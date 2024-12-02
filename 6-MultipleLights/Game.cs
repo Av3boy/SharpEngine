@@ -10,16 +10,26 @@ namespace LearnOpenTK
     {
         public Camera Camera;
 
-        public float[] Vertices_ => GetVertices(); // TODO: Optimize by reading only once per mesh and loading only once
+        public float[] Vertices => GetVertices();
 
         private float[] GetVertices()
         {
-            List<float> vertices = new List<float>();
-
             var mesh = Cubes[0].Mesh; // Mesh is identical for all cubes
-            vertices.AddRange(mesh.Vertices);
-            vertices.AddRange(mesh.Normals);
-            vertices.AddRange(mesh.TextureCoordinates);
+            var vertices = new List<float>();
+
+            for (int i = 0; i < mesh.Vertices.Length / 3; i++)
+            {
+                vertices.Add(mesh.Vertices[i * 3]);
+                vertices.Add(mesh.Vertices[i * 3 + 1]);
+                vertices.Add(mesh.Vertices[i * 3 + 2]);
+
+                vertices.Add(mesh.Normals[i * 3]);
+                vertices.Add(mesh.Normals[i * 3 + 1]);
+                vertices.Add(mesh.Normals[i * 3 + 2]);
+
+                vertices.Add(mesh.TextureCoordinates[i * 2]);
+                vertices.Add(mesh.TextureCoordinates[i * 2 + 1]);
+            }
 
             return vertices.ToArray();
         }
@@ -36,66 +46,6 @@ namespace LearnOpenTK
             Primitives.Cube.Create(new Vector3(1.5f, 2.0f, -2.5f)),
             Primitives.Cube.Create(new Vector3(1.5f, 0.2f, -1.5f)),
             Primitives.Cube.Create(new Vector3(-1.3f, 1.0f, -1.5f))
-        };
-
-        public readonly float[] Vertices =
-        {
-            // Positions          Normals              Texture coords
-            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-             0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-
-            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
-             0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
-            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
-            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
-
-            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-             0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-             0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-             0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-
-            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-             0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
-        };
-
-        public readonly Vector3[] CubePositions =
-        {
-            new Vector3(0.0f, 0.0f, 0.0f),
-            new Vector3(2.0f, 5.0f, -15.0f),
-            new Vector3(-1.5f, -2.2f, -2.5f),
-            new Vector3(-3.8f, -2.0f, -12.3f),
-            new Vector3(2.4f, -0.4f, -3.5f),
-            new Vector3(-1.7f, 3.0f, -7.5f),
-            new Vector3(1.3f, -2.0f, -2.5f),
-            new Vector3(1.5f, 2.0f, -2.5f),
-            new Vector3(1.5f, 0.2f, -1.5f),
-            new Vector3(-1.3f, 1.0f, -1.5f)
         };
 
         public readonly Vector3[] PointLightPositions =

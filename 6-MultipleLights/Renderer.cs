@@ -129,11 +129,11 @@ namespace LearnOpenTK
             _lightingShader.SetFloat("spotLight.cutOff", MathF.Cos(MathHelper.DegreesToRadians(12.5f)));
             _lightingShader.SetFloat("spotLight.outerCutOff", MathF.Cos(MathHelper.DegreesToRadians(17.5f)));
 
-            for (int i = 0; i < _game.CubePositions.Length; i++)
+            for (int i = 0; i < _game.Cubes.Length; i++)
             {
-                Matrix4 model = Matrix4.CreateTranslation(_game.CubePositions[i]);
+                Matrix4 model = Matrix4.CreateTranslation(_game.Cubes[i].Position);
                 float angle = 20.0f * i;
-                model = model * Matrix4.CreateFromAxisAngle(new Vector3(1.0f, 0.3f, 0.5f), angle);
+                model = model * Matrix4.CreateFromAxisAngle(new Vector3(1.0f, 0.3f, 0.5f), MathHelper.DegreesToRadians(angle));
                 _lightingShader.SetMatrix4("model", model);
 
                 GL.DrawArrays(PrimitiveType.Triangles, 0, 36);

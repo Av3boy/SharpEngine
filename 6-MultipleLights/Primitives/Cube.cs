@@ -11,6 +11,7 @@ public static class Cube
     public static GameObject Create(Vector3 position)
         => new()
         {
+            Position = position,
             Mesh = new()
             {
                 Vertices =

@@ -35,18 +35,18 @@ namespace LearnOpenTK
             CursorState = CursorState.Grabbed;
         }
 
-        protected override void OnRenderFrame(FrameEventArgs e)
+        protected override void OnRenderFrame(FrameEventArgs args)
         {
-            base.OnRenderFrame(e);
+            base.OnRenderFrame(args);
 
             _renderer.Render(_game.Camera);
 
             SwapBuffers();
         }
 
-        protected override void OnUpdateFrame(FrameEventArgs e)
+        protected override void OnUpdateFrame(FrameEventArgs args)
         {
-            base.OnUpdateFrame(e);
+            base.OnUpdateFrame(args);
 
             if (!IsFocused)
             {
@@ -58,7 +58,7 @@ namespace LearnOpenTK
                 Close();
             }
 
-            _game.HandleMovement(KeyboardState, (float)e.Time);
+            _game.HandleMovement(KeyboardState, (float)args.Time);
             _game.HandleMouseMovement(MouseState, ref _firstMove, ref _lastPos);
         }
 
