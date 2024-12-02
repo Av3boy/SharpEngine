@@ -10,6 +10,8 @@ namespace LearnOpenTK
     {
         public Camera Camera;
 
+        // TODO: Read only once, load into OpenGL buffer once.
+        // If already loaded, add mesh indetifier to a dictionary. If dict contains mesh, skip it.
         public float[] Vertices => GetVertices();
 
         private float[] GetVertices()

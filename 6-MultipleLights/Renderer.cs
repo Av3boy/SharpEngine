@@ -16,6 +16,10 @@ namespace LearnOpenTK
         private Texture _specularMap;
         private Game _game;
 
+        private DirectionalLight _directionalLight;
+        private PointLight[] _pointLights;
+        private SpotLight _spotLight;
+
         public Renderer(Game game)
         {
             _game = game;
@@ -30,6 +34,42 @@ namespace LearnOpenTK
             InitializeShaders();
             InitializeVertexArrays();
             LoadTextures();
+
+            // Initialize lights
+            _directionalLight = new DirectionalLight
+            {
+                Direction = new Vector3(-0.2f, -1.0f, -0.3f),
+                Ambient = new Vector3(0.05f, 0.05f, 0.05f),
+                Diffuse = new Vector3(0.4f, 0.4f, 0.4f),
+                Specular = new Vector3(0.5f, 0.5f, 0.5f)
+            };
+
+            _pointLights = new PointLight[_game.PointLightPositions.Length];
+            for (int i = 0; i < _game.PointLightPositions.Length; i++)
+            {
+                _pointLights[i] = new PointLight
+                {
+                    Position = _game.PointLightPositions[i],
+                    Ambient = new Vector3(0.05f, 0.05f, 0.05f),
+                    Diffuse = new Vector3(0.8f, 0.8f, 0.8f),
+                    Specular = new Vector3(1.0f, 1.0f, 1.0f),
+                    Constant = 1.0f,
+                    Linear = 0.09f,
+                    Quadratic = 0.032f
+                };
+            }
+
+            _spotLight = new SpotLight
+            {
+                Ambient = new Vector3(0.0f, 0.0f, 0.0f),
+                Diffuse = new Vector3(1.0f, 1.0f, 1.0f),
+                Specular = new Vector3(1.0f, 1.0f, 1.0f),
+                Constant = 1.0f,
+                Linear = 0.09f,
+                Quadratic = 0.032f,
+                CutOff = MathF.Cos(MathHelper.DegreesToRadians(12.5f)),
+                OuterCutOff = MathF.Cos(MathHelper.DegreesToRadians(17.5f))
+            };
         }
 
         private void InitializeBuffers()
@@ -100,34 +140,37 @@ namespace LearnOpenTK
             _lightingShader.SetFloat("material.shininess", 32.0f);
 
             // Directional light
-            _lightingShader.SetVector3("dirLight.direction", new Vector3(-0.2f, -1.0f, -0.3f));
-            _lightingShader.SetVector3("dirLight.ambient", new Vector3(0.05f, 0.05f, 0.05f));
-            _lightingShader.SetVector3("dirLight.diffuse", new Vector3(0.4f, 0.4f, 0.4f));
-            _lightingShader.SetVector3("dirLight.specular", new Vector3(0.5f, 0.5f, 0.5f));
+            _lightingShader.SetVector3("dirLight.direction", _directionalLight.Direction);
+            _lightingShader.SetVector3("dirLight.ambient", _directionalLight.Ambient);
+            _lightingShader.SetVector3("dirLight.diffuse", _directionalLight.Diffuse);
+            _lightingShader.SetVector3("dirLight.specular", _directionalLight.Specular);
 
             // Point lights
-            for (int i = 0; i < _game.PointLightPositions.Length; i++)
+            for (int i = 0; i < _pointLights.Length; i++)
             {
-                _lightingShader.SetVector3($"pointLights[{i}].position", _game.PointLightPositions[i]);
-                _lightingShader.SetVector3($"pointLights[{i}].ambient", new Vector3(0.05f, 0.05f, 0.05f));
-                _lightingShader.SetVector3($"pointLights[{i}].diffuse", new Vector3(0.8f, 0.8f, 0.8f));
-                _lightingShader.SetVector3($"pointLights[{i}].specular", new Vector3(1.0f, 1.0f, 1.0f));
-                _lightingShader.SetFloat($"pointLights[{i}].constant", 1.0f);
-                _lightingShader.SetFloat($"pointLights[{i}].linear", 0.09f);
-                _lightingShader.SetFloat($"pointLights[{i}].quadratic", 0.032f);
+                _lightingShader.SetVector3($"pointLights[{i}].position", _pointLights[i].Position);
+                _lightingShader.SetVector3($"pointLights[{i}].ambient", _pointLights[i].Ambient);
+                _lightingShader.SetVector3($"pointLights[{i}].diffuse", _pointLights[i].Diffuse);
+                _lightingShader.SetVector3($"pointLights[{i}].specular", _pointLights[i].Specular);
+                _lightingShader.SetFloat($"pointLights[{i}].constant", _pointLights[i].Constant);
+                _lightingShader.SetFloat($"pointLights[{i}].linear", _pointLights[i].Linear);
+                _lightingShader.SetFloat($"pointLights[{i}].quadratic", _pointLights[i].Quadratic);
             }
 
             // Spot light
-            _lightingShader.SetVector3("spotLight.position", camera.Position);
-            _lightingShader.SetVector3("spotLight.direction", camera.Front);
-            _lightingShader.SetVector3("spotLight.ambient", new Vector3(0.0f, 0.0f, 0.0f));
-            _lightingShader.SetVector3("spotLight.diffuse", new Vector3(1.0f, 1.0f, 1.0f));
-            _lightingShader.SetVector3("spotLight.specular", new Vector3(1.0f, 1.0f, 1.0f));
-            _lightingShader.SetFloat("spotLight.constant", 1.0f);
-            _lightingShader.SetFloat("spotLight.linear", 0.09f);
-            _lightingShader.SetFloat("spotLight.quadratic", 0.032f);
-            _lightingShader.SetFloat("spotLight.cutOff", MathF.Cos(MathHelper.DegreesToRadians(12.5f)));
-            _lightingShader.SetFloat("spotLight.outerCutOff", MathF.Cos(MathHelper.DegreesToRadians(17.5f)));
+            _spotLight.Position = camera.Position;
+            _spotLight.Direction = camera.Front;
+
+            _lightingShader.SetVector3("spotLight.position", _spotLight.Position);
+            _lightingShader.SetVector3("spotLight.direction", _spotLight.Direction);
+            _lightingShader.SetVector3("spotLight.ambient", _spotLight.Ambient);
+            _lightingShader.SetVector3("spotLight.diffuse", _spotLight.Diffuse);
+            _lightingShader.SetVector3("spotLight.specular", _spotLight.Specular);
+            _lightingShader.SetFloat("spotLight.constant", _spotLight.Constant);
+            _lightingShader.SetFloat("spotLight.linear", _spotLight.Linear);
+            _lightingShader.SetFloat("spotLight.quadratic", _spotLight.Quadratic);
+            _lightingShader.SetFloat("spotLight.cutOff", _spotLight.CutOff);
+            _lightingShader.SetFloat("spotLight.outerCutOff", _spotLight.OuterCutOff);
 
             for (int i = 0; i < _game.Cubes.Length; i++)
             {
@@ -146,10 +189,10 @@ namespace LearnOpenTK
             _lampShader.SetMatrix4("view", camera.GetViewMatrix());
             _lampShader.SetMatrix4("projection", camera.GetProjectionMatrix());
             // We use a loop to draw all the lights at the proper position
-            for (int i = 0; i < _game.PointLightPositions.Length; i++)
+            for (int i = 0; i < _pointLights.Length; i++)
             {
                 Matrix4 lampMatrix = Matrix4.CreateScale(0.2f);
-                lampMatrix = lampMatrix * Matrix4.CreateTranslation(_game.PointLightPositions[i]);
+                lampMatrix = lampMatrix * Matrix4.CreateTranslation(_pointLights[i].Position);
 
                 _lampShader.SetMatrix4("model", lampMatrix);
 
