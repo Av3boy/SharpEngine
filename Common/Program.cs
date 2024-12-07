@@ -8,6 +8,9 @@ namespace LearnOpenTK
     {
         private static void Main()
         {
+            Scene scene = new Scene();
+            Game game = new Game(scene);
+
             var nativeWindowSettings = new NativeWindowSettings()
             {
                 ClientSize = new Vector2i(800, 600),
@@ -16,10 +19,8 @@ namespace LearnOpenTK
                 Flags = ContextFlags.ForwardCompatible,
             };
 
-            using (var window = new Window(GameWindowSettings.Default, nativeWindowSettings))
-            {
-                window.Run();
-            }
+            using var window = new Window(game, scene, GameWindowSettings.Default, nativeWindowSettings);
+            window.Run();
         }
     }
 }

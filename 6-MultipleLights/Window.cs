@@ -5,6 +5,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
+using System.Collections.Generic;
 
 namespace LearnOpenTK
 {
@@ -12,21 +13,51 @@ namespace LearnOpenTK
     // with several point lights
     public class Window : GameWindow
     {
-        private Game _game;
+        private IGame _game;
         private Renderer _renderer;
+        private Scene _scene;
 
         private bool _firstMove = true;
         private Vector2 _lastPos;
 
-        public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
-            : base(gameWindowSettings, nativeWindowSettings) { }
+        // TODO: Read only once, load into OpenGL buffer once.
+        // If already loaded, add mesh indetifier to a dictionary. If dict contains mesh, skip it.
+        public float[] Vertices => GetVertices();
+
+        public Window(IGame game, Scene scene, GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
+            : base(gameWindowSettings, nativeWindowSettings)
+        {
+            _game = game;
+            _scene = scene;
+        }
+
+        private float[] GetVertices()
+        {
+            var mesh = _game.Cubes[0].Mesh; // Mesh is identical for all cubes
+            var vertices = new List<float>();
+
+            for (int i = 0; i < mesh.Vertices.Length / 3; i++)
+            {
+                vertices.Add(mesh.Vertices[i * 3]);
+                vertices.Add(mesh.Vertices[i * 3 + 1]);
+                vertices.Add(mesh.Vertices[i * 3 + 2]);
+
+                vertices.Add(mesh.Normals[i * 3]);
+                vertices.Add(mesh.Normals[i * 3 + 1]);
+                vertices.Add(mesh.Normals[i * 3 + 2]);
+
+                vertices.Add(mesh.TextureCoordinates[i * 2]);
+                vertices.Add(mesh.TextureCoordinates[i * 2 + 1]);
+            }
+
+            return vertices.ToArray();
+        }
 
         protected override void OnLoad()
         {
             base.OnLoad();
 
-            _game = new Game();
-            _renderer = new Renderer(_game);
+            _renderer = new Renderer(_game, _scene, Vertices);
 
             _renderer.Initialize();
 
