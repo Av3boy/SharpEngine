@@ -39,56 +39,14 @@ namespace Minecraft
 
         private void InitializeLights()
         {
-            DirectionalLight = new DirectionalLight
-            {
-                Direction = new Vector3(-0.2f, -1.0f, -0.3f),
-                Ambient = new Vector3(0.05f, 0.05f, 0.05f),
-                Diffuse = new Vector3(0.4f, 0.4f, 0.4f),
-                Specular = new Vector3(0.5f, 0.5f, 0.5f)
-            };
+            DirectionalLight = new();
 
             PointLights =
             [
-                new()
-                {
-                    Position = new Vector3(0.7f, 0.2f, 2.0f),
-                    Ambient = new Vector3(0.05f, 0.05f, 0.05f),
-                    Diffuse = new Vector3(0.8f, 0.8f, 0.8f),
-                    Specular = new Vector3(1.0f, 1.0f, 1.0f),
-                    Constant = 1.0f,
-                    Linear = 0.09f,
-                    Quadratic = 0.032f
-                },
-                new()
-                {
-                    Position = new Vector3(2.3f, -3.3f, -4.0f),
-                    Ambient = new Vector3(0.05f, 0.05f, 0.05f),
-                    Diffuse = new Vector3(0.8f, 0.8f, 0.8f),
-                    Specular = new Vector3(1.0f, 1.0f, 1.0f),
-                    Constant = 1.0f,
-                    Linear = 0.09f,
-                    Quadratic = 0.032f
-                },
-                new()
-                {
-                    Position = new Vector3(-4.0f, 2.0f, -12.0f),
-                    Ambient = new Vector3(0.05f, 0.05f, 0.05f),
-                    Diffuse = new Vector3(0.8f, 0.8f, 0.8f),
-                    Specular = new Vector3(1.0f, 1.0f, 1.0f),
-                    Constant = 1.0f,
-                    Linear = 0.09f,
-                    Quadratic = 0.032f
-                },
-                new()
-                {
-                    Position = new Vector3(0.0f, 0.0f, -3.0f),
-                    Ambient = new Vector3(0.05f, 0.05f, 0.05f),
-                    Diffuse = new Vector3(0.8f, 0.8f, 0.8f),
-                    Specular = new Vector3(1.0f, 1.0f, 1.0f),
-                    Constant = 1.0f,
-                    Linear = 0.09f,
-                    Quadratic = 0.032f
-                }
+                new(new Vector3(0.7f, 0.2f, 2.0f)),
+                new(new Vector3(2.3f, -3.3f, -4.0f)),
+                new(new Vector3(-4.0f, 2.0f, -12.0f)),
+                new(new Vector3(0.0f, 0.0f, -3.0f))
             ];
 
             SpotLight = new()
@@ -96,11 +54,6 @@ namespace Minecraft
                 Ambient = new Vector3(0.0f, 0.0f, 0.0f),
                 Diffuse = new Vector3(1.0f, 1.0f, 1.0f),
                 Specular = new Vector3(1.0f, 1.0f, 1.0f),
-                Constant = 1.0f,
-                Linear = 0.09f,
-                Quadratic = 0.032f,
-                CutOff = MathF.Cos(MathHelper.DegreesToRadians(12.5f)),
-                OuterCutOff = MathF.Cos(MathHelper.DegreesToRadians(17.5f))
             };
         }
 
@@ -114,6 +67,12 @@ namespace Minecraft
                 {
                     var dirt = new Dirt(new Vector3(x, 0, z), $"Dirt ({x}{z})");
                     _scene.AddNode(dirt);
+
+                    for (int y = 1; y < chunkSize; y++)
+                    {
+                        var stone = new Stone(new Vector3(x, -y, z), $"Dirt ({x}{z}.{y})");
+                        _scene.AddNode(stone);
+                    }
                 }
             }
         }

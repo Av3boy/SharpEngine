@@ -1,6 +1,7 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
+using Plane = System.Numerics.Plane;
 
 namespace Core;
 
@@ -138,5 +139,60 @@ public class Camera
             Yaw += deltaX * Sensitivity;
             Pitch -= deltaY * Sensitivity;
         }
+    }
+
+    public Plane[] GetFrustumPlanes()
+    {
+        Matrix4 viewProjection = GetViewMatrix() * GetProjectionMatrix();
+        Plane[] planes = new Plane[6];
+
+        // Left
+        planes[0] = new Plane(
+            viewProjection.M14 + viewProjection.M11,
+            viewProjection.M24 + viewProjection.M21,
+            viewProjection.M34 + viewProjection.M31,
+            viewProjection.M44 + viewProjection.M41);
+
+        // Right
+        planes[1] = new Plane(
+            viewProjection.M14 - viewProjection.M11,
+            viewProjection.M24 - viewProjection.M21,
+            viewProjection.M34 - viewProjection.M31,
+            viewProjection.M44 - viewProjection.M41);
+
+        // Bottom
+        planes[2] = new Plane(
+            viewProjection.M14 + viewProjection.M12,
+            viewProjection.M24 + viewProjection.M22,
+            viewProjection.M34 + viewProjection.M32,
+            viewProjection.M44 + viewProjection.M42);
+
+        // Top
+        planes[3] = new Plane(
+            viewProjection.M14 - viewProjection.M12,
+            viewProjection.M24 - viewProjection.M22,
+            viewProjection.M34 - viewProjection.M32,
+            viewProjection.M44 - viewProjection.M42);
+
+        // Near
+        planes[4] = new Plane(
+            viewProjection.M13,
+            viewProjection.M23,
+            viewProjection.M33,
+            viewProjection.M43);
+
+        // Far
+        planes[5] = new Plane(
+            viewProjection.M14 - viewProjection.M13,
+            viewProjection.M24 - viewProjection.M23,
+            viewProjection.M34 - viewProjection.M33,
+            viewProjection.M44 - viewProjection.M43);
+
+        for (int i = 0; i < 6; i++)
+        {
+            planes[i] = Plane.Normalize(planes[i]);
+        }
+
+        return planes;
     }
 }

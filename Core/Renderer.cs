@@ -16,6 +16,8 @@ public class Renderer
     private readonly IGame _game;
     private readonly Scene _scene;
 
+    public bool DrawWireFrame { get; set; } = true;
+
     // Read only once, load into OpenGL buffer once.
     //
     // TODO: Multiple meshes
@@ -107,66 +109,25 @@ public class Renderer
     {
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
+        if (DrawWireFrame)
+        {
+            // Set polygon mode to line to draw wireframe
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+        }
+
         GL.BindVertexArray(_vaoModel);
 
         foreach (var node in _scene.Nodes)
         {
             if (node is GameObject gameObject)
             {
-                var shader = gameObject.Shader;
-                shader.Use();
-
-                shader.SetMatrix4("view", camera.GetViewMatrix());
-                shader.SetMatrix4("projection", camera.GetProjectionMatrix());
-
-                shader.SetVector3("viewPos", camera.Position);
-
-                // Directional light
-                shader.SetVector3("dirLight.direction", _game.DirectionalLight.Direction);
-                shader.SetVector3("dirLight.ambient", _game.DirectionalLight.Ambient);
-                shader.SetVector3("dirLight.diffuse", _game.DirectionalLight.Diffuse);
-                shader.SetVector3("dirLight.specular", _game.DirectionalLight.Specular);
-
-                // Point lights
-                for (int i = 0; i < _game.PointLights.Length; i++)
+                // Perform frustum culling
+                if (!IsInViewFrustum(gameObject.BoundingBox, camera))
                 {
-                    shader.SetVector3($"pointLights[{i}].position", _game.PointLights[i].Position);
-                    shader.SetVector3($"pointLights[{i}].ambient", _game.PointLights[i].Ambient);
-                    shader.SetVector3($"pointLights[{i}].diffuse", _game.PointLights[i].Diffuse);
-                    shader.SetVector3($"pointLights[{i}].specular", _game.PointLights[i].Specular);
-                    shader.SetFloat($"pointLights[{i}].constant", _game.PointLights[i].Constant);
-                    shader.SetFloat($"pointLights[{i}].linear", _game.PointLights[i].Linear);
-                    shader.SetFloat($"pointLights[{i}].quadratic", _game.PointLights[i].Quadratic);
+                    continue;
                 }
 
-                // Spot light
-                _game.SpotLight.Position = camera.Position;
-                _game.SpotLight.Direction = camera.Front;
-
-                shader.SetVector3("spotLight.position", _game.SpotLight.Position);
-                shader.SetVector3("spotLight.direction", _game.SpotLight.Direction);
-                shader.SetVector3("spotLight.ambient", _game.SpotLight.Ambient);
-                shader.SetVector3("spotLight.diffuse", _game.SpotLight.Diffuse);
-                shader.SetVector3("spotLight.specular", _game.SpotLight.Specular);
-                shader.SetFloat("spotLight.constant", _game.SpotLight.Constant);
-                shader.SetFloat("spotLight.linear", _game.SpotLight.Linear);
-                shader.SetFloat("spotLight.quadratic", _game.SpotLight.Quadratic);
-                shader.SetFloat("spotLight.cutOff", _game.SpotLight.CutOff);
-                shader.SetFloat("spotLight.outerCutOff", _game.SpotLight.OuterCutOff);
-
-                gameObject.DiffuseMap.Use(TextureUnit.Texture0);
-                gameObject.SpecularMap.Use(TextureUnit.Texture1);
-
-                shader.SetInt("material.diffuse", gameObject.Material.diffuseUnit);
-                shader.SetInt("material.specular", gameObject.Material.specularUnit);
-                shader.SetVector3("material.specular", gameObject.Material.Specular);
-                shader.SetFloat("material.shininess", gameObject.Material.Shininess);
-
-                Matrix4 model = Matrix4.CreateTranslation(gameObject.Position);
-                model *= Matrix4.CreateFromAxisAngle(gameObject.Quaternion.Axis, MathHelper.DegreesToRadians(gameObject.Quaternion.Angle));
-                shader.SetMatrix4("model", model);
-
-                GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
+                gameObject.Render(camera, _game.DirectionalLight, _game.PointLights, _game.SpotLight);
             }
         }
 
@@ -187,5 +148,44 @@ public class Renderer
 
             GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
         }
+
+        if (DrawWireFrame)
+        {
+            // Reset polygon mode to fill to draw solid objects
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+        }
+    }
+
+    private bool IsInViewFrustum(BoundingBox boundingBox, Camera camera)
+    {
+        var planes = camera.GetFrustumPlanes();
+
+        foreach (var plane in planes)
+        {
+            if (DistanceToPoint(plane, boundingBox.Min) < 0 && DistanceToPoint(plane, boundingBox.Max) < 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public float DistanceToPoint(System.Numerics.Plane plane, Vector3 point)
+    {
+        var normal = new Vector3(plane.Normal.X, plane.Normal.Y, plane.Normal.Z);
+        return Vector3.Dot(normal, point) + plane.D;
+    }
+}
+
+public class BoundingBox
+{
+    public Vector3 Min { get; set; }
+    public Vector3 Max { get; set; }
+
+    public BoundingBox(Vector3 min, Vector3 max)
+    {
+        Min = min;
+        Max = max;
     }
 }
