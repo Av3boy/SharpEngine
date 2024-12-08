@@ -112,19 +112,12 @@ namespace Core
 
             GL.BindVertexArray(_vaoModel);
 
-            _diffuseMap.Use(TextureUnit.Texture0);
-            _specularMap.Use(TextureUnit.Texture1);
             _lightingShader.Use();
 
             _lightingShader.SetMatrix4("view", camera.GetViewMatrix());
             _lightingShader.SetMatrix4("projection", camera.GetProjectionMatrix());
 
             _lightingShader.SetVector3("viewPos", camera.Position);
-
-            _lightingShader.SetInt("material.diffuse", 0);
-            _lightingShader.SetInt("material.specular", 1);
-            _lightingShader.SetVector3("material.specular", new Vector3(0.5f, 0.5f, 0.5f));
-            _lightingShader.SetFloat("material.shininess", 32.0f);
 
             // Directional light
             _lightingShader.SetVector3("dirLight.direction", _game.DirectionalLight.Direction);
@@ -163,6 +156,14 @@ namespace Core
             {
                 if (node is GameObject gameObject)
                 {
+                    gameObject.DiffuseMap.Use(TextureUnit.Texture0);
+                    gameObject.SpecularMap.Use(TextureUnit.Texture1);
+
+                    _lightingShader.SetInt("material.diffuse", 0);
+                    _lightingShader.SetInt("material.specular", 1);
+                    _lightingShader.SetVector3("material.specular", new Vector3(0.5f, 0.5f, 0.5f));
+                    _lightingShader.SetFloat("material.shininess", 32.0f);
+
                     Matrix4 model = Matrix4.CreateTranslation(gameObject.Position);
                     model *= Matrix4.CreateFromAxisAngle(gameObject.Quaternion.Axis, MathHelper.DegreesToRadians(gameObject.Quaternion.Angle));
                     _lightingShader.SetMatrix4("model", model);

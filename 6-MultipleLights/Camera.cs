@@ -1,4 +1,5 @@
 using OpenTK.Mathematics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 
 namespace Core;
@@ -114,5 +115,28 @@ public class Camera
         // not be what you need for all cameras so keep this in mind if you do not want a FPS camera.
         _right = Vector3.Normalize(Vector3.Cross(_front, Vector3.UnitY));
         _up = Vector3.Normalize(Vector3.Cross(_right, _front));
+    }
+
+    private bool firstMove;
+    private Vector2 lastPos;
+
+    public float Sensitivity { get; set; } = 0.2f;
+
+    public void UpdateMousePosition(Vector2 mousePosition)
+    {
+        if (firstMove)
+        {
+            lastPos = new Vector2(mousePosition.X, mousePosition.Y);
+            firstMove = false;
+        }
+        else
+        {
+            var deltaX = mousePosition.X - lastPos.X;
+            var deltaY = mousePosition.Y - lastPos.Y;
+            lastPos = new Vector2(mousePosition.X, mousePosition.Y);
+
+            Yaw += deltaX * Sensitivity;
+            Pitch -= deltaY * Sensitivity;
+        }
     }
 }

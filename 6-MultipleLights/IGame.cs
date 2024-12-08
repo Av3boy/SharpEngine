@@ -15,6 +15,8 @@ public interface IGame
     public Camera Camera { get; set; }
 
     public void HandleMouseDown(MouseButtonEventArgs e);
-    public void HandleMouseMovement(MouseState mouse, ref bool firstMove, ref Vector2 lastPos);
-    public void HandleMovement(KeyboardState input, float deltaTime);
+    public void HandleMouse(MouseState mouse);
+    public void HandleKeyboard(KeyboardState input, float deltaTime);
+    public void Initialize();
+    public void Update(FrameEventArgs args, KeyboardState keyboardState, MouseState mouseState);
 }

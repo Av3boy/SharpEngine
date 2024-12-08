@@ -7,6 +7,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace Minecraft
@@ -19,10 +20,19 @@ namespace Minecraft
         public SpotLight SpotLight { get; set; }
 
         private Scene _scene;
+        private Input _input;
+
+        private BlockType SelectedBlockType = BlockType.Dirt;
 
         public Game(Scene scene)
         {
             _scene = scene;
+        }
+
+        public void Initialize()
+        {
+            _input = new Input(Camera);
+
             InitializeLights();
             InitializeCubes();
         }
@@ -108,55 +118,23 @@ namespace Minecraft
             }
         }
 
-        public void HandleMovement(KeyboardState input, float deltaTime)
+        public void Update(FrameEventArgs args, KeyboardState keyboardState, MouseState mouseState)
         {
-            const float cameraSpeed = 1.5f;
 
-            if (input.IsKeyDown(Keys.W))
+        }
+
+        public void HandleKeyboard(KeyboardState input, float deltaTime)
+        {
+            _input.HandleKeyboard(input, deltaTime);
+
+            if (input.IsKeyDown(Keys.D1))
             {
-                Camera.Position += Camera.Front * cameraSpeed * deltaTime; // Forward
-            }
-            if (input.IsKeyDown(Keys.S))
-            {
-                Camera.Position -= Camera.Front * cameraSpeed * deltaTime; // Backwards
-            }
-            if (input.IsKeyDown(Keys.A))
-            {
-                Camera.Position -= Camera.Right * cameraSpeed * deltaTime; // Left
-            }
-            if (input.IsKeyDown(Keys.D))
-            {
-                Camera.Position += Camera.Right * cameraSpeed * deltaTime; // Right
-            }
-            if (input.IsKeyDown(Keys.Space))
-            {
-                Camera.Position += Camera.Up * cameraSpeed * deltaTime; // Up
-            }
-            if (input.IsKeyDown(Keys.LeftShift))
-            {
-                Camera.Position -= Camera.Up * cameraSpeed * deltaTime; // Down
+                SelectedBlockType = BlockType.Stone;
             }
         }
 
-        public void HandleMouseMovement(MouseState mouse, ref bool firstMove, ref Vector2 lastPos)
-        {
-            const float sensitivity = 0.2f;
-
-            if (firstMove)
-            {
-                lastPos = new Vector2(mouse.X, mouse.Y);
-                firstMove = false;
-            }
-            else
-            {
-                var deltaX = mouse.X - lastPos.X;
-                var deltaY = mouse.Y - lastPos.Y;
-                lastPos = new Vector2(mouse.X, mouse.Y);
-
-                Camera.Yaw += deltaX * sensitivity;
-                Camera.Pitch -= deltaY * sensitivity;
-            }
-        }
+        public void HandleMouse(MouseState mouse)
+            => _input.HandleMouse(mouse);
 
         public void HandleMouseDown(MouseButtonEventArgs e)
         {
@@ -189,70 +167,23 @@ namespace Minecraft
             if (newBlockPosition == Camera.Position || newBlockPosition == hitPosition)
                 return;
 
-            var newBlock = BlockFactory.CreateBlock(BlockType.Dirt, newBlockPosition, $"Dirt ({_scene.Root.Children.Count})"); // TODO:
+            var newBlock = BlockFactory.CreateBlock(SelectedBlockType, newBlockPosition, $"Dirt ({_scene.Root.Children.Count})");
             _scene.AddNode(newBlock);
 
             Console.WriteLine($"New block created: {newBlock.Position}, block in view location: {intersectingObject.Position}");
 
         }
 
-        private Vector3 GetNewBlockPosition(Vector3 hitPosition, GameObject intersectingObject)
+        private static Vector3 GetNewBlockPosition(Vector3 hitPosition, GameObject intersectingObject)
         {
-            Vector3 normal = GetFaceNormal(hitPosition, intersectingObject);
-            return intersectingObject.Position + normal * intersectingObject.Scale;
-        }
-
-        private Vector3 GetFaceNormal(Vector3 point, GameObject obj)
-        {
-            Vector3 min = obj.Position - (obj.Scale / 2);
-            Vector3 max = obj.Position + (obj.Scale / 2);
-
-            var distances = new Dictionary<Vector3, float>
-            {
-                { -Vector3.UnitX, Math.Abs(point.X - min.X) },
-                { Vector3.UnitX, Math.Abs(point.X - max.X) },
-                { -Vector3.UnitY, Math.Abs(point.Y - min.Y) },
-                { Vector3.UnitY, Math.Abs(point.Y - max.Y) },
-                { -Vector3.UnitZ, Math.Abs(point.Z - min.Z) },
-                { Vector3.UnitZ, Math.Abs(point.Z - max.Z) }
-            };
-
-            return distances.OrderBy(d => d.Value).First().Key;
+            Vector3 normal = Ray.GetClosestFaceNormal(hitPosition, intersectingObject);
+            return intersectingObject.Position + (normal * intersectingObject.Scale);
         }
 
         public bool IsBlockInView(out GameObject intersectingObject, out Vector3 hitPosition)
         {
-            Vector3 rayOrigin = Camera.Position;
-            Vector3 rayDirection = Camera.Front;
-
-            const float maxDistance = 100.0f; // Maximum distance to check for intersections
-            const float stepSize = 0.1f; // Step size for ray marching
-
-            for (float t = 0; t < maxDistance; t += stepSize)
-            {
-                Vector3 currentPosition = rayOrigin + (t * rayDirection);
-
-                intersectingObject = _scene.Blocks.FirstOrDefault(obj => IsPointInsideObject(currentPosition, obj));
-                if (intersectingObject != null)
-                {
-                    hitPosition = currentPosition;
-                    return true;
-                }
-            }
-
-            intersectingObject = null;
-            hitPosition = Vector3.Zero;
-            return false;
-        }
-
-        private static bool IsPointInsideObject(Vector3 point, GameObject obj)
-        {
-            Vector3 min = obj.Position - (obj.Scale / 2);
-            Vector3 max = obj.Position + (obj.Scale / 2);
-
-            return point.X >= min.X && point.X <= max.X &&
-                   point.Y >= min.Y && point.Y <= max.Y &&
-                   point.Z >= min.Z && point.Z <= max.Z;
+            Ray ray = new Ray(Camera.Position, Camera.Front);
+            return ray.IsBlockInView(_scene, out intersectingObject, out hitPosition);
         }
     }
 }

@@ -12,12 +12,14 @@ namespace Minecraft
             => type switch
             {
                 BlockType.Dirt => new Dirt(position, name),
+                BlockType.Stone => new Stone(position, name),
                 _ => throw new ArgumentException("Invalid block type", nameof(type)),
             };
     }
 
     public enum BlockType
     {
-        Dirt
+        Dirt,
+        Stone
     }
 }

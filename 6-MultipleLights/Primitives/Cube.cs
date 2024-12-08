@@ -4,8 +4,8 @@ namespace Core.Primitives;
 
 public static class Cube
 {
-    public static GameObject Create(Vector3 position)
-        => new()
+    public static GameObject Create(Vector3 position, string diffuseMapFile, string specularMapFile)
+        => new(diffuseMapFile, specularMapFile)
         {
             Position = position,
             Mesh = Mesh

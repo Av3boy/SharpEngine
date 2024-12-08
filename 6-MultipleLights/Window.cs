@@ -31,12 +31,13 @@ namespace Core
             base.OnLoad();
 
             _renderer = new Renderer(_game, _scene);
-
             _renderer.Initialize();
 
             _game.Camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
 
             CursorState = CursorState.Grabbed;
+
+            _game.Initialize();
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
@@ -62,8 +63,12 @@ namespace Core
                 Close();
             }
 
-            _game.HandleMovement(KeyboardState, (float)args.Time);
-            _game.HandleMouseMovement(MouseState, ref _firstMove, ref _lastPos);
+            _game.Camera.UpdateMousePosition(new Vector2(MouseState.X, MouseState.Y));
+
+            _game.HandleKeyboard(KeyboardState, (float)args.Time);
+            _game.HandleMouse(MouseState);
+
+            _game.Update(args, KeyboardState, MouseState);
         }
 
         protected override void OnMouseWheel(MouseWheelEventArgs e)
