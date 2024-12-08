@@ -1,5 +1,6 @@
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using System.Collections.Generic;
 
 namespace Core
 {
@@ -15,13 +16,36 @@ namespace Core
         private IGame _game;
         private Scene _scene;
 
-        float[] _vertices;
+        // TODO: Read only once, load into OpenGL buffer once.
+        // If already loaded, add mesh indetifier to a dictionary. If dict contains mesh, skip it.
+        public float[] Vertices => GetVertices();
 
-        public Renderer(IGame game, Scene scene, float[] vertices)
+        private float[] GetVertices()
+        {
+            var mesh = _game.Cubes[0].Mesh; // Mesh is identical for all cubes
+            var vertices = new List<float>();
+
+            for (int i = 0; i < mesh.Vertices.Length / 3; i++)
+            {
+                vertices.Add(mesh.Vertices[i * 3]);
+                vertices.Add(mesh.Vertices[i * 3 + 1]);
+                vertices.Add(mesh.Vertices[i * 3 + 2]);
+
+                vertices.Add(mesh.Normals[i * 3]);
+                vertices.Add(mesh.Normals[i * 3 + 1]);
+                vertices.Add(mesh.Normals[i * 3 + 2]);
+
+                vertices.Add(mesh.TextureCoordinates[i * 2]);
+                vertices.Add(mesh.TextureCoordinates[i * 2 + 1]);
+            }
+
+            return vertices.ToArray();
+        }
+
+        public Renderer(IGame game, Scene scene)
         {
             _game = game;
             _scene = scene;
-            _vertices = vertices;
         }
 
         public void Initialize()
@@ -40,7 +64,7 @@ namespace Core
             _vertexBufferObject = GL.GenBuffer();
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, Vertices.Length * sizeof(float), Vertices, BufferUsageHint.StaticDraw);
         }
 
         private void InitializeShaders()

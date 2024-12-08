@@ -168,7 +168,6 @@ namespace Minecraft
             _scene.Nodes.Add(newBlock);
             Cubes.Add(newBlock);
 
-            //OnSceneChanged?.Invoke();
             Console.WriteLine($"New block created: {newBlock.Position}, block in view location: {intersectingObject.Position}");
 
         }
@@ -184,23 +183,17 @@ namespace Minecraft
             Vector3 min = obj.Position - (obj.Scale / 2);
             Vector3 max = obj.Position + (obj.Scale / 2);
 
-            float distanceToMinX = Math.Abs(point.X - min.X);
-            float distanceToMaxX = Math.Abs(point.X - max.X);
-            float distanceToMinY = Math.Abs(point.Y - min.Y);
-            float distanceToMaxY = Math.Abs(point.Y - max.Y);
-            float distanceToMinZ = Math.Abs(point.Z - min.Z);
-            float distanceToMaxZ = Math.Abs(point.Z - max.Z);
+            var distances = new Dictionary<Vector3, float>
+            {
+                { -Vector3.UnitX, Math.Abs(point.X - min.X) },
+                { Vector3.UnitX, Math.Abs(point.X - max.X) },
+                { -Vector3.UnitY, Math.Abs(point.Y - min.Y) },
+                { Vector3.UnitY, Math.Abs(point.Y - max.Y) },
+                { -Vector3.UnitZ, Math.Abs(point.Z - min.Z) },
+                { Vector3.UnitZ, Math.Abs(point.Z - max.Z) }
+            };
 
-            float minDistance = Math.Min(Math.Min(Math.Min(Math.Min(Math.Min(distanceToMinX, distanceToMaxX), distanceToMinY), distanceToMaxY), distanceToMinZ), distanceToMaxZ);
-
-            if (minDistance == distanceToMinX) return -Vector3.UnitX;
-            if (minDistance == distanceToMaxX) return Vector3.UnitX;
-            if (minDistance == distanceToMinY) return -Vector3.UnitY;
-            if (minDistance == distanceToMaxY) return Vector3.UnitY;
-            if (minDistance == distanceToMinZ) return -Vector3.UnitZ;
-            if (minDistance == distanceToMaxZ) return Vector3.UnitZ;
-
-            return Vector3.Zero;
+            return distances.OrderBy(d => d.Value).First().Key;
         }
 
         public bool IsBlockInView(out GameObject intersectingObject, out Vector3 hitPosition)

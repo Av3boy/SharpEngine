@@ -19,10 +19,6 @@ namespace Core
         private bool _firstMove = true;
         private Vector2 _lastPos;
 
-        // TODO: Read only once, load into OpenGL buffer once.
-        // If already loaded, add mesh indetifier to a dictionary. If dict contains mesh, skip it.
-        public float[] Vertices => GetVertices();
-
         public Window(IGame game, Scene scene, GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
             : base(gameWindowSettings, nativeWindowSettings)
         {
@@ -30,33 +26,11 @@ namespace Core
             _scene = scene;
         }
 
-        private float[] GetVertices()
-        {
-            var mesh = _game.Cubes[0].Mesh; // Mesh is identical for all cubes
-            var vertices = new List<float>();
-
-            for (int i = 0; i < mesh.Vertices.Length / 3; i++)
-            {
-                vertices.Add(mesh.Vertices[i * 3]);
-                vertices.Add(mesh.Vertices[i * 3 + 1]);
-                vertices.Add(mesh.Vertices[i * 3 + 2]);
-
-                vertices.Add(mesh.Normals[i * 3]);
-                vertices.Add(mesh.Normals[i * 3 + 1]);
-                vertices.Add(mesh.Normals[i * 3 + 2]);
-
-                vertices.Add(mesh.TextureCoordinates[i * 2]);
-                vertices.Add(mesh.TextureCoordinates[i * 2 + 1]);
-            }
-
-            return vertices.ToArray();
-        }
-
         protected override void OnLoad()
         {
             base.OnLoad();
 
-            _renderer = new Renderer(_game, _scene, Vertices);
+            _renderer = new Renderer(_game, _scene);
 
             _renderer.Initialize();
 
@@ -109,7 +83,7 @@ namespace Core
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
-            // base.OnMouseDown(e);
+            base.OnMouseDown(e);
             _game.HandleMouseDown(e);
         }
     }
