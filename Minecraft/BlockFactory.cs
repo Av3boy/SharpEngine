@@ -19,6 +19,7 @@ namespace Minecraft
 
     public enum BlockType
     {
+        None,
         Dirt,
         Stone
     }

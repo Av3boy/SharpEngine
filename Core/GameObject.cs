@@ -24,7 +24,7 @@ public class GameObject : SceneNode
     public Quaternion Quaternion { get; set; } = new();
     public Material Material { get; set; } = new();
 
-    public void Render(Camera camera, DirectionalLight DirectionalLight, PointLight[] PointLights, SpotLight SpotLight)
+    public virtual void Render(Camera camera, DirectionalLight directionalLight, PointLight[] pointLights, SpotLight spotLight)
     {
         Shader.Use();
 
@@ -33,38 +33,13 @@ public class GameObject : SceneNode
 
         Shader.SetVector3("viewPos", camera.Position);
 
-        // Directional light
-        Shader.SetVector3("dirLight.direction", DirectionalLight.Direction);
-        Shader.SetVector3("dirLight.ambient", DirectionalLight.Ambient);
-        Shader.SetVector3("dirLight.diffuse", DirectionalLight.Diffuse);
-        Shader.SetVector3("dirLight.specular", DirectionalLight.Specular);
-
-        // Point lights
-        for (int i = 0; i < PointLights.Length; i++)
+        // Render lights
+        directionalLight.Render(Shader);
+        for (int i = 0; i < pointLights.Length; i++)
         {
-            Shader.SetVector3($"pointLights[{i}].position", PointLights[i].Position);
-            Shader.SetVector3($"pointLights[{i}].ambient", PointLights[i].Ambient);
-            Shader.SetVector3($"pointLights[{i}].diffuse", PointLights[i].Diffuse);
-            Shader.SetVector3($"pointLights[{i}].specular", PointLights[i].Specular);
-            Shader.SetFloat($"pointLights[{i}].constant", PointLights[i].Constant);
-            Shader.SetFloat($"pointLights[{i}].linear", PointLights[i].Linear);
-            Shader.SetFloat($"pointLights[{i}].quadratic", PointLights[i].Quadratic);
+            pointLights[i].Render(Shader, i);
         }
-
-        // Spot light
-        SpotLight.Position = camera.Position;
-        SpotLight.Direction = camera.Front;
-
-        Shader.SetVector3("spotLight.position", SpotLight.Position);
-        Shader.SetVector3("spotLight.direction", SpotLight.Direction);
-        Shader.SetVector3("spotLight.ambient", SpotLight.Ambient);
-        Shader.SetVector3("spotLight.diffuse", SpotLight.Diffuse);
-        Shader.SetVector3("spotLight.specular", SpotLight.Specular);
-        Shader.SetFloat("spotLight.constant", SpotLight.Constant);
-        Shader.SetFloat("spotLight.linear", SpotLight.Linear);
-        Shader.SetFloat("spotLight.quadratic", SpotLight.Quadratic);
-        Shader.SetFloat("spotLight.cutOff", SpotLight.CutOff);
-        Shader.SetFloat("spotLight.outerCutOff", SpotLight.OuterCutOff);
+        spotLight.Render(Shader);
 
         DiffuseMap.Use(TextureUnit.Texture0);
         SpecularMap.Use(TextureUnit.Texture1);

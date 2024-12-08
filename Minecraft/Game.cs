@@ -7,6 +7,7 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 using System;
+using System.Collections.Generic;
 
 namespace Minecraft
 {
@@ -23,6 +24,7 @@ namespace Minecraft
         private Scene _scene;
         private Input _input;
 
+        private Inventory _inventory = new();
         private BlockType SelectedBlockType = BlockType.Dirt;
 
         public Game(Scene scene, Settings settings)
@@ -92,6 +94,16 @@ namespace Minecraft
             {
                 SelectedBlockType = BlockType.Stone;
             }
+
+            if (input.IsKeyDown(Keys.D2))
+            {
+                SelectedBlockType = BlockType.Dirt;
+            }
+
+            if (input.IsKeyDown(Keys.F))
+            {
+                Settings.PrintFrameRate = !Settings.PrintFrameRate;
+            }
         }
 
         public void HandleMouse(MouseState mouse)
@@ -101,21 +113,38 @@ namespace Minecraft
         {
             if (e.Button == MouseButton.Right)
             {
-                PlaceBlock();
+                if (_inventory.Blocks.GetValueOrDefault(SelectedBlockType) > 0)
+                {
+                    PlaceBlock();
+                    _inventory.Blocks[SelectedBlockType] -= 1;
+                }
+                else
+                {
+                    Console.WriteLine($"No more {SelectedBlockType}s.");
+                }
             }
 
             if (e.Button == MouseButton.Left)
             {
-                DestroryBlock();
+                var destoryedBlockType = DestroyBlock();
+                if (destoryedBlockType != BlockType.None)
+                {
+                    Console.WriteLine($"Block destroyed: {destoryedBlockType}.");
+                    if (_inventory.Blocks.ContainsKey(destoryedBlockType))
+                        _inventory.Blocks[destoryedBlockType] += 1;
+                    else
+                        _inventory.Blocks.Add(destoryedBlockType, 1);
+                }
             }
         }
 
-        private void DestroryBlock()
+        private BlockType DestroyBlock()
         {
             if (!IsBlockInView(out GameObject intersectingObject, out Vector3 _))
-                return;
+                return BlockType.None;
 
             _scene.RemoveNode(intersectingObject);
+            return ((BlockBase)intersectingObject).BlockType;
         }
 
         private void PlaceBlock()

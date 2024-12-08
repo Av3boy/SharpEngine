@@ -4,6 +4,7 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
 using Core.Interfaces;
+using System;
 
 namespace Core;
 
@@ -49,9 +50,11 @@ public class Window : GameWindow
         base.OnUpdateFrame(args);
 
         if (!IsFocused)
-        {
             return;
-        }
+
+        var frameTime = (float)args.Time;
+        if (_game.CoreSettings.PrintFrameRate)
+            Console.WriteLine($"FPS: {1f / frameTime}");
 
         if (KeyboardState.IsKeyDown(Keys.Escape))
         {
@@ -60,7 +63,7 @@ public class Window : GameWindow
 
         _game.Camera.UpdateMousePosition(new Vector2(MouseState.X, MouseState.Y));
 
-        _game.HandleKeyboard(KeyboardState, (float)args.Time);
+        _game.HandleKeyboard(KeyboardState, frameTime);
         _game.HandleMouse(MouseState);
 
         _game.Update(args, KeyboardState, MouseState);

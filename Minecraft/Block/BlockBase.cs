@@ -7,6 +7,7 @@ namespace Minecraft.Block;
 
 public class BlockBase : GameObject
 {
+    public virtual BlockType BlockType { get; }
     public virtual string Name { get; set; }
     public virtual bool IsSolid { get; }
     public virtual void Interact() { }

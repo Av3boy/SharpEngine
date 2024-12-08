@@ -12,7 +12,7 @@ public static class Program
     {
         Settings gameSettings = new()
         {
-            UseWireFrame = true,
+            UseWireFrame = false,
         };
 
         Scene scene = new Scene();

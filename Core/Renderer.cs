@@ -17,8 +17,6 @@ public class Renderer
     private readonly IGame _game;
     private readonly Scene _scene;
 
-    public bool DrawWireFrame { get; set; } = true;
-
     // Read only once, load into OpenGL buffer once.
     //
     // TODO: Multiple meshes
@@ -110,7 +108,7 @@ public class Renderer
     {
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-        if (DrawWireFrame)
+        if (_game.CoreSettings.UseWireFrame)
         {
             // Set polygon mode to line to draw wireframe
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
@@ -124,9 +122,9 @@ public class Renderer
             {
                 // Perform frustum culling
                 if (!IsInViewFrustum(gameObject.BoundingBox, camera))
-                {
                     continue;
-                }
+
+                // TODO: Skip blocks that are behind others relative to the camera
 
                 gameObject.Render(camera, _game.DirectionalLight, _game.PointLights, _game.SpotLight);
             }
@@ -150,7 +148,7 @@ public class Renderer
             GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
         }
 
-        if (DrawWireFrame)
+        if (_game.CoreSettings.UseWireFrame)
         {
             // Reset polygon mode to fill to draw solid objects
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
