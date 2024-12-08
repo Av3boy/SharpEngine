@@ -19,6 +19,7 @@ public class GameObject : SceneNode
     public Texture SpecularMap { get; set; }
     public Shader Shader { get; set; }
     public Quaternion Quaternion { get; set; } = new();
+    public Material Material { get; set; } = new();
 }
 
 public class Quaternion

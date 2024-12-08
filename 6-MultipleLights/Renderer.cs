@@ -6,42 +6,45 @@ namespace Core
 {
     public class Renderer
     {
-        private int _vertexBufferObject;
         private int _vaoModel;
         private int _vaoLamp;
 
         private Shader _lampShader;
         private Shader _lightingShader;
-        private Texture _diffuseMap;
-        private Texture _specularMap;
 
-        private IGame _game;
-        private Scene _scene;
+        private readonly IGame _game;
+        private readonly Scene _scene;
 
-        // TODO: Read only once, load into OpenGL buffer once.
+        // Read only once, load into OpenGL buffer once.
+        //
+        // TODO: Multiple meshes
         // If already loaded, add mesh indetifier to a dictionary. If dict contains mesh, skip it.
-        public float[] Vertices => GetVertices();
+        private static readonly float[] _vertices = GetVertices();
 
-        private float[] GetVertices()
+        private static float[] GetVertices()
         {
             var mesh = Primitives.Cube.Mesh; // Mesh is identical for all cubes
             var vertices = new List<float>();
 
             for (int i = 0; i < mesh.Vertices.Length / 3; i++)
             {
-                vertices.Add(mesh.Vertices[i * 3]);
-                vertices.Add(mesh.Vertices[i * 3 + 1]);
-                vertices.Add(mesh.Vertices[i * 3 + 2]);
+                var vertexIndex = i * 3;
 
-                vertices.Add(mesh.Normals[i * 3]);
-                vertices.Add(mesh.Normals[i * 3 + 1]);
-                vertices.Add(mesh.Normals[i * 3 + 2]);
+                vertices.Add(mesh.Vertices[vertexIndex]);
+                vertices.Add(mesh.Vertices[vertexIndex + 1]);
+                vertices.Add(mesh.Vertices[vertexIndex + 2]);
 
-                vertices.Add(mesh.TextureCoordinates[i * 2]);
-                vertices.Add(mesh.TextureCoordinates[i * 2 + 1]);
+                var normalIndex = i * 3;
+                vertices.Add(mesh.Normals[normalIndex]);
+                vertices.Add(mesh.Normals[normalIndex + 1]);
+                vertices.Add(mesh.Normals[normalIndex + 2]);
+
+                var texCoordIndex = i * 2;
+                vertices.Add(mesh.TextureCoordinates[texCoordIndex]);
+                vertices.Add(mesh.TextureCoordinates[texCoordIndex + 1]);
             }
 
-            return vertices.ToArray();
+            return [.. vertices];
         }
 
         public Renderer(IGame game, Scene scene)
@@ -58,15 +61,14 @@ namespace Core
             InitializeBuffers();
             InitializeShaders();
             InitializeVertexArrays();
-            LoadTextures();
         }
 
-        private void InitializeBuffers()
+        private static void InitializeBuffers()
         {
-            _vertexBufferObject = GL.GenBuffer();
+            var vertexBufferObject = GL.GenBuffer();
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-            GL.BufferData(BufferTarget.ArrayBuffer, Vertices.Length * sizeof(float), Vertices, BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferObject);
+            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
         }
 
         private void InitializeShaders()
@@ -82,28 +84,22 @@ namespace Core
 
             var positionLocation = _lightingShader.GetAttribLocation("aPos");
             GL.EnableVertexAttribArray(positionLocation);
-            GL.VertexAttribPointer(positionLocation, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float), 0);
+            GL.VertexAttribPointer(positionLocation, VertexData.VerticesSize, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
 
             var normalLocation = _lightingShader.GetAttribLocation("aNormal");
             GL.EnableVertexAttribArray(normalLocation);
-            GL.VertexAttribPointer(normalLocation, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float), 3 * sizeof(float));
+            GL.VertexAttribPointer(normalLocation, VertexData.NormalsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.NormalsOffset);
 
             var texCoordLocation = _lightingShader.GetAttribLocation("aTexCoords");
             GL.EnableVertexAttribArray(texCoordLocation);
-            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 8 * sizeof(float), 6 * sizeof(float));
+            GL.VertexAttribPointer(texCoordLocation, VertexData.TexCoordsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.TexCoordsOffset);
 
             _vaoLamp = GL.GenVertexArray();
             GL.BindVertexArray(_vaoLamp);
 
             positionLocation = _lampShader.GetAttribLocation("aPos");
             GL.EnableVertexAttribArray(positionLocation);
-            GL.VertexAttribPointer(positionLocation, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float), 0);
-        }
-
-        private void LoadTextures()
-        {
-            _diffuseMap = TextureService.Instance.LoadTexture("Resources/container2.png");
-            _specularMap = TextureService.Instance.LoadTexture("Resources/container2_specular.png");
+            GL.VertexAttribPointer(positionLocation, 3, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
         }
 
         public void Render(Camera camera)
@@ -159,10 +155,10 @@ namespace Core
                     gameObject.DiffuseMap.Use(TextureUnit.Texture0);
                     gameObject.SpecularMap.Use(TextureUnit.Texture1);
 
-                    _lightingShader.SetInt("material.diffuse", 0);
-                    _lightingShader.SetInt("material.specular", 1);
-                    _lightingShader.SetVector3("material.specular", new Vector3(0.5f, 0.5f, 0.5f));
-                    _lightingShader.SetFloat("material.shininess", 32.0f);
+                    _lightingShader.SetInt("material.diffuse", gameObject.Material.diffuseUnit);
+                    _lightingShader.SetInt("material.specular", gameObject.Material.specularUnit);
+                    _lightingShader.SetVector3("material.specular", gameObject.Material.Specular);
+                    _lightingShader.SetFloat("material.shininess", gameObject.Material.Shininess);
 
                     Matrix4 model = Matrix4.CreateTranslation(gameObject.Position);
                     model *= Matrix4.CreateFromAxisAngle(gameObject.Quaternion.Axis, MathHelper.DegreesToRadians(gameObject.Quaternion.Angle));
@@ -180,10 +176,10 @@ namespace Core
             _lampShader.SetMatrix4("projection", camera.GetProjectionMatrix());
 
             // We use a loop to draw all the lights at the proper position
-            for (int i = 0; i < _game.PointLights.Length; i++)
+            foreach (var pointLight in _game.PointLights)
             {
-                Matrix4 lampMatrix = Matrix4.CreateScale(0.2f);
-                lampMatrix = lampMatrix * Matrix4.CreateTranslation(_game.PointLights[i].Position);
+                Matrix4 lampMatrix = Matrix4.CreateScale(pointLight.Scale);
+                lampMatrix *= Matrix4.CreateTranslation(pointLight.Position);
 
                 _lampShader.SetMatrix4("model", lampMatrix);
 

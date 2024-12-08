@@ -2,8 +2,6 @@
   
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <RootNamespace>LearnOpenTK.Common</RootNamespace>
-    <AssemblyName>LearnOpenTK.Common</AssemblyName>
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 

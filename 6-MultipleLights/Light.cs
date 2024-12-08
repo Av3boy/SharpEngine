@@ -16,6 +16,11 @@ public class DirectionalLight : Light
 
 public class PointLight : Light
 {
+    public PointLight()
+    {
+        Scale = new(0.2f, 0.2f, 0.2f);
+    }
+
     public float Constant { get; set; }
     public float Linear { get; set; }
     public float Quadratic { get; set; }
