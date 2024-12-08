@@ -11,11 +11,10 @@ public interface IGame
     public DirectionalLight DirectionalLight { get; }
     public PointLight[] PointLights { get; }
     public SpotLight SpotLight { get; }
-    public List<GameObject> Cubes { get; set; }
 
     public Camera Camera { get; set; }
 
-    void HandleMouseDown(MouseButtonEventArgs e);
-    void HandleMouseMovement(MouseState mouse, ref bool firstMove, ref Vector2 lastPos);
-    void HandleMovement(KeyboardState input, float deltaTime);
+    public void HandleMouseDown(MouseButtonEventArgs e);
+    public void HandleMouseMovement(MouseState mouse, ref bool firstMove, ref Vector2 lastPos);
+    public void HandleMovement(KeyboardState input, float deltaTime);
 }

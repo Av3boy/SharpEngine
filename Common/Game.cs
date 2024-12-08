@@ -1,13 +1,12 @@
 using Core;
-using Core.Primitives;
 using Minecraft.Block;
+
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Minecraft
@@ -18,15 +17,6 @@ namespace Minecraft
         public DirectionalLight DirectionalLight { get; set; }
         public PointLight[] PointLights { get; set; }
         public SpotLight SpotLight { get; set; }
-        public List<GameObject> Cubes { get; set; } = new();
-
-        public readonly Vector3[] PointLightPositions =
-        {
-            new Vector3(0.7f, 0.2f, 2.0f),
-            new Vector3(2.3f, -3.3f, -4.0f),
-            new Vector3(-4.0f, 2.0f, -12.0f),
-            new Vector3(0.0f, 0.0f, -3.0f)
-        };
 
         private Scene _scene;
 
@@ -47,22 +37,51 @@ namespace Minecraft
                 Specular = new Vector3(0.5f, 0.5f, 0.5f)
             };
 
-            PointLights = new PointLight[PointLightPositions.Length];
-            for (int i = 0; i < PointLightPositions.Length; i++)
-            {
-                PointLights[i] = new PointLight
+            PointLights =
+            [
+                new()
                 {
-                    Position = PointLightPositions[i],
+                    Position = new Vector3(0.7f, 0.2f, 2.0f),
                     Ambient = new Vector3(0.05f, 0.05f, 0.05f),
                     Diffuse = new Vector3(0.8f, 0.8f, 0.8f),
                     Specular = new Vector3(1.0f, 1.0f, 1.0f),
                     Constant = 1.0f,
                     Linear = 0.09f,
                     Quadratic = 0.032f
-                };
-            }
+                },
+                new()
+                {
+                    Position = new Vector3(2.3f, -3.3f, -4.0f),
+                    Ambient = new Vector3(0.05f, 0.05f, 0.05f),
+                    Diffuse = new Vector3(0.8f, 0.8f, 0.8f),
+                    Specular = new Vector3(1.0f, 1.0f, 1.0f),
+                    Constant = 1.0f,
+                    Linear = 0.09f,
+                    Quadratic = 0.032f
+                },
+                new()
+                {
+                    Position = new Vector3(-4.0f, 2.0f, -12.0f),
+                    Ambient = new Vector3(0.05f, 0.05f, 0.05f),
+                    Diffuse = new Vector3(0.8f, 0.8f, 0.8f),
+                    Specular = new Vector3(1.0f, 1.0f, 1.0f),
+                    Constant = 1.0f,
+                    Linear = 0.09f,
+                    Quadratic = 0.032f
+                },
+                new()
+                {
+                    Position = new Vector3(0.0f, 0.0f, -3.0f),
+                    Ambient = new Vector3(0.05f, 0.05f, 0.05f),
+                    Diffuse = new Vector3(0.8f, 0.8f, 0.8f),
+                    Specular = new Vector3(1.0f, 1.0f, 1.0f),
+                    Constant = 1.0f,
+                    Linear = 0.09f,
+                    Quadratic = 0.032f
+                }
+            ];
 
-            SpotLight = new SpotLight
+            SpotLight = new()
             {
                 Ambient = new Vector3(0.0f, 0.0f, 0.0f),
                 Diffuse = new Vector3(1.0f, 1.0f, 1.0f),
@@ -84,9 +103,7 @@ namespace Minecraft
                 for (int z = 0; z < chunkSize; z++)
                 {
                     var cube = Core.Primitives.Cube.Create(new Vector3(x, 0, z));
-
-                    Cubes.Add(cube);
-                    _scene.Nodes.Add(cube);
+                    _scene.AddNode(cube);
                 }
             }
         }
@@ -145,13 +162,21 @@ namespace Minecraft
         {
             if (e.Button == MouseButton.Right)
             {
-                Console.WriteLine("Right mouse button pressed");
+                PlaceBlock();
             }
 
             if (e.Button == MouseButton.Left)
             {
-                PlaceBlock();
+                DestroryBlock();
             }
+        }
+
+        private void DestroryBlock()
+        {
+            if (!IsBlockInView(out GameObject intersectingObject, out Vector3 _))
+                return;
+
+            _scene.RemoveNode(intersectingObject);
         }
 
         private void PlaceBlock()
@@ -164,9 +189,8 @@ namespace Minecraft
             if (newBlockPosition == Camera.Position || newBlockPosition == hitPosition)
                 return;
 
-            var newBlock = new Dirt(newBlockPosition, $"Dirt ({Cubes.Count})");
-            _scene.Nodes.Add(newBlock);
-            Cubes.Add(newBlock);
+            var newBlock = BlockFactory.CreateBlock(BlockType.Dirt, newBlockPosition, $"Dirt ({_scene.Root.Children.Count})"); // TODO:
+            _scene.AddNode(newBlock);
 
             Console.WriteLine($"New block created: {newBlock.Position}, block in view location: {intersectingObject.Position}");
 
@@ -208,7 +232,7 @@ namespace Minecraft
             {
                 Vector3 currentPosition = rayOrigin + (t * rayDirection);
 
-                intersectingObject = Cubes.FirstOrDefault(obj => IsPointInsideObject(currentPosition, obj));
+                intersectingObject = _scene.Blocks.FirstOrDefault(obj => IsPointInsideObject(currentPosition, obj));
                 if (intersectingObject != null)
                 {
                     hitPosition = currentPosition;

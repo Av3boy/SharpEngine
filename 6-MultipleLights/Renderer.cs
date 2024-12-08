@@ -9,10 +9,12 @@ namespace Core
         private int _vertexBufferObject;
         private int _vaoModel;
         private int _vaoLamp;
+
         private Shader _lampShader;
         private Shader _lightingShader;
         private Texture _diffuseMap;
         private Texture _specularMap;
+
         private IGame _game;
         private Scene _scene;
 
@@ -22,7 +24,7 @@ namespace Core
 
         private float[] GetVertices()
         {
-            var mesh = _game.Cubes[0].Mesh; // Mesh is identical for all cubes
+            var mesh = Primitives.Cube.Mesh; // Mesh is identical for all cubes
             var vertices = new List<float>();
 
             for (int i = 0; i < mesh.Vertices.Length / 3; i++)

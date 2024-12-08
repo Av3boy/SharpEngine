@@ -6,7 +6,7 @@ using System;
 
 namespace Minecraft.Block;
 
-internal class BlockBase : GameObject
+public class BlockBase : GameObject
 {
     public virtual string Name { get; set; }
     public virtual bool IsSolid { get; }
