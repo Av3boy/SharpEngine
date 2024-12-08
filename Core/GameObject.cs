@@ -6,10 +6,11 @@ public class GameObject : SceneNode
 {
     public GameObject() { }
 
-    public GameObject(string diffuseMapFile, string specularMapFile)
+    public GameObject(string diffuseMapFile, string specularMapFile, string vertShaderFile, string fragShaderFile)
     {
         DiffuseMap = TextureService.Instance.LoadTexture(diffuseMapFile);
         SpecularMap = TextureService.Instance.LoadTexture(specularMapFile);
+        Shader = ShaderService.Instance.LoadShader(vertShaderFile, fragShaderFile);
     }
 
     public Mesh Mesh { get; set; }

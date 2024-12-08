@@ -1,9 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <RootNamespace>LearnOpenTK</RootNamespace>
-    <AssemblyName>LearnOpenTK</AssemblyName>
-    <TargetFramework>net8.0</TargetFramework>
-  </PropertyGroup>
 
   <ItemGroup>
     <None Include="Resources/**" CopyToOutputDirectory="PreserveNewest" />
@@ -14,6 +9,5 @@
     <PackageReference Include="OpenTK" Version="4.8.2" />
     <PackageReference Include="StbImageSharp" Version="2.27.11" />
   </ItemGroup>
-
 
 </Project>

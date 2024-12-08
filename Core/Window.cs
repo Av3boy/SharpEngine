@@ -4,92 +4,85 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
 
-using System.Collections.Generic;
+namespace Core;
 
-namespace Core
+// In this tutorial we focus on how to set up a scene with multiple lights, both of different types but also
+// with several point lights
+public class Window : GameWindow
 {
-    // In this tutorial we focus on how to set up a scene with multiple lights, both of different types but also
-    // with several point lights
-    public class Window : GameWindow
+    private readonly IGame _game;
+    private readonly Renderer _renderer;
+
+    public Window(IGame game, Scene scene, GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
+        : base(gameWindowSettings, nativeWindowSettings)
     {
-        private IGame _game;
-        private Renderer _renderer;
-        private Scene _scene;
+        _game = game;
 
-        private bool _firstMove = true;
-        private Vector2 _lastPos;
+        _renderer = new Renderer(_game, scene);
+    }
 
-        public Window(IGame game, Scene scene, GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
-            : base(gameWindowSettings, nativeWindowSettings)
+    protected override void OnLoad()
+    {
+        base.OnLoad();
+
+        _renderer.Initialize();
+
+        _game.Camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
+
+        CursorState = CursorState.Grabbed;
+
+        _game.Initialize();
+    }
+
+    protected override void OnRenderFrame(FrameEventArgs args)
+    {
+        base.OnRenderFrame(args);
+
+        _renderer.Render(_game.Camera);
+
+        SwapBuffers();
+    }
+
+    protected override void OnUpdateFrame(FrameEventArgs args)
+    {
+        base.OnUpdateFrame(args);
+
+        if (!IsFocused)
         {
-            _game = game;
-            _scene = scene;
+            return;
         }
 
-        protected override void OnLoad()
+        if (KeyboardState.IsKeyDown(Keys.Escape))
         {
-            base.OnLoad();
-
-            _renderer = new Renderer(_game, _scene);
-            _renderer.Initialize();
-
-            _game.Camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
-
-            CursorState = CursorState.Grabbed;
-
-            _game.Initialize();
+            Close();
         }
 
-        protected override void OnRenderFrame(FrameEventArgs args)
-        {
-            base.OnRenderFrame(args);
+        _game.Camera.UpdateMousePosition(new Vector2(MouseState.X, MouseState.Y));
 
-            _renderer.Render(_game.Camera);
+        _game.HandleKeyboard(KeyboardState, (float)args.Time);
+        _game.HandleMouse(MouseState);
 
-            SwapBuffers();
-        }
+        _game.Update(args, KeyboardState, MouseState);
+    }
 
-        protected override void OnUpdateFrame(FrameEventArgs args)
-        {
-            base.OnUpdateFrame(args);
+    protected override void OnMouseWheel(MouseWheelEventArgs e)
+    {
+        base.OnMouseWheel(e);
 
-            if (!IsFocused)
-            {
-                return;
-            }
+        _game.Camera.Fov -= e.OffsetY;
+    }
 
-            if (KeyboardState.IsKeyDown(Keys.Escape))
-            {
-                Close();
-            }
+    protected override void OnResize(ResizeEventArgs e)
+    {
+        base.OnResize(e);
 
-            _game.Camera.UpdateMousePosition(new Vector2(MouseState.X, MouseState.Y));
+        GL.Viewport(0, 0, Size.X, Size.Y);
+        _game.Camera.AspectRatio = Size.X / (float)Size.Y;
+    }
 
-            _game.HandleKeyboard(KeyboardState, (float)args.Time);
-            _game.HandleMouse(MouseState);
-
-            _game.Update(args, KeyboardState, MouseState);
-        }
-
-        protected override void OnMouseWheel(MouseWheelEventArgs e)
-        {
-            base.OnMouseWheel(e);
-
-            _game.Camera.Fov -= e.OffsetY;
-        }
-
-        protected override void OnResize(ResizeEventArgs e)
-        {
-            base.OnResize(e);
-
-            GL.Viewport(0, 0, Size.X, Size.Y);
-            _game.Camera.AspectRatio = Size.X / (float)Size.Y;
-        }
-
-        protected override void OnMouseDown(MouseButtonEventArgs e)
-        {
-            base.OnMouseDown(e);
-            _game.HandleMouseDown(e);
-        }
+    protected override void OnMouseDown(MouseButtonEventArgs e)
+    {
+        base.OnMouseDown(e);
+        _game.HandleMouseDown(e);
     }
 }

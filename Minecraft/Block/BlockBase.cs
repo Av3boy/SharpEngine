@@ -11,14 +11,14 @@ public class BlockBase : GameObject
     public virtual bool IsSolid { get; }
     public virtual void Interact() { }
 
-    protected BlockBase(Vector3 position, string name, string diffuseMapFile, string specularMapFile)
+    protected BlockBase(Vector3 position, string name, string diffuseMapFile, string specularMapFile, string vertShaderFile, string fragShaderFile)
     {
-        Intialize(position, name, diffuseMapFile, specularMapFile);
+        Intialize(position, name, diffuseMapFile, specularMapFile, vertShaderFile, fragShaderFile);
     }
 
-    private void Intialize(Vector3 position, string name, string diffuseMapFile, string specularMapFile)
+    private void Intialize(Vector3 position, string name, string diffuseMapFile, string specularMapFile, string vertShaderFile, string fragShaderFile)
     {
-        var cube = Cube.Create(position, diffuseMapFile, specularMapFile);
+        var cube = Cube.Create(position, diffuseMapFile, specularMapFile, vertShaderFile, fragShaderFile);
         AssignProperties(cube, name);
     }
 

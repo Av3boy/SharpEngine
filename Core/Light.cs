@@ -4,6 +4,11 @@ namespace Core;
 
 public abstract class Light : GameObject
 {
+    public Light()
+    {
+        Shader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/shader.frag");
+    }
+
     public Vector3 Ambient { get; set; }
     public Vector3 Diffuse { get; set; }
     public Vector3 Specular { get; set; }
