@@ -4,6 +4,14 @@ namespace Core;
 
 public class GameObject : SceneNode
 {
+    public GameObject() { }
+
+    public GameObject(string diffuseMapFile, string specularMapFile)
+    {
+        DiffuseMap = TextureService.Instance.LoadTexture(diffuseMapFile);
+        SpecularMap = TextureService.Instance.LoadTexture(specularMapFile);
+    }
+
     public Mesh Mesh { get; set; }
     public Vector3 Position { get; set; }
     public Vector3 Scale { get; set; } = new(1, 1, 1);

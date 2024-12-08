@@ -102,8 +102,8 @@ namespace Core
 
         private void LoadTextures()
         {
-            _diffuseMap = Texture.LoadFromFile("Resources/container2.png");
-            _specularMap = Texture.LoadFromFile("Resources/container2_specular.png");
+            _diffuseMap = TextureService.Instance.LoadTexture("Resources/container2.png");
+            _specularMap = TextureService.Instance.LoadTexture("Resources/container2_specular.png");
         }
 
         public void Render(Camera camera)

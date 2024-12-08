@@ -102,8 +102,8 @@ namespace Minecraft
             {
                 for (int z = 0; z < chunkSize; z++)
                 {
-                    var cube = Core.Primitives.Cube.Create(new Vector3(x, 0, z));
-                    _scene.AddNode(cube);
+                    var dirt = new Dirt(new Vector3(x, 0, z), $"Dirt ({x}{z})");
+                    _scene.AddNode(dirt);
                 }
             }
         }
