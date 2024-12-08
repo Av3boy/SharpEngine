@@ -20,6 +20,7 @@ public static class Program
 
         var nativeWindowSettings = new NativeWindowSettings()
         {
+            // TODO: Change through settings
             ClientSize = new Vector2i(800, 600),
             Title = "Minecraft",
 

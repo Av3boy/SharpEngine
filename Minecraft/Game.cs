@@ -13,10 +13,14 @@ namespace Minecraft
 {
     public class Game : IGame
     {
+        // TODO: Add documentation to the code
+
         public Camera Camera { get; set; }
         public readonly Settings Settings;
         public ISettings CoreSettings => Settings;
 
+
+        // TODO: Get rid of these light properties
         public DirectionalLight DirectionalLight { get; set; }
         public PointLight[] PointLights { get; set; }
         public SpotLight SpotLight { get; set; }
@@ -43,6 +47,8 @@ namespace Minecraft
 
         private void InitializeLights()
         {
+            // TODO: Move lights into the scene
+
             DirectionalLight = new();
 
             PointLights =
@@ -63,6 +69,10 @@ namespace Minecraft
 
         private void InitializeCubes()
         {
+            // TODO: Generate chunks when player moves
+
+            // TODO: Generate chunks using 3d perlin noise
+
             const int chunkSize = 16;
 
             for (int x = 0; x < chunkSize; x++)

@@ -15,6 +15,8 @@ public class GameObject : SceneNode
         Shader = ShaderService.Instance.LoadShader(vertShaderFile, fragShaderFile);
     }
 
+    // TODO: Cleanup these properties
+
     public Mesh Mesh { get; set; }
     public Vector3 Position { get; set; }
     public Vector3 Scale { get; set; } = new(1, 1, 1);
