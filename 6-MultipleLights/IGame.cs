@@ -1,9 +1,10 @@
-﻿using LearnOpenTK.Common;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+
 using System.Collections.Generic;
 
-namespace LearnOpenTK;
+namespace Core;
 
 public interface IGame
 {
@@ -14,6 +15,7 @@ public interface IGame
 
     public Camera Camera { get; set; }
 
+    void HandleMouseDown(MouseButtonEventArgs e);
     void HandleMouseMovement(MouseState mouse, ref bool firstMove, ref Vector2 lastPos);
     void HandleMovement(KeyboardState input, float deltaTime);
 }

@@ -1,13 +1,16 @@
-using LearnOpenTK.Common;
-
+using Core;
+using Core.Primitives;
+using Minecraft.Block;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
-namespace LearnOpenTK
+namespace Minecraft
 {
     public class Game : IGame
     {
@@ -80,7 +83,7 @@ namespace LearnOpenTK
             {
                 for (int z = 0; z < chunkSize; z++)
                 {
-                    var cube = Primitives.Cube.Create(new Vector3(x, 0, z));
+                    var cube = Core.Primitives.Cube.Create(new Vector3(x, 0, z));
 
                     Cubes.Add(cube);
                     _scene.Nodes.Add(cube);
@@ -136,6 +139,103 @@ namespace LearnOpenTK
                 Camera.Yaw += deltaX * sensitivity;
                 Camera.Pitch -= deltaY * sensitivity;
             }
+        }
+
+        public void HandleMouseDown(MouseButtonEventArgs e)
+        {
+            if (e.Button == MouseButton.Right)
+            {
+                Console.WriteLine("Right mouse button pressed");
+            }
+
+            if (e.Button == MouseButton.Left)
+            {
+                PlaceBlock();
+            }
+        }
+
+        private void PlaceBlock()
+        {
+            if (!IsBlockInView(out GameObject intersectingObject, out Vector3 hitPosition))
+                return;
+
+            var newBlockPosition = GetNewBlockPosition(hitPosition, intersectingObject);
+
+            if (newBlockPosition == Camera.Position || newBlockPosition == hitPosition)
+                return;
+
+            var newBlock = new Dirt(newBlockPosition, $"Dirt ({Cubes.Count})");
+            _scene.Nodes.Add(newBlock);
+            Cubes.Add(newBlock);
+
+            //OnSceneChanged?.Invoke();
+            Console.WriteLine($"New block created: {newBlock.Position}, block in view location: {intersectingObject.Position}");
+
+        }
+
+        private Vector3 GetNewBlockPosition(Vector3 hitPosition, GameObject intersectingObject)
+        {
+            Vector3 normal = GetFaceNormal(hitPosition, intersectingObject);
+            return intersectingObject.Position + normal * intersectingObject.Scale;
+        }
+
+        private Vector3 GetFaceNormal(Vector3 point, GameObject obj)
+        {
+            Vector3 min = obj.Position - (obj.Scale / 2);
+            Vector3 max = obj.Position + (obj.Scale / 2);
+
+            float distanceToMinX = Math.Abs(point.X - min.X);
+            float distanceToMaxX = Math.Abs(point.X - max.X);
+            float distanceToMinY = Math.Abs(point.Y - min.Y);
+            float distanceToMaxY = Math.Abs(point.Y - max.Y);
+            float distanceToMinZ = Math.Abs(point.Z - min.Z);
+            float distanceToMaxZ = Math.Abs(point.Z - max.Z);
+
+            float minDistance = Math.Min(Math.Min(Math.Min(Math.Min(Math.Min(distanceToMinX, distanceToMaxX), distanceToMinY), distanceToMaxY), distanceToMinZ), distanceToMaxZ);
+
+            if (minDistance == distanceToMinX) return -Vector3.UnitX;
+            if (minDistance == distanceToMaxX) return Vector3.UnitX;
+            if (minDistance == distanceToMinY) return -Vector3.UnitY;
+            if (minDistance == distanceToMaxY) return Vector3.UnitY;
+            if (minDistance == distanceToMinZ) return -Vector3.UnitZ;
+            if (minDistance == distanceToMaxZ) return Vector3.UnitZ;
+
+            return Vector3.Zero;
+        }
+
+        public bool IsBlockInView(out GameObject intersectingObject, out Vector3 hitPosition)
+        {
+            Vector3 rayOrigin = Camera.Position;
+            Vector3 rayDirection = Camera.Front;
+
+            const float maxDistance = 100.0f; // Maximum distance to check for intersections
+            const float stepSize = 0.1f; // Step size for ray marching
+
+            for (float t = 0; t < maxDistance; t += stepSize)
+            {
+                Vector3 currentPosition = rayOrigin + (t * rayDirection);
+
+                intersectingObject = Cubes.FirstOrDefault(obj => IsPointInsideObject(currentPosition, obj));
+                if (intersectingObject != null)
+                {
+                    hitPosition = currentPosition;
+                    return true;
+                }
+            }
+
+            intersectingObject = null;
+            hitPosition = Vector3.Zero;
+            return false;
+        }
+
+        private static bool IsPointInsideObject(Vector3 point, GameObject obj)
+        {
+            Vector3 min = obj.Position - (obj.Scale / 2);
+            Vector3 max = obj.Position + (obj.Scale / 2);
+
+            return point.X >= min.X && point.X <= max.X &&
+                   point.Y >= min.Y && point.Y <= max.Y &&
+                   point.Z >= min.Z && point.Z <= max.Z;
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿using OpenTK.Mathematics;
+﻿using Core;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 
-namespace LearnOpenTK
+namespace Minecraft
 {
     public static class Program
     {

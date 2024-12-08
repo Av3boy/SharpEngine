@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace LearnOpenTK;
+namespace Core;
 
 public class Scene
 {
-    public List<SceneNode> Nodes = new List<SceneNode>();
+    public SceneNode Root = new();
+    public List<SceneNode> Nodes = new();
 
 }
 

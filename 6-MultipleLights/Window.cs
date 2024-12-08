@@ -1,13 +1,12 @@
-﻿using System;
-using LearnOpenTK.Common;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
+
 using System.Collections.Generic;
 
-namespace LearnOpenTK
+namespace Core
 {
     // In this tutorial we focus on how to set up a scene with multiple lights, both of different types but also
     // with several point lights
@@ -106,6 +105,12 @@ namespace LearnOpenTK
 
             GL.Viewport(0, 0, Size.X, Size.Y);
             _game.Camera.AspectRatio = Size.X / (float)Size.Y;
+        }
+
+        protected override void OnMouseDown(MouseButtonEventArgs e)
+        {
+            // base.OnMouseDown(e);
+            _game.HandleMouseDown(e);
         }
     }
 }

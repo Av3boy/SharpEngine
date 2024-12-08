@@ -1,11 +1,12 @@
-﻿using LearnOpenTK.Common;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 
-namespace LearnOpenTK;
+namespace Core;
+
 public class GameObject : SceneNode
 {
     public Mesh Mesh { get; set; }
     public Vector3 Position { get; set; }
+    public Vector3 Scale { get; set; } = new(1, 1, 1);
     public Texture DiffuseMap { get; set; }
     public Texture SpecularMap { get; set; }
     public Shader Shader { get; set; }

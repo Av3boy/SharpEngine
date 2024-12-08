@@ -1,4 +1,4 @@
-﻿namespace LearnOpenTK;
+﻿namespace Core;
 
 public class Mesh
 {

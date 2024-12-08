@@ -1,5 +1,6 @@
-using LearnOpenTK;
 using OpenTK.Mathematics;
+
+namespace Core;
 
 public abstract class Light : GameObject
 {

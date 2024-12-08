@@ -1,9 +1,7 @@
-using LearnOpenTK.Common;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using System;
 
-namespace LearnOpenTK
+namespace Core
 {
     public class Renderer
     {

@@ -1,11 +1,7 @@
 ﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace LearnOpenTK.Primitives;
+namespace Core.Primitives;
+
 public static class Cube
 {
     public static GameObject Create(Vector3 position)
