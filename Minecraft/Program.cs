@@ -10,13 +10,19 @@ public static class Program
 {
     private static void Main()
     {
+        Settings gameSettings = new()
+        {
+            UseWireFrame = true,
+        };
+
         Scene scene = new Scene();
-        Game game = new Game(scene);
+        Game game = new Game(scene, gameSettings);
 
         var nativeWindowSettings = new NativeWindowSettings()
         {
             ClientSize = new Vector2i(800, 600),
-            Title = "LearnOpenTK - Multiple lights",
+            Title = "Minecraft",
+
             // This is needed to run on macos
             Flags = ContextFlags.ForwardCompatible,
         };

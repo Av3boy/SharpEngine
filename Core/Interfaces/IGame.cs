@@ -1,13 +1,12 @@
-﻿using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
+﻿using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
-using System.Collections.Generic;
-
-namespace Core;
+namespace Core.Interfaces;
 
 public interface IGame
 {
+    public ISettings CoreSettings { get; }
+
     public DirectionalLight DirectionalLight { get; }
     public PointLight[] PointLights { get; }
     public SpotLight SpotLight { get; }

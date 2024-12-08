@@ -1,4 +1,5 @@
 using Core;
+using Core.Interfaces;
 using Minecraft.Block;
 
 using OpenTK.Mathematics;
@@ -6,15 +7,15 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 
 namespace Minecraft
 {
     public class Game : IGame
     {
         public Camera Camera { get; set; }
+        public readonly Settings Settings;
+        public ISettings CoreSettings => Settings;
+
         public DirectionalLight DirectionalLight { get; set; }
         public PointLight[] PointLights { get; set; }
         public SpotLight SpotLight { get; set; }
@@ -24,9 +25,10 @@ namespace Minecraft
 
         private BlockType SelectedBlockType = BlockType.Dirt;
 
-        public Game(Scene scene)
+        public Game(Scene scene, Settings settings)
         {
             _scene = scene;
+            Settings = settings;
         }
 
         public void Initialize()
@@ -59,7 +61,7 @@ namespace Minecraft
 
         private void InitializeCubes()
         {
-            int chunkSize = 16;
+            const int chunkSize = 16;
 
             for (int x = 0; x < chunkSize; x++)
             {
