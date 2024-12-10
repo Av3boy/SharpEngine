@@ -17,6 +17,8 @@ public class Renderer
     private readonly IGame _game;
     private readonly Scene _scene;
 
+    private List<Shader> _shaders = new();
+
     // Read only once, load into OpenGL buffer once.
     //
     // TODO: Multiple meshes
@@ -75,8 +77,8 @@ public class Renderer
 
     private void InitializeShaders()
     {
-        _lightingShader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/lighting.frag");
-        _lampShader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/shader.frag");
+        _lightingShader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/lighting.frag", "lighting");
+        _lampShader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/shader.frag", "lamp");
     }
 
     private void InitializeVertexArrays()
@@ -108,6 +110,18 @@ public class Renderer
     {
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
+        if (ShaderService.Instance.HasShadersToLoad)
+        {
+            _shaders = ShaderService.Instance.GetAll();
+        }
+
+        _shaders.ForEach(shader => shader.Use());
+
+        _lightingShader.SetMatrix4("view", camera.GetViewMatrix());
+        _lightingShader.SetMatrix4("projection", camera.GetProjectionMatrix());
+
+        _lightingShader.SetVector3("viewPos", camera.Position);
+
         if (_game.CoreSettings.UseWireFrame)
         {
             // Set polygon mode to line to draw wireframe
@@ -131,11 +145,6 @@ public class Renderer
         }
 
         GL.BindVertexArray(_vaoLamp);
-
-        _lampShader.Use();
-
-        _lampShader.SetMatrix4("view", camera.GetViewMatrix());
-        _lampShader.SetMatrix4("projection", camera.GetProjectionMatrix());
 
         // We use a loop to draw all the lights at the proper position
         foreach (var pointLight in _game.PointLights)

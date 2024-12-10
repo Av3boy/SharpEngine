@@ -7,7 +7,7 @@ public abstract class Light : GameObject
 {
     protected Light()
     {
-        Shader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/shader.frag");
+        Shader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/shader.frag", "lamp");
     }
 
     public Vector3 Ambient { get; set; } = new Vector3(0.05f, 0.05f, 0.05f);

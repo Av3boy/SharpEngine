@@ -195,23 +195,36 @@ namespace Core
     {
         public static ShaderService Instance { get; } = new ShaderService();
         private readonly Dictionary<string, Shader> _shaderCache = new();
+        public bool HasShadersToLoad { get; set; } = true;
 
         // Private constructor to prevent instantiation
         private ShaderService() { }
 
-        public Shader LoadShader(string vertPath, string fragPath)
+        public List<Shader> GetAll()
         {
-            string key = $"{vertPath}|{fragPath}";
+            HasShadersToLoad = false;
+            return new(_shaderCache.Values);
+        }
 
-            // Check if the shader is already in the cache
-            if (_shaderCache.TryGetValue(key, out var cachedShader))
-            {
+        private Shader GetByName(string name)
+        {
+            if (_shaderCache.TryGetValue(name, out var cachedShader))
                 return cachedShader;
-            }
+
+            throw new KeyNotFoundException($"Shader with name {name} not found in cache.");
+        }
+
+        public Shader LoadShader(string vertPath, string fragPath, string name)
+        {
+            // Check if the shader is already in the cache
+            if (_shaderCache.TryGetValue(name, out var cachedShader))
+                return cachedShader;
 
             // Create a new shader instance and add it to the cache
-            var shader = new Shader(vertPath, fragPath);
-            _shaderCache[key] = shader;
+            var shader = new Shader(vertPath, fragPath, name);
+            _shaderCache[name] = shader;
+
+            HasShadersToLoad = true;
 
             return shader;
         }
@@ -222,14 +235,18 @@ namespace Core
     {
         public readonly int Handle;
 
+        public string Name { get; set; }
+
         private readonly Dictionary<string, int> _uniformLocations;
 
         // This is how you create a simple shader.
         // Shaders are written in GLSL, which is a language very similar to C in its semantics.
         // The GLSL source is compiled *at runtime*, so it can optimize itself for the graphics card it's currently being used on.
         // A commented example of GLSL can be found in shader.vert.
-        public Shader(string vertPath, string fragPath)
+        public Shader(string vertPath, string fragPath, string name)
         {
+            Name = name;
+
             // There are several different types of shaders, but the only two you need for basic rendering are the vertex and fragment shaders.
             // The vertex shader is responsible for moving around vertices, and uploading that data to the fragment shader.
             //   The vertex shader won't be too important here, but they'll be more important later.

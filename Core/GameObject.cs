@@ -12,7 +12,7 @@ public class GameObject : SceneNode
     {
         DiffuseMap = TextureService.Instance.LoadTexture(diffuseMapFile);
         SpecularMap = TextureService.Instance.LoadTexture(specularMapFile);
-        Shader = ShaderService.Instance.LoadShader(vertShaderFile, fragShaderFile);
+        Shader = ShaderService.Instance.LoadShader(vertShaderFile, fragShaderFile, "lighting");
     }
 
     // TODO: Cleanup these properties
@@ -28,19 +28,13 @@ public class GameObject : SceneNode
 
     public virtual void Render(Camera camera, DirectionalLight directionalLight, PointLight[] pointLights, SpotLight spotLight)
     {
-        Shader.Use();
-
-        Shader.SetMatrix4("view", camera.GetViewMatrix());
-        Shader.SetMatrix4("projection", camera.GetProjectionMatrix());
-
-        Shader.SetVector3("viewPos", camera.Position);
-
         // Render lights
         directionalLight.Render(Shader);
         for (int i = 0; i < pointLights.Length; i++)
         {
             pointLights[i].Render(Shader, i);
         }
+
         spotLight.Render(Shader);
 
         DiffuseMap.Use(TextureUnit.Texture0);
