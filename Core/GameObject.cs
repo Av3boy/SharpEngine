@@ -10,9 +10,9 @@ public class GameObject : SceneNode
 
     public GameObject(string diffuseMapFile, string specularMapFile, string vertShaderFile, string fragShaderFile)
     {
-        DiffuseMap = TextureService.Instance.LoadTexture(diffuseMapFile);
-        SpecularMap = TextureService.Instance.LoadTexture(specularMapFile);
-        Shader = ShaderService.Instance.LoadShader(vertShaderFile, fragShaderFile, "lighting");
+        Material.DiffuseMap = TextureService.Instance.LoadTexture(diffuseMapFile);
+        Material.SpecularMap = TextureService.Instance.LoadTexture(specularMapFile);
+        Material.Shader = ShaderService.Instance.LoadShader(vertShaderFile, fragShaderFile, "lighting");
     }
 
     // TODO: Cleanup these properties
@@ -20,34 +20,31 @@ public class GameObject : SceneNode
     public Mesh Mesh { get; set; }
     public Vector3 Position { get; set; }
     public Vector3 Scale { get; set; } = new(1, 1, 1);
-    public Texture DiffuseMap { get; set; }
-    public Texture SpecularMap { get; set; }
-    public Shader Shader { get; set; }
     public Quaternion Quaternion { get; set; } = new();
     public Material Material { get; set; } = new();
 
     public virtual void Render(Camera camera, DirectionalLight directionalLight, PointLight[] pointLights, SpotLight spotLight)
     {
         // Render lights
-        directionalLight.Render(Shader);
+        directionalLight.Render(Material.Shader);
         for (int i = 0; i < pointLights.Length; i++)
         {
-            pointLights[i].Render(Shader, i);
+            pointLights[i].Render(Material.Shader, i);
         }
 
-        spotLight.Render(Shader);
+        spotLight.Render(Material.Shader);
 
-        DiffuseMap.Use(TextureUnit.Texture0);
-        SpecularMap.Use(TextureUnit.Texture1);
+        Material.DiffuseMap.Use(TextureUnit.Texture0);
+        Material.SpecularMap.Use(TextureUnit.Texture1);
 
-        Shader.SetInt("material.diffuse", Material.diffuseUnit);
-        Shader.SetInt("material.specular", Material.specularUnit);
-        Shader.SetVector3("material.specular", Material.Specular);
-        Shader.SetFloat("material.shininess", Material.Shininess);
+        Material.Shader.SetInt("material.diffuse", Material.diffuseUnit);
+        Material.Shader.SetInt("material.specular", Material.specularUnit);
+        Material.Shader.SetVector3("material.specular", Material.Specular);
+        Material.Shader.SetFloat("material.shininess", Material.Shininess);
 
         Matrix4 model = Matrix4.CreateTranslation(Position);
         model *= Matrix4.CreateFromAxisAngle(Quaternion.Axis, MathHelper.DegreesToRadians(Quaternion.Angle));
-        Shader.SetMatrix4("model", model);
+        Material.Shader.SetMatrix4("model", model);
 
         GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
     }

@@ -27,11 +27,9 @@ public class BlockBase : GameObject
     {
         Position = cube.Position;
         Name = name;
-        DiffuseMap = cube.DiffuseMap;
+        Material = cube.Material;
         Mesh = cube.Mesh;
         Quaternion = cube.Quaternion;
         Scale = cube.Scale;
-        Shader = cube.Shader;
-        SpecularMap = cube.SpecularMap;
     }
 }
