@@ -130,19 +130,17 @@ public class Renderer
 
         GL.BindVertexArray(_vaoModel);
 
-        foreach (var node in _scene.Nodes)
+        /*foreach (var node in _scene.Nodes)
         {
             if (node is GameObject gameObject)
             {
-                // Perform frustum culling
-                if (!IsInViewFrustum(gameObject.BoundingBox, camera))
-                    continue;
 
-                // TODO: Skip blocks that are behind others relative to the camera
 
                 gameObject.Render(camera, _game.DirectionalLight, _game.PointLights, _game.SpotLight);
             }
-        }
+        }*/
+
+        RenderSceneNode(_scene.Root, _game.Camera);
 
         GL.BindVertexArray(_vaoLamp);
 
@@ -161,6 +159,34 @@ public class Renderer
         {
             // Reset polygon mode to fill to draw solid objects
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+        }
+    }
+
+    private void RenderSceneNode(SceneNode node, Camera camera)
+    {
+        RenderGameObject(node, camera);
+
+        foreach (var child in node.Children)
+        {
+            RenderSceneNode(child, camera);
+        }
+    }
+
+    private void RenderGameObject(SceneNode node, Camera camera)
+    {
+        if (node is GameObject gameObject)
+        {
+            // Perform frustum culling
+            if (!IsInViewFrustum(gameObject.BoundingBox, camera))
+                return;
+
+            // TODO: Skip blocks that are behind others relative to the camera
+
+            // Perform frustum culling
+            // if (!IsInViewFrustum(gameObject.BoundingBox, camera))
+            //     return;
+
+            gameObject.Render(camera, _game.DirectionalLight, _game.PointLights, _game.SpotLight);
         }
     }
 

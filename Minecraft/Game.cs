@@ -8,6 +8,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 
 using System;
 using System.Collections.Generic;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Minecraft
 {
@@ -80,12 +81,14 @@ namespace Minecraft
                 for (int z = 0; z < chunkSize; z++)
                 {
                     var dirt = new Dirt(new Vector3(x, 0, z), $"Dirt ({x}{z})");
-                    _scene.AddNode(dirt);
+                    _scene.Root.AddChild(dirt);
+                    _scene.Blocks.Add(dirt);
 
                     for (int y = 1; y < chunkSize; y++)
                     {
                         var stone = new Stone(new Vector3(x, -y, z), $"Dirt ({x}{z}.{y})");
-                        _scene.AddNode(stone);
+                        _scene.Root.AddChild(stone);
+                        _scene.Blocks.Add(stone);
                     }
                 }
             }
@@ -168,7 +171,8 @@ namespace Minecraft
                 return;
 
             var newBlock = BlockFactory.CreateBlock(SelectedBlockType, newBlockPosition, $"Dirt ({_scene.Root.Children.Count})");
-            _scene.AddNode(newBlock);
+            _scene.Root.AddChild(newBlock);
+            _scene.Blocks.Add(newBlock);
 
             Console.WriteLine($"New block created: {newBlock.Position}, block in view location: {intersectingObject.Position}");
 
