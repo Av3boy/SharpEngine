@@ -117,6 +117,15 @@ public class Renderer
 
         _shaders.ForEach(shader => shader.Use());
 
+        // Render lights
+        _game.DirectionalLight.Render(_lightingShader);
+        for (int i = 0; i < _game.PointLights.Length; i++)
+        {
+            _game.PointLights[i].Render(_lightingShader, i);
+        }
+
+        _game.SpotLight.Render(_lightingShader);
+
         _lightingShader.SetMatrix4("view", camera.GetViewMatrix());
         _lightingShader.SetMatrix4("projection", camera.GetProjectionMatrix());
 
@@ -130,16 +139,6 @@ public class Renderer
 
         GL.BindVertexArray(_vaoModel);
 
-        /*foreach (var node in _scene.Nodes)
-        {
-            if (node is GameObject gameObject)
-            {
-
-
-                gameObject.Render(camera, _game.DirectionalLight, _game.PointLights, _game.SpotLight);
-            }
-        }*/
-
         RenderSceneNode(_scene.Root, _game.Camera);
 
         GL.BindVertexArray(_vaoLamp);
@@ -151,8 +150,6 @@ public class Renderer
             lampMatrix *= Matrix4.CreateTranslation(pointLight.Position);
 
             _lampShader.SetMatrix4("model", lampMatrix);
-
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
         }
 
         if (_game.CoreSettings.UseWireFrame)
@@ -182,11 +179,7 @@ public class Renderer
 
             // TODO: Skip blocks that are behind others relative to the camera
 
-            // Perform frustum culling
-            // if (!IsInViewFrustum(gameObject.BoundingBox, camera))
-            //     return;
-
-            gameObject.Render(camera, _game.DirectionalLight, _game.PointLights, _game.SpotLight);
+            gameObject.Render(camera);
         }
     }
 

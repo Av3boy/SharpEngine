@@ -156,7 +156,9 @@ namespace Minecraft
             if (!IsBlockInView(out GameObject intersectingObject, out Vector3 _))
                 return BlockType.None;
 
-            _scene.RemoveNode(intersectingObject);
+            _scene.Root.RemoveChild(intersectingObject);
+            _scene.Blocks.Remove((BlockBase)intersectingObject);
+
             return ((BlockBase)intersectingObject).BlockType;
         }
 

@@ -23,16 +23,9 @@ public class GameObject : SceneNode
     public Quaternion Quaternion { get; set; } = new();
     public Material Material { get; set; } = new();
 
-    public virtual void Render(Camera camera, DirectionalLight directionalLight, PointLight[] pointLights, SpotLight spotLight)
+    public virtual void Render(Camera camera)
     {
-        // Render lights
-        directionalLight.Render(Material.Shader);
-        for (int i = 0; i < pointLights.Length; i++)
-        {
-            pointLights[i].Render(Material.Shader, i);
-        }
 
-        spotLight.Render(Material.Shader);
 
         Material.DiffuseMap.Use(TextureUnit.Texture0);
         Material.SpecularMap.Use(TextureUnit.Texture1);

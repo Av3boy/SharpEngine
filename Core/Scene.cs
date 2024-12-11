@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace Core;
 
@@ -43,6 +44,11 @@ public class SceneNode
         Children.Add(node);
 
         return node;
+    }
+
+    public void RemoveChild(SceneNode node)
+    {
+        Children.Remove(node);
     }
 
     public virtual void AddChild(SceneNode node)
