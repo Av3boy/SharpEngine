@@ -51,15 +51,20 @@ public class PointLight : Light
     public float Linear { get; set; }
     public float Quadratic { get; set; }
 
-    public void Render(Shader shader, int index)
+    public void Render(Shader lightingShader, Shader lampShader, int index)
     {
-        shader.SetVector3($"pointLights[{index}].position", Position);
-        shader.SetVector3($"pointLights[{index}].ambient", Ambient);
-        shader.SetVector3($"pointLights[{index}].diffuse", Diffuse);
-        shader.SetVector3($"pointLights[{index}].specular", Specular);
-        shader.SetFloat($"pointLights[{index}].constant", Constant);
-        shader.SetFloat($"pointLights[{index}].linear", Linear);
-        shader.SetFloat($"pointLights[{index}].quadratic", Quadratic);
+        lightingShader.SetVector3($"pointLights[{index}].position", Position);
+        lightingShader.SetVector3($"pointLights[{index}].ambient", Ambient);
+        lightingShader.SetVector3($"pointLights[{index}].diffuse", Diffuse);
+        lightingShader.SetVector3($"pointLights[{index}].specular", Specular);
+        lightingShader.SetFloat($"pointLights[{index}].constant", Constant);
+        lightingShader.SetFloat($"pointLights[{index}].linear", Linear);
+        lightingShader.SetFloat($"pointLights[{index}].quadratic", Quadratic);
+
+        Matrix4 lampMatrix = Matrix4.CreateScale(Scale);
+        lampMatrix *= Matrix4.CreateTranslation(Position);
+
+        lampShader.SetMatrix4("model", lampMatrix);
     }
 }
 

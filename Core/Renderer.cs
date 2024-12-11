@@ -121,7 +121,7 @@ public class Renderer
         _game.DirectionalLight.Render(_lightingShader);
         for (int i = 0; i < _game.PointLights.Length; i++)
         {
-            _game.PointLights[i].Render(_lightingShader, i);
+            _game.PointLights[i].Render(_lightingShader, _lampShader, i);
         }
 
         _game.SpotLight.Render(_lightingShader);
@@ -142,15 +142,6 @@ public class Renderer
         RenderSceneNode(_scene.Root, _game.Camera);
 
         GL.BindVertexArray(_vaoLamp);
-
-        // We use a loop to draw all the lights at the proper position
-        foreach (var pointLight in _game.PointLights)
-        {
-            Matrix4 lampMatrix = Matrix4.CreateScale(pointLight.Scale);
-            lampMatrix *= Matrix4.CreateTranslation(pointLight.Position);
-
-            _lampShader.SetMatrix4("model", lampMatrix);
-        }
 
         if (_game.CoreSettings.UseWireFrame)
         {
