@@ -7,7 +7,6 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 using System;
-using System.Collections.Generic;
 
 namespace Minecraft
 {
@@ -19,30 +18,31 @@ namespace Minecraft
         public readonly Settings Settings;
         public ISettings CoreSettings => Settings;
 
-
-        // TODO: Get rid of these light properties
-        public DirectionalLight DirectionalLight { get; set; }
-        public PointLight[] PointLights { get; set; }
-        public SpotLight SpotLight { get; set; }
-
         private Scene _scene;
         private SceneNode _lightsNode;
         private SceneNode _blocksNode;
 
         private Input _input;
 
-        private Inventory _inventory = new();
-        private BlockType SelectedBlockType = BlockType.Dirt;
+        private Inventory _inventory;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Game"/>.
+        /// </summary>
+        /// <param name="scene"></param>
+        /// <param name="settings"></param>
         public Game(Scene scene, Settings settings)
         {
             _scene = scene;
             Settings = settings;
         }
 
+        /// <inheritdoc />
         public void Initialize()
         {
             _input = new Input(Camera);
+            _inventory = new Inventory();
+            _inventory.Initialize();
 
             _lightsNode = _scene.Root.AddChild("lights");
             _blocksNode = _scene.Root.AddChild("blocks");
@@ -119,23 +119,23 @@ namespace Minecraft
             }
         }
 
+        /// <inheritdoc />
         public void Update(FrameEventArgs args, KeyboardState keyboardState, MouseState mouseState)
         {
 
         }
 
+        /// <inheritdoc />
         public void HandleKeyboard(KeyboardState input, float deltaTime)
         {
             _input.HandleKeyboard(input, deltaTime);
 
-            if (input.IsKeyDown(Keys.D1))
+            for (int i = 0; i <= 9; i++)
             {
-                SelectedBlockType = BlockType.Stone;
-            }
-
-            if (input.IsKeyDown(Keys.D2))
-            {
-                SelectedBlockType = BlockType.Dirt;
+                if (input.IsKeyDown(Keys.D1 + i))
+                {
+                    _inventory.SetSelectedSlot(i);
+                }
             }
 
             if (input.IsKeyDown(Keys.F))
@@ -144,21 +144,26 @@ namespace Minecraft
             }
         }
 
+        /// <inheritdoc />
         public void HandleMouse(MouseState mouse)
             => _input.HandleMouse(mouse);
 
+        /// <inheritdoc />
         public void HandleMouseDown(MouseButtonEventArgs e)
         {
             if (e.Button == MouseButton.Right)
             {
-                if (_inventory.Blocks.GetValueOrDefault(SelectedBlockType) > 0)
+                if (_inventory.SelectedSlot.Items.Type != BlockType.None && _inventory.SelectedSlot.Items.Amount > 0)
                 {
                     PlaceBlock();
-                    _inventory.Blocks[SelectedBlockType] -= 1;
+                    _inventory.SelectedSlot.Items.Amount -= 1;
+
+                    if (_inventory.SelectedSlot.Items.Amount < 0)
+                        _inventory.SelectedSlot.Items.Type = BlockType.None;
                 }
                 else
                 {
-                    Console.WriteLine($"No more {SelectedBlockType}s.");
+                    Console.WriteLine($"No more {_inventory.SelectedSlot.Items.Type}s.");
                 }
             }
 
@@ -168,10 +173,7 @@ namespace Minecraft
                 if (destoryedBlockType != BlockType.None)
                 {
                     Console.WriteLine($"Block destroyed: {destoryedBlockType}.");
-                    if (_inventory.Blocks.ContainsKey(destoryedBlockType))
-                        _inventory.Blocks[destoryedBlockType] += 1;
-                    else
-                        _inventory.Blocks.Add(destoryedBlockType, 1);
+                    _inventory.AddToolbarItem(destoryedBlockType);
                 }
             }
         }
@@ -181,10 +183,12 @@ namespace Minecraft
             if (!IsBlockInView(out GameObject intersectingObject, out Vector3 _))
                 return BlockType.None;
 
-            _blocksNode.RemoveChild(intersectingObject);
-            _scene.Blocks.Remove((BlockBase)intersectingObject);
+            var block = (BlockBase)intersectingObject;
 
-            return ((BlockBase)intersectingObject).BlockType;
+            _blocksNode.RemoveChild(intersectingObject);
+            _scene.Blocks.Remove(block);
+
+            return block.BlockType;
         }
 
         private void PlaceBlock()
@@ -197,7 +201,7 @@ namespace Minecraft
             if (newBlockPosition == Camera.Position || newBlockPosition == hitPosition)
                 return;
 
-            var newBlock = BlockFactory.CreateBlock(SelectedBlockType, newBlockPosition, $"Dirt ({_blocksNode.Children.Count})");
+            var newBlock = BlockFactory.CreateBlock(_inventory.SelectedSlot.Items.Type, newBlockPosition, $"Dirt ({_blocksNode.Children.Count})");
             _blocksNode.AddChild(newBlock);
             _scene.Blocks.Add(newBlock);
 
@@ -215,6 +219,26 @@ namespace Minecraft
         {
             Ray ray = new Ray(Camera.Position, Camera.Front);
             return ray.IsBlockInView(_scene, out intersectingObject, out hitPosition);
+        }
+
+        /// <inheritdoc />
+        public void HandleMouseWheel(MouseWheelScrollDirection direction, MouseWheelEventArgs e)
+        {
+            int slotIndex = _inventory.SelectedSlotIndex;
+
+            if (direction == MouseWheelScrollDirection.Up)
+                slotIndex++;
+            else if (direction == MouseWheelScrollDirection.Down)
+                slotIndex--;
+
+            if (slotIndex < 0)
+                slotIndex = 9;
+            else if (slotIndex > 9)
+                slotIndex = 0;
+
+            _inventory.SetSelectedSlot(slotIndex);
+            Console.WriteLine($"Selected slot: {slotIndex}");
+
         }
     }
 }

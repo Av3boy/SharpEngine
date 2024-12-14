@@ -3,6 +3,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
+
 using Core.Interfaces;
 using System;
 
@@ -67,11 +68,20 @@ public class Window : GameWindow
         _game.HandleMouse(MouseState);
 
         _game.Update(args, KeyboardState, MouseState);
-    }
+    } 
 
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
+
+        var direction = e.OffsetY switch
+        {
+            > 0 => MouseWheelScrollDirection.Up,
+            < 0 => MouseWheelScrollDirection.Down,
+            _ => throw new NotImplementedException()
+        };
+
+        _game.HandleMouseWheel(direction, e);
 
         _game.Camera.Fov -= e.OffsetY;
     }

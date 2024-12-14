@@ -117,10 +117,7 @@ public class Renderer
 
         _shaders.ForEach(shader => shader.Use());
 
-        _lightingShader.SetMatrix4("view", camera.GetViewMatrix());
-        _lightingShader.SetMatrix4("projection", camera.GetProjectionMatrix());
-
-        _lightingShader.SetVector3("viewPos", camera.Position);
+        camera.SetShaderUniforms(_lightingShader);
 
         if (_game.CoreSettings.UseWireFrame)
         {

@@ -8,8 +8,10 @@ namespace Minecraft.Block;
 public class BlockBase : GameObject
 {
     public virtual BlockType BlockType { get; }
-    public virtual string Name { get; set; }
     public virtual bool IsSolid { get; }
+
+    public int SizeInInventory { get; set; } = 1;
+
     public virtual void Interact() { }
 
     protected BlockBase(Vector3 position, string name, string diffuseMapFile, string specularMapFile, string vertShaderFile, string fragShaderFile)

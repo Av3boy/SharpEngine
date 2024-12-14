@@ -57,4 +57,15 @@ public class Input
     {
     }
 
+    public static bool IsInputNumber(Keys key, out int number)
+    {
+        number = -1;
+        if (key is >= Keys.D0 and <= Keys.D9)
+        {
+            number = key - Keys.D0;
+            return true;
+        }
+
+        return false;
+    }
 }
