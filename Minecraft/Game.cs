@@ -27,6 +27,7 @@ namespace Minecraft
 
         private Scene _scene;
         private SceneNode _lightsNode;
+        private SceneNode _blocksNode;
 
         private Input _input;
 
@@ -44,9 +45,15 @@ namespace Minecraft
             _input = new Input(Camera);
 
             _lightsNode = _scene.Root.AddChild("lights");
+            _blocksNode = _scene.Root.AddChild("blocks");
 
+            InitializeWorld();
+        }
+
+        private void InitializeWorld()
+        {
             InitializeLights();
-            InitializeCubes();
+            InitializeChunks();
         }
 
         private void InitializeLights()
@@ -66,28 +73,46 @@ namespace Minecraft
                 Diffuse = new Vector3(1.0f, 1.0f, 1.0f),
                 Specular = new Vector3(1.0f, 1.0f, 1.0f),
             });
+
+            // var _lightingShader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/lighting.frag", "lighting");
+            // _lightingShader.SetInt("numDirLights", 1);
+            // _lightingShader.SetInt("numPointLights", 4);
+            // _lightingShader.SetInt("numSpotLights", 1);
         }
 
-        private void InitializeCubes()
+        private void InitializeChunks()
         {
             // TODO: Generate chunks when player moves
 
             // TODO: Generate chunks using 3d perlin noise
 
             const int chunkSize = 16;
+            const int numChunks = 3;
 
+            for (int i = 0; i < numChunks; i++)
+            {
+                var chunkPos = new Vector3(i * chunkSize, 0, 0);
+                GenerateChunk(chunkSize, chunkPos);
+            }
+        }
+
+        private void GenerateChunk(int chunkSize, Vector3 chunkPos)
+        {
             for (int x = 0; x < chunkSize; x++)
             {
                 for (int z = 0; z < chunkSize; z++)
                 {
-                    var dirt = new Dirt(new Vector3(x, 0, z), $"Dirt ({x}{z})");
-                    _scene.Root.AddChild(dirt);
+                    var blockPos = chunkPos + new Vector3(x, 0, z);
+
+                    var dirt = new Dirt(blockPos, $"Dirt ({x}{z})");
+                    _blocksNode.AddChild(dirt);
                     _scene.Blocks.Add(dirt);
 
                     for (int y = 1; y < chunkSize; y++)
                     {
-                        var stone = new Stone(new Vector3(x, -y, z), $"Dirt ({x}{z}.{y})");
-                        _scene.Root.AddChild(stone);
+                        blockPos.Y = -y;
+                        var stone = new Stone(blockPos, $"Dirt ({x}{z}.{y})");
+                        _blocksNode.AddChild(stone);
                         _scene.Blocks.Add(stone);
                     }
                 }
@@ -156,7 +181,7 @@ namespace Minecraft
             if (!IsBlockInView(out GameObject intersectingObject, out Vector3 _))
                 return BlockType.None;
 
-            _scene.Root.RemoveChild(intersectingObject);
+            _blocksNode.RemoveChild(intersectingObject);
             _scene.Blocks.Remove((BlockBase)intersectingObject);
 
             return ((BlockBase)intersectingObject).BlockType;
@@ -172,8 +197,8 @@ namespace Minecraft
             if (newBlockPosition == Camera.Position || newBlockPosition == hitPosition)
                 return;
 
-            var newBlock = BlockFactory.CreateBlock(SelectedBlockType, newBlockPosition, $"Dirt ({_scene.Root.Children.Count})");
-            _scene.Root.AddChild(newBlock);
+            var newBlock = BlockFactory.CreateBlock(SelectedBlockType, newBlockPosition, $"Dirt ({_blocksNode.Children.Count})");
+            _blocksNode.AddChild(newBlock);
             _scene.Blocks.Add(newBlock);
 
             Console.WriteLine($"New block created: {newBlock.Position}, block in view location: {intersectingObject.Position}");

@@ -195,4 +195,11 @@ public class Camera
 
         return planes;
     }
+
+    public void SetShaderUniforms(Shader shader)
+    {
+        shader.SetMatrix4("view", GetViewMatrix());
+        shader.SetMatrix4("projection", GetProjectionMatrix());
+        shader.SetVector3("viewPos", Position);
+    }
 }
