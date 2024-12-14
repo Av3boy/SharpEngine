@@ -24,6 +24,33 @@ public class Scene
             Blocks.Remove(gameObject);
         }
     }
+
+    public SceneNode? GetNode(string name)
+    {
+        static SceneNode? FindNode(SceneNode node, string name)
+        {
+            if (node.Name == name)
+                return node;
+
+            foreach (var child in node.Children)
+            {
+                var result = FindNode(child, name);
+                if (result != null)
+                    return result;
+            }
+
+            return null;
+        }
+
+        foreach (var node in Nodes)
+        {
+            var result = FindNode(node, name);
+            if (result != null)
+                return result;
+        }
+
+        return null;
+    }
 }
 
 public class SceneNode
@@ -46,13 +73,16 @@ public class SceneNode
         return node;
     }
 
+    public virtual SceneNode AddChild(params SceneNode[] nodes)
+    {
+        foreach (var node in nodes)
+            Children.Add(node);
+
+        return this;
+    }
+
     public void RemoveChild(SceneNode node)
     {
         Children.Remove(node);
-    }
-
-    public virtual void AddChild(SceneNode node)
-    {
-        Children.Add(node);
     }
 }

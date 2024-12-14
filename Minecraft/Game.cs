@@ -8,7 +8,6 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 
 using System;
 using System.Collections.Generic;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Minecraft
 {
@@ -27,6 +26,8 @@ namespace Minecraft
         public SpotLight SpotLight { get; set; }
 
         private Scene _scene;
+        private SceneNode _lightsNode;
+
         private Input _input;
 
         private Inventory _inventory = new();
@@ -42,6 +43,8 @@ namespace Minecraft
         {
             _input = new Input(Camera);
 
+            _lightsNode = _scene.Root.AddChild("lights");
+
             InitializeLights();
             InitializeCubes();
         }
@@ -51,6 +54,7 @@ namespace Minecraft
             // TODO: Move lights into the scene
 
             DirectionalLight = new();
+            _lightsNode.AddChild(DirectionalLight);
 
             PointLights =
             [
@@ -59,6 +63,7 @@ namespace Minecraft
                 new(new Vector3(-4.0f, 2.0f, -12.0f)),
                 new(new Vector3(0.0f, 0.0f, -3.0f))
             ];
+            _lightsNode.AddChild(PointLights);
 
             SpotLight = new()
             {
@@ -66,6 +71,7 @@ namespace Minecraft
                 Diffuse = new Vector3(1.0f, 1.0f, 1.0f),
                 Specular = new Vector3(1.0f, 1.0f, 1.0f),
             };
+            _lightsNode.AddChild(SpotLight);
         }
 
         private void InitializeCubes()
