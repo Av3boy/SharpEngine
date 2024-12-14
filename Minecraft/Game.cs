@@ -51,27 +51,21 @@ namespace Minecraft
 
         private void InitializeLights()
         {
-            // TODO: Move lights into the scene
+            _lightsNode.AddChild(new DirectionalLight());
 
-            DirectionalLight = new();
-            _lightsNode.AddChild(DirectionalLight);
+            _lightsNode.AddChild(
+                new PointLight(new Vector3(0.7f, 0.2f, 2.0f), 0),
+                new PointLight(new Vector3(2.3f, -3.3f, -4.0f), 1),
+                new PointLight(new Vector3(-4.0f, 2.0f, -12.0f), 2),
+                new PointLight(new Vector3(0.0f, 0.0f, -3.0f), 3)
+            );
 
-            PointLights =
-            [
-                new(new Vector3(0.7f, 0.2f, 2.0f)),
-                new(new Vector3(2.3f, -3.3f, -4.0f)),
-                new(new Vector3(-4.0f, 2.0f, -12.0f)),
-                new(new Vector3(0.0f, 0.0f, -3.0f))
-            ];
-            _lightsNode.AddChild(PointLights);
-
-            SpotLight = new()
+            _lightsNode.AddChild(new SpotLight()
             {
                 Ambient = new Vector3(0.0f, 0.0f, 0.0f),
                 Diffuse = new Vector3(1.0f, 1.0f, 1.0f),
                 Specular = new Vector3(1.0f, 1.0f, 1.0f),
-            };
-            _lightsNode.AddChild(SpotLight);
+            });
         }
 
         private void InitializeCubes()

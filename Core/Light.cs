@@ -38,28 +38,32 @@ public class DirectionalLight : Light
 
 public class PointLight : Light
 {
-    public PointLight(Vector3 position)
+    public PointLight(Vector3 position, int index)
     {
         Scale = new(0.2f, 0.2f, 0.2f);
         Position = position;
         Constant = 1.0f;
         Linear = 0.09f;
         Quadratic = 0.032f;
+
+        _index = index;
     }
+
+    private int _index;
 
     public float Constant { get; set; }
     public float Linear { get; set; }
     public float Quadratic { get; set; }
 
-    public void Render(Shader lightingShader, Shader lampShader, int index)
+    public void Render(Shader lightingShader, Shader lampShader)
     {
-        lightingShader.SetVector3($"pointLights[{index}].position", Position);
-        lightingShader.SetVector3($"pointLights[{index}].ambient", Ambient);
-        lightingShader.SetVector3($"pointLights[{index}].diffuse", Diffuse);
-        lightingShader.SetVector3($"pointLights[{index}].specular", Specular);
-        lightingShader.SetFloat($"pointLights[{index}].constant", Constant);
-        lightingShader.SetFloat($"pointLights[{index}].linear", Linear);
-        lightingShader.SetFloat($"pointLights[{index}].quadratic", Quadratic);
+        lightingShader.SetVector3($"pointLights[{_index}].position", Position);
+        lightingShader.SetVector3($"pointLights[{_index}].ambient", Ambient);
+        lightingShader.SetVector3($"pointLights[{_index}].diffuse", Diffuse);
+        lightingShader.SetVector3($"pointLights[{_index}].specular", Specular);
+        lightingShader.SetFloat($"pointLights[{_index}].constant", Constant);
+        lightingShader.SetFloat($"pointLights[{_index}].linear", Linear);
+        lightingShader.SetFloat($"pointLights[{_index}].quadratic", Quadratic);
 
         Matrix4 lampMatrix = Matrix4.CreateScale(Scale);
         lampMatrix *= Matrix4.CreateTranslation(Position);

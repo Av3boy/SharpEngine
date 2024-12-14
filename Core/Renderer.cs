@@ -157,22 +157,13 @@ public class Renderer
         {
             if (gameObject is Light light)
             {
-                // Render lights
-                _game.DirectionalLight.Render(_lightingShader);
-                for (int i = 0; i < _game.PointLights.Length; i++)
-                {
-                    _game.PointLights[i].Render(_lightingShader, _lampShader, i);
-                }
-
-                _game.SpotLight.Render(_lightingShader);
-
                 switch (light)
                 {
                     case DirectionalLight directionalLight:
                         directionalLight.Render(_lightingShader);
                         break;
                     case PointLight pointLight:
-                        //pointLight.Render(_lightingShader, _lampShader, 0);
+                        pointLight.Render(_lightingShader, _lampShader);
                         break;
                     case SpotLight spotLight:
                         spotLight.Render(_lightingShader);

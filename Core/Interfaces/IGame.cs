@@ -7,10 +7,6 @@ public interface IGame
 {
     public ISettings CoreSettings { get; }
 
-    public DirectionalLight DirectionalLight { get; }
-    public PointLight[] PointLights { get; }
-    public SpotLight SpotLight { get; }
-
     public Camera Camera { get; set; }
 
     public void HandleMouseDown(MouseButtonEventArgs e);
