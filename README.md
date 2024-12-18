@@ -23,3 +23,10 @@ For any question, please reach out to the owner(s) of the repository.
 
 ## Read More
 A port of [the tutorials at LearnOpenGL](https://learnopengl.com/) to C#/OpenTK.
+https://www.khronos.org/opengl/wiki
+https://opentk.net/learn/index.html
+https://docs.gl/
+https://gist.github.com/Erfan-Ahmadi/defe4ab99af97f624b68e0dccb0712ea
+https://opentk.net/faq.html
+https://github.com/ocornut/imgui
+https://www.shadertoy.com/
