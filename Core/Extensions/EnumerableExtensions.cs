@@ -2,8 +2,11 @@
 using System.Linq;
 
 namespace Core.Extensions;
+
+/// <summary>
+///     Contains extension methods types implementing the <see cref="IEnumerable{T}"/> interface.
+/// </summary>
 public static class EnumerableExtensions
 {
-    public static bool IsAnyOf<T>(this T item, params T[] items)
-        => items.Contains(item);
+    // TODO: Add extension methods
 }

@@ -218,7 +218,7 @@ namespace Minecraft
         public bool IsBlockInView(out GameObject intersectingObject, out Vector3 hitPosition)
         {
             Ray ray = new Ray(Camera.Position, Camera.Front);
-            return ray.IsBlockInView(_scene, out intersectingObject, out hitPosition);
+            return ray.IsGameObjectInView(_scene, out intersectingObject, out hitPosition);
         }
 
         /// <inheritdoc />

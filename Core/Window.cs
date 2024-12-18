@@ -9,13 +9,21 @@ using System;
 
 namespace Core;
 
-// In this tutorial we focus on how to set up a scene with multiple lights, both of different types but also
-// with several point lights
+/// <summary>
+///     Represents the game window.
+/// </summary>
 public class Window : GameWindow
 {
     private readonly IGame _game;
     private readonly Renderer _renderer;
 
+    /// <summary>
+    ///     Initializes a new instance of <see cref="Window"/>.
+    /// </summary>
+    /// <param name="game">Contains the actual game implementation.</param>
+    /// <param name="scene">Contains the game scene.</param>
+    /// <param name="gameWindowSettings"><inheritdoc cref="GameWindowSettings"/></param>
+    /// <param name="nativeWindowSettings"><inheritdoc cref="NativeWindowSettings"/></param>
     public Window(IGame game, Scene scene, GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
         : base(gameWindowSettings, nativeWindowSettings)
     {
@@ -24,6 +32,7 @@ public class Window : GameWindow
         _renderer = new Renderer(_game, scene);
     }
 
+    /// <inheritdoc />
     protected override void OnLoad()
     {
         base.OnLoad();
@@ -37,6 +46,7 @@ public class Window : GameWindow
         _game.Initialize();
     }
 
+    /// <inheritdoc />
     protected override void OnRenderFrame(FrameEventArgs args)
     {
         base.OnRenderFrame(args);
@@ -46,6 +56,7 @@ public class Window : GameWindow
         SwapBuffers();
     }
 
+    /// <inheritdoc />
     protected override void OnUpdateFrame(FrameEventArgs args)
     {
         base.OnUpdateFrame(args);
@@ -68,8 +79,9 @@ public class Window : GameWindow
         _game.HandleMouse(MouseState);
 
         _game.Update(args, KeyboardState, MouseState);
-    } 
+    }
 
+    /// <inheritdoc />
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
@@ -86,6 +98,7 @@ public class Window : GameWindow
         _game.Camera.Fov -= e.OffsetY;
     }
 
+    /// <inheritdoc />
     protected override void OnResize(ResizeEventArgs e)
     {
         base.OnResize(e);
@@ -94,6 +107,7 @@ public class Window : GameWindow
         _game.Camera.AspectRatio = Size.X / (float)Size.Y;
     }
 
+    /// <inheritdoc />
     protected override void OnMouseDown(MouseButtonEventArgs e)
     {
         base.OnMouseDown(e);

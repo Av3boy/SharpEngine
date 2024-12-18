@@ -6,21 +6,30 @@ using System.Collections.Generic;
 
 namespace Core
 {
+    /// <summary>
+    ///     Represents a service for loading textures.
+    /// </summary>
     public class TextureService
     {
+        /// <summary>
+        ///     Gets the singleton instance of the <see cref="TextureService"/> class.
+        /// </summary>
         public static TextureService Instance { get; } = new TextureService();
         private readonly Dictionary<string, Texture> _textureCache = new();
 
         // Private constructor to prevent instantiation
         private TextureService() { }
 
+        /// <summary>
+        ///     Loads a texture from the specified path.
+        /// </summary>
+        /// <param name="path">the full path to the texture.</param>
+        /// <returns>The loaded texture program.</returns>
         public Texture LoadTexture(string path)
         {
             // Check if the texture is already in the cache
             if (_textureCache.TryGetValue(path, out var cachedTexture))
-            {
                 return cachedTexture;
-            }
 
             // Generate handle
             int handle = GL.GenTexture();
@@ -59,19 +68,31 @@ namespace Core
         }
     }
 
+    /// <summary>
+    ///     Represents a texture program.
+    /// </summary>
     public class Texture
     {
+        /// <summary>The OpenGL handle for the texture.</summary>
         public readonly int Handle;
 
+        /// <summary>
+        ///     Initializes a new instance of <see cref="Texture"/>.
+        /// </summary>
+        /// <param name="glHandle"></param>
         public Texture(int glHandle)
         {
             Handle = glHandle;
         }
 
-        // Activate texture
         // Multiple textures can be bound, if your shader needs more than just one.
         // If you want to do that, use GL.ActiveTexture to set which slot GL.BindTexture binds to.
         // The OpenGL standard requires that there be at least 16, but there can be more depending on your graphics card.
+
+        /// <summary>
+        ///     Activate the texture.
+        /// </summary>
+        /// <param name="unit">The bound texture location.</param>
         public void Use(TextureUnit unit)
         {
             GL.ActiveTexture(unit);

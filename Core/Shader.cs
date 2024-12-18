@@ -8,21 +8,46 @@ using System.Text.RegularExpressions;
 
 namespace Core
 {
+    /// <summary>
+    ///     Contains all the shaders used in the game.
+    /// </summary>
     public class ShaderService
     {
+        /// <summary>
+        ///     Gets the singleton instance of the <see cref="ShaderService"/>.
+        /// </summary>
         public static ShaderService Instance { get; } = new ShaderService();
         private readonly Dictionary<string, Shader> _shaderCache = new();
+
+        /// <summary>
+        ///    Gets or sets whether there are shaders to load.
+        /// </summary>
         public bool HasShadersToLoad { get; set; } = true;
 
-        // Private constructor to prevent instantiation
+        /// <summary>
+        ///     Private constructor to prevent instantiation.
+        /// </summary>
         private ShaderService() { }
 
+        /// <summary>
+        ///     Gets all the shaders in the cache.
+        /// </summary>
+        /// <returns>All the shaders found from the cache.</returns>
         public List<Shader> GetAll()
         {
             HasShadersToLoad = false;
             return new(_shaderCache.Values);
         }
 
+        /// <summary>
+        ///     Gets a shader by its name.
+        /// </summary>
+        /// <param name="name">The name of the shader to be found.</param>
+        /// <returns>The found shader.</returns>
+        /// <exception cref="KeyNotFoundException">
+        ///     Thrown if a shader by that is not found.
+        ///     This exception is thrown to make sure there are no unexpected issues made by the developer.
+        /// </exception>
         public Shader GetByName(string name)
         {
             if (_shaderCache.TryGetValue(name, out var cachedShader))
@@ -31,6 +56,14 @@ namespace Core
             throw new KeyNotFoundException($"Shader with name {name} not found in cache.");
         }
 
+        /// <summary>
+        ///     Loads a shader from the specified vertex and fragment paths. <br />
+        ///     If the shader is loaded already, adds it to the cache.
+        /// </summary>
+        /// <param name="vertPath">The vertex shader full path.</param>
+        /// <param name="fragPath">The fragment shader full path.</param>
+        /// <param name="name">A name identifier for the shader.</param>
+        /// <returns>A shader with the given name.</returns>
         public Shader LoadShader(string vertPath, string fragPath, string name)
         {
             // Check if the shader is already in the cache
@@ -47,18 +80,29 @@ namespace Core
         }
     }
 
+    /// <summary>
+    ///     Represents a shader program.
+    /// </summary>
     public class Shader
     {
+        /// <summary>Gets the handle to the shader program.</summary>
         public readonly int Handle;
 
+        /// <summary>Gets or sets the identifying name of the shader.</summary>
         public string Name { get; set; }
 
         private Dictionary<string, int> _uniformLocations = [];
 
-        // This is how you create a simple shader.
-        // Shaders are written in GLSL, which is a language very similar to C in its semantics.
-        // The GLSL source is compiled *at runtime*, so it can optimize itself for the graphics card it's currently being used on.
-        // A commented example of GLSL can be found in shader.vert.
+        /// <summary>
+        ///    Initializes a new instance of <see cref="Shader"/>.
+        /// </summary>
+        /// <remarks>
+        ///     Shaders are written in GLSL, which is a language very similar to C in its semantics.
+        ///     The GLSL source is compiled *at runtime*, so it can optimize itself for the graphics card it's currently being used on.
+        /// </remarks>
+        /// <param name="vertPath">The vertex shader full path.</param>
+        /// <param name="fragPath">The fragment shader full path.</param>
+        /// <param name="name">The identfier name of the shader.</param>
         public Shader(string vertPath, string fragPath, string name)
         {
             Name = name;
@@ -175,18 +219,16 @@ namespace Core
             }
         }
 
-        // A wrapper function that enables the shader program.
+        /// <summary>
+        ///     Enables the shader program.
+        /// </summary>
         public void Use()
-        {
-            GL.UseProgram(Handle);
-        }
+            => GL.UseProgram(Handle);
 
         // The shader sources provided with this project use hardcoded layout(location)-s. If you want to do it dynamically,
         // you can omit the layout(location=X) lines in the vertex shader, and use this in VertexAttribPointer instead of the hardcoded values.
         public int GetAttribLocation(string attribName)
-        {
-            return GL.GetAttribLocation(Handle, attribName);
-        }
+            => GL.GetAttribLocation(Handle, attribName);
 
         // Uniform setters
         // Uniforms are variables that can be set by user code, instead of reading them from the VBO.

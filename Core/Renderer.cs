@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 namespace Core;
 
+/// <summary>
+///     Represents the game renderer.
+/// </summary>
 public class Renderer
 {
     private int _vaoModel;
@@ -51,12 +54,20 @@ public class Renderer
         return vertices.ToArray();
     }
 
+    /// <summary>
+    ///     Initializes a new instance of <see cref="Renderer"/>.
+    /// </summary>
+    /// <param name="game"></param>
+    /// <param name="scene"></param>
     public Renderer(IGame game, Scene scene)
     {
         _game = game;
         _scene = scene;
     }
 
+    /// <summary>
+    ///     Initializes the renderer.
+    /// </summary>
     public void Initialize()
     {
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -106,6 +117,10 @@ public class Renderer
         GL.VertexAttribPointer(positionLocation, 3, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
     }
 
+    /// <summary>
+    ///    Renders the scene.
+    /// </summary>
+    /// <param name="camera">The camera where the scene should be rendered to.</param>
     public void Render(Camera camera)
     {
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -195,18 +210,40 @@ public class Renderer
         return true;
     }
 
-    public float DistanceToPoint(System.Numerics.Plane plane, Vector3 point)
+    /// <summary>
+    ///     Calculates the distance from the given <paramref name="plane"/> to a <paramref name="point"/>.
+    /// </summary>
+    /// <param name="plane">The origin of where the distance to <paramref name="point"/> should be calculated.</param>
+    /// <param name="point">The point the distance to is calculated.</param>
+    /// <returns>The distance from <paramref name="plane"/> to <paramref name="point"/>.</returns>
+    public static float DistanceToPoint(System.Numerics.Plane plane, Vector3 point)
     {
         var normal = new Vector3(plane.Normal.X, plane.Normal.Y, plane.Normal.Z);
         return Vector3.Dot(normal, point) + plane.D;
     }
 }
 
+/// <summary>
+///     Represents a bounding box of a gameobject.
+///     TODO: Move to a separate file and as a property of GameObject.
+/// </summary>
 public class BoundingBox
 {
+    /// <summary>
+    ///     Gets or sets the minimum point of the bounding box.
+    /// </summary>
     public Vector3 Min { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the maximum point of the bounding box.
+    /// </summary>
     public Vector3 Max { get; set; }
 
+    /// <summary>
+    ///     Initializes a new instance of <see cref="BoundingBox"/>.
+    /// </summary>
+    /// <param name="min">The minimum point of the box.</param>
+    /// <param name="max">The maximum point of the box.</param>
     public BoundingBox(Vector3 min, Vector3 max)
     {
         Min = min;

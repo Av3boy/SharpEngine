@@ -6,6 +6,9 @@ using OpenTK.Windowing.Desktop;
 
 namespace Minecraft;
 
+/// <summary>
+///     Represents the entry point of the application.
+/// </summary>
 public static class Program
 {
     private static void Main()

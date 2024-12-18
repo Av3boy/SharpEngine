@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <None Include="Resources/**" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="Shaders/**" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
+  <PropertyGroup>
+    <Description>A purely C# game engine</Description>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="OpenTK" Version="4.8.2" />

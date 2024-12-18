@@ -1,25 +1,41 @@
 using OpenTK.Mathematics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using Plane = System.Numerics.Plane;
 
 namespace Core;
 
-// This is the camera class as it could be set up after the tutorials on the website.
-// It is important to note there are a few ways you could have set up this camera.
-// For example, you could have also managed the player input inside the camera class,
-// and a lot of the properties could have been made into functions.
-
-// TL;DR: This is just one of many ways in which we could have set up the camera.
-// Check out the web version if you don't know why we are doing a specific thing or want to know more about the code.
+/// <summary>
+///     Represents a movable camera.
+/// </summary>
+/// <remarks>
+///     Basically the implementation from <see href="https://github.com/opentk/LearnOpenTK"/>.
+/// </remarks>
 public class Camera
 {
+    /// <summary>
+    ///     Initializes a new instance of <see cref="Camera"/>.
+    /// </summary>
+    /// <param name="position">The initial position of the camera.</param>
+    /// <param name="aspectRatio">The aspect ratio of the viewport.</param>
+    public Camera(Vector3 position, float aspectRatio)
+    {
+        Position = position;
+        AspectRatio = aspectRatio;
+    }
+
     // Those vectors are directions pointing outwards from the camera to define how it rotated.
     private Vector3 _front = -Vector3.UnitZ;
-
     private Vector3 _up = Vector3.UnitY;
-
     private Vector3 _right = Vector3.UnitX;
+
+    /// <summary>Gets the front vector of the camera.</summary>
+    public Vector3 Front => _front;
+
+    /// <summary>Gets the up vector of the camera.</summary>
+    public Vector3 Up => _up;
+
+    /// <summary>Gets the right vector of the camera.</summary>
+    public Vector3 Right => _right;
 
     // Rotation around the X axis (radians)
     private float _pitch;
@@ -30,25 +46,18 @@ public class Camera
     // The field of view of the camera (radians)
     private float _fov = MathHelper.PiOver2;
 
-    public Camera(Vector3 position, float aspectRatio)
-    {
-        Position = position;
-        AspectRatio = aspectRatio;
-    }
-
-    // The position of the camera
+    /// <summary>Gets or sets the position of the camera.</summary>
     public Vector3 Position { get; set; }
 
-    // This is simply the aspect ratio of the viewport, used for the projection matrix.
+    /// <summary>Gets or sets the aspect ratio of the viewport, used for the projection matrix.</summary>
     public float AspectRatio { private get; set; }
 
-    public Vector3 Front => _front;
-
-    public Vector3 Up => _up;
-
-    public Vector3 Right => _right;
-
-    // We convert from degrees to radians as soon as the property is set to improve performance.
+    /// <summary>
+    ///     Gets or sets the pitch (rotation around the X axis) of the camera in degrees.
+    /// </summary>
+    /// <remarks>
+    ///     Convert from degrees to radians as soon as the property is set to improve performance.
+    /// </remarks>
     public float Pitch
     {
         get => MathHelper.RadiansToDegrees(_pitch);
@@ -63,7 +72,12 @@ public class Camera
         }
     }
 
-    // We convert from degrees to radians as soon as the property is set to improve performance.
+    /// <summary>
+    ///     Gets or sets the yaw (rotation around the Y axis) of the camera in degrees.
+    /// </summary>
+    /// <remarks>
+    ///     We convert from degrees to radians as soon as the property is set to improve performance.
+    /// </remarks>
     public float Yaw
     {
         get => MathHelper.RadiansToDegrees(_yaw);
@@ -74,10 +88,15 @@ public class Camera
         }
     }
 
-    // The field of view (FOV) is the vertical angle of the camera view.
-    // This has been discussed more in depth in a previous tutorial,
-    // but in this tutorial, you have also learned how we can use this to simulate a zoom feature.
-    // We convert from degrees to radians as soon as the property is set to improve performance.
+    /// <summary>
+    ///     Gets or sets the field of view (FOV) of the camera in degrees.
+    /// </summary>
+    /// <remarks>
+    ///     The field of view (FOV) is the vertical angle of the camera view.
+    ///     This has been discussed more in depth in a previous tutorial,
+    ///     but in this tutorial, you have also learned how we can use this to simulate a zoom feature.
+    ///     We convert from degrees to radians as soon as the property is set to improve performance.
+    /// </remarks>
     public float Fov
     {
         get => MathHelper.RadiansToDegrees(_fov);
@@ -88,19 +107,23 @@ public class Camera
         }
     }
 
-    // Get the view matrix using the amazing LookAt function described more in depth on the web tutorials
+    /// <summary>
+    ///     Gets the view matrix of the camera.
+    /// </summary>
+    /// <returns>The view matrix.</returns>
     public Matrix4 GetViewMatrix()
-    {
-        return Matrix4.LookAt(Position, Position + _front, _up);
-    }
+        => Matrix4.LookAt(Position, Position + _front, _up);
 
-    // Get the projection matrix using the same method we have used up until this point
+    /// <summary>
+    ///     Gets the projection matrix of the camera.
+    /// </summary>
+    /// <returns>The projection matrix.</returns>
     public Matrix4 GetProjectionMatrix()
-    {
-        return Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, 0.01f, 100f);
-    }
+        => Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, 0.01f, 100f);
 
-    // This function is going to update the direction vertices using some of the math learned in the web tutorials.
+    /// <summary>
+    ///     Updates the direction vectors of the camera based on its current pitch and yaw.
+    /// </summary>
     private void UpdateVectors()
     {
         // First, the front matrix is calculated using some basic trigonometry.
@@ -121,8 +144,14 @@ public class Camera
     private bool firstMove;
     private Vector2 lastPos;
 
+    // TODO: Move to the settings
+    /// <summary>Gets or sets the sensitivity of the camera to mouse movements.</summary>
     public float Sensitivity { get; set; } = 0.2f;
 
+    /// <summary>
+    ///     Updates the camera's orientation based on the current mouse position.
+    /// </summary>
+    /// <param name="mousePosition">The current mouse position.</param>
     public void UpdateMousePosition(Vector2 mousePosition)
     {
         if (firstMove)
@@ -141,61 +170,68 @@ public class Camera
         }
     }
 
+    /// <summary>
+    ///     Gets the frustum planes of the camera.
+    /// </summary>
+    /// <returns>An array of six planes representing the camera's frustum.</returns>
     public Plane[] GetFrustumPlanes()
     {
         Matrix4 viewProjection = GetViewMatrix() * GetProjectionMatrix();
-        Plane[] planes = new Plane[6];
+        Plane[] planes =
+        [
+            // Left
+            new Plane(
+                viewProjection.M14 + viewProjection.M11,
+                viewProjection.M24 + viewProjection.M21,
+                viewProjection.M34 + viewProjection.M31,
+                viewProjection.M44 + viewProjection.M41),
 
-        // Left
-        planes[0] = new Plane(
-            viewProjection.M14 + viewProjection.M11,
-            viewProjection.M24 + viewProjection.M21,
-            viewProjection.M34 + viewProjection.M31,
-            viewProjection.M44 + viewProjection.M41);
+            // Right
+            new Plane(
+                viewProjection.M14 - viewProjection.M11,
+                viewProjection.M24 - viewProjection.M21,
+                viewProjection.M34 - viewProjection.M31,
+                viewProjection.M44 - viewProjection.M41),
 
-        // Right
-        planes[1] = new Plane(
-            viewProjection.M14 - viewProjection.M11,
-            viewProjection.M24 - viewProjection.M21,
-            viewProjection.M34 - viewProjection.M31,
-            viewProjection.M44 - viewProjection.M41);
+            // Bottom
+            new Plane(
+                viewProjection.M14 + viewProjection.M12,
+                viewProjection.M24 + viewProjection.M22,
+                viewProjection.M34 + viewProjection.M32,
+                viewProjection.M44 + viewProjection.M42),
 
-        // Bottom
-        planes[2] = new Plane(
-            viewProjection.M14 + viewProjection.M12,
-            viewProjection.M24 + viewProjection.M22,
-            viewProjection.M34 + viewProjection.M32,
-            viewProjection.M44 + viewProjection.M42);
+            // Top
+            new Plane(
+                viewProjection.M14 - viewProjection.M12,
+                viewProjection.M24 - viewProjection.M22,
+                viewProjection.M34 - viewProjection.M32,
+                viewProjection.M44 - viewProjection.M42),
 
-        // Top
-        planes[3] = new Plane(
-            viewProjection.M14 - viewProjection.M12,
-            viewProjection.M24 - viewProjection.M22,
-            viewProjection.M34 - viewProjection.M32,
-            viewProjection.M44 - viewProjection.M42);
+            // Near
+            new Plane(
+                viewProjection.M13,
+                viewProjection.M23,
+                viewProjection.M33,
+                viewProjection.M43),
 
-        // Near
-        planes[4] = new Plane(
-            viewProjection.M13,
-            viewProjection.M23,
-            viewProjection.M33,
-            viewProjection.M43);
-
-        // Far
-        planes[5] = new Plane(
-            viewProjection.M14 - viewProjection.M13,
-            viewProjection.M24 - viewProjection.M23,
-            viewProjection.M34 - viewProjection.M33,
-            viewProjection.M44 - viewProjection.M43);
+            // Far
+            new Plane(
+                viewProjection.M14 - viewProjection.M13,
+                viewProjection.M24 - viewProjection.M23,
+                viewProjection.M34 - viewProjection.M33,
+                viewProjection.M44 - viewProjection.M43),
+        ];
 
         for (int i = 0; i < 6; i++)
-        {
             planes[i] = Plane.Normalize(planes[i]);
-        }
 
         return planes;
     }
 
+    /// <summary>
+    ///     Sets the shader uniforms for the camera.
+    /// </summary>
+    /// <param name="shader">The shader to set the uniforms on.</param>
     public void SetShaderUniforms(Shader shader)
     {
         shader.SetMatrix4("view", GetViewMatrix());
