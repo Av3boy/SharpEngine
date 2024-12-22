@@ -132,7 +132,7 @@ namespace Minecraft
 
             for (int i = 0; i <= 9; i++)
             {
-                if (input.IsKeyDown(Keys.D1 + i))
+                if (input.IsKeyDown(Keys.D0 + i))
                 {
                     _inventory.SetSelectedSlot(i);
                 }

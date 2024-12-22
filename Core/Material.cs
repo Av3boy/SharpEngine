@@ -34,7 +34,6 @@ public class Material
     internal readonly int diffuseUnit = 0;
     internal readonly int specularUnit = 1;
 
-
     /// <summary>
     ///    Gets or sets the ambient color of the material.
     /// </summary>
