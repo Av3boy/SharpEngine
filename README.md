@@ -51,4 +51,11 @@ For any question, please reach out to the owner(s) of the repository.
 - [VoxelRifts - A Brief look at Text Rendering](https://www.youtube.com/watch?v=qcMuyHzhvpI)  
 - [Freya Holmér - The Continuity of Splines](https://www.youtube.com/watch?v=jvPPXbo87ds)  
 - [Sebastian Lague - Coding Adventure: Rendering Text](https://www.youtube.com/watch?v=SO83KQuuZvg)
-- [Sharp engine](https://sharp-engine.com/)
+- [Sharp engine](https://sharp-engine.com/)  
+- https://developer.nvidia.com/industries/game-development  
+- https://developer.nvidia.com/gpugems/gpugems3/contributors  
+- https://developer.nvidia.com/graphics-research-tools  
+- https://developer.nvidia.com/industries/aeco  
+- https://gdcvault.com/browse/  
+- https://developer.nvidia.com/gpugems/gpugems3/part-iv-image-effects/chapter-25-rendering-vector-art-gpu  
+- https://blog.siggraph.org/2024/12/our-top-10-most-read-blogs-of-2024.html/  
