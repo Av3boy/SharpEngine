@@ -15,7 +15,9 @@ public class Scene
     /// <summary>
     ///     Gets the nodes in the scene.
     /// </summary>
-    public List<SceneNode> Nodes { get; private set; } = new();
+    private List<SceneNode> Nodes { get; set; } = new();
+
+    public List<UIElement> UIElements { get; private set; } = new();
 
     /// <summary>
     ///     Adds an empty node to the scene root.

@@ -6,6 +6,7 @@ using OpenTK.Windowing.Desktop;
 
 using Core.Interfaces;
 using System;
+using Core.Renderers;
 
 namespace Core;
 
@@ -16,6 +17,7 @@ public class Window : GameWindow
 {
     private readonly IGame _game;
     private readonly Renderer _renderer;
+    private readonly UIRenderer _uiRenderer;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
@@ -28,8 +30,10 @@ public class Window : GameWindow
         : base(gameWindowSettings, nativeWindowSettings)
     {
         _game = game;
+        _game.Camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
 
         _renderer = new Renderer(_game, scene);
+        _uiRenderer = new UIRenderer(scene, _game.Camera);
     }
 
     /// <inheritdoc />
@@ -38,8 +42,7 @@ public class Window : GameWindow
         base.OnLoad();
 
         _renderer.Initialize();
-
-        _game.Camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
+        _uiRenderer.Initialize();
 
         CursorState = CursorState.Grabbed;
 
@@ -51,7 +54,8 @@ public class Window : GameWindow
     {
         base.OnRenderFrame(args);
 
-        _renderer.Render(_game.Camera);
+        // _renderer.Render(_game.Camera);
+        _uiRenderer.Render();
 
         SwapBuffers();
     }

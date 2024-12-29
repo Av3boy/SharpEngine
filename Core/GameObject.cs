@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using Core.Renderers;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System.Xml.Linq;
 
@@ -76,6 +77,7 @@ public class GameObject : SceneNode
         GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
     }
 
+    // TODO: Calculate during initialization. Should primitive types contain hard coded values?
     /// <summary>
     ///     Gets the bounding box of the game object.
     /// </summary>

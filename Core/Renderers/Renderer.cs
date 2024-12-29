@@ -4,12 +4,12 @@ using OpenTK.Mathematics;
 
 using System.Collections.Generic;
 
-namespace Core;
+namespace Core.Renderers;
 
 /// <summary>
 ///     Represents the game renderer.
 /// </summary>
-public class Renderer
+public class Renderer : IRenderer
 {
     private int _vaoModel;
     private int _vaoLamp;
@@ -66,9 +66,7 @@ public class Renderer
         _scene = scene;
     }
 
-    /// <summary>
-    ///     Initializes the renderer.
-    /// </summary>
+    /// <inheritdoc />
     public void Initialize()
     {
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -127,19 +125,15 @@ public class Renderer
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         if (ShaderService.Instance.HasShadersToLoad)
-        {
             _shaders = ShaderService.Instance.GetAll();
-        }
 
         _shaders.ForEach(shader => shader.Use());
 
         camera.SetShaderUniforms(_lightingShader);
 
         if (_game.CoreSettings.UseWireFrame)
-        {
             // Set polygon mode to line to draw wireframe
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
-        }
 
         GL.BindVertexArray(_vaoModel);
 
@@ -148,10 +142,8 @@ public class Renderer
         GL.BindVertexArray(_vaoLamp);
 
         if (_game.CoreSettings.UseWireFrame)
-        {
             // Reset polygon mode to fill to draw solid objects
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
-        }
     }
 
     private void RenderSceneNode(SceneNode node, Camera camera)
@@ -159,15 +151,15 @@ public class Renderer
         RenderGameObject(node, camera);
 
         foreach (var child in node.Children)
-        {
             RenderSceneNode(child, camera);
-        }
     }
 
     private void RenderGameObject(SceneNode node, Camera camera)
     {
         if (node is GameObject gameObject)
         {
+            // TODO: Refactor the light rendering so that it can be called through the GameObject base
+            // To get rid of this if and switch block
             if (gameObject is Light light)
             {
                 switch (light)
@@ -186,6 +178,7 @@ public class Renderer
                 return;
             }
 
+            // TODO: Fix culling for blocks that are partially in view
             // Perform frustum culling
             if (!IsInViewFrustum(gameObject.BoundingBox, camera))
                 return;
@@ -196,17 +189,13 @@ public class Renderer
         }
     }
 
-    private bool IsInViewFrustum(BoundingBox boundingBox, Camera camera)
+    private static bool IsInViewFrustum(BoundingBox boundingBox, Camera camera)
     {
         var planes = camera.GetFrustumPlanes();
 
         foreach (var plane in planes)
-        {
             if (DistanceToPoint(plane, boundingBox.Min) < 0 && DistanceToPoint(plane, boundingBox.Max) < 0)
-            {
                 return false;
-            }
-        }
 
         return true;
     }

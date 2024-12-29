@@ -9,4 +9,13 @@
     <PackageReference Include="StbImageSharp" Version="2.27.11" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Shaders\uiShader.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\uiShader.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

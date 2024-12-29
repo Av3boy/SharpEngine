@@ -123,6 +123,7 @@ namespace Minecraft
 
         }
 
+        // TODO: Input system to let users change change key bindings?
         /// <inheritdoc />
         public void HandleKeyboard(KeyboardState input, float deltaTime)
         {
@@ -133,6 +134,7 @@ namespace Minecraft
                 if (input.IsKeyDown(Keys.D0 + i))
                 {
                     _inventory.SetSelectedSlot(i);
+                    Console.WriteLine($"Selected slot: {i} ({_inventory.SelectedSlot.Items.Type})");
                 }
             }
 
@@ -170,6 +172,8 @@ namespace Minecraft
                 var destoryedBlockType = DestroyBlock();
                 if (destoryedBlockType != BlockType.None)
                 {
+                    // TODO: The block should be added to the slot so that 0 is the last slot instead of 9.
+                    // TODO: The first block destoryed doesn't seem to be added to the inventory.
                     Console.WriteLine($"Block destroyed: {destoryedBlockType}.");
                     _inventory.AddToolbarItem(destoryedBlockType);
                 }
@@ -182,7 +186,6 @@ namespace Minecraft
                 return BlockType.None;
 
             var block = (BlockBase)intersectingObject;
-
             _blocksNode.RemoveChild(intersectingObject);
 
             return block.BlockType;
@@ -194,7 +197,6 @@ namespace Minecraft
                 return;
 
             var newBlockPosition = GetNewBlockPosition(hitPosition, intersectingObject);
-
             if (newBlockPosition == Camera.Position || newBlockPosition == hitPosition)
                 return;
 
