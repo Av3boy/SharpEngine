@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Core;
 
 public class Scene
 {
-    /// <summary>
-    ///     Gets or sets the game objects in the scene.
-    /// </summary>
-    [Obsolete("This needs to be removed.")]
-    public List<GameObject> Blocks { get; set; } = new();
-
     /// <summary>
     ///     Gets or sets the root node of the scene.
     /// </summary>
@@ -39,10 +35,6 @@ public class Scene
     public virtual void RemoveNode(SceneNode node)
     {
         Nodes.Remove(node);
-        if (node is GameObject gameObject)
-        {
-            Blocks.Remove(gameObject);
-        }
     }
 
     /// <summary>
@@ -73,8 +65,25 @@ public class Scene
             if (result != null)
                 return result;
         }
-
         return null;
+    }
+
+    public List<GameObject> GetAllGameObjects()
+    {
+        var gameObjects = new List<GameObject>();
+        static void FindGameObjects(SceneNode node, List<GameObject> gameObjects)
+        {
+            if (node is GameObject gameObject)
+                gameObjects.Add(gameObject);
+
+            foreach (var child in node.Children)
+                FindGameObjects(child, gameObjects);
+        }
+
+        foreach (var node in Root.Children)
+            FindGameObjects(node, gameObjects);
+
+        return gameObjects;
     }
 }
 

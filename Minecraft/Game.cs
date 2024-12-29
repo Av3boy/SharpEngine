@@ -106,14 +106,12 @@ namespace Minecraft
 
                     var dirt = new Dirt(blockPos, $"Dirt ({x}{z})");
                     _blocksNode.AddChild(dirt);
-                    _scene.Blocks.Add(dirt);
 
                     for (int y = 1; y < chunkSize; y++)
                     {
                         blockPos.Y = -y;
                         var stone = new Stone(blockPos, $"Dirt ({x}{z}.{y})");
                         _blocksNode.AddChild(stone);
-                        _scene.Blocks.Add(stone);
                     }
                 }
             }
@@ -186,7 +184,6 @@ namespace Minecraft
             var block = (BlockBase)intersectingObject;
 
             _blocksNode.RemoveChild(intersectingObject);
-            _scene.Blocks.Remove(block);
 
             return block.BlockType;
         }
@@ -203,7 +200,6 @@ namespace Minecraft
 
             var newBlock = BlockFactory.CreateBlock(_inventory.SelectedSlot.Items.Type, newBlockPosition, $"Dirt ({_blocksNode.Children.Count})");
             _blocksNode.AddChild(newBlock);
-            _scene.Blocks.Add(newBlock);
 
             Console.WriteLine($"New block created: {newBlock.Position}, block in view location: {intersectingObject.Position}");
 
@@ -218,7 +214,7 @@ namespace Minecraft
         public bool IsBlockInView(out GameObject intersectingObject, out Vector3 hitPosition)
         {
             Ray ray = new Ray(Camera.Position, Camera.Front);
-            return ray.IsGameObjectInView(_scene, out intersectingObject, out hitPosition);
+            return ray.IsGameObjectInView(_scene, out intersectingObject, out hitPosition, allowedTypes: typeof(BlockBase));
         }
 
         /// <inheritdoc />

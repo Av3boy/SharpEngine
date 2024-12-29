@@ -37,17 +37,23 @@ namespace Core
         /// <param name="scene">The scene to check for intersections.</param>
         /// <param name="intersectingObject">The intersecting object; <see langword="null"/> if the ray did not intersect an object.</param>
         /// <param name="hitPosition">The position where the ray hits the object.</param>
+        /// <param name="allowedTypes">The game object types the ray is able to intersect.</param>
         /// <returns><see langword="true"/> if the ray intersects with an object; otherwise <see langword="false"/>.</returns>
-        public bool IsGameObjectInView(Scene scene, out GameObject? intersectingObject, out Vector3 hitPosition)
+        public bool IsGameObjectInView(Scene scene, out GameObject? intersectingObject, out Vector3 hitPosition, params Type[] allowedTypes)
         {
             const float maxDistance = 100.0f; // Maximum distance to check for intersections
             const float stepSize = 0.1f; // Step size for ray marching
+
+            var sceneNodes = scene.GetAllGameObjects();
+            
+            if (allowedTypes.Any())
+                sceneNodes = sceneNodes.Where(go => allowedTypes.Any(type => type.IsInstanceOfType(go))).ToList();
 
             for (float t = 0; t < maxDistance; t += stepSize)
             {
                 Vector3 currentPosition = Origin + (t * Direction);
 
-                intersectingObject = scene.Blocks.FirstOrDefault(obj => IsPointInsideObject(currentPosition, obj));
+                intersectingObject = sceneNodes.FirstOrDefault(obj => IsPointInsideObject(currentPosition, obj));
                 if (intersectingObject != null)
                 {
                     hitPosition = currentPosition;

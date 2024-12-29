@@ -25,6 +25,7 @@ public class Renderer
     // Read only once, load into OpenGL buffer once.
     //
     // TODO: Multiple meshes
+    // TODO: Create mesh service to keep track of loaded meshes
     // If already loaded, add mesh indetifier to a dictionary. If dict contains mesh, skip it.
     private static readonly float[] _vertices = GetVertices();
 
