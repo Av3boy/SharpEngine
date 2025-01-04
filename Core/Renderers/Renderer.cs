@@ -147,34 +147,14 @@ public class Renderer : RendererBase
     {
         if (node is GameObject gameObject)
         {
-            // TODO: Refactor the light rendering so that it can be called through the GameObject base
-            // To get rid of this if and switch block
-            if (gameObject is Light light)
-            {
-                switch (light)
-                {
-                    case DirectionalLight directionalLight:
-                        directionalLight.Render(_lightingShader.Shader);
-                        break;
-                    case PointLight pointLight:
-                        pointLight.Render(_lightingShader.Shader, _lampShader.Shader);
-                        break;
-                    case SpotLight spotLight:
-                        spotLight.Render(_lightingShader.Shader);
-                        break;
-                }
-
-                return;
-            }
-
             // TODO: Fix culling for blocks that are partially in view
             // Perform frustum culling
-            if (!IsInViewFrustum(gameObject.BoundingBox, camera))
+            if (gameObject is not Light && !IsInViewFrustum(gameObject.BoundingBox, camera))
                 return;
 
             // TODO: Skip blocks that are behind others relative to the camera
 
-            gameObject.Render(camera);
+            gameObject.Render();
         }
     }
 

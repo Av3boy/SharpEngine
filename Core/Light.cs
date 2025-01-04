@@ -1,3 +1,4 @@
+using Core.Shaders;
 using OpenTK.Mathematics;
 
 namespace Core;
@@ -12,7 +13,6 @@ public abstract class Light : GameObject
     /// </summary>
     protected Light()
     {
-        Material.Shader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/shader.frag", "lamp");
     }
 
     /// <summary>
@@ -33,8 +33,6 @@ public abstract class Light : GameObject
     /// <summary>
     ///     Renders the light using the specified shader.
     /// </summary>
-    /// <param name="shader">The shader to use for rendering.</param>
-    public virtual void Render(Shader shader) { }
 }
 
 /// <summary>
@@ -54,15 +52,17 @@ public class DirectionalLight : Light
     {
         Diffuse = new Vector3(0.4f, 0.4f, 0.4f);
         Specular = new Vector3(0.5f, 0.5f, 0.5f);
+
+        Material.Shader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/lighting.frag", "lighting");
     }
 
     /// <inheritdoc />
-    public override void Render(Shader shader)
+    public override void Render()
     {
-        shader.SetVector3("dirLight.direction", Direction);
-        shader.SetVector3("dirLight.ambient", Ambient);
-        shader.SetVector3("dirLight.diffuse", Diffuse);
-        shader.SetVector3("dirLight.specular", Specular);
+        Material.Shader.SetVector3("dirLight.direction", Direction);
+        Material.Shader.SetVector3("dirLight.ambient", Ambient);
+        Material.Shader.SetVector3("dirLight.diffuse", Diffuse);
+        Material.Shader.SetVector3("dirLight.specular", Specular);
     }
 }
 
@@ -85,9 +85,15 @@ public class PointLight : Light
         Quadratic = 0.032f;
 
         _index = index;
+
+        Material.Shader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/lighting.frag", "lighting");
+        LampShader = new LampShader();
+
     }
 
-    private int _index;
+    private LampShader LampShader { get; set; }
+
+    private readonly int _index;
 
     /// <summary>
     ///     Gets or sets the constant attenuation factor.
@@ -104,25 +110,21 @@ public class PointLight : Light
     /// </summary>
     public float Quadratic { get; set; }
 
-    /// <summary>
-    ///     Renders the point light using the specified shaders.
-    /// </summary>
-    /// <param name="lightingShader">The shader to use for lighting.</param>
-    /// <param name="lampShader">The shader to use for the lamp.</param>
-    public void Render(Shader lightingShader, Shader lampShader)
+    /// <inheritdoc />
+    public override void Render()
     {
-        lightingShader.SetVector3($"pointLights[{_index}].position", Position);
-        lightingShader.SetVector3($"pointLights[{_index}].ambient", Ambient);
-        lightingShader.SetVector3($"pointLights[{_index}].diffuse", Diffuse);
-        lightingShader.SetVector3($"pointLights[{_index}].specular", Specular);
-        lightingShader.SetFloat($"pointLights[{_index}].constant", Constant);
-        lightingShader.SetFloat($"pointLights[{_index}].linear", Linear);
-        lightingShader.SetFloat($"pointLights[{_index}].quadratic", Quadratic);
+        Material.Shader.SetVector3($"pointLights[{_index}].position", Position);
+        Material.Shader.SetVector3($"pointLights[{_index}].ambient", Ambient);
+        Material.Shader.SetVector3($"pointLights[{_index}].diffuse", Diffuse);
+        Material.Shader.SetVector3($"pointLights[{_index}].specular", Specular);
+        Material.Shader.SetFloat($"pointLights[{_index}].constant", Constant);
+        Material.Shader.SetFloat($"pointLights[{_index}].linear", Linear);
+        Material.Shader.SetFloat($"pointLights[{_index}].quadratic", Quadratic);
 
         Matrix4 lampMatrix = Matrix4.CreateScale(Scale);
         lampMatrix *= Matrix4.CreateTranslation(Position);
 
-        lampShader.SetMatrix4("model", lampMatrix);
+        LampShader.Shader.SetMatrix4("model", lampMatrix);
     }
 }
 
@@ -142,6 +144,8 @@ public class SpotLight : Light
         Constant = 1.0f;
         Linear = 0.09f;
         Quadratic = 0.032f;
+
+        Material.Shader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/lighting.frag", "lighting");
     }
 
     /// <summary>
@@ -175,17 +179,17 @@ public class SpotLight : Light
     public float Quadratic { get; set; }
 
     /// <inheritdoc />
-    public override void Render(Shader shader)
+    public override void Render()
     {
-        shader.SetVector3("spotLight.position", Position);
-        shader.SetVector3("spotLight.direction", Direction);
-        shader.SetVector3("spotLight.ambient", Ambient);
-        shader.SetVector3("spotLight.diffuse", Diffuse);
-        shader.SetVector3("spotLight.specular", Specular);
-        shader.SetFloat("spotLight.constant", Constant);
-        shader.SetFloat("spotLight.linear", Linear);
-        shader.SetFloat("spotLight.quadratic", Quadratic);
-        shader.SetFloat("spotLight.cutOff", CutOff);
-        shader.SetFloat("spotLight.outerCutOff", OuterCutOff);
+        Material.Shader.SetVector3("spotLight.position", Position);
+        Material.Shader.SetVector3("spotLight.direction", Direction);
+        Material.Shader.SetVector3("spotLight.ambient", Ambient);
+        Material.Shader.SetVector3("spotLight.diffuse", Diffuse);
+        Material.Shader.SetVector3("spotLight.specular", Specular);
+        Material.Shader.SetFloat("spotLight.constant", Constant);
+        Material.Shader.SetFloat("spotLight.linear", Linear);
+        Material.Shader.SetFloat("spotLight.quadratic", Quadratic);
+        Material.Shader.SetFloat("spotLight.cutOff", CutOff);
+        Material.Shader.SetFloat("spotLight.outerCutOff", OuterCutOff);
     }
 }

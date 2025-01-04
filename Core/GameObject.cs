@@ -59,8 +59,7 @@ public class GameObject : SceneNode
     /// <summary>
     ///     Renders the game object using the specified camera.
     /// </summary>
-    /// <param name="camera">The camera to use for rendering.</param>
-    public virtual void Render(Camera camera)
+    public virtual void Render()
     {
         Material.DiffuseMap.Use(TextureUnit.Texture0);
         Material.SpecularMap.Use(TextureUnit.Texture1);
