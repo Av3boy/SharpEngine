@@ -17,10 +17,14 @@ public class UIRenderer : IRenderer
 
     private int _vaoModel;
 
-    public UIRenderer(Scene scene, Camera camera)
+    private Matrix4 _orthoProjection;
+
+    public UIRenderer(Scene scene, Camera camera, int screenWidth, int screenHeight)
     {
         _scene = scene;
         _camera = camera;
+
+        _orthoProjection = Matrix4.CreateOrthographicOffCenter(0, screenWidth, 0, screenHeight, 0.1f, 100.0f);
     }
 
     private readonly float[] _vertices =
@@ -105,15 +109,15 @@ public class UIRenderer : IRenderer
 
     public void Render()
     {
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        // GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         GL.BindVertexArray(_vertexArrayObject);
 
         _uiShader.Use();
 
         var model = Matrix4.CreateTranslation(new Vector3(1, 1, 1)) * Matrix4.CreateRotationX(90) * Matrix4.CreateScale(1);
-        _uiShader.SetMatrix4("model", model);
-        _uiShader.SetMatrix4("view", _camera.GetViewMatrix());
-        _uiShader.SetMatrix4("projection", _camera.GetProjectionMatrix());
+        // _uiShader.SetMatrix4("model", model);
+        // _uiShader.SetMatrix4("view", _camera.GetViewMatrix());
+        //_uiShader.SetMatrix4("uProjection", _orthoProjection, transpose: false);
 
         // GL.DrawArrays(PrimitiveType.Triangles, 0, 2);
         GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
