@@ -1,21 +1,15 @@
 ﻿using OpenTK.Graphics.OpenGL4;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Shaders;
-internal class LightingShader
+internal class LightingShader : ShaderBase
 {
-    public Shader Shader { get; private set; }
-
     public LightingShader()
     {
         Shader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/lighting.frag", "lighting");
     }
 
-    public void SetAttributes()
+    /// <inheritdoc />
+    public override void SetAttributes()
     {
         var positionLocation = Shader.GetAttribLocation(ShaderAttributes.Pos);
         GL.EnableVertexAttribArray(positionLocation);

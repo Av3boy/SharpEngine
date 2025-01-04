@@ -55,7 +55,7 @@ public class Window : GameWindow
         base.OnRenderFrame(args);
 
         // TODO: Multi threading for different renderers
-        _renderer.Render(_game.Camera);
+        _renderer.Render();
         _uiRenderer.Render();
 
         SwapBuffers();

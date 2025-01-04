@@ -87,6 +87,21 @@ public class Scene
 
         return gameObjects;
     }
+
+    public void Iterate<TEntityType>(List<TEntityType> elements, Action<TEntityType> action) where TEntityType : SceneNode
+    {
+        foreach (var entity in elements)
+        {
+            action(entity);
+
+            var children = entity.Children.OfType<TEntityType>().ToList();
+            if (children.Count != 0)
+                Iterate(children, action);
+        }
+    }
+
+    public void Iterate(List<SceneNode> elements, Action<SceneNode> action)
+        => Iterate<SceneNode>(elements, action);
 }
 
 /// <summary>

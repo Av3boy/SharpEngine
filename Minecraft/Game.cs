@@ -138,9 +138,14 @@ namespace Minecraft
                 }
             }
 
-            if (input.IsKeyDown(Keys.F))
+            if (input.IsKeyReleased(Keys.F))
             {
                 Settings.PrintFrameRate = !Settings.PrintFrameRate;
+            }
+
+            if (input.IsKeyReleased(Keys.L))
+            {
+                Settings.UseWireFrame = !Settings.UseWireFrame;
             }
         }
 

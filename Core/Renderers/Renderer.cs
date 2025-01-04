@@ -105,11 +105,8 @@ public class Renderer : RendererBase
         _lampShader.SetAttributes();
     }
 
-    /// <summary>
-    ///    Renders the scene.
-    /// </summary>
-    /// <param name="camera">The camera where the scene should be rendered to.</param>
-    public void Render(Camera camera)
+    /// <inheritdoc />
+    public override void Render()
     {
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -118,48 +115,42 @@ public class Renderer : RendererBase
 
         _shaders.ForEach(shader => shader.Use());
 
-        camera.SetShaderUniforms(_lightingShader.Shader);
+        _game.Camera.SetShaderUniforms(_lightingShader.Shader);
 
+        // Set polygon mode to line to draw wireframe
         if (_game.CoreSettings.UseWireFrame)
-            // Set polygon mode to line to draw wireframe
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
 
         GL.BindVertexArray(_vaoModel);
 
-        RenderSceneNode(_scene.Root, _game.Camera);
+        _scene.Iterate(_scene.Root.Children, RenderGameObject);
 
         GL.BindVertexArray(_vaoLamp);
 
-        if (_game.CoreSettings.UseWireFrame)
-            // Reset polygon mode to fill to draw solid objects
+        // Reset polygon mode to fill to draw solid objects
+        if (!_game.CoreSettings.UseWireFrame)
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
     }
 
-    private void RenderSceneNode(SceneNode node, Camera camera)
-    {
-        RenderGameObject(node, camera);
-
-        foreach (var child in node.Children)
-            RenderSceneNode(child, camera);
-    }
-
-    private void RenderGameObject(SceneNode node, Camera camera)
+    private  void RenderGameObject(SceneNode node)
     {
         if (node is GameObject gameObject)
         {
             // TODO: Fix culling for blocks that are partially in view
             // Perform frustum culling
-            if (gameObject is not Light && !IsInViewFrustum(gameObject.BoundingBox, camera))
+            if (!IsInViewFrustum(gameObject.BoundingBox, _game.Camera))
                 return;
 
             // TODO: Skip blocks that are behind others relative to the camera
-
             gameObject.Render();
         }
     }
 
     private static bool IsInViewFrustum(BoundingBox boundingBox, Camera camera)
     {
+        if (boundingBox is null)
+            return true;
+
         var planes = camera.GetFrustumPlanes();
 
         foreach (var plane in planes)
@@ -179,33 +170,5 @@ public class Renderer : RendererBase
     {
         var normal = new Vector3(plane.Normal.X, plane.Normal.Y, plane.Normal.Z);
         return Vector3.Dot(normal, point) + plane.D;
-    }
-}
-
-/// <summary>
-///     Represents a bounding box of a gameobject.
-///     TODO: Move to a separate file and as a property of GameObject.
-/// </summary>
-public class BoundingBox
-{
-    /// <summary>
-    ///     Gets or sets the minimum point of the bounding box.
-    /// </summary>
-    public Vector3 Min { get; set; }
-
-    /// <summary>
-    ///     Gets or sets the maximum point of the bounding box.
-    /// </summary>
-    public Vector3 Max { get; set; }
-
-    /// <summary>
-    ///     Initializes a new instance of <see cref="BoundingBox"/>.
-    /// </summary>
-    /// <param name="min">The minimum point of the box.</param>
-    /// <param name="max">The maximum point of the box.</param>
-    public BoundingBox(Vector3 min, Vector3 max)
-    {
-        Min = min;
-        Max = max;
     }
 }

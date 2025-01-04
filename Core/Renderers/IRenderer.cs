@@ -9,4 +9,9 @@ public abstract class RendererBase
     ///     Initializes the renderer.
     /// </summary>
     public abstract void Initialize();
+
+    /// <summary>
+    ///    Renders the scene.
+    /// </summary>
+    public abstract void Render();
 }
