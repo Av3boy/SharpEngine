@@ -9,7 +9,7 @@ namespace Core.Renderers;
 /// <summary>
 ///     Represents a renderer dedicated to drawing UI elements to the screen.
 /// </summary>
-public class UIRenderer : IRenderer
+public class UIRenderer : RendererBase
 {
     private readonly Scene _scene;
     private readonly Camera _camera;
@@ -45,7 +45,7 @@ public class UIRenderer : IRenderer
     private int _vertexArrayObject;
 
     /// <inheritdoc />
-    public void Initialize()
+    public override void Initialize()
     {
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         GL.Enable(EnableCap.DepthTest);
@@ -110,14 +110,14 @@ public class UIRenderer : IRenderer
     {
         foreach (var uiElement in elements)
         {
-            var model = Matrix4.CreateTranslation(new Vector3(1, 1, 1)) * Matrix4.CreateRotationX(45) * Matrix4.CreateScale(1);
+            /*var model = Matrix4.CreateTranslation(new Vector3(1, 1, 1)) * Matrix4.CreateRotationX(45) * Matrix4.CreateScale(1);
             _uiShader.SetMatrix4("model", model);
             _uiShader.SetMatrix4("view", _camera.GetViewMatrix());
             _uiShader.SetMatrix4("projection", _camera.GetProjectionMatrix());
 
-            GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);*/
 
-            //uiElement.Render(_uiShader);
+            uiElement.Render(_uiShader!);
 
             var children = uiElement.Children.OfType<UIElement>().ToList();
             RenderScene(children);

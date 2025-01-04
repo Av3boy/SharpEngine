@@ -1,4 +1,5 @@
 using Core.Interfaces;
+using Core.Shaders;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
@@ -9,13 +10,13 @@ namespace Core.Renderers;
 /// <summary>
 ///     Represents the game renderer.
 /// </summary>
-public class Renderer : IRenderer
+public class Renderer : RendererBase
 {
     private int _vaoModel;
     private int _vaoLamp;
 
-    private Shader _lampShader;
-    private Shader _lightingShader;
+    private LampShader _lampShader;
+    private LightingShader _lightingShader;
 
     private readonly IGame _game;
     private readonly Scene _scene;
@@ -67,7 +68,7 @@ public class Renderer : IRenderer
     }
 
     /// <inheritdoc />
-    public void Initialize()
+    public override void Initialize()
     {
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         GL.Enable(EnableCap.DepthTest);
@@ -87,8 +88,8 @@ public class Renderer : IRenderer
 
     private void InitializeShaders()
     {
-        _lightingShader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/lighting.frag", "lighting");
-        _lampShader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/shader.frag", "lamp");
+        _lightingShader = new LightingShader();
+        _lampShader = new LampShader();
     }
 
     private void InitializeVertexArrays()
@@ -96,24 +97,12 @@ public class Renderer : IRenderer
         _vaoModel = GL.GenVertexArray();
         GL.BindVertexArray(_vaoModel);
 
-        var positionLocation = _lightingShader.GetAttribLocation("aPos");
-        GL.EnableVertexAttribArray(positionLocation);
-        GL.VertexAttribPointer(positionLocation, VertexData.VerticesSize, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
-
-        var normalLocation = _lightingShader.GetAttribLocation("aNormal");
-        GL.EnableVertexAttribArray(normalLocation);
-        GL.VertexAttribPointer(normalLocation, VertexData.NormalsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.NormalsOffset);
-
-        var texCoordLocation = _lightingShader.GetAttribLocation("aTexCoords");
-        GL.EnableVertexAttribArray(texCoordLocation);
-        GL.VertexAttribPointer(texCoordLocation, VertexData.TexCoordsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.TexCoordsOffset);
+        _lightingShader.SetAttributes();
 
         _vaoLamp = GL.GenVertexArray();
         GL.BindVertexArray(_vaoLamp);
 
-        positionLocation = _lampShader.GetAttribLocation("aPos");
-        GL.EnableVertexAttribArray(positionLocation);
-        GL.VertexAttribPointer(positionLocation, 3, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
+        _lampShader.SetAttributes();
     }
 
     /// <summary>
@@ -129,7 +118,7 @@ public class Renderer : IRenderer
 
         _shaders.ForEach(shader => shader.Use());
 
-        camera.SetShaderUniforms(_lightingShader);
+        camera.SetShaderUniforms(_lightingShader.Shader);
 
         if (_game.CoreSettings.UseWireFrame)
             // Set polygon mode to line to draw wireframe
@@ -165,13 +154,13 @@ public class Renderer : IRenderer
                 switch (light)
                 {
                     case DirectionalLight directionalLight:
-                        directionalLight.Render(_lightingShader);
+                        directionalLight.Render(_lightingShader.Shader);
                         break;
                     case PointLight pointLight:
-                        pointLight.Render(_lightingShader, _lampShader);
+                        pointLight.Render(_lightingShader.Shader, _lampShader.Shader);
                         break;
                     case SpotLight spotLight:
-                        spotLight.Render(_lightingShader);
+                        spotLight.Render(_lightingShader.Shader);
                         break;
                 }
 

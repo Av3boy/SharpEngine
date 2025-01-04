@@ -3,10 +3,10 @@
 /// <summary>
 ///     Contains definitions shared across all renderers.
 /// </summary>
-public interface IRenderer
+public abstract class RendererBase
 {
     /// <summary>
     ///     Initializes the renderer.
     /// </summary>
-    public void Initialize();
+    public abstract void Initialize();
 }
