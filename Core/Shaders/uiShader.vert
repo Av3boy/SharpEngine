@@ -6,6 +6,6 @@ uniform mat4 uProjection;
 
 void main()
 {
-    // gl_Position = uProjection * vec4(aPos, 1.0);
+    // TODO: Transform the ui element
     gl_Position = vec4(aPos, 1.0);
 }

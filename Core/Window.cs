@@ -33,7 +33,7 @@ public class Window : GameWindow
         _game.Camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
 
         _renderer = new Renderer(_game, scene);
-        _uiRenderer = new UIRenderer(scene, _game.Camera, Size.X, Size.Y);
+        _uiRenderer = new UIRenderer(scene, _game.Camera);
     }
 
     /// <inheritdoc />
@@ -54,6 +54,7 @@ public class Window : GameWindow
     {
         base.OnRenderFrame(args);
 
+        // TODO: Multi threading for different renderers
         _renderer.Render(_game.Camera);
         _uiRenderer.Render();
 
