@@ -21,14 +21,14 @@ public class Renderer : RendererBase
     private readonly IGame _game;
     private readonly Scene _scene;
 
-    private List<Shader> _shaders = new();
-
     // Read only once, load into OpenGL buffer once.
     //
     // TODO: Multiple meshes
     // TODO: Create mesh service to keep track of loaded meshes
     // If already loaded, add mesh indetifier to a dictionary. If dict contains mesh, skip it.
     private static readonly float[] _vertices = GetVertices();
+
+    public override RenderFlags RenderFlag => RenderFlags.Renderer3D;
 
     private static float[] GetVertices()
     {
@@ -59,9 +59,9 @@ public class Renderer : RendererBase
     /// <summary>
     ///     Initializes a new instance of <see cref="Renderer"/>.
     /// </summary>
-    /// <param name="game"></param>
-    /// <param name="scene"></param>
-    public Renderer(IGame game, Scene scene)
+    /// <param name="game">The game the renderer is being used for.</param>
+    /// <param name="scene">The game scene to be rendered.</param>
+    public Renderer(IGame game, Scene scene) : base(game.CoreSettings)
     {
         _game = game;
         _scene = scene;
@@ -106,33 +106,20 @@ public class Renderer : RendererBase
     }
 
     /// <inheritdoc />
-    public override void Render()
+    public override void Render2()
     {
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-        if (ShaderService.Instance.HasShadersToLoad)
-            _shaders = ShaderService.Instance.GetAll();
-
-        _shaders.ForEach(shader => shader.Use());
-
         _game.Camera.SetShaderUniforms(_lightingShader.Shader);
 
-        // Set polygon mode to line to draw wireframe
-        if (_game.CoreSettings.UseWireFrame)
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+
 
         GL.BindVertexArray(_vaoModel);
 
         _scene.Iterate(_scene.Root.Children, RenderGameObject);
 
         GL.BindVertexArray(_vaoLamp);
-
-        // Reset polygon mode to fill to draw solid objects
-        if (!_game.CoreSettings.UseWireFrame)
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
     }
 
-    private  void RenderGameObject(SceneNode node)
+    private void RenderGameObject(SceneNode node)
     {
         if (node is GameObject gameObject)
         {

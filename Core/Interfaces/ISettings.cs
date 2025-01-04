@@ -1,4 +1,6 @@
-﻿namespace Core.Interfaces;
+﻿using Core.Renderers;
+
+namespace Core.Interfaces;
 
 /// <summary>
 ///     Contains definitions for the settings the game engine supports.
@@ -14,4 +16,6 @@ public interface ISettings
     ///     Gets or sets whether each frames frame rate should be printed to the console.
     /// </summary>
     public bool PrintFrameRate { get; set; }
+
+    public RenderFlags RendererFlags { get; set; }
 }

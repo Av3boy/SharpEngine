@@ -1,4 +1,5 @@
 ﻿using Core.Interfaces;
+using Core.Renderers;
 
 namespace Minecraft;
 
@@ -10,4 +11,7 @@ public class Settings : ISettings
 
     /// <inheritdoc/>
     public bool PrintFrameRate { get; set; }
+
+    /// <inheritdoc/>
+    public RenderFlags RendererFlags { get; set; } = RenderFlags.All;
 }

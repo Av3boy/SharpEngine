@@ -33,7 +33,7 @@ public class Window : GameWindow
         _game.Camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
 
         _renderer = new Renderer(_game, scene);
-        _uiRenderer = new UIRenderer(scene, _game.Camera);
+        _uiRenderer = new UIRenderer(scene, _game);
     }
 
     /// <inheritdoc />
@@ -53,6 +53,9 @@ public class Window : GameWindow
     protected override void OnRenderFrame(FrameEventArgs args)
     {
         base.OnRenderFrame(args);
+
+        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
 
         // TODO: Multi threading for different renderers
         _renderer.Render();
