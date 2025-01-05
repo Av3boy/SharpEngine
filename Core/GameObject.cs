@@ -1,6 +1,5 @@
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using System.Xml.Linq;
 
 namespace Core;
 
@@ -38,32 +37,21 @@ public class GameObject : SceneNode
     public Mesh Mesh { get; set; }
 
     /// <summary>
-    ///     Gets or sets the position of the game object.
-    /// </summary>
-    public Vector3 Position { get; set; }
-
-    /// <summary>
-    ///     Gets or sets the scale of the game object.
-    /// </summary>
-    public Vector3 Scale { get; set; } = new(1, 1, 1);
-
-    /// <summary>
-    ///     Gets or sets the rotation of the game object.
-    /// </summary>
-    public Quaternion Quaternion { get; set; } = new();
-
-    /// <summary>
     ///     Gets or sets the material of the game object.
     /// </summary>
     public Material Material { get; set; } = new();
 
-    // TODO: Cleanup
-    public Transform Transform => new()
+    private Transform _transform = new();
+
+    public Transform Transform
     {
-        Position = Position,
-        Scale = Scale,
-        Rotation = Quaternion
-    };
+        get => _transform;
+        set
+        {
+            _transform = value;
+            BoundingBox = BoundingBox.CalculateBoundingBox(_transform);
+        }
+    }
 
     /// <summary>
     ///     Renders the game object using the specified camera.

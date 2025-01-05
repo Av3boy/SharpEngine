@@ -78,8 +78,8 @@ public class PointLight : Light
     /// <param name="index">The index of the light in the shader array.</param>
     public PointLight(Vector3 position, int index)
     {
-        Scale = new(0.2f, 0.2f, 0.2f);
-        Position = position;
+        Transform.Scale = new(0.2f, 0.2f, 0.2f);
+        Transform.Position = position;
         Constant = 1.0f;
         Linear = 0.09f;
         Quadratic = 0.032f;
@@ -113,7 +113,7 @@ public class PointLight : Light
     /// <inheritdoc />
     public override void Render()
     {
-        Material.Shader.SetVector3($"pointLights[{_index}].position", Position);
+        Material.Shader.SetVector3($"pointLights[{_index}].position", Transform.Position);
         Material.Shader.SetVector3($"pointLights[{_index}].ambient", Ambient);
         Material.Shader.SetVector3($"pointLights[{_index}].diffuse", Diffuse);
         Material.Shader.SetVector3($"pointLights[{_index}].specular", Specular);
@@ -121,8 +121,8 @@ public class PointLight : Light
         Material.Shader.SetFloat($"pointLights[{_index}].linear", Linear);
         Material.Shader.SetFloat($"pointLights[{_index}].quadratic", Quadratic);
 
-        Matrix4 lampMatrix = Matrix4.CreateScale(Scale);
-        lampMatrix *= Matrix4.CreateTranslation(Position);
+        Matrix4 lampMatrix = Matrix4.CreateScale(Transform.Scale);
+        lampMatrix *= Matrix4.CreateTranslation(Transform.Position);
 
         LampShader.Shader.SetMatrix4("model", lampMatrix);
     }
@@ -181,7 +181,7 @@ public class SpotLight : Light
     /// <inheritdoc />
     public override void Render()
     {
-        Material.Shader.SetVector3("spotLight.position", Position);
+        Material.Shader.SetVector3("spotLight.position", Transform.Position);
         Material.Shader.SetVector3("spotLight.direction", Direction);
         Material.Shader.SetVector3("spotLight.ambient", Ambient);
         Material.Shader.SetVector3("spotLight.diffuse", Diffuse);

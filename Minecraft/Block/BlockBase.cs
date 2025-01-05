@@ -48,11 +48,15 @@ public class BlockBase : GameObject
 
     private void AssignProperties(GameObject cube, string name)
     {
-        Position = cube.Position;
+        Transform = new()
+        {
+            Position = cube.Transform.Position,
+            Rotation = cube.Transform.Rotation,
+            Scale = cube.Transform.Scale
+        };
+
         Name = name;
         Material = cube.Material;
         Mesh = cube.Mesh;
-        Quaternion = cube.Quaternion;
-        Scale = cube.Scale;
     }
 }

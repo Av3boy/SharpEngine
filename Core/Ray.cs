@@ -74,8 +74,8 @@ namespace Core
         /// <returns><see langword="true"/> if the point is inside the object, otherwise otherwise <see langword="false"/>.</returns>
         public static bool IsPointInsideObject(Vector3 point, GameObject obj)
         {
-            Vector3 min = obj.Position - (obj.Scale / 2);
-            Vector3 max = obj.Position + (obj.Scale / 2);
+            Vector3 min = obj.Transform.Position - (obj.Transform.Scale / 2);
+            Vector3 max = obj.Transform.Position + (obj.Transform.Scale / 2);
 
             return point.X >= min.X && point.X <= max.X &&
                    point.Y >= min.Y && point.Y <= max.Y &&
@@ -90,8 +90,8 @@ namespace Core
         /// <returns>The normal of the closest face.</returns>
         public static Vector3 GetClosestFaceNormal(Vector3 point, GameObject obj)
         {
-            Vector3 min = obj.Position - (obj.Scale / 2);
-            Vector3 max = obj.Position + (obj.Scale / 2);
+            Vector3 min = obj.Transform.Position - (obj.Transform.Scale / 2);
+            Vector3 max = obj.Transform.Position + (obj.Transform.Scale / 2);
 
             var distances = new Dictionary<Vector3, float>
                 {

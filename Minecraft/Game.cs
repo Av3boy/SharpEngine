@@ -208,14 +208,14 @@ namespace Minecraft
             var newBlock = BlockFactory.CreateBlock(_inventory.SelectedSlot.Items.Type, newBlockPosition, $"Dirt ({_blocksNode.Children.Count})");
             _blocksNode.AddChild(newBlock);
 
-            Console.WriteLine($"New block created: {newBlock.Position}, block in view location: {intersectingObject.Position}");
+            Console.WriteLine($"New block created: {newBlock.Transform.Position}, block in view location: {intersectingObject.Transform.Position}");
 
         }
 
         private static Vector3 GetNewBlockPosition(Vector3 hitPosition, GameObject intersectingObject)
         {
             Vector3 normal = Ray.GetClosestFaceNormal(hitPosition, intersectingObject);
-            return intersectingObject.Position + (normal * intersectingObject.Scale);
+            return intersectingObject.Transform.Position + (normal * intersectingObject.Transform.Scale);
         }
 
         public bool IsBlockInView(out GameObject intersectingObject, out Vector3 hitPosition)

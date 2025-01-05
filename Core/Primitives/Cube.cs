@@ -19,7 +19,7 @@ public static class Cube
     public static GameObject Create(Vector3 position, string diffuseMapFile, string specularMapFile, string vertShaderFile, string fragShaderFile)
         => new(diffuseMapFile, specularMapFile, vertShaderFile, fragShaderFile)
         {
-            Position = position,
+            Transform = new Transform { Position = position },
             Mesh = Mesh
         };
 
