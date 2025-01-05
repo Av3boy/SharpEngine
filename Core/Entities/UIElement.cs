@@ -1,39 +1,34 @@
-﻿using Core.Shaders;
+﻿using Core.Entities.Properties;
+using Core.Shaders;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Core;
+namespace Core.Entities;
 public class UIElement : SceneNode
 {
     public UIElement()
     {
-        
+
     }
 
     private UIShader _uIShader = new UIShader();
 
-    public Vector3 Position { get; set; } = new(0, 0, 0);
-    public Vector3 Scale { get; set; } = new(1, 1, 1);
+    Transform2D Transform { get; set; } = new();
 
     private readonly float[] _vertices =
-    {
+    [
         // Position         Texture coordinates
          0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,  // top right
          0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom right
         -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom left
         -0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // top left
-    };
+    ];
 
     private readonly uint[] _indices =
-    {
+    [
        0, 1, 3,
        1, 2, 3
-    };
+    ];
 
     private int _vertexArrayObject;
 
@@ -43,7 +38,6 @@ public class UIElement : SceneNode
         GL.BindVertexArray(_vertexArrayObject);
 
         InitializeBuffers();
-
     }
 
     private void InitializeBuffers()
@@ -60,11 +54,10 @@ public class UIElement : SceneNode
     /// <summary>
     ///     Render the UI element.
     /// </summary>
-    public void Render()
+    public override void Render()
     {
         GL.BindVertexArray(_vertexArrayObject);
 
-        // TODO: Control ui element positions.
         var model = Matrix4.CreateTranslation(new Vector3(0, 1, 0)) * Matrix4.CreateRotationX(90) * Matrix4.CreateScale(1);
         _uIShader.Shader.SetMatrix4("model", model);
 

@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Core.Entities;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Minecraft;

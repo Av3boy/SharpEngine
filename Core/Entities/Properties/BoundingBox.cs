@@ -1,6 +1,6 @@
 ﻿using OpenTK.Mathematics;
 
-namespace Core;
+namespace Core.Entities.Properties;
 
 /// <summary>
 ///     Represents a bounding box of a gameobject.
@@ -34,8 +34,8 @@ public class BoundingBox
     /// <returns>The bounding box of the game object.</returns>
     public static BoundingBox CalculateBoundingBox(Transform transform)
     {
-        Vector3 min = transform.Position - (transform.Scale / 2);
-        Vector3 max = transform.Position + (transform.Scale / 2);
+        var min = transform.Position - transform.Scale / 2;
+        var max = transform.Position + transform.Scale / 2;
         return new BoundingBox(min, max);
     }
 }

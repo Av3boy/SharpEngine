@@ -1,4 +1,6 @@
-﻿using OpenTK.Windowing.Common;
+﻿using Core.Entities;
+using Core.Enums;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using static Core.Window;
 

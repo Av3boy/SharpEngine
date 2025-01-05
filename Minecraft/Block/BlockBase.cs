@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Core.Entities;
 using Core.Primitives;
 
 using OpenTK.Mathematics;
@@ -42,7 +42,7 @@ public class BlockBase : GameObject
 
     private void Intialize(Vector3 position, string name, string diffuseMapFile, string specularMapFile, string vertShaderFile, string fragShaderFile)
     {
-        var cube = Cube.Create(position, diffuseMapFile, specularMapFile, vertShaderFile, fragShaderFile);
+        var cube = PrimitiveFactory.Create(PrimitiveType.Cube, position, diffuseMapFile, specularMapFile, vertShaderFile, fragShaderFile);
         AssignProperties(cube, name);
     }
 

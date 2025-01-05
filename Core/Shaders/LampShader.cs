@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using Core.Entities.Properties;
+using OpenTK.Graphics.OpenGL4;
 
 namespace Core.Shaders;
 

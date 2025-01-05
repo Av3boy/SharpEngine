@@ -1,3 +1,5 @@
+using Core.Entities;
+using Core.Entities.Properties;
 using Core.Interfaces;
 using Core.Shaders;
 using OpenTK.Graphics.OpenGL4;
@@ -71,7 +73,6 @@ public class Renderer : RendererBase
     public override void Initialize()
     {
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        GL.Enable(EnableCap.DepthTest);
 
         InitializeBuffers();
         InitializeShaders();
@@ -108,9 +109,9 @@ public class Renderer : RendererBase
     /// <inheritdoc />
     public override void Render2()
     {
+        GL.Enable(EnableCap.DepthTest);
+
         _game.Camera.SetShaderUniforms(_lightingShader.Shader);
-
-
 
         GL.BindVertexArray(_vaoModel);
 

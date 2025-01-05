@@ -1,4 +1,6 @@
 using Core;
+using Core.Entities;
+using Core.Enums;
 using Core.Interfaces;
 using Minecraft.Block;
 

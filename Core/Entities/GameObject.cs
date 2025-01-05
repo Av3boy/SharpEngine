@@ -1,7 +1,8 @@
+using Core.Entities.Properties;
+using Core.Shaders;
 using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
 
-namespace Core;
+namespace Core.Entities;
 
 /// <summary>
 /// Represents a game object in the scene.
@@ -43,6 +44,9 @@ public class GameObject : SceneNode
 
     private Transform _transform = new();
 
+    /// <summary>
+    ///    Gets or sets the transform of the game object.
+    /// </summary>
     public Transform Transform
     {
         get => _transform;
@@ -53,10 +57,8 @@ public class GameObject : SceneNode
         }
     }
 
-    /// <summary>
-    ///     Renders the game object using the specified camera.
-    /// </summary>
-    public virtual void Render()
+    /// <inheritdoc />
+    public override void Render()
     {
         Material.DiffuseMap.Use(TextureUnit.Texture0);
         Material.SpecularMap.Use(TextureUnit.Texture1);
@@ -75,15 +77,4 @@ public class GameObject : SceneNode
     ///     Gets the bounding box of the game object.
     /// </summary>
     public BoundingBox BoundingBox { get; set; }
-}
-
-public class Transform
-{
-    public Vector3 Position { get; set; }
-    public Vector3 Scale { get; set; } = new(1, 1, 1);
-    public Quaternion Rotation { get; set; } = new();
-
-    public Matrix4 ModelMatrix => Matrix4.CreateScale(Scale) * 
-                                  Matrix4.CreateFromAxisAngle(Rotation.Axis, MathHelper.DegreesToRadians(Rotation.Angle)) *
-                                  Matrix4.CreateTranslation(Position);
 }

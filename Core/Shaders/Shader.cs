@@ -6,7 +6,7 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System.Text.RegularExpressions;
 
-namespace Core
+namespace Core.Shaders
 {
     /// <summary>
     ///     Contains all the shaders used in the game.

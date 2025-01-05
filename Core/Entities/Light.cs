@@ -1,7 +1,7 @@
 using Core.Shaders;
 using OpenTK.Mathematics;
 
-namespace Core;
+namespace Core.Entities;
 
 /// <summary>
 ///     Represents a light source in the scene.
@@ -121,7 +121,7 @@ public class PointLight : Light
         Material.Shader.SetFloat($"pointLights[{_index}].linear", Linear);
         Material.Shader.SetFloat($"pointLights[{_index}].quadratic", Quadratic);
 
-        Matrix4 lampMatrix = Matrix4.CreateScale(Transform.Scale);
+        var lampMatrix = Matrix4.CreateScale(Transform.Scale);
         lampMatrix *= Matrix4.CreateTranslation(Transform.Position);
 
         LampShader.Shader.SetMatrix4("model", lampMatrix);

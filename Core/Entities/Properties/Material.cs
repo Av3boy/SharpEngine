@@ -1,6 +1,7 @@
-﻿using OpenTK.Mathematics;
+﻿using Core.Shaders;
+using OpenTK.Mathematics;
 
-namespace Core;
+namespace Core.Entities.Properties;
 
 /// <summary>
 ///     Represents the material rendered onto a game object.

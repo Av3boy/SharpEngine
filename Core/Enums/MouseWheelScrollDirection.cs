@@ -1,4 +1,4 @@
-﻿namespace Core;
+﻿namespace Core.Enums;
 
 /// <summary>
 ///     Contains the possible mouse wheel scroll directions.

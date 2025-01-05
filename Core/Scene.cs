@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static System.Formats.Asn1.AsnWriter;
@@ -166,5 +167,10 @@ public class SceneNode
     public void RemoveChild(SceneNode node)
     {
         Children.Remove(node);
+    }
+
+    public virtual void Render()
+    {
+
     }
 }

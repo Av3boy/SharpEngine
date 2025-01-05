@@ -1,8 +1,9 @@
+using Core.Shaders;
 using OpenTK.Mathematics;
 using System;
 using Plane = System.Numerics.Plane;
 
-namespace Core;
+namespace Core.Entities;
 
 /// <summary>
 ///     Represents a movable camera.
@@ -176,7 +177,7 @@ public class Camera
     /// <returns>An array of six planes representing the camera's frustum.</returns>
     public Plane[] GetFrustumPlanes()
     {
-        Matrix4 viewProjection = GetViewMatrix() * GetProjectionMatrix();
+        var viewProjection = GetViewMatrix() * GetProjectionMatrix();
         Plane[] planes =
         [
             // Left

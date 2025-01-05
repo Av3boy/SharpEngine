@@ -5,8 +5,11 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
 
 using Core.Interfaces;
-using System;
 using Core.Renderers;
+using Core.Enums;
+using Core.Entities;
+
+using System;
 
 namespace Core;
 
@@ -55,7 +58,6 @@ public class Window : GameWindow
         base.OnRenderFrame(args);
 
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
 
         // TODO: Multi threading for different renderers
         _renderer.Render();

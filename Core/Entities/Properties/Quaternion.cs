@@ -1,6 +1,6 @@
 ﻿using OpenTK.Mathematics;
 
-namespace Core;
+namespace Core.Entities.Properties;
 
 /// <summary>
 ///     Represents a quaternion for rotation.
