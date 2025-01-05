@@ -51,7 +51,7 @@ public class UIRenderer : RendererBase
     }
 
     /// <inheritdoc />
-    public override void Render2()
+    public override void Render()
     {
         GL.Disable(EnableCap.DepthTest);
         GL.DepthFunc(DepthFunction.Less);

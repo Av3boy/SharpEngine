@@ -28,35 +28,10 @@ public class Renderer : RendererBase
     // TODO: Multiple meshes
     // TODO: Create mesh service to keep track of loaded meshes
     // If already loaded, add mesh indetifier to a dictionary. If dict contains mesh, skip it.
-    private static readonly float[] _vertices = GetVertices();
+    private static readonly float[] _vertices = Primitives.Cube.Mesh.GetVertices();
 
+    /// <inheritdoc />
     public override RenderFlags RenderFlag => RenderFlags.Renderer3D;
-
-    private static float[] GetVertices()
-    {
-        var mesh = Primitives.Cube.Mesh; // Mesh is identical for all cubes
-        var vertices = new List<float>();
-
-        for (int i = 0; i < mesh.Vertices.Length / 3; i++)
-        {
-            var vertexIndex = i * 3;
-
-            vertices.Add(mesh.Vertices[vertexIndex]);
-            vertices.Add(mesh.Vertices[vertexIndex + 1]);
-            vertices.Add(mesh.Vertices[vertexIndex + 2]);
-
-            var normalIndex = i * 3;
-            vertices.Add(mesh.Normals[normalIndex]);
-            vertices.Add(mesh.Normals[normalIndex + 1]);
-            vertices.Add(mesh.Normals[normalIndex + 2]);
-
-            var texCoordIndex = i * 2;
-            vertices.Add(mesh.TextureCoordinates[texCoordIndex]);
-            vertices.Add(mesh.TextureCoordinates[texCoordIndex + 1]);
-        }
-
-        return vertices.ToArray();
-    }
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Renderer"/>.
@@ -107,7 +82,7 @@ public class Renderer : RendererBase
     }
 
     /// <inheritdoc />
-    public override void Render2()
+    public override void Render()
     {
         GL.Enable(EnableCap.DepthTest);
 

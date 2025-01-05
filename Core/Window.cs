@@ -10,6 +10,9 @@ using Core.Enums;
 using Core.Entities;
 
 using System;
+using Core.Shaders;
+using System.Runtime;
+using System.Collections.Generic;
 
 namespace Core;
 
@@ -59,11 +62,35 @@ public class Window : GameWindow
 
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
+        ToggleWireFrame(_game.CoreSettings.UseWireFrame);
+
+        UseShaders();
+
         // TODO: Multi threading for different renderers
-        _renderer.Render();
-        _uiRenderer.Render();
+        if (_game.CoreSettings.RendererFlags.HasFlag(_renderer.RenderFlag))
+            _renderer.Render();
+
+        if (_game.CoreSettings.RendererFlags.HasFlag(_uiRenderer.RenderFlag))
+            _uiRenderer.Render();
 
         SwapBuffers();
+    }
+
+    /// <summary>
+    ///     Toggles the renderer between wireframe and fill mode.
+    /// </summary>
+    /// <param name="useWireFrame">Determines whether objects should be rendered in wireframe.</param>
+    private static void ToggleWireFrame(bool useWireFrame)
+        => GL.PolygonMode(MaterialFace.FrontAndBack, useWireFrame ? PolygonMode.Line : PolygonMode.Fill);
+
+    private List<Shader> _shaders = [];
+
+    private void UseShaders()
+    {
+        if (ShaderService.Instance.HasShadersToLoad)
+            _shaders = ShaderService.Instance.GetAll();
+
+        _shaders.ForEach(shader => shader.Use());
     }
 
     /// <inheritdoc />
