@@ -1,4 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System.Xml.Linq;
 
@@ -27,7 +27,7 @@ public class GameObject : SceneNode
         Material.SpecularMap = TextureService.Instance.LoadTexture(specularMapFile);
         Material.Shader = ShaderService.Instance.LoadShader(vertShaderFile, fragShaderFile, "lighting");
 
-        BoundingBox = CalculateBoundingBox();
+        BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
     }
 
     // TODO: Cleanup these properties
@@ -70,9 +70,7 @@ public class GameObject : SceneNode
         Material.Shader.SetVector3("material.specular", Material.Specular);
         Material.Shader.SetFloat("material.shininess", Material.Shininess);
 
-        Matrix4 model = Matrix4.CreateTranslation(Position);
-        model *= Matrix4.CreateFromAxisAngle(Quaternion.Axis, MathHelper.DegreesToRadians(Quaternion.Angle));
-        Material.Shader.SetMatrix4("model", model);
+        Mesh.Material.Shader.SetMatrix4("model", Transform.ModelMatrix);
 
         GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
     }
@@ -81,31 +79,15 @@ public class GameObject : SceneNode
     ///     Gets the bounding box of the game object.
     /// </summary>
     public BoundingBox BoundingBox { get; set; }
-
-    /// <summary>
-    ///     Calculates the bounding box of the game object.
-    /// </summary>
-    /// <returns>The bounding box of the game object.</returns>
-    private BoundingBox CalculateBoundingBox()
-    {
-        Vector3 min = Position - (Scale / 2);
-        Vector3 max = Position + (Scale / 2);
-        return new BoundingBox(min, max);
-    }
 }
 
-/// <summary>
-///     Represents a quaternion for rotation.
-/// </summary>
-public class Quaternion
+public class Transform
 {
-    /// <summary>
-    ///     Gets or sets the angle of rotation in degrees.
-    /// </summary>
-    public float Angle { get; set; }
+    public Vector3 Position { get; set; }
+    public Vector3 Scale { get; set; } = new(1, 1, 1);
+    public Quaternion Rotation { get; set; } = new();
 
-    /// <summary>
-    ///     Gets or sets the axis of rotation.
-    /// </summary>
-    public Vector3 Axis { get; set; } = new(0, 1, 0);
+    public Matrix4 ModelMatrix => Matrix4.CreateScale(Scale) * 
+                                  Matrix4.CreateFromAxisAngle(Rotation.Axis, MathHelper.DegreesToRadians(Rotation.Angle)) *
+                                  Matrix4.CreateTranslation(Position);
 }

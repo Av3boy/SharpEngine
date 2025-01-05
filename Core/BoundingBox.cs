@@ -27,4 +27,15 @@ public class BoundingBox
         Min = min;
         Max = max;
     }
+
+    /// <summary>
+    ///     Calculates the bounding box of the game object.
+    /// </summary>
+    /// <returns>The bounding box of the game object.</returns>
+    public static BoundingBox CalculateBoundingBox(Transform transform)
+    {
+        Vector3 min = transform.Position - (transform.Scale / 2);
+        Vector3 max = transform.Position + (transform.Scale / 2);
+        return new BoundingBox(min, max);
+    }
 }

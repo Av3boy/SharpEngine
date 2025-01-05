@@ -65,10 +65,8 @@ public class UIElement : SceneNode
         GL.BindVertexArray(_vertexArrayObject);
 
         // TODO: Control ui element positions.
-        var model = Matrix4.CreateTranslation(new Vector3(1, 1, 1)) * Matrix4.CreateRotationX(90) * Matrix4.CreateScale(1);
-        // _uiShader.SetMatrix4("model", model);
-        // _uiShader.SetMatrix4("view", _camera.GetViewMatrix());
-        //_uiShader.SetMatrix4("uProjection", _orthoProjection, transpose: false);
+        var model = Matrix4.CreateTranslation(new Vector3(0, 1, 0)) * Matrix4.CreateRotationX(90) * Matrix4.CreateScale(1);
+        _uIShader.Shader.SetMatrix4("model", model);
 
         GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
     }

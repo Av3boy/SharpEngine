@@ -2,10 +2,14 @@
 
 layout (location = 0) in vec3 aPos;
 
-uniform mat4 uProjection;
+uniform mat4 model;
+
+out vec3 FragPos;
 
 void main()
 {
-    // TODO: Transform the ui element
-    gl_Position = vec4(aPos, 1.0);
+    vec4 pos = vec4(aPos, 1.0);
+
+    gl_Position = model * pos;
+    FragPos = vec3(model * pos);
 }
