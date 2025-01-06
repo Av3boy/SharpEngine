@@ -47,6 +47,8 @@ public class Window : GameWindow
     {
         base.OnLoad();
 
+        GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
         _renderer.Initialize();
         _uiRenderer.Initialize();
 

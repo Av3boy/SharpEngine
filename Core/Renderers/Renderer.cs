@@ -2,10 +2,9 @@ using Core.Entities;
 using Core.Entities.Properties;
 using Core.Interfaces;
 using Core.Shaders;
+
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-
-using System.Collections.Generic;
 
 namespace Core.Renderers;
 
@@ -47,19 +46,9 @@ public class Renderer : RendererBase
     /// <inheritdoc />
     public override void Initialize()
     {
-        GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
-        InitializeBuffers();
+        MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
         InitializeShaders();
         InitializeVertexArrays();
-    }
-
-    private static void InitializeBuffers()
-    {
-        var vertexBufferObject = GL.GenBuffer();
-
-        GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferObject);
-        GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
     }
 
     private void InitializeShaders()

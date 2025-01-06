@@ -22,7 +22,7 @@ public class Transform2D
     /// <summary>
     ///     Gets the transformation of the game object as a model matrix.
     /// </summary>
-    public Matrix4 ModelMatrix => Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 1)) *
-                                  Matrix4.CreateFromAxisAngle(Vector3.UnitX, MathHelper.DegreesToRadians(Rotation)) *
+    public Matrix4 ModelMatrix => Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 0)) *
+                                  Matrix4.CreateRotationZ(Rotation) *
                                   Matrix4.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using OpenTK.Graphics.OpenGL4;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Core.Entities.Properties;
 
@@ -48,5 +50,29 @@ public static class MeshExtensions
         }
 
         return vertices.ToArray();
+    }
+}
+
+public class MeshService
+{
+    public static MeshService Instance = new();
+
+    private Dictionary<string, Mesh> Meshes = new();
+
+    private MeshService() { }
+
+    public Mesh LoadMesh(string identifier, Mesh mesh)
+    {
+        if (Meshes.TryGetValue(identifier, out var cachedMesh))
+            return cachedMesh;
+
+        var meshData = mesh.GetVertices();
+
+        var vertexBufferObject = GL.GenBuffer();
+        GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferObject);
+        GL.BufferData(BufferTarget.ArrayBuffer, meshData.Length * sizeof(float), meshData, BufferUsageHint.StaticDraw);
+
+        Meshes.Add(identifier, mesh);
+        return mesh;
     }
 }

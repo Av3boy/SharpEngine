@@ -1,19 +1,27 @@
 ﻿using Core.Entities.Properties;
-using Core.Shaders;
 using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
+
+using Core.Shaders;
 
 namespace Core.Entities;
+
 public class UIElement : SceneNode
 {
-    public UIElement()
+    public UIElement(string name)
     {
-
+        Name = name;
+        // Mesh = MeshService.Instance.LoadMesh("plane", Primitives.Plane.Mesh);
     }
 
     private UIShader _uIShader = new UIShader();
 
-    Transform2D Transform { get; set; } = new();
+    public Transform2D Transform { get; set; } = new()
+    {
+        Rotation = 180
+    };
+
+    // TODO: Use actual mesh
+    public Mesh Mesh { get; set; }
 
     private readonly float[] _vertices =
     [
@@ -58,8 +66,7 @@ public class UIElement : SceneNode
     {
         GL.BindVertexArray(_vertexArrayObject);
 
-        var model = Matrix4.CreateTranslation(new Vector3(0, 1, 0)) * Matrix4.CreateRotationX(90) * Matrix4.CreateScale(1);
-        _uIShader.Shader.SetMatrix4("model", model);
+        _uIShader.Shader.SetMatrix4("model", Transform.ModelMatrix);
 
         GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
     }
