@@ -49,6 +49,9 @@ namespace Minecraft
             _lightsNode = _scene.Root.AddChild("lights");
             _blocksNode = _scene.Root.AddChild("blocks");
 
+            uiElem = new UIElement("uiElement");
+            _scene.UIElements.Add(uiElem);
+
             InitializeWorld();
         }
 
@@ -80,9 +83,6 @@ namespace Minecraft
             // _lightingShader.SetInt("numDirLights", 1);
             // _lightingShader.SetInt("numPointLights", 4);
             // _lightingShader.SetInt("numSpotLights", 1);
-
-            // uiElem = new UIElement("uiElement");
-            // _scene.UIElements.Add(uiElem);
         }
 
         UIElement uiElem;
@@ -127,7 +127,7 @@ namespace Minecraft
         /// <inheritdoc />
         public void Update(FrameEventArgs args, KeyboardState keyboardState, MouseState mouseState)
         {
-            //uiElem.Transform.Rotation += 0.01f;
+            uiElem.Transform.Rotation += 0.01f;
         }
 
         // TODO: Input system to let users change change key bindings?

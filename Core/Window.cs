@@ -49,12 +49,12 @@ public class Window : GameWindow
 
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-        _renderer.Initialize();
-        _uiRenderer.Initialize();
-
         CursorState = CursorState.Grabbed;
 
         _game.Initialize();
+
+        _renderer.Initialize();
+        _uiRenderer.Initialize();
     }
 
     /// <inheritdoc />
