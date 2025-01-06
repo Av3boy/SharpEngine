@@ -13,6 +13,7 @@ using System;
 using Core.Shaders;
 using System.Runtime;
 using System.Collections.Generic;
+using Core.Entities.Properties;
 
 namespace Core;
 
@@ -50,6 +51,9 @@ public class Window : GameWindow
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
         CursorState = CursorState.Grabbed;
+
+        // Load all meshes from the mesh cache
+        MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
 
         _game.Initialize();
 

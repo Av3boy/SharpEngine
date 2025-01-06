@@ -75,4 +75,6 @@ public class MeshService
         Meshes.Add(identifier, mesh);
         return mesh;
     }
+
+    // TODO: Load mesh from file
 }

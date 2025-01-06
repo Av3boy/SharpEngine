@@ -27,7 +27,6 @@ public class Renderer : RendererBase
     // TODO: Multiple meshes
     // TODO: Create mesh service to keep track of loaded meshes
     // If already loaded, add mesh indetifier to a dictionary. If dict contains mesh, skip it.
-    private static readonly float[] _vertices = Primitives.Cube.Mesh.GetVertices();
 
     /// <inheritdoc />
     public override RenderFlags RenderFlag => RenderFlags.Renderer3D;
@@ -46,7 +45,6 @@ public class Renderer : RendererBase
     /// <inheritdoc />
     public override void Initialize()
     {
-        MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
         InitializeShaders();
         InitializeVertexArrays();
     }
