@@ -2,9 +2,11 @@
 using System.IO;
 using System.Collections.Generic;
 
-using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
 using System.Text.RegularExpressions;
+
+using static Core.Window;
+using Silk.NET.OpenGL;
+using System.Numerics;
 
 namespace Core.Shaders
 {
@@ -86,7 +88,7 @@ namespace Core.Shaders
     public class Shader
     {
         /// <summary>Gets the handle to the shader program.</summary>
-        public readonly int Handle;
+        public readonly uint Handle;
 
         /// <summary>Gets or sets the identifying name of the shader.</summary>
         public string Name { get; set; }
@@ -118,10 +120,10 @@ namespace Core.Shaders
             shaderSource = ProcessIncludes(shaderSource, Path.GetDirectoryName(vertPath)!);
 
             // GL.CreateShader will create an empty shader (obviously). The ShaderType enum denotes which type of shader will be created.
-            var vertexShader = GL.CreateShader(ShaderType.VertexShader);
+            var vertexShader = Window.GL.CreateShader(ShaderType.VertexShader);
 
             // Now, bind the GLSL source code
-            GL.ShaderSource(vertexShader, shaderSource);
+            Window.GL.ShaderSource(vertexShader, shaderSource);
 
             // And then compile
             CompileShader(vertexShader);
@@ -130,27 +132,28 @@ namespace Core.Shaders
             shaderSource = File.ReadAllText(fragPath);
             shaderSource = ProcessIncludes(shaderSource, Path.GetDirectoryName(fragPath)!);
 
-            var fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-            GL.ShaderSource(fragmentShader, shaderSource);
+            var fragmentShader = Window.GL.CreateShader(ShaderType.FragmentShader);
+            Window.GL.ShaderSource(fragmentShader, shaderSource);
             CompileShader(fragmentShader);
 
             // These two shaders must then be merged into a shader program, which can then be used by OpenGL.
             // To do this, create a program...
-            Handle = GL.CreateProgram();
+            
+            Handle = Window.GL.CreateProgram();
 
             // Attach both shaders...
-            GL.AttachShader(Handle, vertexShader);
-            GL.AttachShader(Handle, fragmentShader);
+            Window.GL.AttachShader(Handle, vertexShader);
+            Window.GL.AttachShader(Handle, fragmentShader);
 
             // And then link them together.
             LinkProgram(Handle);
 
             // When the shader program is linked, it no longer needs the individual shaders attached to it; the compiled code is copied into the shader program.
             // Detach them, and then delete them.
-            GL.DetachShader(Handle, vertexShader);
-            GL.DetachShader(Handle, fragmentShader);
-            GL.DeleteShader(fragmentShader);
-            GL.DeleteShader(vertexShader);
+            Window.GL.DetachShader(Handle, vertexShader);
+            Window.GL.DetachShader(Handle, fragmentShader);
+            Window.GL.DeleteShader(fragmentShader);
+            Window.GL.DeleteShader(vertexShader);
 
             // The shader is now ready to go, but first, we're going to cache all the shader uniform locations.
             // Querying this from the shader is very slow, so we do it once on initialization and reuse those values
@@ -192,29 +195,29 @@ namespace Core.Shaders
             });
         }
 
-        private static void CompileShader(int shader)
+        private static void CompileShader(uint shader)
         {
             // Try to compile the shader
-            GL.CompileShader(shader);
+            Window.GL.CompileShader(shader);
 
             // Check for compilation errors
-            GL.GetShader(shader, ShaderParameter.CompileStatus, out var code);
+            Window.GL.GetShader(shader, ShaderParameter.CompileStatus, out var code);
             if (code != (int)All.True)
             {
                 // We can use `GL.GetShaderInfoLog(shader)` to get information about the error.
-                var infoLog = GL.GetShaderInfoLog(shader);
+                var infoLog = Window.GL.GetShaderInfoLog(shader);
                 throw new InvalidOperationException($"Error occurred whilst compiling Shader({shader}).\n\n{infoLog}");
             }
         }
 
-        private static void LinkProgram(int program)
+        private static void LinkProgram(uint program)
         {
-            GL.LinkProgram(program);
+            Window.GL.LinkProgram(program);
 
-            GL.GetProgram(program, GetProgramParameterName.LinkStatus, out var code);
+            Window.GL.GetProgram(program, GetProgramParameterName.LinkStatus, out var code);
             if (code != (int)All.True)
             {
-                string infoLog = GL.GetProgramInfoLog(program);
+                string infoLog = Window.GL.GetProgramInfoLog(program);
                 throw new InvalidOperationException($"Error occurred whilst linking Program({program}): {infoLog}");
             }
         }
@@ -223,12 +226,12 @@ namespace Core.Shaders
         ///     Enables the shader program.
         /// </summary>
         public void Use()
-            => GL.UseProgram(Handle);
+            => Window.GL.UseProgram(Handle);
 
         // The shader sources provided with this project use hardcoded layout(location)-s. If you want to do it dynamically,
         // you can omit the layout(location=X) lines in the vertex shader, and use this in VertexAttribPointer instead of the hardcoded values.
         public int GetAttribLocation(string attribName)
-            => GL.GetAttribLocation(Handle, attribName);
+            => Window.GL.GetAttribLocation(Handle, attribName);
 
         // Uniform setters
         // Uniforms are variables that can be set by user code, instead of reading them from the VBO.
@@ -246,8 +249,8 @@ namespace Core.Shaders
         /// <param name="data">The data to set</param>
         public void SetInt(string name, int data)
         {
-            GL.UseProgram(Handle);
-            GL.Uniform1(_uniformLocations[name], data);
+            Window.GL.UseProgram(Handle);
+            Window.GL.Uniform1(_uniformLocations[name], data);
         }
 
         /// <summary>
@@ -257,8 +260,8 @@ namespace Core.Shaders
         /// <param name="data">The data to set</param>
         public void SetFloat(string name, float data)
         {
-            GL.UseProgram(Handle);
-            GL.Uniform1(_uniformLocations[name], data);
+            Window.GL.UseProgram(Handle);
+            Window.GL.Uniform1(_uniformLocations[name], data);
         }
 
         /// <summary>
@@ -271,10 +274,10 @@ namespace Core.Shaders
         ///   The matrix is transposed before being sent to the shader.
         ///   </para>
         /// </remarks>
-        public void SetMatrix4(string name, Matrix4 data, bool transpose = true)
+        public void SetMatrix4(string name, Matrix4x4 data, bool transpose = true)
         {
-            GL.UseProgram(Handle);
-            GL.UniformMatrix4(_uniformLocations[name], transpose, ref data);
+            Window.GL.UseProgram(Handle);
+            Window.GL.UniformMatrix4(_uniformLocations[name], transpose, data.ToSpan());
         }
 
         /// <summary>
@@ -284,8 +287,8 @@ namespace Core.Shaders
         /// <param name="data">The data to set</param>
         public void SetVector3(string name, Vector3 data)
         {
-            GL.UseProgram(Handle);
-            GL.Uniform3(_uniformLocations[name], data);
+            Window.GL.UseProgram(Handle);
+            Window.GL.Uniform3(_uniformLocations[name], data);
         }
     }
 }

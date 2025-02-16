@@ -1,8 +1,7 @@
-﻿using OpenTK.Graphics.OpenGL4;
-using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
-using StbImageSharp;
+﻿using StbImageSharp;
 using System.IO;
 using System.Collections.Generic;
+using Silk.NET.OpenGL;
 
 namespace Core
 {
@@ -32,11 +31,11 @@ namespace Core
                 return cachedTexture;
 
             // Generate handle
-            int handle = GL.GenTexture();
+            uint handle = Window.GL.GenTexture();
 
             // Bind the handle
-            GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, handle);
+            Window.GL.ActiveTexture(TextureUnit.Texture0);
+            Window.GL.BindTexture(TextureTarget.Texture2D, handle);
 
             // OpenGL has its texture origin in the lower left corner instead of the top left corner,
             // so we tell StbImageSharp to flip the image when loading.
@@ -48,14 +47,14 @@ namespace Core
                 ImageResult image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
 
                 // Generate a texture
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
+                Window.GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
             }
 
             // Set texture parameters
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            Window.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            Window.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            Window.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+            Window.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
 
             // Generate mipmaps
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
@@ -74,13 +73,13 @@ namespace Core
     public class Texture
     {
         /// <summary>The OpenGL handle for the texture.</summary>
-        public readonly int Handle;
+        public readonly uint Handle;
 
         /// <summary>
         ///     Initializes a new instance of <see cref="Texture"/>.
         /// </summary>
         /// <param name="glHandle"></param>
-        public Texture(int glHandle)
+        public Texture(uint glHandle)
         {
             Handle = glHandle;
         }
@@ -95,8 +94,8 @@ namespace Core
         /// <param name="unit">The bound texture location.</param>
         public void Use(TextureUnit unit)
         {
-            GL.ActiveTexture(unit);
-            GL.BindTexture(TextureTarget.Texture2D, Handle);
+            Window.GL.ActiveTexture(unit);
+            Window.GL.BindTexture(TextureTarget.Texture2D, Handle);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Core.Entities.Properties;
-using OpenTK.Graphics.OpenGL4;
+using Silk.NET.OpenGL;
 
 namespace Core.Shaders;
 
@@ -13,8 +13,8 @@ internal class LampShader : ShaderBase
     /// <inheritdoc />
     public override void SetAttributes()
     {
-        var positionLocation = Shader.GetAttribLocation(ShaderAttributes.Pos);
-        GL.EnableVertexAttribArray(positionLocation);
-        GL.VertexAttribPointer(positionLocation, 3, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
+        var positionLocation = (uint)Shader.GetAttribLocation(ShaderAttributes.Pos);
+        Window.GL.EnableVertexAttribArray(positionLocation);
+        Window.GL.VertexAttribPointer(positionLocation, 3, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
     }
 }

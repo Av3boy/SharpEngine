@@ -1,7 +1,8 @@
 ﻿using Core.Entities.Properties;
-using OpenTK.Graphics.OpenGL4;
+using Silk.NET.OpenGL;
 
 namespace Core.Shaders;
+
 internal class LightingShader : ShaderBase
 {
     public LightingShader()
@@ -12,16 +13,16 @@ internal class LightingShader : ShaderBase
     /// <inheritdoc />
     public override void SetAttributes()
     {
-        var positionLocation = Shader.GetAttribLocation(ShaderAttributes.Pos);
-        GL.EnableVertexAttribArray(positionLocation);
-        GL.VertexAttribPointer(positionLocation, VertexData.VerticesSize, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
+        var positionLocation = (uint)Shader.GetAttribLocation(ShaderAttributes.Pos);
+        Window.GL.EnableVertexAttribArray(positionLocation);
+        Window.GL.VertexAttribPointer(positionLocation, VertexData.VerticesSize, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
 
-        var normalLocation = Shader.GetAttribLocation(ShaderAttributes.Normal);
-        GL.EnableVertexAttribArray(normalLocation);
-        GL.VertexAttribPointer(normalLocation, VertexData.NormalsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.NormalsOffset);
+        var normalLocation = (uint)Shader.GetAttribLocation(ShaderAttributes.Normal);
+        Window.GL.EnableVertexAttribArray(normalLocation);
+        Window.GL.VertexAttribPointer(normalLocation, VertexData.NormalsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.NormalsOffset);
 
-        var texCoordLocation = Shader.GetAttribLocation(ShaderAttributes.TexCoords);
-        GL.EnableVertexAttribArray(texCoordLocation);
-        GL.VertexAttribPointer(texCoordLocation, VertexData.TexCoordsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.TexCoordsOffset);
+        var texCoordLocation = (uint)Shader.GetAttribLocation(ShaderAttributes.TexCoords);
+        Window.GL.EnableVertexAttribArray(texCoordLocation);
+        Window.GL.VertexAttribPointer(texCoordLocation, VertexData.TexCoordsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.TexCoordsOffset);
     }
 }

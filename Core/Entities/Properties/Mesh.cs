@@ -1,6 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL4;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace Core.Entities.Properties;
 
@@ -68,9 +66,9 @@ public class MeshService
 
         var meshData = mesh.GetVertices();
 
-        var vertexBufferObject = GL.GenBuffer();
-        GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferObject);
-        GL.BufferData(BufferTarget.ArrayBuffer, meshData.Length * sizeof(float), meshData, BufferUsageHint.StaticDraw);
+        var vertexBufferObject = Window.GL.GenBuffer();
+        Window.GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferObject);
+        Window.GL.BufferData(BufferTarget.ArrayBuffer, meshData.Length * sizeof(float), meshData, BufferUsageHint.StaticDraw);
 
         Meshes.Add(identifier, mesh);
         return mesh;

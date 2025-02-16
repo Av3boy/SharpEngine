@@ -1,5 +1,5 @@
 using Core.Shaders;
-using OpenTK.Mathematics;
+using System.Numerics;
 
 namespace Core.Entities;
 
@@ -121,8 +121,8 @@ public class PointLight : Light
         Material.Shader.SetFloat($"pointLights[{_index}].linear", Linear);
         Material.Shader.SetFloat($"pointLights[{_index}].quadratic", Quadratic);
 
-        var lampMatrix = Matrix4.CreateScale(Transform.Scale);
-        lampMatrix *= Matrix4.CreateTranslation(Transform.Position);
+        var lampMatrix = Matrix4x4.CreateScale(Transform.Scale);
+        lampMatrix *= Matrix4x4.CreateTranslation(Transform.Position);
 
         LampShader.Shader.SetMatrix4("model", lampMatrix);
     }

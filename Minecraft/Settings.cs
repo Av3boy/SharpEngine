@@ -1,5 +1,6 @@
 ﻿using Core.Interfaces;
 using Core.Renderers;
+using Silk.NET.Windowing;
 
 namespace Minecraft;
 
@@ -14,4 +15,7 @@ public class Settings : ISettings
 
     /// <inheritdoc/>
     public RenderFlags RendererFlags { get; set; } = RenderFlags.All;
+
+    /// <inheritdoc/>
+    public WindowOptions WindowOptions { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿using OpenTK.Mathematics;
+﻿using System.Numerics;
 
 namespace Core.Entities.Properties;
 
@@ -22,7 +22,7 @@ public class Transform
     /// <summary>
     ///     Gets the transformation of the game object as a model matrix.
     /// </summary>
-    public Matrix4 ModelMatrix => Matrix4.CreateScale(Scale) *
-                                  Matrix4.CreateFromAxisAngle(Rotation.Axis, MathHelper.DegreesToRadians(Rotation.Angle)) *
-                                  Matrix4.CreateTranslation(Position);
+    public Matrix4x4 ModelMatrix => Matrix4x4.CreateScale(Scale) *
+                                  Matrix4x4.CreateFromAxisAngle(Rotation.Axis, MathHelper.DegreesToRadians(Rotation.Angle)) *
+                                  Matrix4x4.CreateTranslation(Position);
 }

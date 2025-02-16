@@ -1,8 +1,8 @@
 ﻿using Core.Entities;
 using Core.Entities.Properties;
 
-using OpenTK.Mathematics;
 using System;
+using System.Numerics;
 
 namespace Core.Primitives;
 
@@ -20,7 +20,7 @@ public static class PrimitiveFactory
     /// <param name="specularMapFile">The specular map texture file full path.</param>
     /// <param name="vertShaderFile">The vertex shader file full path.</param>
     /// <param name="fragShaderFile">The fragment shader file full path.</param>
-    /// <returns>A new gameobject.</returns>
+    /// <returns>A new game object.</returns>
     /// <exception cref="InvalidOperationException">Thrown when the specified primitive type does not exist.</exception>
     public static GameObject Create(PrimitiveType primitiveType, Vector3 position, string diffuseMapFile, string specularMapFile, string vertShaderFile, string fragShaderFile)
         => new(diffuseMapFile, specularMapFile, vertShaderFile, fragShaderFile)

@@ -1,6 +1,4 @@
 ﻿using Core.Entities.Properties;
-using OpenTK.Graphics.OpenGL4;
-
 using Core.Shaders;
 
 namespace Core.Entities;
@@ -38,25 +36,25 @@ public class UIElement : SceneNode
        1, 2, 3
     ];
 
-    private int _vertexArrayObject;
+    private uint _vertexArrayObject;
 
     public void Initialize()
     {
-        _vertexArrayObject = GL.GenVertexArray();
-        GL.BindVertexArray(_vertexArrayObject);
+        _vertexArrayObject = Window.GL.GenVertexArray();
+        Window.GL.BindVertexArray(_vertexArrayObject);
 
         InitializeBuffers();
     }
 
     private void InitializeBuffers()
     {
-        var vertexBufferObject = GL.GenBuffer();
-        GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferObject);
-        GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
+        var vertexBufferObject = Window.GL.GenBuffer();
+        Window.GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferObject);
+        Window.GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
 
         var elementBufferObject = GL.GenBuffer();
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, elementBufferObject);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
+        Window.GL.BindBuffer(BufferTarget.ElementArrayBuffer, elementBufferObject);
+        Window.GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
     }
 
     /// <summary>
@@ -64,10 +62,10 @@ public class UIElement : SceneNode
     /// </summary>
     public override void Render()
     {
-        GL.BindVertexArray(_vertexArrayObject);
+        Window.GL.BindVertexArray(_vertexArrayObject);
 
         _uIShader.Shader.SetMatrix4("model", Transform.ModelMatrix);
 
-        GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
+        Window.GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
     }
 }

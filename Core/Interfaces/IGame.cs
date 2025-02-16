@@ -1,14 +1,14 @@
 ﻿using Core.Entities;
 using Core.Enums;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.GraphicsLibraryFramework;
+using Silk.NET.Input;
+
 using static Core.Window;
 
 namespace Core.Interfaces;
 
 /// <summary>
 ///     Contains definitions the Game class must implement.
-///     To consider: move into a abstract class so that the game doesn't necesarily have to implement all methods.
+///     To consider: move into a abstract class so that the game doesn't necessarily have to implement all methods.
 /// </summary>
 public interface IGame
 {
@@ -38,8 +38,7 @@ public interface IGame
     ///     Gets or sets the event executed when the mouse wheel is scrolled.
     /// </summary>
     /// <param name="direction">The direction the wheel was scrolled.</param>
-    /// <param name="e">Information about the mouse scroll event.</param>
-    public void HandleMouseWheel(MouseWheelScrollDirection direction, MouseWheelEventArgs e);
+    public void HandleMouseWheel(MouseWheelScrollDirection direction, ScrollWheel scrollWheel);
 
     /// <summary>
     ///     Executed when a key is pressed.
