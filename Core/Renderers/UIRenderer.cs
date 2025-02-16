@@ -1,6 +1,8 @@
-﻿using Core.Interfaces;
+﻿using Core.Entities;
+using Core.Interfaces;
 using Core.Shaders;
 using Silk.NET.OpenGL;
+using System;
 using System.Threading.Tasks;
 
 namespace Core.Renderers;
@@ -32,9 +34,15 @@ public class UIRenderer : RendererBase
     /// <inheritdoc />
     public override void Initialize()
     {
+        if (_uiShader.Shader is null)
+        {
+            Console.WriteLine("The UI shader is null. This is broken mostly when the exe is started outside the solution. This needs to be fixed later.");
+            return;
+        }   
+        
         _uiShader.Shader.Use();
 
-        // _scene.UIElements.Add(new UIElement("uiElement"));
+        _scene.UIElements.Add(new UIElement("uiElement"));
 
         _scene.Iterate(_scene.UIElements, elem => elem.Initialize());
 
@@ -47,14 +55,12 @@ public class UIRenderer : RendererBase
     }
 
     /// <inheritdoc />
-    public override Task Render()
+    public override async Task Render()
     {
         Window.GL.Disable(EnableCap.DepthTest);
         Window.GL.DepthFunc(DepthFunction.Less);
 
         _uiShader.Shader.Use();
-        _scene.Iterate(_scene.UIElements, elem => elem.Render());
-
-        return Task.CompletedTask;
+        await _scene.IterateAsync(_scene.UIElements, elem => elem.Render());
     }
 }

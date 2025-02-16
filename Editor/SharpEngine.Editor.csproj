@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>SharpEngine</AssemblyName>
+    <SignAssembly>False</SignAssembly>
+    <Title>SharpEngine</Title>
+    <Description>SharpEngine, a purely c# game engine.</Description>
+    <PackageProjectUrl>https://github.com/Av3boy/SharpEngine</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>game-engine</PackageTags>
+    <PackageReleaseNotes>Early release, expect broken / missing features.</PackageReleaseNotes>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\SharpEngine.Core.csproj" />
+  </ItemGroup>
+
+</Project>

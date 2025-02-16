@@ -66,11 +66,23 @@ namespace Core.Shaders
         /// <param name="fragPath">The fragment shader full path.</param>
         /// <param name="name">A name identifier for the shader.</param>
         /// <returns>A shader with the given name.</returns>
-        public Shader LoadShader(string vertPath, string fragPath, string name)
+        public Shader? LoadShader(string vertPath, string fragPath, string name)
         {
             // Check if the shader is already in the cache
             if (_shaderCache.TryGetValue(name, out var cachedShader))
                 return cachedShader;
+
+            if (!File.Exists(vertPath))
+            {
+                Console.WriteLine($"Vertex shader file not found: {vertPath}");
+                return null;
+            }
+
+            if (!File.Exists(fragPath))
+            {
+                Console.WriteLine($"Fragment shader file not found: {fragPath}");
+                return null;
+            }
 
             // Create a new shader instance and add it to the cache
             var shader = new Shader(vertPath, fragPath, name);
@@ -115,30 +127,16 @@ namespace Core.Shaders
             // The fragment shader is responsible for then converting the vertices to "fragments", which represent all the data OpenGL needs to draw a pixel.
             //   The fragment shader is what we'll be using the most here.
 
-            // Load vertex shader and compile
-            var shaderSource = File.ReadAllText(vertPath);
-            shaderSource = ProcessIncludes(shaderSource, Path.GetDirectoryName(vertPath)!);
+            // Load and compile shader
+            if (!LoadShader(ShaderType.VertexShader, vertPath, out uint vertexShader))
+                return;
 
-            // GL.CreateShader will create an empty shader (obviously). The ShaderType enum denotes which type of shader will be created.
-            var vertexShader = Window.GL.CreateShader(ShaderType.VertexShader);
-
-            // Now, bind the GLSL source code
-            Window.GL.ShaderSource(vertexShader, shaderSource);
-
-            // And then compile
-            CompileShader(vertexShader);
-
-            // We do the same for the fragment shader.
-            shaderSource = File.ReadAllText(fragPath);
-            shaderSource = ProcessIncludes(shaderSource, Path.GetDirectoryName(fragPath)!);
-
-            var fragmentShader = Window.GL.CreateShader(ShaderType.FragmentShader);
-            Window.GL.ShaderSource(fragmentShader, shaderSource);
-            CompileShader(fragmentShader);
+            if (!LoadShader(ShaderType.FragmentShader, fragPath, out uint fragmentShader))
+                return;
 
             // These two shaders must then be merged into a shader program, which can then be used by OpenGL.
             // To do this, create a program...
-            
+
             Handle = Window.GL.CreateProgram();
 
             // Attach both shaders...
@@ -160,6 +158,27 @@ namespace Core.Shaders
             // later.
 
             GetUniformLocations();
+        }
+
+        private static bool LoadShader(ShaderType shaderType, string shaderPath, out uint shader)
+        {
+            if (!File.Exists(shaderPath))
+            {
+                Console.WriteLine($"Shader file not found: {shaderPath}");
+
+                shader = 0;
+                return false;
+            }
+
+            string shaderSource = File.ReadAllText(shaderPath);
+            shaderSource = ProcessIncludes(shaderSource, Path.GetDirectoryName(shaderPath)!);
+
+            // GL.CreateShader will create an empty shader (obviously). The ShaderType enum denotes which type of shader will be created.
+            shader = Window.GL.CreateShader(shaderType);
+            Window.GL.ShaderSource(shader, shaderSource);
+            CompileShader(shader);
+
+            return true;
         }
 
         private void GetUniformLocations()
@@ -231,7 +250,13 @@ namespace Core.Shaders
         // The shader sources provided with this project use hardcoded layout(location)-s. If you want to do it dynamically,
         // you can omit the layout(location=X) lines in the vertex shader, and use this in VertexAttribPointer instead of the hardcoded values.
         public int GetAttribLocation(string attribName)
-            => Window.GL.GetAttribLocation(Handle, attribName);
+        {
+            int location = Window.GL.GetAttribLocation(Handle, attribName);
+            if (location == -1)
+                Console.WriteLine($"Attribute '{attribName}' not found in shader program.");
+
+            return location;
+        }
 
         // Uniform setters
         // Uniforms are variables that can be set by user code, instead of reading them from the VBO.

@@ -1,5 +1,6 @@
 ﻿using Core.Entities.Properties;
 using Silk.NET.OpenGL;
+using System;
 
 namespace Core.Shaders;
 
@@ -11,9 +12,12 @@ internal class LightingShader : ShaderBase
     }
 
     /// <inheritdoc />
-    public override void SetAttributes()
+    public override bool SetAttributes()
     {
-        var positionLocation = (uint)Shader.GetAttribLocation(ShaderAttributes.Pos);
+        if (!base.SetAttributes())
+            return false;
+
+        var positionLocation = (uint)Shader!.GetAttribLocation(ShaderAttributes.Pos);
         Window.GL.EnableVertexAttribArray(positionLocation);
         Window.GL.VertexAttribPointer(positionLocation, VertexData.VerticesSize, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
 
@@ -24,5 +28,7 @@ internal class LightingShader : ShaderBase
         var texCoordLocation = (uint)Shader.GetAttribLocation(ShaderAttributes.TexCoords);
         Window.GL.EnableVertexAttribArray(texCoordLocation);
         Window.GL.VertexAttribPointer(texCoordLocation, VertexData.TexCoordsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.TexCoordsOffset);
+
+        return true;
     }
 }

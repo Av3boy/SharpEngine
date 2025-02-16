@@ -36,9 +36,7 @@ public class Window : SilkWindow
 
     public static GL GL;
 
-    private IInputContext _input;
-
-    private ImGuiController _imGuiController;
+    public IInputContext Input;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
@@ -48,6 +46,7 @@ public class Window : SilkWindow
     /// <param name="options"></param>
     public Window(IGame game, Scene scene, WindowOptions options)
     {
+        // TODO: Game should be refactored out of the window class.
         _game = game;
         _scene = scene;
 
@@ -67,10 +66,8 @@ public class Window : SilkWindow
     {
         GL = _window.CreateOpenGL();
 
-        _input = _window.CreateInput();
+        Input = _window.CreateInput();
         _window.MakeCurrent();
-
-        _imGuiController = new ImGuiController(GL, _window, _input);
 
         AssignInputEvents();
 
@@ -88,8 +85,6 @@ public class Window : SilkWindow
 
         _renderer.Initialize();
         _uiRenderer.Initialize();
-
-
     }
 
     /// <summary>
@@ -104,7 +99,7 @@ public class Window : SilkWindow
 
         UseShaders();
 
-        _imGuiController.Update((float)deltaTime);
+        //_imGuiController.Update((float)deltaTime);
 
         var renderTasks = new List<Task>();
 
@@ -116,10 +111,10 @@ public class Window : SilkWindow
 
         Task.WaitAll([.. renderTasks]);
 
-        ImGui.Begin("test");
-        ImGui.Text("some text");
+        // ImGui.Begin("test");
+        // ImGui.Text("some text");
 
-        _imGuiController.Render();
+        // _imGuiController.Render();
 
         // TODO: This call causes filckering in the new framework. Investigate why.
         // _window.SwapBuffers();
@@ -153,8 +148,8 @@ public class Window : SilkWindow
             Console.WriteLine($"FPS: {1f / deltaTime}");
 
         // TODO: Handle multiple mice?
-        var mouse = _input.Mice[0];
-        var keyboard = _input.Keyboards[0];
+        var mouse = Input.Mice[0];
+        var keyboard = Input.Keyboards[0];
 
         _game.Camera.UpdateMousePosition(mouse.Position);
 
@@ -165,16 +160,16 @@ public class Window : SilkWindow
 
         _game.HandleKeyboard(keyboard, deltaTime);
 
-        _game.Update(deltaTime, _input);
+        _game.Update(deltaTime, Input);
     }
 
     // TODO: #21 Input system
     private void AssignInputEvents()
     {
-        foreach (var keyboard in _input.Keyboards)
+        foreach (var keyboard in Input.Keyboards)
           keyboard.KeyDown += KeyDown;
 
-        foreach (var mouse in _input.Mice)
+        foreach (var mouse in Input.Mice)
         {
             mouse.Scroll += OnMouseWheel;
             mouse.Click += OnMouseClick;
@@ -224,6 +219,6 @@ public class Window : SilkWindow
     {
         // TODO: Dispose of any / all resources
 
-        _imGuiController.Dispose();
+        // _imGuiController.Dispose();
     }
 }
