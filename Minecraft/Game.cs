@@ -15,16 +15,18 @@ namespace Minecraft
     {
         // TODO: Add documentation to the code
 
+        /// <summary>Gets or sets the player camera.</summary>
         public Camera Camera { get; set; }
-        public readonly Settings Settings;
-        public ISettings CoreSettings => Settings;
 
-        private Scene _scene;
+        /// <inheritdoc />
+        public ISettings CoreSettings { get; }
+
+        private readonly Scene _scene;
+
         private SceneNode _lightsNode;
         private SceneNode _blocksNode;
 
         private Input _input;
-
         private Inventory _inventory;
 
         /// <summary>
@@ -35,7 +37,7 @@ namespace Minecraft
         public Game(Scene scene, Settings settings)
         {
             _scene = scene;
-            Settings = settings;
+            CoreSettings = settings;
         }
 
         /// <inheritdoc />
@@ -128,12 +130,12 @@ namespace Minecraft
         {
             uiElem.Transform.Rotation += 0.01f;
 
-            // _input.HandleKeyboard(input, deltaTime);
+            _input.HandleKeyboard(input.Keyboards[0], (float)deltaTime);
         }
 
         // TODO: Input system to let users change change key bindings?
         /// <inheritdoc />
-        public void HandleKeyboard(IKeyboard input)
+        public void HandleKeyboard(IKeyboard input, double deltaTime)
         {
             for (int i = 0; i <= 9; i++)
             {
@@ -145,23 +147,22 @@ namespace Minecraft
             }
 
             input.KeyUp += Input_KeyUp;
-
-
         }
 
         private void Input_KeyUp(IKeyboard arg1, Key arg2, int arg3)
         {
             if (arg2 == Key.F)
             {
-                Settings.PrintFrameRate = !Settings.PrintFrameRate;
+                CoreSettings.PrintFrameRate = !CoreSettings.PrintFrameRate;
             }
 
             if (arg2 == Key.L)
             {
-                Settings.UseWireFrame = !Settings.UseWireFrame;
+                CoreSettings.UseWireFrame = !CoreSettings.UseWireFrame;
             }
         }
 
+        /// <inheritdoc />
         public void HandleMouse(IMouse mouse) { }
 
         /// <inheritdoc />
@@ -198,28 +199,28 @@ namespace Minecraft
 
         private BlockType DestroyBlock()
         {
-            if (!IsBlockInView(out GameObject intersectingObject, out Vector3 _))
+            if (!IsBlockInView(out GameObject? intersectingObject, out Vector3 _))
                 return BlockType.None;
 
-            var block = (BlockBase)intersectingObject;
-            _blocksNode.RemoveChild(intersectingObject);
+            var block = (BlockBase)intersectingObject!;
+            _blocksNode.RemoveChild(intersectingObject!);
 
             return block.BlockType;
         }
 
         private void PlaceBlock()
         {
-            if (!IsBlockInView(out GameObject intersectingObject, out Vector3 hitPosition))
+            if (!IsBlockInView(out GameObject? intersectingObject, out Vector3 hitPosition))
                 return;
 
-            var newBlockPosition = GetNewBlockPosition(hitPosition, intersectingObject);
+            var newBlockPosition = GetNewBlockPosition(hitPosition, intersectingObject!);
             if (newBlockPosition == Camera.Position || newBlockPosition == hitPosition)
                 return;
 
             var newBlock = BlockFactory.CreateBlock(_inventory.SelectedSlot.Items.Type, newBlockPosition, $"Dirt ({_blocksNode.Children.Count})");
             _blocksNode.AddChild(newBlock);
 
-            Console.WriteLine($"New block created: {newBlock.Transform.Position}, block in view location: {intersectingObject.Transform.Position}");
+            Console.WriteLine($"New block created: {newBlock.Transform.Position}, block in view location: {intersectingObject!.Transform.Position}");
 
         }
 
@@ -229,7 +230,13 @@ namespace Minecraft
             return intersectingObject.Transform.Position + (normal * intersectingObject.Transform.Scale);
         }
 
-        public bool IsBlockInView(out GameObject intersectingObject, out Vector3 hitPosition)
+        /// <summary>
+        ///     Checks whether a block is in view of the camera.
+        /// </summary>
+        /// <param name="intersectingObject"></param>
+        /// <param name="hitPosition"></param>
+        /// <returns></returns>
+        public bool IsBlockInView(out GameObject? intersectingObject, out Vector3 hitPosition)
         {
             Ray ray = new Ray(Camera.Position, Camera.Front);
             return ray.IsGameObjectInView(_scene, out intersectingObject, out hitPosition, allowedTypes: typeof(BlockBase));
@@ -254,6 +261,5 @@ namespace Minecraft
             Console.WriteLine($"Selected slot: {slotIndex}");
 
         }
-
     }
 }

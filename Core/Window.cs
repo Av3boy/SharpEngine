@@ -15,6 +15,8 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using static System.Formats.Asn1.AsnWriter;
+using Silk.NET.GLFW;
+using MouseButton = Silk.NET.Input.MouseButton;
 
 namespace Core;
 
@@ -63,6 +65,8 @@ public class Window : SilkWindow
         GL = _window.CreateOpenGL();
 
         _input = _window.CreateInput();
+        _window.MakeCurrent();
+
         AssignInputEvents();
 
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -100,7 +104,8 @@ public class Window : SilkWindow
         if (_game.CoreSettings.RendererFlags.HasFlag(_uiRenderer.RenderFlag))
             _uiRenderer.Render();
 
-        _window.SwapBuffers();
+        // TODO: This call causes filckering in the new framework. Investigate why.
+        // _window.SwapBuffers();
     }
 
     /// <summary>
@@ -132,17 +137,25 @@ public class Window : SilkWindow
 
         // TODO: Handle multiple mice?
         var mouse = _input.Mice[0];
+        var keyboard = _input.Keyboards[0];
 
         _game.Camera.UpdateMousePosition(mouse.Position);
 
         _game.HandleMouse(mouse);
+
+        if (keyboard.IsKeyPressed(Key.Escape))
+            _window.Close();
+
+        _game.HandleKeyboard(keyboard, deltaTime);
+
         _game.Update(deltaTime, _input);
     }
 
+    // TODO: #21 Input system
     private void AssignInputEvents()
     {
         foreach (var keyboard in _input.Keyboards)
-            keyboard.KeyDown += KeyDown;
+          keyboard.KeyDown += KeyDown;
 
         foreach (var mouse in _input.Mice)
         {
@@ -152,7 +165,7 @@ public class Window : SilkWindow
         }
     }
 
-    /// <inheritdoc />
+    // /// <inheritdoc />
     protected void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) => throw new NotImplementedException();
 
     /// <inheritdoc />
@@ -161,13 +174,12 @@ public class Window : SilkWindow
         if (key == Key.Escape)
             _window.Close();
 
-        _game.HandleKeyboard(keyboard);
+        // _game.HandleKeyboard(keyboard);
     }
 
     /// <inheritdoc />
     protected void OnMouseWheel(IMouse mouse, ScrollWheel sw)
     {
-        
         var direction = sw.Y switch
         {
             > 0 => MouseWheelScrollDirection.Up,

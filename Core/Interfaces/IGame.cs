@@ -42,7 +42,7 @@ public interface IGame
     ///     Executed when a key is pressed.
     /// </summary>
     /// <param name="input">The state of the keyboard on the current frame.</param>
-    public void HandleKeyboard(IKeyboard input);
+    public void HandleKeyboard(IKeyboard input, double deltaTime);
 
     /// <summary>
     ///     Executed when the game is first loaded.

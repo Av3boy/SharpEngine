@@ -3,6 +3,9 @@ using System.Numerics;
 
 namespace Core
 {
+    /// <summary>
+    ///     Provides math-related functions.
+    /// </summary>
     public static class Math
     {
         /// <summary>

@@ -19,7 +19,7 @@ public class UIElement : SceneNode
         // Mesh = MeshService.Instance.LoadMesh("plane", Primitives.Plane.Mesh);
     }
 
-    private UIShader _uIShader = new();
+    private readonly UIShader _uIShader = new();
 
     /// <summary>Gets or sets the 2D space transformation of the UI element.</summary>
     public Transform2D Transform { get; set; } = new()

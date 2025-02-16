@@ -1,5 +1,4 @@
 using Core.Shaders;
-using System;
 using System.Numerics;
 
 namespace Core.Entities;
@@ -12,9 +11,7 @@ public abstract class Light : GameObject
     /// <summary>
     ///     Initializes a new instance of <see cref="Light"/>.
     /// </summary>
-    protected Light()
-    {
-    }
+    protected Light() { }
 
     /// <summary>
     ///     Gets or sets the ambient color of the light.
@@ -30,10 +27,6 @@ public abstract class Light : GameObject
     ///     Gets or sets the specular color of the light.
     /// </summary>
     public Vector3 Specular { get; set; } = new Vector3(1.0f, 1.0f, 1.0f);
-
-    /// <summary>
-    ///     Renders the light using the specified shader.
-    /// </summary>
 }
 
 /// <summary>
