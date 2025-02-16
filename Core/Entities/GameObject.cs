@@ -1,6 +1,6 @@
 using Core.Entities.Properties;
 using Core.Shaders;
-using OpenTK.Graphics.OpenGL4;
+using Silk.NET.OpenGL;
 
 namespace Core.Entities;
 
@@ -70,7 +70,7 @@ public class GameObject : SceneNode
 
         Material.Shader.SetMatrix4("model", Transform.ModelMatrix);
 
-        GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
+        Window.GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
     }
 
     /// <summary>

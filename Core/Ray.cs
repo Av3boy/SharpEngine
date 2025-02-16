@@ -1,8 +1,8 @@
 using Core.Entities;
-using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace Core
 {
@@ -96,12 +96,12 @@ namespace Core
 
             var distances = new Dictionary<Vector3, float>
                 {
-                    { -Vector3.UnitX, Math.Abs(point.X - min.X) },
-                    { Vector3.UnitX, Math.Abs(point.X - max.X) },
-                    { -Vector3.UnitY, Math.Abs(point.Y - min.Y) },
-                    { Vector3.UnitY, Math.Abs(point.Y - max.Y) },
-                    { -Vector3.UnitZ, Math.Abs(point.Z - min.Z) },
-                    { Vector3.UnitZ, Math.Abs(point.Z - max.Z) }
+                    { -Vector3.UnitX, MathF.Abs(point.X - min.X) },
+                    { Vector3.UnitX, MathF.Abs(point.X - max.X) },
+                    { -Vector3.UnitY, MathF.Abs(point.Y - min.Y) },
+                    { Vector3.UnitY, MathF.Abs(point.Y - max.Y) },
+                    { -Vector3.UnitZ, MathF.Abs(point.Z - min.Z) },
+                    { Vector3.UnitZ, MathF.Abs(point.Z - max.Z) }
                 };
 
             return distances.OrderBy(d => d.Value).First().Key;

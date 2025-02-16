@@ -1,8 +1,6 @@
-﻿using Core.Entities;
-using Core.Interfaces;
+﻿using Core.Interfaces;
 using Core.Shaders;
-
-using OpenTK.Graphics.OpenGL4;
+using Silk.NET.OpenGL;
 
 namespace Core.Renderers;
 
@@ -50,8 +48,8 @@ public class UIRenderer : RendererBase
     /// <inheritdoc />
     public override void Render()
     {
-        GL.Disable(EnableCap.DepthTest);
-        GL.DepthFunc(DepthFunction.Less);
+        Window.GL.Disable(EnableCap.DepthTest);
+        Window.GL.DepthFunc(DepthFunction.Less);
 
         _uiShader.Shader.Use();
         _scene.Iterate(_scene.UIElements, elem => elem.Render());

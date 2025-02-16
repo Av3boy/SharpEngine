@@ -1,14 +1,12 @@
 ﻿using Core.Entities;
 using Core.Enums;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using static Core.Window;
+using Silk.NET.Input;
 
 namespace Core.Interfaces;
 
 /// <summary>
 ///     Contains definitions the Game class must implement.
-///     To consider: move into a abstract class so that the game doesn't necesarily have to implement all methods.
+///     To consider: move into a abstract class so that the game doesn't necessarily have to implement all methods.
 /// </summary>
 public interface IGame
 {
@@ -25,28 +23,26 @@ public interface IGame
     /// <summary>
     ///     Executed when a mouse button is pressed.
     /// </summary>
-    /// <param name="e">Contains information about the button press.</param>
-    public void HandleMouseDown(MouseButtonEventArgs e);
+    public void HandleMouseDown(IMouse mouse, Silk.NET.Input.MouseButton button);
 
     /// <summary>
     ///     A method executed when the mouse state is changed
     /// </summary>
     /// <param name="mouse">The state of the mouse on the current frame.</param>
-    public void HandleMouse(MouseState mouse);
+    public void HandleMouse(IMouse mouse);
 
     /// <summary>
     ///     Gets or sets the event executed when the mouse wheel is scrolled.
     /// </summary>
     /// <param name="direction">The direction the wheel was scrolled.</param>
-    /// <param name="e">Information about the mouse scroll event.</param>
-    public void HandleMouseWheel(MouseWheelScrollDirection direction, MouseWheelEventArgs e);
+    /// <param name="scrollWheel">Contains information about the scroll wheel changes during the current frame.</param>
+    public void HandleMouseWheel(MouseWheelScrollDirection direction, ScrollWheel scrollWheel);
 
     /// <summary>
     ///     Executed when a key is pressed.
     /// </summary>
     /// <param name="input">The state of the keyboard on the current frame.</param>
-    /// <param name="deltaTime">Time since the previous frame.</param>
-    public void HandleKeyboard(KeyboardState input, float deltaTime);
+    public void HandleKeyboard(IKeyboard input, double deltaTime);
 
     /// <summary>
     ///     Executed when the game is first loaded.
@@ -56,8 +52,5 @@ public interface IGame
     /// <summary>
     ///    Executed each frame.
     /// </summary>
-    /// <param name="args">Information about the current frame.</param>
-    /// <param name="keyboardState">The state of the keyboard this frame.</param>
-    /// <param name="mouseState">The state of the mouse this frame.</param>
-    public void Update(FrameEventArgs args, KeyboardState keyboardState, MouseState mouseState);
+    public void Update(double deltaTime, IInputContext input);
 }

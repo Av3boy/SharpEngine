@@ -25,37 +25,3 @@ The `Core` project is the actual game engine logic. The `Minecraft` project cont
 
 Do note: The contributors of this repository do not have much experience when it comes to game engine / graphics development.
 This repository is mainly a hobby project that is going to evolve over time.
-
-## Contribution
-If you wish to contribute to the project, you should create a new feature branch off of main and create a pull request with your changes so that the main contributors are able to make sure your contributions are on an acceptable level of quality.
-When contributing to the project, always create new issues about your changes with appropriate descriptions of the changes you are about to make.
-
-Additionally your branch name should be in the following format: `<issue number>-<your initials>-<some name>`. E.g. `1234-av-renderer-optimizations`.
-
-For any question, please reach out to the owner(s) of the repository.
-
-## Material and insipiration from:
-- [Learn OpenGL](https://learnopengl.com/)    
-- [Learn OpenTK - OpenTK examples](https://opentk.net/learn/index.html) (examples ported from the Learn OpenGL website)  
-- [OpenGL Wiki](https://www.khronos.org/opengl/wiki)  
-- [OpenGL API Documentation](https://docs.gl/)  
-- [Erfan Ahmadi - Rendering Engine Development](https://gist.github.com/Erfan-Ahmadi/defe4ab99af97f624b68e0dccb0712ea)  
-- [Game Engine Architecture by Jason Gregory](https://www.gameenginebook.com/)  
-- [Imgui repository](https://github.com/ocornut/imgui)  
-- [Shadertoy website](https://www.shadertoy.com/)  
-- [Game engine architecture 2nd edition overview, Chapter 1, pt1](http://hightalestudios.com/2017/03/game-engine-architecture-2nd-edition-overview-ch-1/)  
-- [Game engine architecture 2nd edition overview, Chapter 1, pt2](http://hightalestudios.com/2017/03/game-engine-architecture-2nd-edition-overview-ch-1-part-2/)  
-- [Ray traycing in one weekend - course material](https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview)  
-- [Scratchpixel - graphics programming lessons](https://www.scratchapixel.com/index.html)  
-- [Wwise fundamentals](https://www.audiokinetic.com/en/library/edge/?source=WwiseFundamentalApproach&id=wwise_fundamentals)  
-- [VoxelRifts - A Brief look at Text Rendering](https://www.youtube.com/watch?v=qcMuyHzhvpI)  
-- [Freya Holmér - The Continuity of Splines](https://www.youtube.com/watch?v=jvPPXbo87ds)  
-- [Sebastian Lague - Coding Adventure: Rendering Text](https://www.youtube.com/watch?v=SO83KQuuZvg)
-- [Sharp engine](https://sharp-engine.com/)  
-- https://developer.nvidia.com/industries/game-development  
-- https://developer.nvidia.com/gpugems/gpugems3/contributors  
-- https://developer.nvidia.com/graphics-research-tools  
-- https://developer.nvidia.com/industries/aeco  
-- https://gdcvault.com/browse/  
-- https://developer.nvidia.com/gpugems/gpugems3/part-iv-image-effects/chapter-25-rendering-vector-art-gpu  
-- https://blog.siggraph.org/2024/12/our-top-10-most-read-blogs-of-2024.html/  

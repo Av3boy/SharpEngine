@@ -1,9 +1,9 @@
-﻿using OpenTK.Mathematics;
+﻿using System.Numerics;
 
 namespace Core.Entities.Properties;
 
 /// <summary>
-///     Represents a bounding box of a gameobject.
+///     Represents a bounding box of a game object.
 /// </summary>
 public class BoundingBox
 {

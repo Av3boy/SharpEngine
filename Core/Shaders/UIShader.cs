@@ -1,6 +1,7 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using Silk.NET.OpenGL;
 
 namespace Core.Shaders;
+
 internal class UIShader : ShaderBase
 {
     public UIShader()
@@ -10,8 +11,8 @@ internal class UIShader : ShaderBase
 
     public override void SetAttributes()
     {
-        var vertexLocation = Shader.GetAttribLocation("aPos");
-        GL.EnableVertexAttribArray(vertexLocation);
-        GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+        var vertexLocation = (uint)Shader.GetAttribLocation("aPos");
+        Window.GL.EnableVertexAttribArray(vertexLocation);
+        Window.GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
     }
 }

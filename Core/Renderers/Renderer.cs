@@ -2,9 +2,8 @@ using Core.Entities;
 using Core.Entities.Properties;
 using Core.Interfaces;
 using Core.Shaders;
-
-using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
+using Silk.NET.OpenGL;
+using System.Numerics;
 
 namespace Core.Renderers;
 
@@ -13,8 +12,8 @@ namespace Core.Renderers;
 /// </summary>
 public class Renderer : RendererBase
 {
-    private int _vaoModel;
-    private int _vaoLamp;
+    private uint _vaoModel;
+    private uint _vaoLamp;
 
     private LampShader _lampShader;
     private LightingShader _lightingShader;
@@ -57,13 +56,13 @@ public class Renderer : RendererBase
 
     private void InitializeVertexArrays()
     {
-        _vaoModel = GL.GenVertexArray();
-        GL.BindVertexArray(_vaoModel);
+        _vaoModel = Window.GL.GenVertexArray();
+        Window.GL.BindVertexArray(_vaoModel);
 
         _lightingShader.SetAttributes();
 
-        _vaoLamp = GL.GenVertexArray();
-        GL.BindVertexArray(_vaoLamp);
+        _vaoLamp = Window.GL.GenVertexArray();
+        Window.GL.BindVertexArray(_vaoLamp);
 
         _lampShader.SetAttributes();
     }
@@ -71,15 +70,15 @@ public class Renderer : RendererBase
     /// <inheritdoc />
     public override void Render()
     {
-        GL.Enable(EnableCap.DepthTest);
+        Window.GL.Enable(EnableCap.DepthTest);
 
         _game.Camera.SetShaderUniforms(_lightingShader.Shader);
 
-        GL.BindVertexArray(_vaoModel);
+        Window.GL.BindVertexArray(_vaoModel);
 
         _scene.Iterate(_scene.Root.Children, RenderGameObject);
 
-        GL.BindVertexArray(_vaoLamp);
+        Window.GL.BindVertexArray(_vaoLamp);
     }
 
     private void RenderGameObject(SceneNode node)

@@ -1,20 +1,27 @@
 ﻿using Core.Entities.Properties;
-using OpenTK.Graphics.OpenGL4;
-
 using Core.Shaders;
+using Silk.NET.OpenGL;
 
 namespace Core.Entities;
 
+/// <summary>
+///     Represents a User Interface entity.
+/// </summary>
 public class UIElement : SceneNode
 {
+    /// <summary>
+    ///     Initializes a new instance of <see cref="UIElement"/>.
+    /// </summary>
+    /// <param name="name"></param>
     public UIElement(string name)
     {
         Name = name;
         // Mesh = MeshService.Instance.LoadMesh("plane", Primitives.Plane.Mesh);
     }
 
-    private UIShader _uIShader = new UIShader();
+    private readonly UIShader _uIShader = new();
 
+    /// <summary>Gets or sets the 2D space transformation of the UI element.</summary>
     public Transform2D Transform { get; set; } = new()
     {
         Rotation = 180
@@ -38,25 +45,32 @@ public class UIElement : SceneNode
        1, 2, 3
     ];
 
-    private int _vertexArrayObject;
+    private uint _vertexArrayObject;
 
+    /// <inheritdoc />
     public void Initialize()
     {
-        _vertexArrayObject = GL.GenVertexArray();
-        GL.BindVertexArray(_vertexArrayObject);
+        _vertexArrayObject = Window.GL.GenVertexArray();
+        Window.GL.BindVertexArray(_vertexArrayObject);
 
         InitializeBuffers();
     }
 
-    private void InitializeBuffers()
+    private unsafe void InitializeBuffers()
     {
-        var vertexBufferObject = GL.GenBuffer();
-        GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferObject);
-        GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
+        fixed (float* vertexDataPtr = _vertices)
+        {
+            var vertexBufferObject = Window.GL.GenBuffer();
+            Window.GL.BindBuffer(GLEnum.ArrayBuffer, vertexBufferObject);
+            Window.GL.BufferData(GLEnum.ArrayBuffer, (uint)_vertices.Length * sizeof(float), vertexDataPtr, GLEnum.StaticDraw);
+        }
 
-        var elementBufferObject = GL.GenBuffer();
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, elementBufferObject);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
+        fixed (uint* indicieDataPtr = _indices)
+        {
+            var elementBufferObject = Window.GL.GenBuffer();
+            Window.GL.BindBuffer(GLEnum.ElementArrayBuffer, elementBufferObject);
+            Window.GL.BufferData(GLEnum.ElementArrayBuffer, (uint)_indices.Length * sizeof(uint), indicieDataPtr, GLEnum.StaticDraw);
+        }
     }
 
     /// <summary>
@@ -64,10 +78,10 @@ public class UIElement : SceneNode
     /// </summary>
     public override void Render()
     {
-        GL.BindVertexArray(_vertexArrayObject);
+        Window.GL.BindVertexArray(_vertexArrayObject);
 
         _uIShader.Shader.SetMatrix4("model", Transform.ModelMatrix);
 
-        GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
+        Window.GL.DrawElements(PrimitiveType.Triangles, (uint)_indices.Length, DrawElementsType.UnsignedInt, 0);
     }
 }

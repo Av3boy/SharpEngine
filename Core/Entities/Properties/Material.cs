@@ -1,5 +1,5 @@
 ﻿using Core.Shaders;
-using OpenTK.Mathematics;
+using System.Numerics;
 
 namespace Core.Entities.Properties;
 

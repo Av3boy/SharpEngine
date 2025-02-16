@@ -1,4 +1,5 @@
 ﻿using Core.Renderers;
+using Silk.NET.Windowing;
 
 namespace Core.Interfaces;
 
@@ -18,4 +19,6 @@ public interface ISettings
     public bool PrintFrameRate { get; set; }
 
     public RenderFlags RendererFlags { get; set; }
+
+    public WindowOptions WindowOptions { get; set; }
 }

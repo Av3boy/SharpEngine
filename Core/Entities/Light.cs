@@ -1,5 +1,5 @@
 using Core.Shaders;
-using OpenTK.Mathematics;
+using System.Numerics;
 
 namespace Core.Entities;
 
@@ -11,9 +11,7 @@ public abstract class Light : GameObject
     /// <summary>
     ///     Initializes a new instance of <see cref="Light"/>.
     /// </summary>
-    protected Light()
-    {
-    }
+    protected Light() { }
 
     /// <summary>
     ///     Gets or sets the ambient color of the light.
@@ -29,10 +27,6 @@ public abstract class Light : GameObject
     ///     Gets or sets the specular color of the light.
     /// </summary>
     public Vector3 Specular { get; set; } = new Vector3(1.0f, 1.0f, 1.0f);
-
-    /// <summary>
-    ///     Renders the light using the specified shader.
-    /// </summary>
 }
 
 /// <summary>
@@ -121,8 +115,8 @@ public class PointLight : Light
         Material.Shader.SetFloat($"pointLights[{_index}].linear", Linear);
         Material.Shader.SetFloat($"pointLights[{_index}].quadratic", Quadratic);
 
-        var lampMatrix = Matrix4.CreateScale(Transform.Scale);
-        lampMatrix *= Matrix4.CreateTranslation(Transform.Position);
+        var lampMatrix = Matrix4x4.CreateScale(Transform.Scale);
+        lampMatrix *= Matrix4x4.CreateTranslation(Transform.Position);
 
         LampShader.Shader.SetMatrix4("model", lampMatrix);
     }
@@ -139,8 +133,8 @@ public class SpotLight : Light
     public SpotLight()
     {
         Direction = new Vector3(0.0f, -1.0f, 0.0f);
-        CutOff = (float)MathHelper.Cos(MathHelper.DegreesToRadians(12.5f));
-        OuterCutOff = (float)MathHelper.Cos(MathHelper.DegreesToRadians(15.0f));
+        CutOff = (float)System.Math.Cos(Math.DegreesToRadians(12.5f));
+        OuterCutOff = (float)System.Math.Cos(Math.DegreesToRadians(15.0f));
         Constant = 1.0f;
         Linear = 0.09f;
         Quadratic = 0.032f;
