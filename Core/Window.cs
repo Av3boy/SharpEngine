@@ -14,9 +14,10 @@ using Core.Shaders;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using static System.Formats.Asn1.AsnWriter;
-using Silk.NET.GLFW;
 using MouseButton = Silk.NET.Input.MouseButton;
+using System.Threading.Tasks;
+using ImGuiNET;
+using Silk.NET.OpenGL.Extensions.ImGui;
 
 namespace Core;
 
@@ -36,6 +37,8 @@ public class Window : SilkWindow
     public static GL GL;
 
     private IInputContext _input;
+
+    private ImGuiController _imGuiController;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
@@ -67,6 +70,8 @@ public class Window : SilkWindow
         _input = _window.CreateInput();
         _window.MakeCurrent();
 
+        _imGuiController = new ImGuiController(GL, _window, _input);
+
         AssignInputEvents();
 
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -83,12 +88,14 @@ public class Window : SilkWindow
 
         _renderer.Initialize();
         _uiRenderer.Initialize();
+
+
     }
 
     /// <summary>
     ///    Renders the current view and all specified renderers.
     /// </summary>
-    /// <param name="deltaTime"></param>
+    /// <param name="deltaTime">The time since the last frame.</param>
     protected void RenderFrame(double deltaTime)
     {
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -97,12 +104,22 @@ public class Window : SilkWindow
 
         UseShaders();
 
-        // TODO: Multi threading for different renderers
+        _imGuiController.Update((float)deltaTime);
+
+        var renderTasks = new List<Task>();
+
         if (_game.CoreSettings.RendererFlags.HasFlag(_renderer.RenderFlag))
-            _renderer.Render();
+            renderTasks.Add(_renderer.Render());
 
         if (_game.CoreSettings.RendererFlags.HasFlag(_uiRenderer.RenderFlag))
-            _uiRenderer.Render();
+            renderTasks.Add(_uiRenderer.Render());
+
+        Task.WaitAll([.. renderTasks]);
+
+        ImGui.Begin("test");
+        ImGui.Text("some text");
+
+        _imGuiController.Render();
 
         // TODO: This call causes filckering in the new framework. Investigate why.
         // _window.SwapBuffers();
@@ -166,7 +183,7 @@ public class Window : SilkWindow
     }
 
     // /// <inheritdoc />
-    protected void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) => throw new NotImplementedException();
+    protected void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) { }
 
     /// <inheritdoc />
     protected void KeyDown(IKeyboard keyboard, Key key, int keyCode)
@@ -206,5 +223,7 @@ public class Window : SilkWindow
     public void Dispose()
     {
         // TODO: Dispose of any / all resources
+
+        _imGuiController.Dispose();
     }
 }

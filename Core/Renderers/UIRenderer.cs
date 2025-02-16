@@ -1,6 +1,7 @@
 ﻿using Core.Interfaces;
 using Core.Shaders;
 using Silk.NET.OpenGL;
+using System.Threading.Tasks;
 
 namespace Core.Renderers;
 
@@ -46,12 +47,14 @@ public class UIRenderer : RendererBase
     }
 
     /// <inheritdoc />
-    public override void Render()
+    public override Task Render()
     {
         Window.GL.Disable(EnableCap.DepthTest);
         Window.GL.DepthFunc(DepthFunction.Less);
 
         _uiShader.Shader.Use();
         _scene.Iterate(_scene.UIElements, elem => elem.Render());
+
+        return Task.CompletedTask;
     }
 }

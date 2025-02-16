@@ -1,6 +1,7 @@
 ﻿using Core.Entities.Properties;
 using Core.Shaders;
 using Silk.NET.OpenGL;
+using System.Threading.Tasks;
 
 namespace Core.Entities;
 
@@ -76,12 +77,14 @@ public class UIElement : SceneNode
     /// <summary>
     ///     Render the UI element.
     /// </summary>
-    public override void Render()
+    public override Task Render()
     {
         Window.GL.BindVertexArray(_vertexArrayObject);
 
         _uIShader.Shader.SetMatrix4("model", Transform.ModelMatrix);
 
         Window.GL.DrawElements(PrimitiveType.Triangles, (uint)_indices.Length, DrawElementsType.UnsignedInt, 0);
+
+        return Task.CompletedTask;
     }
 }

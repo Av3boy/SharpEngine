@@ -1,6 +1,7 @@
 using Core.Entities.Properties;
 using Core.Shaders;
 using Silk.NET.OpenGL;
+using System.Threading.Tasks;
 
 namespace Core.Entities;
 
@@ -58,7 +59,7 @@ public class GameObject : SceneNode
     }
 
     /// <inheritdoc />
-    public override void Render()
+    public override Task Render()
     {
         Material.DiffuseMap.Use(TextureUnit.Texture0);
         Material.SpecularMap.Use(TextureUnit.Texture1);
@@ -71,6 +72,8 @@ public class GameObject : SceneNode
         Material.Shader.SetMatrix4("model", Transform.ModelMatrix);
 
         Window.GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
+
+        return Task.CompletedTask;
     }
 
     /// <summary>

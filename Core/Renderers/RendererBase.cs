@@ -2,6 +2,7 @@
 using Core.Shaders;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Core.Renderers;
 
@@ -11,7 +12,6 @@ namespace Core.Renderers;
 public abstract class RendererBase
 {
     private ISettings _settings;
-
 
     protected RendererBase(ISettings settings)
     {
@@ -28,7 +28,7 @@ public abstract class RendererBase
     /// <summary>
     ///    Renders the scene.
     /// </summary>
-    public abstract void Render();
+    public abstract Task Render();
 }
 
 [Flags]

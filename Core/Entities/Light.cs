@@ -1,5 +1,6 @@
 using Core.Shaders;
 using System.Numerics;
+using System.Threading.Tasks;
 
 namespace Core.Entities;
 
@@ -51,12 +52,14 @@ public class DirectionalLight : Light
     }
 
     /// <inheritdoc />
-    public override void Render()
+    public override Task Render()
     {
         Material.Shader.SetVector3("dirLight.direction", Direction);
         Material.Shader.SetVector3("dirLight.ambient", Ambient);
         Material.Shader.SetVector3("dirLight.diffuse", Diffuse);
         Material.Shader.SetVector3("dirLight.specular", Specular);
+
+        return Task.CompletedTask;
     }
 }
 
@@ -105,7 +108,7 @@ public class PointLight : Light
     public float Quadratic { get; set; }
 
     /// <inheritdoc />
-    public override void Render()
+    public override Task Render()
     {
         Material.Shader.SetVector3($"pointLights[{_index}].position", Transform.Position);
         Material.Shader.SetVector3($"pointLights[{_index}].ambient", Ambient);
@@ -119,6 +122,8 @@ public class PointLight : Light
         lampMatrix *= Matrix4x4.CreateTranslation(Transform.Position);
 
         LampShader.Shader.SetMatrix4("model", lampMatrix);
+
+        return Task.CompletedTask;
     }
 }
 
@@ -173,7 +178,7 @@ public class SpotLight : Light
     public float Quadratic { get; set; }
 
     /// <inheritdoc />
-    public override void Render()
+    public override Task Render()
     {
         Material.Shader.SetVector3("spotLight.position", Transform.Position);
         Material.Shader.SetVector3("spotLight.direction", Direction);
@@ -185,5 +190,7 @@ public class SpotLight : Light
         Material.Shader.SetFloat("spotLight.quadratic", Quadratic);
         Material.Shader.SetFloat("spotLight.cutOff", CutOff);
         Material.Shader.SetFloat("spotLight.outerCutOff", OuterCutOff);
+
+        return Task.CompletedTask;
     }
 }

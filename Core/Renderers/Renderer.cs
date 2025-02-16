@@ -4,6 +4,7 @@ using Core.Interfaces;
 using Core.Shaders;
 using Silk.NET.OpenGL;
 using System.Numerics;
+using System.Threading.Tasks;
 
 namespace Core.Renderers;
 
@@ -68,20 +69,17 @@ public class Renderer : RendererBase
     }
 
     /// <inheritdoc />
-    public override void Render()
+    public override async Task Render()
     {
         Window.GL.Enable(EnableCap.DepthTest);
-
         _game.Camera.SetShaderUniforms(_lightingShader.Shader);
 
         Window.GL.BindVertexArray(_vaoModel);
-
-        _scene.Iterate(_scene.Root.Children, RenderGameObject);
-
+        await _scene.IterateAsync(_scene.Root.Children, RenderGameObject);
         Window.GL.BindVertexArray(_vaoLamp);
     }
 
-    private void RenderGameObject(SceneNode node)
+    private async Task RenderGameObject(SceneNode node)
     {
         if (node is GameObject gameObject)
         {
@@ -91,7 +89,7 @@ public class Renderer : RendererBase
                 return;
 
             // TODO: Skip blocks that are behind others relative to the camera
-            gameObject.Render();
+            await gameObject.Render();
         }
     }
 

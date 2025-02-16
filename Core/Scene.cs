@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Core;
 
@@ -103,6 +104,21 @@ public class Scene
 
     public void Iterate(List<SceneNode> elements, Action<SceneNode> action)
         => Iterate<SceneNode>(elements, action);
+
+    public async Task IterateAsync<TEntityType>(List<TEntityType> elements, Func<TEntityType, Task> action) where TEntityType : SceneNode
+    {
+        foreach (var entity in elements)
+        {
+            await action(entity);
+
+            var children = entity.Children.OfType<TEntityType>().ToList();
+            if (children.Count != 0)
+                await IterateAsync(children, action);
+        }
+    }
+
+    public Task IterateAsync(List<SceneNode> elements, Func<SceneNode, Task> action)
+        => IterateAsync<SceneNode>(elements, action);
 }
 
 /// <summary>
@@ -169,8 +185,9 @@ public class SceneNode
         Children.Remove(node);
     }
 
-    public virtual void Render()
-    {
-
-    }
+    /// <summary>
+    ///     Renders the current object to the screen.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing an asynchronous operation.</returns>
+    public virtual Task Render() => Task.CompletedTask;
 }

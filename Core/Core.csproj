@@ -8,45 +8,33 @@
       We should see if there is a better way to approach where ever these unsafe contexts are being used.
     -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Platforms>AnyCPU;x64;x86</Platforms>
     
   </PropertyGroup>
 
   <ItemGroup>
+    <!--
+    <PackageReference Include="ImGui.NET" Version="1.91.6.1" />-->
+    <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.22.0" />
+
     <PackageReference Include="Silk.NET.Input" Version="2.22.0" />
     <PackageReference Include="Silk.NET.OpenGL" Version="2.22.0" />
     <PackageReference Include="Silk.NET.Windowing" Version="2.22.0" />
+    
     <PackageReference Include="StbImageSharp" Version="2.30.15" />
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Shaders\lighting.frag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Shaders\Light\DirectionalLight.glsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Shaders\Light\PointLight.glsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Shaders\Light\SpotLight.glsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Shaders\Material.glsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Shaders\shader.frag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Shaders\shader.vert">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Shaders\uiShader.frag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Shaders\uiShader.vert">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Update="Shaders\lighting.frag" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Shaders\Light\DirectionalLight.glsl" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Shaders\Light\PointLight.glsl" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Shaders\Light\SpotLight.glsl" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Shaders\Material.glsl" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Shaders\shader.frag" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Shaders\shader.vert" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Shaders\uiShader.frag" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Shaders\uiShader.vert" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
