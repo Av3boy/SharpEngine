@@ -1,7 +1,7 @@
 ﻿using Core.Entities;
 using Core.Primitives;
 
-using OpenTK.Mathematics;
+using System.Numerics;
 
 namespace Minecraft.Block;
 

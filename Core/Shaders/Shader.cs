@@ -165,19 +165,19 @@ namespace Core.Shaders
         private void GetUniformLocations()
         {
             // First, we have to get the number of active uniforms in the shader.
-            GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var numberOfUniforms);
+            Window.GL.GetProgram(Handle, GLEnum.ActiveUniforms, out var numberOfUniforms);
 
             // Next, allocate the dictionary to hold the locations.
             _uniformLocations = new Dictionary<string, int>();
 
             // Loop over all the uniforms,
-            for (var i = 0; i < numberOfUniforms; i++)
+            for (uint i = 0; i < numberOfUniforms; i++)
             {
                 // get the name of this uniform,
-                var key = GL.GetActiveUniform(Handle, i, out _, out _);
+                var key = Window.GL.GetActiveUniform(Handle, i, out _, out _);
 
                 // get the location,
-                var location = GL.GetUniformLocation(Handle, key);
+                var location = Window.GL.GetUniformLocation(Handle, key);
 
                 // and then add it to the dictionary.
                 _uniformLocations.Add(key, location);
@@ -201,8 +201,8 @@ namespace Core.Shaders
             Window.GL.CompileShader(shader);
 
             // Check for compilation errors
-            Window.GL.GetShader(shader, ShaderParameter.CompileStatus, out var code);
-            if (code != (int)All.True)
+            Window.GL.GetShader(shader, GLEnum.CompileStatus, out var code);
+            if (code != (int)GLEnum.True)
             {
                 // We can use `GL.GetShaderInfoLog(shader)` to get information about the error.
                 var infoLog = Window.GL.GetShaderInfoLog(shader);
@@ -214,8 +214,8 @@ namespace Core.Shaders
         {
             Window.GL.LinkProgram(program);
 
-            Window.GL.GetProgram(program, GetProgramParameterName.LinkStatus, out var code);
-            if (code != (int)All.True)
+            Window.GL.GetProgram(program, GLEnum.LinkStatus, out var code);
+            if (code != (int)GLEnum.True)
             {
                 string infoLog = Window.GL.GetProgramInfoLog(program);
                 throw new InvalidOperationException($"Error occurred whilst linking Program({program}): {infoLog}");

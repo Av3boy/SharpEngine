@@ -2,13 +2,12 @@ using Core;
 using Core.Entities;
 using Core.Enums;
 using Core.Interfaces;
+
 using Minecraft.Block;
 
-using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-
+using Silk.NET.Input;
 using System;
+using System.Numerics;
 
 namespace Minecraft
 {
@@ -125,45 +124,50 @@ namespace Minecraft
         }
 
         /// <inheritdoc />
-        public void Update(FrameEventArgs args, KeyboardState keyboardState, MouseState mouseState)
+        public void Update(double deltaTime, IInputContext input)
         {
             uiElem.Transform.Rotation += 0.01f;
+
+            // _input.HandleKeyboard(input, deltaTime);
         }
 
         // TODO: Input system to let users change change key bindings?
         /// <inheritdoc />
-        public void HandleKeyboard(KeyboardState input, float deltaTime)
+        public void HandleKeyboard(IKeyboard input)
         {
-            _input.HandleKeyboard(input, deltaTime);
-
             for (int i = 0; i <= 9; i++)
             {
-                if (input.IsKeyDown(Keys.D0 + i))
+                if (input.IsKeyPressed(Key.Number0 + i))
                 {
                     _inventory.SetSelectedSlot(i);
                     Console.WriteLine($"Selected slot: {i} ({_inventory.SelectedSlot.Items.Type})");
                 }
             }
 
-            if (input.IsKeyReleased(Keys.F))
+            input.KeyUp += Input_KeyUp;
+
+
+        }
+
+        private void Input_KeyUp(IKeyboard arg1, Key arg2, int arg3)
+        {
+            if (arg2 == Key.F)
             {
                 Settings.PrintFrameRate = !Settings.PrintFrameRate;
             }
 
-            if (input.IsKeyReleased(Keys.L))
+            if (arg2 == Key.L)
             {
                 Settings.UseWireFrame = !Settings.UseWireFrame;
             }
         }
 
-        /// <inheritdoc />
-        public void HandleMouse(MouseState mouse)
-            => _input.HandleMouse(mouse);
+        public void HandleMouse(IMouse mouse) { }
 
         /// <inheritdoc />
-        public void HandleMouseDown(MouseButtonEventArgs e)
+        public void HandleMouseDown(IMouse mouse, MouseButton button) 
         {
-            if (e.Button == MouseButton.Right)
+            if (button == MouseButton.Right)
             {
                 if (_inventory.SelectedSlot.Items.Type != BlockType.None && _inventory.SelectedSlot.Items.Amount > 0)
                 {
@@ -179,7 +183,7 @@ namespace Minecraft
                 }
             }
 
-            if (e.Button == MouseButton.Left)
+            if (button == MouseButton.Left)
             {
                 var destoryedBlockType = DestroyBlock();
                 if (destoryedBlockType != BlockType.None)
@@ -232,7 +236,7 @@ namespace Minecraft
         }
 
         /// <inheritdoc />
-        public void HandleMouseWheel(MouseWheelScrollDirection direction, MouseWheelEventArgs e)
+        public void HandleMouseWheel(MouseWheelScrollDirection direction, ScrollWheel scrollWheel)
         {
             int slotIndex = _inventory.SelectedSlotIndex;
 
@@ -250,5 +254,6 @@ namespace Minecraft
             Console.WriteLine($"Selected slot: {slotIndex}");
 
         }
+
     }
 }

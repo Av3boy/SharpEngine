@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using Silk.NET.OpenGL;
+using System;
 
 namespace Core
 {
@@ -47,7 +48,7 @@ namespace Core
                 ImageResult image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
 
                 // Generate a texture
-                Window.GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
+                Window.GL.TexImage2D<byte>(TextureTarget.Texture2D, 0, InternalFormat.Rgba, (uint)image.Width, (uint)image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data.AsSpan());
             }
 
             // Set texture parameters
@@ -57,7 +58,7 @@ namespace Core
             Window.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
 
             // Generate mipmaps
-            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+            Window.GL.GenerateMipmap(GLEnum.Texture2D);
 
             // Create a new texture instance and add it to the cache
             var texture = new Texture(handle);

@@ -1,5 +1,5 @@
 ﻿using Core.Entities;
-using OpenTK.Windowing.GraphicsLibraryFramework;
+using Silk.NET.Input;
 
 namespace Minecraft;
 
@@ -20,49 +20,49 @@ public class Input
         _camera = camera;
     }
 
-    public void HandleKeyboard(KeyboardState input, float deltaTime)
+    public void HandleKeyboard(IKeyboard input, float deltaTime)
     {
-        if (input.IsKeyDown(Keys.W))
+        if (input.IsKeyPressed(Key.W))
         {
             _camera.Position += _camera.Front * MovementSpeed * deltaTime; // Forward
         }
         
-        if (input.IsKeyDown(Keys.S))
+        if (input.IsKeyPressed(Key.S))
         {
             _camera.Position -= _camera.Front * MovementSpeed * deltaTime; // Backwards
         }
         
-        if (input.IsKeyDown(Keys.A))
+        if (input.IsKeyPressed(Key.A))
         {
             _camera.Position -= _camera.Right * MovementSpeed * deltaTime; // Left
         }
         
-        if (input.IsKeyDown(Keys.D))
+        if (input.IsKeyPressed(Key.D))
         {
             _camera.Position += _camera.Right * MovementSpeed * deltaTime; // Right
         }
         
-        if (input.IsKeyDown(Keys.Space))
+        if (input.IsKeyPressed(Key.Space))
         {
             _camera.Position += _camera.Up * MovementSpeed * deltaTime; // Up
         }
         
-        if (input.IsKeyDown(Keys.LeftShift))
+        if (input.IsKeyPressed(Key.ShiftLeft))
         {
             _camera.Position -= _camera.Up * MovementSpeed * deltaTime; // Down
         }
     }
 
-    public void HandleMouse(MouseState mouse)
+    public void HandleMouse(IMouse mouse)
     {
     }
 
-    public static bool IsInputNumber(Keys key, out int number)
+    public static bool IsInputNumber(Key key, out int number)
     {
         number = -1;
-        if (key is >= Keys.D0 and <= Keys.D9)
+        if (key is >= Key.Number0 and <= Key.Number9)
         {
-            number = key - Keys.D0;
+            number = key - Key.Number0;
             return true;
         }
 

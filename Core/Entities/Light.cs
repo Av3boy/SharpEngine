@@ -1,4 +1,5 @@
 using Core.Shaders;
+using System;
 using System.Numerics;
 
 namespace Core.Entities;
@@ -139,8 +140,8 @@ public class SpotLight : Light
     public SpotLight()
     {
         Direction = new Vector3(0.0f, -1.0f, 0.0f);
-        CutOff = (float)MathHelper.Cos(MathHelper.DegreesToRadians(12.5f));
-        OuterCutOff = (float)MathHelper.Cos(MathHelper.DegreesToRadians(15.0f));
+        CutOff = (float)System.Math.Cos(Math.DegreesToRadians(12.5f));
+        OuterCutOff = (float)System.Math.Cos(Math.DegreesToRadians(15.0f));
         Constant = 1.0f;
         Linear = 0.09f;
         Quadratic = 0.032f;

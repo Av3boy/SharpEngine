@@ -14,6 +14,7 @@ using Core.Shaders;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Core;
 
@@ -23,49 +24,47 @@ namespace Core;
 public class Window : SilkWindow
 {
     private readonly IGame _game;
-    private readonly Renderer _renderer;
-    private readonly UIRenderer _uiRenderer;
+    private Renderer _renderer;
+    private UIRenderer _uiRenderer;
 
-    private static IWindow _window;
-    private readonly WindowOptions _options;
+    private readonly Scene _scene;
+
+    private readonly IWindow _window;
 
     public static GL GL;
+
+    private IInputContext _input;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
     /// </summary>
     /// <param name="game">Contains the actual game implementation.</param>
     /// <param name="scene">Contains the game scene.</param>
+    /// <param name="options"></param>
     public Window(IGame game, Scene scene, WindowOptions options)
     {
-        _window = Silk.NET.Windowing.Window.Create(options);
-        GL = _window.CreateOpenGL();
-
-        _options = options;
         _game = game;
+        _scene = scene;
+
+        _window = Silk.NET.Windowing.Window.Create(options);
         _game.Camera = new Camera(Vector3.UnitZ * 3, _window.Size.X / (float)_window.Size.Y);
 
-        _window.Load += OnLoad;
         _window.Update += OnUpdateFrame;
         _window.Render += RenderFrame;
-
         _window.Resize += OnResize;
-
-        var input = _window.CreateInput();
-        AssignInputEvents(input);
+        _window.Load += OnLoad;
 
         _window.Run();
-
-        _renderer = new Renderer(_game, scene);
-        _uiRenderer = new UIRenderer(scene, _game);
     }
 
-    public void Run()
-        => _window.Run();
-
     /// <inheritdoc />
-    protected void OnLoad()
+    public void OnLoad()
     {
+        GL = _window.CreateOpenGL();
+
+        _input = _window.CreateInput();
+        AssignInputEvents();
+
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
         // TODO: Set cursor shape
@@ -73,8 +72,10 @@ public class Window : SilkWindow
 
         // Load all meshes from the mesh cache
         MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
-
         _game.Initialize();
+
+        _renderer = new Renderer(_game, _scene);
+        _uiRenderer = new UIRenderer(_scene, _game);
 
         _renderer.Initialize();
         _uiRenderer.Initialize();
@@ -107,7 +108,7 @@ public class Window : SilkWindow
     /// </summary>
     /// <param name="useWireFrame">Determines whether objects should be rendered in wireframe.</param>
     private static void ToggleWireFrame(bool useWireFrame)
-        => GL.PolygonMode(MaterialFace.FrontAndBack, useWireFrame ? PolygonMode.Line : PolygonMode.Fill);
+        => GL.PolygonMode(GLEnum.FrontAndBack, useWireFrame ? PolygonMode.Line : PolygonMode.Fill);
 
     private List<Shader> _shaders = [];
 
@@ -122,24 +123,28 @@ public class Window : SilkWindow
     /// <inheritdoc />
     protected void OnUpdateFrame(double deltaTime)
     {
+        // TODO: GLFW_ISFOCUSED
         // if (!_window.IsFocused)
         //     return;
 
         if (_game.CoreSettings.PrintFrameRate)
             Console.WriteLine($"FPS: {1f / deltaTime}");
 
-        _game.Camera.UpdateMousePosition(new Vector2(MouseState.X, MouseState.Y));
+        // TODO: Handle multiple mice?
+        var mouse = _input.Mice[0];
 
-        _game.HandleMouse(MouseState);
-        _game.Update(args, KeyboardState, MouseState);
+        _game.Camera.UpdateMousePosition(mouse.Position);
+
+        _game.HandleMouse(mouse);
+        _game.Update(deltaTime, _input);
     }
 
-    private void AssignInputEvents(IInputContext input)
+    private void AssignInputEvents()
     {
-        foreach (var keyboard in input.Keyboards)
+        foreach (var keyboard in _input.Keyboards)
             keyboard.KeyDown += KeyDown;
 
-        foreach (var mouse in input.Mice)
+        foreach (var mouse in _input.Mice)
         {
             mouse.Scroll += OnMouseWheel;
             mouse.Click += OnMouseClick;
@@ -147,14 +152,16 @@ public class Window : SilkWindow
         }
     }
 
-    private void OnMouseClick(IMouse mouse, Silk.NET.Input.MouseButton button, Vector2 vector) => throw new NotImplementedException();
+    /// <inheritdoc />
+    protected void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) => throw new NotImplementedException();
 
+    /// <inheritdoc />
     protected void KeyDown(IKeyboard keyboard, Key key, int keyCode)
     {
         if (key == Key.Escape)
             _window.Close();
 
-        _game.HandleKeyboard(KeyboardState, frameTime);
+        _game.HandleKeyboard(keyboard);
     }
 
     /// <inheritdoc />
@@ -181,10 +188,8 @@ public class Window : SilkWindow
     }
 
     /// <inheritdoc />
-    protected void OnMouseDown(IMouse mouse, Silk.NET.Input.MouseButton button)
-    {
-        _game.HandleMouseDown(mouse, button);
-    }
+    protected void OnMouseDown(IMouse mouse, MouseButton button)
+        => _game.HandleMouseDown(mouse, button);
 
     public void Dispose()
     {

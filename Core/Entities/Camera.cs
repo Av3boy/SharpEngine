@@ -42,10 +42,10 @@ public class Camera
     private float _pitch;
 
     // Rotation around the Y axis (radians)
-    private float _yaw = -MathHelper.PiOver2; // Without this, you would be started rotated 90 degrees right.
+    private float _yaw = -Math.PiOver2; // Without this, you would be started rotated 90 degrees right.
 
     // The field of view of the camera (radians)
-    private float _fov = MathHelper.PiOver2;
+    private float _fov = Math.PiOver2;
 
     /// <summary>Gets or sets the position of the camera.</summary>
     public Vector3 Position { get; set; }
@@ -61,14 +61,14 @@ public class Camera
     /// </remarks>
     public float Pitch
     {
-        get => MathHelper.RadiansToDegrees(_pitch);
+        get => Math.RadiansToDegrees(_pitch);
         set
         {
             // We clamp the pitch value between -89 and 89 to prevent the camera from going upside down, and a bunch
             // of weird "bugs" when you are using euler angles for rotation.
             // If you want to read more about this you can try researching a topic called gimbal lock
-            var angle = MathHelper.Clamp(value, -89f, 89f);
-            _pitch = MathHelper.DegreesToRadians(angle);
+            var angle = System.Math.Clamp(value, -89f, 89f);
+            _pitch = Math.DegreesToRadians(angle);
             UpdateVectors();
         }
     }
@@ -81,10 +81,10 @@ public class Camera
     /// </remarks>
     public float Yaw
     {
-        get => MathHelper.RadiansToDegrees(_yaw);
+        get => Math.RadiansToDegrees(_yaw);
         set
         {
-            _yaw = MathHelper.DegreesToRadians(value);
+            _yaw = Math.DegreesToRadians(value);
             UpdateVectors();
         }
     }
@@ -100,11 +100,11 @@ public class Camera
     /// </remarks>
     public float Fov
     {
-        get => MathHelper.RadiansToDegrees(_fov);
+        get => Math.RadiansToDegrees(_fov);
         set
         {
-            var angle = MathHelper.Clamp(value, 1f, 90f);
-            _fov = MathHelper.DegreesToRadians(angle);
+            var angle = System.Math.Clamp(value, 1f, 90f);
+            _fov = Math.DegreesToRadians(angle);
         }
     }
 
@@ -113,7 +113,7 @@ public class Camera
     /// </summary>
     /// <returns>The view matrix.</returns>
     public Matrix4x4 GetViewMatrix()
-        => Matrix4x4.LookAt(Position, Position + _front, _up);
+        => Matrix4x4.CreateLookAt(Position, Position + _front, _up);
 
     /// <summary>
     ///     Gets the projection matrix of the camera.

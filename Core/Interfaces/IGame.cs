@@ -2,8 +2,6 @@
 using Core.Enums;
 using Silk.NET.Input;
 
-using static Core.Window;
-
 namespace Core.Interfaces;
 
 /// <summary>
@@ -25,27 +23,26 @@ public interface IGame
     /// <summary>
     ///     Executed when a mouse button is pressed.
     /// </summary>
-    /// <param name="e">Contains information about the button press.</param>
-    public void HandleMouseDown(MouseButtonEventArgs e);
+    public void HandleMouseDown(IMouse mouse, Silk.NET.Input.MouseButton button);
 
     /// <summary>
     ///     A method executed when the mouse state is changed
     /// </summary>
     /// <param name="mouse">The state of the mouse on the current frame.</param>
-    public void HandleMouse(MouseState mouse);
+    public void HandleMouse(IMouse mouse);
 
     /// <summary>
     ///     Gets or sets the event executed when the mouse wheel is scrolled.
     /// </summary>
     /// <param name="direction">The direction the wheel was scrolled.</param>
+    /// <param name="scrollWheel">Contains information about the scroll wheel changes during the current frame.</param>
     public void HandleMouseWheel(MouseWheelScrollDirection direction, ScrollWheel scrollWheel);
 
     /// <summary>
     ///     Executed when a key is pressed.
     /// </summary>
     /// <param name="input">The state of the keyboard on the current frame.</param>
-    /// <param name="deltaTime">Time since the previous frame.</param>
-    public void HandleKeyboard(KeyboardState input, float deltaTime);
+    public void HandleKeyboard(IKeyboard input);
 
     /// <summary>
     ///     Executed when the game is first loaded.
@@ -55,8 +52,5 @@ public interface IGame
     /// <summary>
     ///    Executed each frame.
     /// </summary>
-    /// <param name="args">Information about the current frame.</param>
-    /// <param name="keyboardState">The state of the keyboard this frame.</param>
-    /// <param name="mouseState">The state of the mouse this frame.</param>
-    public void Update(FrameEventArgs args, KeyboardState keyboardState, MouseState mouseState);
+    public void Update(double deltaTime, IInputContext input);
 }
