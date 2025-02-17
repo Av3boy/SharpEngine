@@ -1,5 +1,6 @@
 using Core;
 using Core.Entities;
+using Core.Entities.Properties;
 using Core.Enums;
 using Core.Interfaces;
 
@@ -16,7 +17,7 @@ namespace Minecraft
         // TODO: Add documentation to the code
 
         /// <summary>Gets or sets the player camera.</summary>
-        public Camera Camera { get; set; }
+        public CameraView Camera { get; set; }
 
         /// <inheritdoc />
         public ISettings CoreSettings { get; }
@@ -46,6 +47,9 @@ namespace Minecraft
             _input = new Input(Camera);
             _inventory = new Inventory();
             _inventory.Initialize();
+
+            // Load all meshes from the mesh cache
+            MeshService.Instance.LoadMesh("cube", Core.Primitives.Cube.Mesh);
 
             _lightsNode = _scene.Root.AddChild("lights");
             _blocksNode = _scene.Root.AddChild("blocks");

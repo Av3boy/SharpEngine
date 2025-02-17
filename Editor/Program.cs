@@ -1,10 +1,9 @@
 ﻿using Core;
 using Core.Entities;
-using Core.Enums;
 using Core.Interfaces;
 using Core.Renderers;
-using Silk.NET.Input;
-using Silk.NET.OpenGL;
+
+using Silk.NET.Maths;
 using Silk.NET.OpenGL.Extensions.ImGui;
 
 public class Program
@@ -15,58 +14,47 @@ public class Program
     {
         // TODO: Load scene as a command line argument.
 
-        var editor = new Editor();
+        var editor = new Editor(new DefaultViewSettings() 
+        { 
+            WindowOptions = Silk.NET.Windowing.WindowOptions.Default with 
+            { 
+                Size = new Vector2D<int>(1280, 720) }
+            }
+        );
         var scene = new Scene();
 
-        Window window = new Window(editor, scene, Silk.NET.Windowing.WindowOptions.Default with
-        {
-            Title = "SharpEngine"
-        });
+        Window window = new Window(scene, editor.CoreSettings, editor);
 
         _imGuiController = new ImGuiController(Window.GL, window, window.Input);
-
     }
 }
 
-public class EditorSettings : ISettings
+public class EditorSettings : IViewSettings
 {
+    /// <inheritdoc />
     public bool UseWireFrame { get; set; }
+
+    /// <inheritdoc />
     public bool PrintFrameRate { get; set; }
+
+    /// <inheritdoc />
     public RenderFlags RendererFlags { get; set; }
-    public Silk.NET.Windowing.WindowOptions WindowOptions { get; set; }
+
+    /// <inheritdoc />
+    public Silk.NET.Windowing.WindowOptions WindowOptions { get; set; } = Silk.NET.Windowing.WindowOptions.Default;
+
+    /// <inheritdoc />
+    public float Sensitivity { get; set; }
 }
 
-public class Editor : IGame
+public class Editor : View
 {
-    public ISettings CoreSettings { get; } = new EditorSettings();
-
-    public Camera Camera { get; set; }
-
-    public void HandleKeyboard(IKeyboard input, double deltaTime)
+    public Editor(IViewSettings settings) : base(new EditorSettings())
     {
-
-    }
-    public void HandleMouse(IMouse mouse)
-    {
-
-    }
-    public void HandleMouseDown(IMouse mouse, MouseButton button)
-    {
-
-    }
-    public void HandleMouseWheel(MouseWheelScrollDirection direction, ScrollWheel scrollWheel)
-    {
-
-    }
-    public void Initialize()
-    {
-
+        CoreSettings = settings;
     }
 
-    public void Update(double deltaTime, IInputContext input)
-    {
-
-    }
+    public ISettings CoreSettings { get; init; }
 
     public void SaveScene(Scene scene)
     {

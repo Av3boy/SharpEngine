@@ -6,18 +6,12 @@ using Shader = Core.Shaders.Shader;
 
 using Core.Interfaces;
 using Core.Renderers;
-using Core.Enums;
 using Core.Entities;
-using Core.Entities.Properties;
 using Core.Shaders;
 
 using System;
 using System.Collections.Generic;
-using System.Numerics;
-using MouseButton = Silk.NET.Input.MouseButton;
 using System.Threading.Tasks;
-using ImGuiNET;
-using Silk.NET.OpenGL.Extensions.ImGui;
 
 namespace Core;
 
@@ -26,11 +20,13 @@ namespace Core;
 /// </summary>
 public class Window : SilkWindow
 {
-    private readonly IGame _game;
     private Renderer _renderer;
     private UIRenderer _uiRenderer;
 
+    private ISettings _settings;
+
     private readonly Scene _scene;
+    private readonly View _camera;
 
     private readonly IWindow _window;
 
@@ -44,14 +40,16 @@ public class Window : SilkWindow
     /// <param name="game">Contains the actual game implementation.</param>
     /// <param name="scene">Contains the game scene.</param>
     /// <param name="options"></param>
-    public Window(IGame game, Scene scene, WindowOptions options)
+    public Window(Scene scene, ISettings settings, View view)
     {
         // TODO: Game should be refactored out of the window class.
-        _game = game;
         _scene = scene;
+        _settings = settings;
+        _camera = view;
 
-        _window = Silk.NET.Windowing.Window.Create(options);
-        _game.Camera = new Camera(Vector3.UnitZ * 3, _window.Size.X / (float)_window.Size.Y);
+        _window = Silk.NET.Windowing.Window.Create(_settings.WindowOptions);
+        // _camera = new CameraView(Vector3.UnitZ * 3, _window.Size.X / (float)_window.Size.Y);
+        _camera = new View(new DefaultViewSettings());
 
         _window.Update += OnUpdateFrame;
         _window.Render += RenderFrame;
@@ -59,6 +57,7 @@ public class Window : SilkWindow
         _window.Load += OnLoad;
 
         _window.Run();
+        _camera = view;
     }
 
     /// <inheritdoc />
@@ -76,12 +75,8 @@ public class Window : SilkWindow
         // TODO: Set cursor shape
         // CursorShape = CursorShape.Hand;
 
-        // Load all meshes from the mesh cache
-        MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
-        _game.Initialize();
-
-        _renderer = new Renderer(_game, _scene);
-        _uiRenderer = new UIRenderer(_scene, _game);
+        _renderer = new Renderer(_camera, _scene, _settings);
+        _uiRenderer = new UIRenderer(_camera, _scene, _settings);
 
         _renderer.Initialize();
         _uiRenderer.Initialize();
@@ -93,9 +88,12 @@ public class Window : SilkWindow
     /// <param name="deltaTime">The time since the last frame.</param>
     protected void RenderFrame(double deltaTime)
     {
+        try
+        {
+
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-        ToggleWireFrame(_game.CoreSettings.UseWireFrame);
+        ToggleWireFrame(_settings.UseWireFrame);
 
         UseShaders();
 
@@ -103,21 +101,26 @@ public class Window : SilkWindow
 
         var renderTasks = new List<Task>();
 
-        if (_game.CoreSettings.RendererFlags.HasFlag(_renderer.RenderFlag))
+        if (_settings.RendererFlags.HasFlag(_renderer.RenderFlag))
             renderTasks.Add(_renderer.Render());
 
-        if (_game.CoreSettings.RendererFlags.HasFlag(_uiRenderer.RenderFlag))
+        if (_settings.RendererFlags.HasFlag(_uiRenderer.RenderFlag))
             renderTasks.Add(_uiRenderer.Render());
 
         Task.WaitAll([.. renderTasks]);
 
-        // ImGui.Begin("test");
-        // ImGui.Text("some text");
+            // ImGui.Begin("test");
+            // ImGui.Text("some text");
 
-        // _imGuiController.Render();
+            // _imGuiController.Render();
 
-        // TODO: This call causes filckering in the new framework. Investigate why.
-        // _window.SwapBuffers();
+            // TODO: This call causes filckering in the new framework. Investigate why.
+            // _window.SwapBuffers();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     /// <summary>
@@ -144,23 +147,17 @@ public class Window : SilkWindow
         // if (!_window.IsFocused)
         //     return;
 
-        if (_game.CoreSettings.PrintFrameRate)
+        if (_settings.PrintFrameRate)
             Console.WriteLine($"FPS: {1f / deltaTime}");
 
         // TODO: Handle multiple mice?
         var mouse = Input.Mice[0];
         var keyboard = Input.Keyboards[0];
 
-        _game.Camera.UpdateMousePosition(mouse.Position);
-
-        _game.HandleMouse(mouse);
+        _camera.UpdateMousePosition(mouse.Position);
 
         if (keyboard.IsKeyPressed(Key.Escape))
             _window.Close();
-
-        _game.HandleKeyboard(keyboard, deltaTime);
-
-        _game.Update(deltaTime, Input);
     }
 
     // TODO: #21 Input system
@@ -177,43 +174,27 @@ public class Window : SilkWindow
         }
     }
 
-    // /// <inheritdoc />
-    protected void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) { }
-
     /// <inheritdoc />
     protected void KeyDown(IKeyboard keyboard, Key key, int keyCode)
     {
         if (key == Key.Escape)
             _window.Close();
-
-        // _game.HandleKeyboard(keyboard);
     }
 
     /// <inheritdoc />
     protected void OnMouseWheel(IMouse mouse, ScrollWheel sw)
     {
-        var direction = sw.Y switch
-        {
-            > 0 => MouseWheelScrollDirection.Up,
-            < 0 => MouseWheelScrollDirection.Down,
-            _ => throw new NotImplementedException()
-        };
-
-        _game.HandleMouseWheel(direction, sw);
-
-        _game.Camera.Fov -= sw.Y;
+        // _camera.Fov -= sw.Y;
     }
 
     /// <inheritdoc />
     protected void OnResize(Vector2D<int> size)
     {
         GL.Viewport(size);
-        _game.Camera.AspectRatio = (float)(size.X / size.Y);
-    }
 
-    /// <inheritdoc />
-    protected void OnMouseDown(IMouse mouse, MouseButton button)
-        => _game.HandleMouseDown(mouse, button);
+        if (_window.WindowState != WindowState.Minimized)
+            _camera.AspectRatio = size.X / (float)size.Y;
+    }
 
     public void Dispose()
     {

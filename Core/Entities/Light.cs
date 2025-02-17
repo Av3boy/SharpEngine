@@ -121,7 +121,7 @@ public class PointLight : Light
         var lampMatrix = Matrix4x4.CreateScale(Transform.Scale);
         lampMatrix *= Matrix4x4.CreateTranslation(Transform.Position);
 
-        LampShader.Shader.SetMatrix4("model", lampMatrix);
+        LampShader.Shader.SetMatrix4(ShaderAttributes.Model, lampMatrix);
 
         return Task.CompletedTask;
     }

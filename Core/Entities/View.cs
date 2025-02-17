@@ -1,4 +1,7 @@
+using Core.Interfaces;
+using Core.Renderers;
 using Core.Shaders;
+using Silk.NET.Windowing;
 using System;
 using System.Numerics;
 using Plane = System.Numerics.Plane;
@@ -6,19 +9,16 @@ using Plane = System.Numerics.Plane;
 namespace Core.Entities;
 
 /// <summary>
-///     Represents a movable camera.
+///     Represents a movable camera view.
 /// </summary>
-/// <remarks>
-///     Basically the implementation from <see href="https://github.com/opentk/LearnOpenTK"/>.
-/// </remarks>
-public class Camera
+public class CameraView : View
 {
     /// <summary>
-    ///     Initializes a new instance of <see cref="Camera"/>.
+    ///     Initializes a new instance of <see cref="View"/>.
     /// </summary>
     /// <param name="position">The initial position of the camera.</param>
     /// <param name="aspectRatio">The aspect ratio of the viewport.</param>
-    public Camera(Vector3 position, float aspectRatio)
+    public CameraView(Vector3 position, float aspectRatio) : base(new DefaultViewSettings())
     {
         Position = position;
         AspectRatio = aspectRatio;
@@ -49,9 +49,6 @@ public class Camera
 
     /// <summary>Gets or sets the position of the camera.</summary>
     public Vector3 Position { get; set; }
-
-    /// <summary>Gets or sets the aspect ratio of the viewport, used for the projection matrix.</summary>
-    public float AspectRatio { private get; set; }
 
     /// <summary>
     ///     Gets or sets the pitch (rotation around the X axis) of the camera in degrees.
@@ -142,35 +139,6 @@ public class Camera
         _up = Vector3.Normalize(Vector3.Cross(_right, _front));
     }
 
-    private bool firstMove;
-    private Vector2 lastPos;
-
-    // TODO: Move to the settings
-    /// <summary>Gets or sets the sensitivity of the camera to mouse movements.</summary>
-    public float Sensitivity { get; set; } = 0.2f;
-
-    /// <summary>
-    ///     Updates the camera's orientation based on the current mouse position.
-    /// </summary>
-    /// <param name="mousePosition">The current mouse position.</param>
-    public void UpdateMousePosition(Vector2 mousePosition)
-    {
-        if (firstMove)
-        {
-            lastPos = new Vector2(mousePosition.X, mousePosition.Y);
-            firstMove = false;
-        }
-        else
-        {
-            var deltaX = mousePosition.X - lastPos.X;
-            var deltaY = mousePosition.Y - lastPos.Y;
-            lastPos = new Vector2(mousePosition.X, mousePosition.Y);
-
-            Yaw += deltaX * Sensitivity;
-            Pitch -= deltaY * Sensitivity;
-        }
-    }
-
     /// <summary>
     ///     Gets the frustum planes of the camera.
     /// </summary>
@@ -238,5 +206,70 @@ public class Camera
         shader.SetMatrix4("view", GetViewMatrix());
         shader.SetMatrix4("projection", GetProjectionMatrix());
         shader.SetVector3("viewPos", Position);
+    }
+
+    /// <inheritdoc />
+    public override void UpdateMousePosition(Vector2 mousePosition)
+    {
+        base.UpdateMousePosition(mousePosition);
+
+        if (!firstMove)
+        {
+            var deltaX = mousePosition.X - lastPos.X;
+            var deltaY = mousePosition.Y - lastPos.Y;
+
+            Yaw += deltaX * Settings.Sensitivity;
+            Pitch -= deltaY * Settings.Sensitivity;
+        }
+    }
+}
+
+public interface IViewSettings : ISettings
+{
+    public float Sensitivity { get; set; }
+}
+
+public struct DefaultViewSettings : IViewSettings
+{
+    public DefaultViewSettings()
+    {
+        Sensitivity = 0.2f;
+    }
+
+    public float Sensitivity { get; set; }
+    public bool UseWireFrame { get; set; }
+    public bool PrintFrameRate { get; set; }
+    public RenderFlags RendererFlags { get; set; }
+    public WindowOptions WindowOptions { get; set; }
+}
+
+public class View
+{
+    public View(IViewSettings settings)
+    {
+        Settings = settings;
+    }
+
+    public IViewSettings Settings { get; set; }
+
+    /// <summary>Gets or sets the aspect ratio of the viewport, used for the projection matrix.</summary>
+    public float AspectRatio { get; set; }
+
+    protected bool firstMove;
+    protected Vector2 lastPos;
+
+    /// <summary>
+    ///     Updates the camera's orientation based on the current mouse position.
+    /// </summary>
+    /// <param name="mousePosition">The current mouse position.</param>
+    public virtual void UpdateMousePosition(Vector2 mousePosition)
+    {
+        if (firstMove)
+        {
+            lastPos = new Vector2(mousePosition.X, mousePosition.Y);
+            firstMove = false;
+        }
+        else
+            lastPos = new Vector2(mousePosition.X, mousePosition.Y);
     }
 }

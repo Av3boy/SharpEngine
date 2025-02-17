@@ -7,15 +7,15 @@ public class Input
 {
     public float MouseSensitivity
     {
-        get => _camera.Sensitivity;
-        set => _camera.Sensitivity = value;
+        get => _camera.Settings.Sensitivity;
+        set => _camera.Settings.Sensitivity = value;
     }
 
     public float MovementSpeed { get; set; } = 1.5f;
 
-    private readonly Camera _camera;
+    private readonly CameraView _camera;
 
-    public Input(Camera camera)
+    public Input(CameraView camera)
     {
         _camera = camera;
     }

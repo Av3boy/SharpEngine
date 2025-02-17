@@ -13,6 +13,8 @@ namespace Core.Renderers;
 public class UIRenderer : RendererBase
 {
     private readonly Scene _scene;
+    private readonly ISettings _settings;
+    private readonly View _camera;
 
     private readonly UIShader _uiShader;
 
@@ -23,10 +25,11 @@ public class UIRenderer : RendererBase
     ///     Initializes a new instance of <see cref="UIRenderer"/>.
     /// </summary>
     /// <param name="scene"></param>
-    /// <param name="game"></param>
-    public UIRenderer(Scene scene, IGame game) : base(game.CoreSettings)
+    public UIRenderer(View camera, Scene scene, ISettings settings) : base(settings)
     {
+        _camera = camera;
         _scene = scene;
+        _settings = settings;
 
         _uiShader = new UIShader();
     }
@@ -43,7 +46,6 @@ public class UIRenderer : RendererBase
         _uiShader.Shader.Use();
 
         _scene.UIElements.Add(new UIElement("uiElement"));
-
         _scene.Iterate(_scene.UIElements, elem => elem.Initialize());
 
         InitializeVertexArrays();

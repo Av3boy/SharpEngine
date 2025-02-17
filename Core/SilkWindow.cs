@@ -1,8 +1,12 @@
 ﻿using Silk.NET.Core;
 using Silk.NET.Core.Contexts;
+using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
+
 using System;
+using System.Numerics;
+using MouseButton = Silk.NET.Input.MouseButton;
 
 namespace Core
 {
@@ -194,5 +198,9 @@ namespace Core
 
         /// <inheritdoc />
         public virtual void SetWindowIcon(ReadOnlySpan<RawImage> icons) { }
+
+        public virtual void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) { }
+
+        public virtual void OnMouseDown(IMouse mouse, MouseButton button) { }
     }
 }

@@ -69,7 +69,7 @@ public class GameObject : SceneNode
         Material.Shader.SetVector3("material.specular", Material.Specular);
         Material.Shader.SetFloat("material.shininess", Material.Shininess);
 
-        Material.Shader.SetMatrix4("model", Transform.ModelMatrix);
+        Material.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
 
         Window.GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
 

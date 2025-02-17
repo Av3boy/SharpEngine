@@ -81,7 +81,7 @@ public class UIElement : SceneNode
     {
         Window.GL.BindVertexArray(_vertexArrayObject);
 
-        _uIShader.Shader.SetMatrix4("model", Transform.ModelMatrix);
+        _uIShader.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
 
         Window.GL.DrawElements(PrimitiveType.Triangles, (uint)_indices.Length, DrawElementsType.UnsignedInt, 0);
 

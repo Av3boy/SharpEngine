@@ -2,14 +2,16 @@ using Core.Entities;
 using Core.Entities.Properties;
 using Core.Interfaces;
 using Core.Shaders;
+
 using Silk.NET.OpenGL;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
 
 namespace Core.Renderers;
 
 /// <summary>
-///     Represents the game renderer.
+///     Represents the a basic 3D renderer.
 /// </summary>
 public class Renderer : RendererBase
 {
@@ -19,8 +21,9 @@ public class Renderer : RendererBase
     private LampShader _lampShader;
     private LightingShader _lightingShader;
 
-    private readonly IGame _game;
+    private readonly View _camera;
     private readonly Scene _scene;
+    private readonly ISettings _settings;
 
     // Read only once, load into OpenGL buffer once.
     //
@@ -34,12 +37,12 @@ public class Renderer : RendererBase
     /// <summary>
     ///     Initializes a new instance of <see cref="Renderer"/>.
     /// </summary>
-    /// <param name="game">The game the renderer is being used for.</param>
-    /// <param name="scene">The game scene to be rendered.</param>
-    public Renderer(IGame game, Scene scene) : base(game.CoreSettings)
+    /// <param name="scene">The scene to be rendered.</param>
+    public Renderer(View camera, Scene scene, ISettings settings) : base(settings)
     {
-        _game = game;
+        _camera = camera;
         _scene = scene;
+        _settings = settings;
     }
 
     /// <inheritdoc />
@@ -72,7 +75,9 @@ public class Renderer : RendererBase
     public override async Task Render()
     {
         Window.GL.Enable(EnableCap.DepthTest);
-        _game.Camera.SetShaderUniforms(_lightingShader.Shader);
+        
+        // TODO: Is this required for basic views
+        // _camera.SetShaderUniforms(_lightingShader.Shader);
 
         Window.GL.BindVertexArray(_vaoModel);
         await _scene.IterateAsync(_scene.Root.Children, RenderGameObject);
@@ -83,22 +88,24 @@ public class Renderer : RendererBase
     {
         if (node is GameObject gameObject)
         {
+            // TODO: Do this only when using a camera view.
             // TODO: Fix culling for blocks that are partially in view
             // Perform frustum culling
-            if (!IsInViewFrustum(gameObject.BoundingBox, _game.Camera))
-                return;
+            // if (!IsInViewFrustum(gameObject.BoundingBox, _camera))
+            //     return;
 
             // TODO: Skip blocks that are behind others relative to the camera
             await gameObject.Render();
         }
     }
 
-    private static bool IsInViewFrustum(BoundingBox boundingBox, Camera camera)
+    private static bool IsInViewFrustum(BoundingBox boundingBox, View camera)
     {
         if (boundingBox is null)
             return true;
 
-        var planes = camera.GetFrustumPlanes();
+        //var planes = camera.GetFrustumPlanes();
+        var planes = new List<System.Numerics.Plane>();
 
         foreach (var plane in planes)
             if (DistanceToPoint(plane, boundingBox.Min) < 0 && DistanceToPoint(plane, boundingBox.Max) < 0)
