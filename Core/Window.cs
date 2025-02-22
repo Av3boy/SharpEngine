@@ -12,6 +12,8 @@ using Core.Shaders;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SharpEngine.Core;
+using Silk.NET.OpenGL.Extensions.ImGui;
 
 namespace Core;
 
@@ -33,6 +35,8 @@ public class Window : SilkWindow
     public static GL GL;
 
     public IInputContext Input;
+    public ImGuiController ImGuiController;
+
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
@@ -61,7 +65,7 @@ public class Window : SilkWindow
     }
 
     /// <inheritdoc />
-    public void OnLoad()
+    public override void OnLoad()
     {
         GL = _window.CreateOpenGL();
 
@@ -80,6 +84,8 @@ public class Window : SilkWindow
 
         _renderer.Initialize();
         _uiRenderer.Initialize();
+
+        ImGuiController = new ImGuiController(GL, _window, Input);
     }
 
     /// <summary>
@@ -90,38 +96,43 @@ public class Window : SilkWindow
     {
         try
         {
+            PreRender(deltaTime);
 
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            ImGuiController.Update((float)deltaTime);
 
-        ToggleWireFrame(_settings.UseWireFrame);
 
-        UseShaders();
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-        //_imGuiController.Update((float)deltaTime);
+            ToggleWireFrame(_settings.UseWireFrame);
 
-        var renderTasks = new List<Task>();
+            UseShaders();
 
-        if (_settings.RendererFlags.HasFlag(_renderer.RenderFlag))
-            renderTasks.Add(_renderer.Render());
+            var renderTasks = new List<Task>();
 
-        if (_settings.RendererFlags.HasFlag(_uiRenderer.RenderFlag))
-            renderTasks.Add(_uiRenderer.Render());
+            if (_settings.RendererFlags.HasFlag(_renderer.RenderFlag))
+                renderTasks.Add(_renderer.Render());
 
-        Task.WaitAll([.. renderTasks]);
+            if (_settings.RendererFlags.HasFlag(_uiRenderer.RenderFlag))
+                renderTasks.Add(_uiRenderer.Render());
 
-            // ImGui.Begin("test");
-            // ImGui.Text("some text");
-
-            // _imGuiController.Render();
+            Task.WaitAll([.. renderTasks]);
 
             // TODO: This call causes filckering in the new framework. Investigate why.
             // _window.SwapBuffers();
+
+            AfterRender(deltaTime);
+
+            ImGuiController.Render();
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            Debug.LogInformation(ex.Message);
         }
     }
+
+    protected virtual void PreRender(double deltaTime) { }
+    
+    protected virtual void AfterRender(double deltaTime) { }
 
     /// <summary>
     ///     Toggles the renderer between wireframe and fill mode.

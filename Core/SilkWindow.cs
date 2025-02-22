@@ -202,5 +202,8 @@ namespace Core
         public virtual void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) { }
 
         public virtual void OnMouseDown(IMouse mouse, MouseButton button) { }
+
+        public abstract void OnLoad();
+
     }
 }

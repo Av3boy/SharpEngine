@@ -247,8 +247,11 @@ namespace Core.Shaders
         public void Use()
             => Window.GL.UseProgram(Handle);
 
-        // The shader sources provided with this project use hardcoded layout(location)-s. If you want to do it dynamically,
-        // you can omit the layout(location=X) lines in the vertex shader, and use this in VertexAttribPointer instead of the hardcoded values.
+        /// <summary>
+        ///     Checks if the shader attribute exists within the current shader.
+        /// </summary>
+        /// <param name="attribName">The name of the attribute that's being looked for.</param>
+        /// <returns>If the attribute exists, the location of the attribute in the shader; otherwise -1.</returns>
         public int GetAttribLocation(string attribName)
         {
             int location = Window.GL.GetAttribLocation(Handle, attribName);

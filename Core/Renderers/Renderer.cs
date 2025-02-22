@@ -74,14 +74,21 @@ public class Renderer : RendererBase
     /// <inheritdoc />
     public override async Task Render()
     {
-        Window.GL.Enable(EnableCap.DepthTest);
-        
-        // TODO: Is this required for basic views
-        // _camera.SetShaderUniforms(_lightingShader.Shader);
+        try
+        {
+            Window.GL.Enable(EnableCap.DepthTest);
+            
+            // TODO: Is this required for basic views
+            // _camera.SetShaderUniforms(_lightingShader.Shader);
 
-        Window.GL.BindVertexArray(_vaoModel);
-        await _scene.IterateAsync(_scene.Root.Children, RenderGameObject);
-        Window.GL.BindVertexArray(_vaoLamp);
+            Window.GL.BindVertexArray(_vaoModel);
+            await _scene.IterateAsync(_scene.Root.Children, RenderGameObject);
+            Window.GL.BindVertexArray(_vaoLamp);
+        }
+        catch (System.Exception e)
+        {
+            System.Console.WriteLine(e);
+        }
     }
 
     private async Task RenderGameObject(SceneNode node)

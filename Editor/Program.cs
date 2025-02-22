@@ -2,9 +2,10 @@
 using Core.Entities;
 using Core.Interfaces;
 using Core.Renderers;
-
+using ImGuiNET;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL.Extensions.ImGui;
+// using Silk.NET.Windowing;
 
 public class Program
 {
@@ -23,9 +24,22 @@ public class Program
         );
         var scene = new Scene();
 
-        Window window = new Window(scene, editor.CoreSettings, editor);
+        using var window = new EditorWindow(scene, editor.CoreSettings, editor);
+    }
+}
 
-        _imGuiController = new ImGuiController(Window.GL, window, window.Input);
+public class EditorWindow : Window
+{
+    public EditorWindow(Scene scene, ISettings settings, View view) : base(scene, settings, view)
+    {
+    }
+
+    protected override void AfterRender(double deltaTime)
+    {
+        base.AfterRender(deltaTime);
+
+        ImGui.Begin("test");
+        ImGui.Text("some text");
     }
 }
 
