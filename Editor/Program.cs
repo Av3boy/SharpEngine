@@ -1,81 +1,31 @@
-﻿using Core;
-using Core.Entities;
-using Core.Interfaces;
-using Core.Renderers;
-using ImGuiNET;
+﻿using Core.Entities;
+using SharpEngine.Core.Scenes;
+using View = Core.Entities.View;
 using Silk.NET.Maths;
-using Silk.NET.OpenGL.Extensions.ImGui;
-// using Silk.NET.Windowing;
 
-public class Program
+namespace SharpEngine.Editor;
+
+/// <summary>
+///    Represents the main entry point of the application.
+/// </summary>
+public static class Program
 {
-    private static ImGuiController _imGuiController;
-
+    /// <summary>
+    ///    The main entry point of the application.
+    /// </summary>
+    /// <param name="args">The arguments passed with the start call.</param>
+    [STAThread]
     public static void Main(string[] args)
     {
-        // TODO: Load scene as a command line argument.
-
-        var editor = new Editor(new DefaultViewSettings() 
+        var editor = new View(new DefaultViewSettings() 
         { 
             WindowOptions = Silk.NET.Windowing.WindowOptions.Default with 
             { 
                 Size = new Vector2D<int>(1280, 720) }
             }
         );
-        var scene = new Scene();
 
-        using var window = new EditorWindow(scene, editor.CoreSettings, editor);
-    }
-}
-
-public class EditorWindow : Window
-{
-    public EditorWindow(Scene scene, ISettings settings, View view) : base(scene, settings, view)
-    {
-    }
-
-    protected override void AfterRender(double deltaTime)
-    {
-        base.AfterRender(deltaTime);
-
-        ImGui.Begin("test");
-        ImGui.Text("some text");
-    }
-}
-
-public class EditorSettings : IViewSettings
-{
-    /// <inheritdoc />
-    public bool UseWireFrame { get; set; }
-
-    /// <inheritdoc />
-    public bool PrintFrameRate { get; set; }
-
-    /// <inheritdoc />
-    public RenderFlags RendererFlags { get; set; }
-
-    /// <inheritdoc />
-    public Silk.NET.Windowing.WindowOptions WindowOptions { get; set; } = Silk.NET.Windowing.WindowOptions.Default;
-
-    /// <inheritdoc />
-    public float Sensitivity { get; set; }
-}
-
-public class Editor : View
-{
-    public Editor(IViewSettings settings) : base(new EditorSettings())
-    {
-        CoreSettings = settings;
-    }
-
-    public ISettings CoreSettings { get; init; }
-
-    public void SaveScene(Scene scene)
-    {
-
-    }
-
-    public void LoadScene(string sceneFile)
-    {
+        var scene = args.Length > 0 ? Scene.LoadScene(args[0]) : new Scene();
+        using var window = new EditorWindow(scene, editor.Settings, editor);
     }
 }

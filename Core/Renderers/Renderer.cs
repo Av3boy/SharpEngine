@@ -2,7 +2,7 @@ using Core.Entities;
 using Core.Entities.Properties;
 using Core.Interfaces;
 using Core.Shaders;
-
+using SharpEngine.Core.Scenes;
 using Silk.NET.OpenGL;
 using System.Collections.Generic;
 using System.Numerics;

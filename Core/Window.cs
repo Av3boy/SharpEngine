@@ -1,19 +1,22 @@
-﻿using Silk.NET.Input;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
 using Silk.NET.OpenGL;
-using Shader = Core.Shaders.Shader;
+using Silk.NET.OpenGL.Extensions.ImGui;
 
 using Core.Interfaces;
 using Core.Renderers;
 using Core.Entities;
 using Core.Shaders;
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using SharpEngine.Core;
-using Silk.NET.OpenGL.Extensions.ImGui;
+using SharpEngine.Core.Scenes;
+using Shader = Core.Shaders.Shader;
+using System.Numerics;
 
 namespace Core;
 
@@ -22,38 +25,36 @@ namespace Core;
 /// </summary>
 public class Window : SilkWindow
 {
+    // TODO: Support multiple renderes (#19)
     private Renderer _renderer;
     private UIRenderer _uiRenderer;
+    private ImGuiController _imGuiController;
 
-    private ISettings _settings;
-
-    private readonly Scene _scene;
-    private readonly View _camera;
+    protected ISettings Settings;
+    protected Scene Scene { get; private set; }
+    protected readonly View View;
 
     private readonly IWindow _window;
 
     public static GL GL;
-
     public IInputContext Input;
-    public ImGuiController ImGuiController;
-
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
     /// </summary>
-    /// <param name="game">Contains the actual game implementation.</param>
     /// <param name="scene">Contains the game scene.</param>
-    /// <param name="options"></param>
+    /// <param name="settings"></param>
+    /// <param name="view"></param>
     public Window(Scene scene, ISettings settings, View view)
     {
         // TODO: Game should be refactored out of the window class.
-        _scene = scene;
-        _settings = settings;
-        _camera = view;
+        Scene = scene;
+        Settings = settings;
+        View = view;
 
-        _window = Silk.NET.Windowing.Window.Create(_settings.WindowOptions);
+        _window = Silk.NET.Windowing.Window.Create(Settings.WindowOptions);
         // _camera = new CameraView(Vector3.UnitZ * 3, _window.Size.X / (float)_window.Size.Y);
-        _camera = new View(new DefaultViewSettings());
+        View = new View(new DefaultViewSettings());
 
         _window.Update += OnUpdateFrame;
         _window.Render += RenderFrame;
@@ -61,7 +62,7 @@ public class Window : SilkWindow
         _window.Load += OnLoad;
 
         _window.Run();
-        _camera = view;
+        View = view;
     }
 
     /// <inheritdoc />
@@ -79,13 +80,13 @@ public class Window : SilkWindow
         // TODO: Set cursor shape
         // CursorShape = CursorShape.Hand;
 
-        _renderer = new Renderer(_camera, _scene, _settings);
-        _uiRenderer = new UIRenderer(_camera, _scene, _settings);
+        _renderer = new Renderer(View, Scene, Settings);
+        _uiRenderer = new UIRenderer(View, Scene, Settings);
 
         _renderer.Initialize();
         _uiRenderer.Initialize();
 
-        ImGuiController = new ImGuiController(GL, _window, Input);
+        _imGuiController = new ImGuiController(GL, _window, Input);
     }
 
     /// <summary>
@@ -98,21 +99,20 @@ public class Window : SilkWindow
         {
             PreRender(deltaTime);
 
-            ImGuiController.Update((float)deltaTime);
-
+            _imGuiController.Update((float)deltaTime);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            ToggleWireFrame(_settings.UseWireFrame);
+            ToggleWireFrame(Settings.UseWireFrame);
 
             UseShaders();
 
             var renderTasks = new List<Task>();
 
-            if (_settings.RendererFlags.HasFlag(_renderer.RenderFlag))
+            if (Settings.RendererFlags.HasFlag(_renderer.RenderFlag))
                 renderTasks.Add(_renderer.Render());
 
-            if (_settings.RendererFlags.HasFlag(_uiRenderer.RenderFlag))
+            if (Settings.RendererFlags.HasFlag(_uiRenderer.RenderFlag))
                 renderTasks.Add(_uiRenderer.Render());
 
             Task.WaitAll([.. renderTasks]);
@@ -122,7 +122,7 @@ public class Window : SilkWindow
 
             AfterRender(deltaTime);
 
-            ImGuiController.Render();
+            _imGuiController.Render();
         }
         catch (Exception ex)
         {
@@ -158,14 +158,14 @@ public class Window : SilkWindow
         // if (!_window.IsFocused)
         //     return;
 
-        if (_settings.PrintFrameRate)
+        if (Settings.PrintFrameRate)
             Console.WriteLine($"FPS: {1f / deltaTime}");
 
         // TODO: Handle multiple mice?
         var mouse = Input.Mice[0];
         var keyboard = Input.Keyboards[0];
 
-        _camera.UpdateMousePosition(mouse.Position);
+        View.UpdateMousePosition(mouse.Position);
 
         if (keyboard.IsKeyPressed(Key.Escape))
             _window.Close();
@@ -204,13 +204,23 @@ public class Window : SilkWindow
         GL.Viewport(size);
 
         if (_window.WindowState != WindowState.Minimized)
-            _camera.AspectRatio = size.X / (float)size.Y;
+            View.AspectRatio = size.X / (float)size.Y;
+    }
+
+    /// <summary>
+    ///     Sets the current scene.
+    /// </summary>
+    /// <param name="scene">The contents of the new scene.</param>
+    protected void SetScene(Scene scene)
+    {
+        // TODO: Do we need to clear anything from e.g. the GPU when we change change the scene?
+        Scene = scene;
     }
 
     public void Dispose()
     {
         // TODO: Dispose of any / all resources
 
-        // _imGuiController.Dispose();
+        _imGuiController.Dispose();
     }
 }

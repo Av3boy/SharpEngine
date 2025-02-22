@@ -1,5 +1,7 @@
 using Core.Entities.Properties;
 using Core.Shaders;
+using SharpEngine.Core.Attributes;
+using SharpEngine.Core.Scenes;
 using Silk.NET.OpenGL;
 using System.Threading.Tasks;
 
@@ -41,6 +43,7 @@ public class GameObject : SceneNode
     /// <summary>
     ///     Gets or sets the material of the game object.
     /// </summary>
+    [Inspector(DisplayInInspector = false)]
     public Material Material { get; set; } = new();
 
     private Transform _transform = new();
@@ -57,6 +60,12 @@ public class GameObject : SceneNode
             BoundingBox = BoundingBox.CalculateBoundingBox(_transform);
         }
     }
+
+    /// <summary>
+    ///     Gets the bounding box of the game object.
+    /// </summary>
+    [Inspector(DisplayInInspector = false)]
+    public BoundingBox BoundingBox { get; set; }
 
     /// <inheritdoc />
     public override Task Render()
@@ -75,9 +84,4 @@ public class GameObject : SceneNode
 
         return Task.CompletedTask;
     }
-
-    /// <summary>
-    ///     Gets the bounding box of the game object.
-    /// </summary>
-    public BoundingBox BoundingBox { get; set; }
 }

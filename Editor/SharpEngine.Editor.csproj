@@ -14,11 +14,18 @@
 		<PackageTags>game-engine</PackageTags>
 		<PackageReleaseNotes>Early release, expect broken / missing features.</PackageReleaseNotes>
 		<NeutralLanguage>en</NeutralLanguage>
+    <UseWindowsForms>true</UseWindowsForms>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Core\SharpEngine.Core.csproj" />
+  <ItemGroup>
+    <ProjectReference Include="..\Core\SharpEngine.Core.csproj" />
 	</ItemGroup>
+
+  <ItemGroup>
+    <None Update="DefaultTextures\debug.JPG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 	<!--
 	TODO: Run conditionally or only if in admin mode.

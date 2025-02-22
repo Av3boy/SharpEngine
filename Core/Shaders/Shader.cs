@@ -19,6 +19,8 @@ namespace Core.Shaders
         ///     Gets the singleton instance of the <see cref="ShaderService"/>.
         /// </summary>
         public static ShaderService Instance { get; } = new ShaderService();
+
+        // TODO: Cache data is never set
         private readonly Dictionary<string, Shader> _shaderCache = new();
 
         /// <summary>
@@ -256,7 +258,7 @@ namespace Core.Shaders
         {
             int location = Window.GL.GetAttribLocation(Handle, attribName);
             if (location == -1)
-                Console.WriteLine($"Attribute '{attribName}' not found in shader program.");
+                Console.WriteLine($"Attribute '{attribName}' not found in shader '{Name}'.");
 
             return location;
         }
