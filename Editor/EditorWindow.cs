@@ -1,16 +1,16 @@
 ﻿using Core;
 using Core.Interfaces;
+using Core.Primitives;
+
 using SharpEngine.Core.Scenes;
+using SharpEngine.Core.Attributes;
+
 using View = Core.Entities.View;
 
 using ImGuiNET;
 using Silk.NET.Input;
 using System.Numerics;
-using Core.Primitives;
-using Core.Entities;
 using System.Reflection;
-using SharpEngine.Core.Extensions;
-using SharpEngine.Core.Attributes;
 
 namespace SharpEngine.Editor;
 
@@ -32,6 +32,17 @@ public class EditorWindow : Window
     private bool _showContextMenu;
     private bool _updateContextMenuLocation;
 
+    public override void OnLoad()
+    {
+        base.OnLoad();
+
+        // Test only: remove later.
+        var cube = PrimitiveFactory.Create(PrimitiveType.Cube, new System.Numerics.Vector3(1, 1, 1));
+        cube.Name = "test";
+
+        Scene.Root.Children.Add(cube);
+    }
+
     /// <inheritdoc />
     protected override void AfterRender(double deltaTime)
     {
@@ -39,9 +50,37 @@ public class EditorWindow : Window
 
         RenderActionsMenu();
         RenderContextMenu();
+        RenderScene();
+        RenderActiveElementProperties(Scene.ActiveElement);
+    }
 
-        if (Scene.ActiveElement is not null)
-            RenderActiveElementProperties(Scene.ActiveElement);
+    private void RenderScene()
+    {
+        ImGui.Begin("Scene");
+
+        if (Scene.Root.Children.Count == 0)
+            ImGui.Text("No objects in the scene.");
+        else
+            RenderSceneNode(Scene.Root);
+
+        ImGui.End();
+    }
+
+    private void RenderSceneNode(SceneNode node)
+    {
+        foreach (var child in node.Children)
+        {
+
+            if (ImGui.TreeNode(child.Name))
+            {
+                Scene.ActiveElement = child;
+
+                ImGui.Indent();
+                RenderSceneNode(child);
+                ImGui.Unindent();
+                ImGui.TreePop();
+            }
+        }
     }
 
     private void RenderActionsMenu()
@@ -62,17 +101,19 @@ public class EditorWindow : Window
     {
         if (_showContextMenu)
         {
-            ImGui.Begin("Context menu");
-
             if (_updateContextMenuLocation)
             {
                 ImGui.SetNextWindowPos(ImGui.GetMousePos());
                 _updateContextMenuLocation = false;
             }
 
+            ImGui.Begin("Context menu");
+
             if (ImGui.Button("Crete cube"))
             {
                 var cube = PrimitiveFactory.Create(PrimitiveType.Cube, new Vector3(0, 0, 0));
+                cube.Name = "Cube" + Scene.Root.Children.Count;
+
                 Scene.ActiveElement = cube;
                 Scene.Root.AddChild(cube);
             }
@@ -81,17 +122,33 @@ public class EditorWindow : Window
         }
     }
 
-    public static void RenderActiveElementProperties(object obj, int maxRecursionDepth = 5, int currentDepth = 0)
+    /// <summary>
+    ///    Renders the properties of the active element.
+    /// </summary>
+    /// <param name="obj">The object whose properties should be rendered onto the window.</param>
+    /// <param name="maxRecursionDepth">Marks how deep the inspector is allowed render properties.</param>
+    /// <param name="currentDepth">Marks the starting level or the currently rendered level of properties.</param>
+    public void RenderActiveElementProperties(object obj, int maxRecursionDepth = 5, int currentDepth = 0)
     {
+        if (currentDepth == 0)
+            ImGui.Begin(obj is null ? "Properties" : Scene.ActiveElement.Name + " properties");
+
+        if (obj is null)
+        {
+            ImGui.Text("No properties to display.");
+            ImGui.End();
+            return;
+        }
+
         if (currentDepth > maxRecursionDepth)
             return;
 
-        if (currentDepth == 0)
-            ImGui.Begin("Properties");
-
         try
         {
-            var properties = obj.GetType().GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance);
+            var properties = obj.GetType()
+                                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                .OrderBy(p => p.PropertyType.IsClass && p.PropertyType != typeof(string));
+
             foreach (var property in properties)
             {
                 var inspectorAttribute = property.GetCustomAttribute<InspectorAttribute>();
@@ -100,50 +157,27 @@ public class EditorWindow : Window
                     continue;
                 }
 
-                var propertyType = property.PropertyType;
                 var propertyName = inspectorAttribute?.DisplayName ?? property.Name;
                 var propertyValue = property.GetValue(obj);
 
-                if (propertyType == typeof(string))
+                object? newValue = propertyValue switch
                 {
-                    var value = propertyValue as string ?? string.Empty;
-                    if (ImGui.InputText(propertyName, ref value, 100))
-                    {
-                        property.SetValue(obj, value);
-                    }
-                }
-                else if (propertyType == typeof(int))
+                    string stringValue => ImGui.InputText(propertyName, ref stringValue, 100) ? stringValue : propertyValue,
+                    int intValue => ImGui.SliderInt(propertyName, ref intValue, 0, 100) ? intValue : propertyValue,
+                    float floatValue => ImGui.SliderFloat(propertyName, ref floatValue, 0f, 100f) ? floatValue : propertyValue,
+                    Vector3 vector3Value => ImGui.SliderFloat3(propertyName, ref vector3Value, 0f, 100f) ? vector3Value : propertyValue,
+                    _ => propertyValue
+                };
+
+                if (newValue != propertyValue)
+                    property.SetValue(obj, newValue);
+
+                if (propertyValue is object && property.PropertyType.IsClass && property.PropertyType != typeof(string) &&
+                    ImGui.CollapsingHeader(propertyName, ImGuiTreeNodeFlags.DefaultOpen))
                 {
-                    var value = (int)(propertyValue ?? 0);
-                    if (ImGui.SliderInt(propertyName, ref value, 0, 100))
-                    {
-                        property.SetValue(obj, value);
-                    }
-                }
-                else if (propertyType == typeof(float))
-                {
-                    var value = (float)(propertyValue ?? 0f);
-                    if (ImGui.SliderFloat(propertyName, ref value, 0f, 100f))
-                    {
-                        property.SetValue(obj, value);
-                    }
-                }
-                else if (propertyType == typeof(Vector3))
-                {
-                    var value = (Vector3)(propertyValue ?? Vector3.Zero);
-                    if (ImGui.SliderFloat3(propertyName, ref value, 0f, 100f))
-                    {
-                        property.SetValue(obj, value);
-                    }
-                }
-                else if (propertyType.IsClass && propertyType != typeof(string))
-                {
-                    if (ImGui.CollapsingHeader(propertyName, ImGuiTreeNodeFlags.DefaultOpen))
-                    {
-                        ImGui.Indent();
-                        RenderActiveElementProperties(propertyValue, maxRecursionDepth, currentDepth + 1);
-                        ImGui.Unindent();
-                    }
+                    ImGui.Indent();
+                    RenderActiveElementProperties(propertyValue, maxRecursionDepth, currentDepth + 1);
+                    ImGui.Unindent();
                 }
             }
         }

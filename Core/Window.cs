@@ -53,16 +53,12 @@ public class Window : SilkWindow
         View = view;
 
         _window = Silk.NET.Windowing.Window.Create(Settings.WindowOptions);
-        // _camera = new CameraView(Vector3.UnitZ * 3, _window.Size.X / (float)_window.Size.Y);
-        View = new View(new DefaultViewSettings());
-
         _window.Update += OnUpdateFrame;
         _window.Render += RenderFrame;
         _window.Resize += OnResize;
         _window.Load += OnLoad;
 
         _window.Run();
-        View = view;
     }
 
     /// <inheritdoc />

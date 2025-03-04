@@ -1,6 +1,8 @@
 using Core.Interfaces;
 using Core.Renderers;
 using Core.Shaders;
+using Silk.NET.Input;
+using Silk.NET.Maths;
 using Silk.NET.Windowing;
 using System;
 using System.Numerics;
@@ -17,11 +19,10 @@ public class CameraView : View
     ///     Initializes a new instance of <see cref="View"/>.
     /// </summary>
     /// <param name="position">The initial position of the camera.</param>
-    /// <param name="aspectRatio">The aspect ratio of the viewport.</param>
-    public CameraView(Vector3 position, float aspectRatio) : base(new DefaultViewSettings())
+    public CameraView(IViewSettings settings, Vector3? position = null) : base(settings)
     {
-        Position = position;
-        AspectRatio = aspectRatio;
+        Position = position ?? Vector3.UnitZ * 3;
+        AspectRatio = settings.WindowOptions.Size.X / (float)settings.WindowOptions.Size.Y;
     }
 
     // Those vectors are directions pointing outwards from the camera to define how it rotated.
@@ -109,14 +110,14 @@ public class CameraView : View
     ///     Gets the view matrix of the camera.
     /// </summary>
     /// <returns>The view matrix.</returns>
-    public Matrix4x4 GetViewMatrix()
+    public override Matrix4x4 GetViewMatrix()
         => Matrix4x4.CreateLookAt(Position, Position + _front, _up);
 
     /// <summary>
     ///     Gets the projection matrix of the camera.
     /// </summary>
     /// <returns>The projection matrix.</returns>
-    public Matrix4x4 GetProjectionMatrix()
+    public override Matrix4x4 GetProjectionMatrix()
         => Matrix4x4.CreatePerspectiveFieldOfView(_fov, AspectRatio, 0.01f, 100f);
 
     /// <summary>
@@ -197,17 +198,6 @@ public class CameraView : View
         return planes;
     }
 
-    /// <summary>
-    ///     Sets the shader uniforms for the camera.
-    /// </summary>
-    /// <param name="shader">The shader to set the uniforms on.</param>
-    public void SetShaderUniforms(Shader shader)
-    {
-        shader.SetMatrix4("view", GetViewMatrix());
-        shader.SetMatrix4("projection", GetProjectionMatrix());
-        shader.SetVector3("viewPos", Position);
-    }
-
     /// <inheritdoc />
     public override void UpdateMousePosition(Vector2 mousePosition)
     {
@@ -257,6 +247,20 @@ public class View
 
     protected bool firstMove;
     protected Vector2 lastPos;
+
+    public virtual Matrix4x4 GetViewMatrix() => Matrix4x4.Identity;
+    public virtual Matrix4x4 GetProjectionMatrix() => Matrix4x4.Identity;
+
+    /// <summary>
+    ///     Sets the shader uniforms for the camera.
+    /// </summary>
+    /// <param name="shader">The shader to set the uniforms on.</param>
+    public virtual void SetShaderUniforms(Shader shader)
+    {
+        shader.SetMatrix4("view", GetViewMatrix());
+        shader.SetMatrix4("projection", GetProjectionMatrix());
+        shader.SetVector3("viewPos", Vector3.Zero);
+    }
 
     /// <summary>
     ///     Updates the camera's orientation based on the current mouse position.

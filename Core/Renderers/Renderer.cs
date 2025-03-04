@@ -21,7 +21,7 @@ public class Renderer : RendererBase
     private LampShader _lampShader;
     private LightingShader _lightingShader;
 
-    private readonly View _camera;
+    private readonly View _view;
     private readonly Scene _scene;
     private readonly ISettings _settings;
 
@@ -40,7 +40,7 @@ public class Renderer : RendererBase
     /// <param name="scene">The scene to be rendered.</param>
     public Renderer(View camera, Scene scene, ISettings settings) : base(settings)
     {
-        _camera = camera;
+        _view = camera;
         _scene = scene;
         _settings = settings;
     }
@@ -77,9 +77,7 @@ public class Renderer : RendererBase
         try
         {
             Window.GL.Enable(EnableCap.DepthTest);
-            
-            // TODO: Is this required for basic views
-            _camera.SetShaderUniforms(_lightingShader.Shader);
+            _view.SetShaderUniforms(_lightingShader.Shader);
 
             Window.GL.BindVertexArray(_vaoModel);
             await _scene.IterateAsync(_scene.Root.Children, RenderGameObject);

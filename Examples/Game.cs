@@ -39,6 +39,7 @@ namespace Minecraft
         {
             _scene = scene;
             CoreSettings = settings;
+            Camera = new(new DefaultViewSettings());
         }
 
         /// <inheritdoc />

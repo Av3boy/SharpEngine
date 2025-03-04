@@ -2,6 +2,8 @@
 using SharpEngine.Core.Scenes;
 using View = Core.Entities.View;
 using Silk.NET.Maths;
+using Core.Primitives;
+using System.Numerics;
 
 namespace SharpEngine.Editor;
 
@@ -17,13 +19,14 @@ public static class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        var editor = new View(new DefaultViewSettings() 
-        { 
-            WindowOptions = Silk.NET.Windowing.WindowOptions.Default with 
-            { 
-                Size = new Vector2D<int>(1280, 720) }
+        var editor = new CameraView(new DefaultViewSettings()
+        {
+            WindowOptions = Silk.NET.Windowing.WindowOptions.Default with
+            {
+                Size = new Vector2D<int>(1280, 720)
             }
-        );
+        });
+        // var editor = new View(new DefaultViewSettings());
 
         var scene = args.Length > 0 ? Scene.LoadScene(args[0]) : new Scene();
         using var window = new EditorWindow(scene, editor.Settings, editor);

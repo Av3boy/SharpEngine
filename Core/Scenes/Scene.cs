@@ -50,7 +50,7 @@ public class Scene
 
     /// <summary>Gets or sets the active element in the scene.</summary>
     /// <remarks>Editor only.</remarks>
-    public GameObject ActiveElement { get; set; }
+    public SceneNode ActiveElement { get; set; }
 
     /// <summary>
     ///     Adds an empty node to the scene root.
