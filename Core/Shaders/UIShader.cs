@@ -6,7 +6,7 @@ internal class UIShader : ShaderBase
 {
     public UIShader()
     {
-        Shader = new Shader("Shaders/uiShadaer.vert", "Shaders/uiShader.frag", "ui");
+        Shader = new Shader("Shaders/uiShader.vert", "Shaders/uiShader.frag", "ui");
     }
 
     /// <inheritdoc />
