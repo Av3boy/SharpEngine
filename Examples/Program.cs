@@ -1,5 +1,6 @@
 ﻿using Core;
 using ImGuiNET;
+using SharpEngine.Core.Scenes;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
 
@@ -26,6 +27,10 @@ public static class Program
         Game game = new Game(scene, gameSettings);
 
         using var window = new Core.Window(scene, gameSettings, game.Camera);
+        window.Load += game.Initialize;
+
         window.Run();
+
+        // game.Initialize();
     }
 }

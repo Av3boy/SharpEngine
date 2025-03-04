@@ -79,7 +79,7 @@ public class Renderer : RendererBase
             Window.GL.Enable(EnableCap.DepthTest);
             
             // TODO: Is this required for basic views
-            // _camera.SetShaderUniforms(_lightingShader.Shader);
+            _camera.SetShaderUniforms(_lightingShader.Shader);
 
             Window.GL.BindVertexArray(_vaoModel);
             await _scene.IterateAsync(_scene.Root.Children, RenderGameObject);
