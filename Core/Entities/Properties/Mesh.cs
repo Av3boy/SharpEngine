@@ -1,4 +1,5 @@
-﻿using Silk.NET.OpenGL;
+﻿using SharpEngine.Core.Attributes;
+using Silk.NET.OpenGL;
 using System.Collections.Generic;
 
 namespace Core.Entities.Properties;
@@ -8,19 +9,24 @@ namespace Core.Entities.Properties;
 /// </summary>
 public class Mesh
 {
+    public string Name { get; set; } = "New Mesh";
+
     /// <summary>
     ///     Gets or sets the mesh vertices.
     /// </summary>
+    [Inspector(DisplayInInspector = false)]
     public float[] Vertices { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the mesh normals.
     /// </summary>
+    [Inspector(DisplayInInspector = false)]
     public float[] Normals { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the mesh texture UV coordinates.
     /// </summary>
+    [Inspector(DisplayInInspector = false)]
     public float[] TextureCoordinates { get; set; } = [];
 }
 

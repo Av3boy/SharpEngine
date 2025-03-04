@@ -18,6 +18,8 @@ using MouseButton = Silk.NET.Input.MouseButton;
 using System.Threading.Tasks;
 using ImGuiNET;
 using Silk.NET.OpenGL.Extensions.ImGui;
+using SharpEngine.Core;
+using SharpEngine.Core.Scenes;
 
 namespace Core;
 
@@ -27,16 +29,19 @@ namespace Core;
 public class Window : SilkWindow
 {
     private readonly IGame _game;
+
+    // TODO: Support multiple renderes (#19)
     private Renderer _renderer;
     private UIRenderer _uiRenderer;
 
-    private readonly Scene _scene;
+    protected Scene Scene { get; private set; }
 
     private readonly IWindow _window;
 
     public static GL GL;
 
     public IInputContext Input;
+    private ImGuiController _imGuiController;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
@@ -48,7 +53,7 @@ public class Window : SilkWindow
     {
         // TODO: Game should be refactored out of the window class.
         _game = game;
-        _scene = scene;
+        Scene = scene;
 
         _window = Silk.NET.Windowing.Window.Create(options);
         _game.Camera = new Camera(Vector3.UnitZ * 3, _window.Size.X / (float)_window.Size.Y);
@@ -62,7 +67,7 @@ public class Window : SilkWindow
     }
 
     /// <inheritdoc />
-    public void OnLoad()
+    public override void OnLoad()
     {
         GL = _window.CreateOpenGL();
 
@@ -80,11 +85,13 @@ public class Window : SilkWindow
         MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
         _game.Initialize();
 
-        _renderer = new Renderer(_game, _scene);
-        _uiRenderer = new UIRenderer(_scene, _game);
+        _renderer = new Renderer(_game, Scene);
+        _uiRenderer = new UIRenderer(Scene, _game);
 
         _renderer.Initialize();
         _uiRenderer.Initialize();
+
+        _imGuiController = new ImGuiController(GL, _window, Input);
     }
 
     /// <summary>
@@ -93,32 +100,44 @@ public class Window : SilkWindow
     /// <param name="deltaTime">The time since the last frame.</param>
     protected void RenderFrame(double deltaTime)
     {
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        try
+        {
+            PreRender(deltaTime);
 
-        ToggleWireFrame(_game.CoreSettings.UseWireFrame);
+            _imGuiController.Update((float)deltaTime);
 
-        UseShaders();
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-        //_imGuiController.Update((float)deltaTime);
+            ToggleWireFrame(_game.CoreSettings.UseWireFrame);
 
-        var renderTasks = new List<Task>();
+            UseShaders();
 
-        if (_game.CoreSettings.RendererFlags.HasFlag(_renderer.RenderFlag))
-            renderTasks.Add(_renderer.Render());
+            var renderTasks = new List<Task>();
 
-        if (_game.CoreSettings.RendererFlags.HasFlag(_uiRenderer.RenderFlag))
-            renderTasks.Add(_uiRenderer.Render());
+            if (_game.CoreSettings.RendererFlags.HasFlag(_renderer.RenderFlag))
+                renderTasks.Add(_renderer.Render());
 
-        Task.WaitAll([.. renderTasks]);
+            if (_game.CoreSettings.RendererFlags.HasFlag(_uiRenderer.RenderFlag))
+                renderTasks.Add(_uiRenderer.Render());
 
-        // ImGui.Begin("test");
-        // ImGui.Text("some text");
+            Task.WaitAll([.. renderTasks]);
 
-        // _imGuiController.Render();
+            // TODO: This call causes filckering in the new framework. Investigate why.
+            // _window.SwapBuffers();
 
-        // TODO: This call causes filckering in the new framework. Investigate why.
-        // _window.SwapBuffers();
+            AfterRender(deltaTime);
+
+            _imGuiController.Render();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogInformation(ex.Message);
+        }
     }
+
+    protected virtual void PreRender(double deltaTime) { }
+
+    protected virtual void AfterRender(double deltaTime) { }
 
     /// <summary>
     ///     Toggles the renderer between wireframe and fill mode.
@@ -177,9 +196,6 @@ public class Window : SilkWindow
         }
     }
 
-    // /// <inheritdoc />
-    protected void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) { }
-
     /// <inheritdoc />
     protected void KeyDown(IKeyboard keyboard, Key key, int keyCode)
     {
@@ -215,10 +231,20 @@ public class Window : SilkWindow
     protected void OnMouseDown(IMouse mouse, MouseButton button)
         => _game.HandleMouseDown(mouse, button);
 
+    /// <summary>
+    ///     Sets the current scene.
+    /// </summary>
+    /// <param name="scene">The contents of the new scene.</param>
+    protected void SetScene(Scene scene)
+    {
+        // TODO: Do we need to clear anything from e.g. the GPU when we change change the scene?
+        Scene = scene;
+    }
+
     public void Dispose()
     {
         // TODO: Dispose of any / all resources
 
-        // _imGuiController.Dispose();
+        _imGuiController.Dispose();
     }
 }

@@ -1,8 +1,11 @@
 ﻿using Silk.NET.Core;
 using Silk.NET.Core.Contexts;
+using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
+
 using System;
+using System.Numerics;
 
 namespace Core
 {
@@ -194,5 +197,15 @@ namespace Core
 
         /// <inheritdoc />
         public virtual void SetWindowIcon(ReadOnlySpan<RawImage> icons) { }
+
+        /// <inheritdoc cref="IMouse.Click"/>
+        public virtual void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) { }
+
+        /// <inheritdoc cref="IMouse.MouseDown"/>
+        public virtual void OnMouseDown(IMouse mouse, MouseButton button) { }
+
+        /// <summary>Loads the resources needed to display any objects within the scene / editor.</summary>
+        /// <remarks>Called when the window is initialized.</remarks>
+        public abstract void OnLoad();
     }
 }

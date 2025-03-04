@@ -7,4 +7,6 @@ public static class ShaderAttributes
     public const string TexCoords = "aTexCoords";
 
     public const int AttributeLocationNotFound = -1;
+
+    public const string Model = "model";
 }

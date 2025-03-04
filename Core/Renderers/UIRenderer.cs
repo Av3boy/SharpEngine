@@ -1,6 +1,7 @@
 ﻿using Core.Entities;
 using Core.Interfaces;
 using Core.Shaders;
+using SharpEngine.Core.Scenes;
 using Silk.NET.OpenGL;
 using System;
 using System.Threading.Tasks;
@@ -57,10 +58,17 @@ public class UIRenderer : RendererBase
     /// <inheritdoc />
     public override async Task Render()
     {
-        Window.GL.Disable(EnableCap.DepthTest);
-        Window.GL.DepthFunc(DepthFunction.Less);
+        try
+        {
+            Window.GL.Disable(EnableCap.DepthTest);
+            Window.GL.DepthFunc(DepthFunction.Less);
 
-        _uiShader.Shader.Use();
-        await _scene.IterateAsync(_scene.UIElements, elem => elem.Render());
+            _uiShader.Shader.Use();
+            await _scene.IterateAsync(_scene.UIElements, elem => elem.Render());
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Core.Entities.Properties;
 using Core.Shaders;
+using SharpEngine.Core.Scenes;
 using Silk.NET.OpenGL;
 using System.Threading.Tasks;
 
@@ -17,6 +18,8 @@ public class UIElement : SceneNode
     public UIElement(string name)
     {
         Name = name;
+
+        // TODO: This causes all the blocks in the scene to render as just a single triangle
         // Mesh = MeshService.Instance.LoadMesh("plane", Primitives.Plane.Mesh);
     }
 
@@ -81,7 +84,7 @@ public class UIElement : SceneNode
     {
         Window.GL.BindVertexArray(_vertexArrayObject);
 
-        _uIShader.Shader.SetMatrix4("model", Transform.ModelMatrix);
+        _uIShader.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
 
         Window.GL.DrawElements(PrimitiveType.Triangles, (uint)_indices.Length, DrawElementsType.UnsignedInt, 0);
 

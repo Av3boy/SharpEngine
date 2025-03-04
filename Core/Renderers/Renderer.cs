@@ -2,7 +2,9 @@ using Core.Entities;
 using Core.Entities.Properties;
 using Core.Interfaces;
 using Core.Shaders;
+using SharpEngine.Core.Scenes;
 using Silk.NET.OpenGL;
+using System;
 using System.Numerics;
 using System.Threading.Tasks;
 
@@ -71,12 +73,19 @@ public class Renderer : RendererBase
     /// <inheritdoc />
     public override async Task Render()
     {
-        Window.GL.Enable(EnableCap.DepthTest);
-        _game.Camera.SetShaderUniforms(_lightingShader.Shader);
+        try
+        {
+            Window.GL.Enable(EnableCap.DepthTest);
+            _game.Camera.SetShaderUniforms(_lightingShader.Shader);
 
-        Window.GL.BindVertexArray(_vaoModel);
-        await _scene.IterateAsync(_scene.Root.Children, RenderGameObject);
-        Window.GL.BindVertexArray(_vaoLamp);
+            Window.GL.BindVertexArray(_vaoModel);
+            await _scene.IterateAsync(_scene.Root.Children, RenderGameObject);
+            Window.GL.BindVertexArray(_vaoLamp);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
     }
 
     private async Task RenderGameObject(SceneNode node)

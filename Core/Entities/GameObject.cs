@@ -1,5 +1,7 @@
 using Core.Entities.Properties;
 using Core.Shaders;
+using SharpEngine.Core.Attributes;
+using SharpEngine.Core.Scenes;
 using Silk.NET.OpenGL;
 using System.Threading.Tasks;
 
@@ -41,6 +43,7 @@ public class GameObject : SceneNode
     /// <summary>
     ///     Gets or sets the material of the game object.
     /// </summary>
+    [Inspector(DisplayInInspector = false)]
     public Material Material { get; set; } = new();
 
     private Transform _transform = new();
@@ -58,6 +61,12 @@ public class GameObject : SceneNode
         }
     }
 
+    /// <summary>
+    ///     Gets the bounding box of the game object.
+    /// </summary>
+    [Inspector(DisplayInInspector = false)]
+    public BoundingBox BoundingBox { get; set; }
+
     /// <inheritdoc />
     public override Task Render()
     {
@@ -69,15 +78,10 @@ public class GameObject : SceneNode
         Material.Shader.SetVector3("material.specular", Material.Specular);
         Material.Shader.SetFloat("material.shininess", Material.Shininess);
 
-        Material.Shader.SetMatrix4("model", Transform.ModelMatrix);
+        Material.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
 
         Window.GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
 
         return Task.CompletedTask;
     }
-
-    /// <summary>
-    ///     Gets the bounding box of the game object.
-    /// </summary>
-    public BoundingBox BoundingBox { get; set; }
 }
