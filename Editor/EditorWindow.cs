@@ -1,6 +1,4 @@
 ﻿using Core;
-using Core.Interfaces;
-using Core.Primitives;
 
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Attributes;
@@ -11,6 +9,8 @@ using System.Numerics;
 using System.Reflection;
 
 using SharpEngine.Core.Entities.Views.Settings;
+using SharpEngine.Core.Interfaces;
+using SharpEngine.Core.Primitives;
 
 namespace SharpEngine.Editor;
 

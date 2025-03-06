@@ -5,9 +5,7 @@ using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using MouseButton = Silk.NET.Input.MouseButton;
 
-using Core.Interfaces;
 using Core.Renderers;
-using Core.Enums;
 using Core.Entities;
 using Core.Entities.Properties;
 using Core.Shaders;
@@ -20,6 +18,8 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
+using SharpEngine.Core.Enums;
+using SharpEngine.Core.Interfaces;
 
 namespace Core;
 
@@ -35,6 +35,7 @@ public class Window : SilkWindow
     private UIRenderer _uiRenderer;
 
     protected Scene Scene { get; private set; }
+    public override string Title { get; set; }
 
     private readonly IWindow _window;
 
@@ -82,7 +83,7 @@ public class Window : SilkWindow
         // CursorShape = CursorShape.Hand;
 
         // Load all meshes from the mesh cache
-        MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
+        MeshService.Instance.LoadMesh("cube", SharpEngine.Core.Primitives.Cube.Mesh);
         _game.Initialize();
 
         _renderer = new Renderer(_game, Scene);

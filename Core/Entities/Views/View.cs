@@ -1,5 +1,5 @@
-﻿using SharpEngine.Core.Entities.Views.Settings;
-using SharpEngine.Core.Shaders;
+﻿using Core.Shaders;
+using SharpEngine.Core.Entities.Views.Settings;
 using System.Numerics;
 
 namespace SharpEngine.Core.Entities.Views;
