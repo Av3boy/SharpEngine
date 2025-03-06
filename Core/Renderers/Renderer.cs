@@ -102,7 +102,7 @@ public class Renderer : RendererBase
         }
     }
 
-    private static bool IsInViewFrustum(BoundingBox boundingBox, Camera camera)
+    private static bool IsInViewFrustum(BoundingBox boundingBox, CameraView camera)
     {
         if (boundingBox is null)
             return true;

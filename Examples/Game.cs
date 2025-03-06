@@ -4,262 +4,260 @@ using Core.Enums;
 using Core.Interfaces;
 
 using Minecraft.Block;
+using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using Silk.NET.Input;
 using System;
 using System.Numerics;
 
-namespace Minecraft
+namespace Minecraft;
+
+public class Game : IGame
 {
-    public class Game : IGame
+    // TODO: Add documentation to the code
+
+    /// <summary>Gets or sets the player camera.</summary>
+    public CameraView Camera { get; set; }
+
+    /// <inheritdoc />
+    public ISettings CoreSettings { get; }
+
+    private readonly Scene _scene;
+
+    private SceneNode _lightsNode;
+    private SceneNode _blocksNode;
+
+    private Input _input;
+    private Inventory _inventory;
+
+    UIElement uiElem;
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Game"/>.
+    /// </summary>
+    public Game(Scene scene, ISettings settings)
     {
-        // TODO: Add documentation to the code
+        _scene = scene;
+        CoreSettings = settings;
+    }
 
-        /// <summary>Gets or sets the player camera.</summary>
-        public Camera Camera { get; set; }
+    /// <inheritdoc />
+    public void Initialize()
+    {
+        _input = new Input(Camera);
+        _inventory = new Inventory();
+        _inventory.Initialize();
 
-        /// <inheritdoc />
-        public ISettings CoreSettings { get; }
+        _lightsNode = _scene.Root.AddChild("lights");
+        _blocksNode = _scene.Root.AddChild("blocks");
 
-        private readonly Scene _scene;
+        uiElem = new UIElement("uiElement");
+        _scene.UIElements.Add(uiElem);
 
-        private SceneNode _lightsNode;
-        private SceneNode _blocksNode;
+        InitializeWorld();
+    }
 
-        private Input _input;
-        private Inventory _inventory;
+    private void InitializeWorld()
+    {
+        InitializeLights();
+        InitializeChunks();
+    }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="Game"/>.
-        /// </summary>
-        /// <param name="scene"></param>
-        /// <param name="settings"></param>
-        public Game(Scene scene, Settings settings)
+    private void InitializeLights()
+    {
+        _lightsNode.AddChild(new DirectionalLight());
+
+        _lightsNode.AddChild(
+            new PointLight(new Vector3(0.7f, 0.2f, 2.0f), 0),
+            new PointLight(new Vector3(2.3f, -3.3f, -4.0f), 1),
+            new PointLight(new Vector3(-4.0f, 2.0f, -12.0f), 2),
+            new PointLight(new Vector3(0.0f, 0.0f, -3.0f), 3)
+        );
+
+        _lightsNode.AddChild(new SpotLight()
         {
-            _scene = scene;
-            CoreSettings = settings;
+            Ambient = new Vector3(0.0f, 0.0f, 0.0f),
+            Diffuse = new Vector3(1.0f, 1.0f, 1.0f),
+            Specular = new Vector3(1.0f, 1.0f, 1.0f),
+        });
+
+        // var _lightingShader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/lighting.frag", "lighting");
+        // _lightingShader.SetInt("numDirLights", 1);
+        // _lightingShader.SetInt("numPointLights", 4);
+        // _lightingShader.SetInt("numSpotLights", 1);
+    }
+
+    private void InitializeChunks()
+    {
+        // TODO: Generate chunks when player moves
+
+        // TODO: Generate chunks using 3d perlin noise
+
+        const int chunkSize = 16;
+        const int numChunks = 3;
+
+        for (int i = 0; i < numChunks; i++)
+        {
+            var chunkPos = new Vector3(i * chunkSize, 0, 0);
+            GenerateChunk(chunkSize, chunkPos);
         }
+    }
 
-        /// <inheritdoc />
-        public void Initialize()
+    private void GenerateChunk(int chunkSize, Vector3 chunkPos)
+    {
+        for (int x = 0; x < chunkSize; x++)
         {
-            _input = new Input(Camera);
-            _inventory = new Inventory();
-            _inventory.Initialize();
-
-            _lightsNode = _scene.Root.AddChild("lights");
-            _blocksNode = _scene.Root.AddChild("blocks");
-
-            uiElem = new UIElement("uiElement");
-            _scene.UIElements.Add(uiElem);
-
-            InitializeWorld();
-        }
-
-        private void InitializeWorld()
-        {
-            InitializeLights();
-            InitializeChunks();
-        }
-
-        private void InitializeLights()
-        {
-            _lightsNode.AddChild(new DirectionalLight());
-
-            _lightsNode.AddChild(
-                new PointLight(new Vector3(0.7f, 0.2f, 2.0f), 0),
-                new PointLight(new Vector3(2.3f, -3.3f, -4.0f), 1),
-                new PointLight(new Vector3(-4.0f, 2.0f, -12.0f), 2),
-                new PointLight(new Vector3(0.0f, 0.0f, -3.0f), 3)
-            );
-
-            _lightsNode.AddChild(new SpotLight()
+            for (int z = 0; z < chunkSize; z++)
             {
-                Ambient = new Vector3(0.0f, 0.0f, 0.0f),
-                Diffuse = new Vector3(1.0f, 1.0f, 1.0f),
-                Specular = new Vector3(1.0f, 1.0f, 1.0f),
-            });
+                var blockPos = chunkPos + new Vector3(x, 0, z);
 
-            // var _lightingShader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/lighting.frag", "lighting");
-            // _lightingShader.SetInt("numDirLights", 1);
-            // _lightingShader.SetInt("numPointLights", 4);
-            // _lightingShader.SetInt("numSpotLights", 1);
-        }
+                var dirt = new Dirt(blockPos, $"Dirt ({x}{z})");
+                _blocksNode.AddChild(dirt);
 
-        UIElement uiElem;
-
-        private void InitializeChunks()
-        {
-            // TODO: Generate chunks when player moves
-
-            // TODO: Generate chunks using 3d perlin noise
-
-            const int chunkSize = 16;
-            const int numChunks = 3;
-
-            for (int i = 0; i < numChunks; i++)
-            {
-                var chunkPos = new Vector3(i * chunkSize, 0, 0);
-                GenerateChunk(chunkSize, chunkPos);
-            }
-        }
-
-        private void GenerateChunk(int chunkSize, Vector3 chunkPos)
-        {
-            for (int x = 0; x < chunkSize; x++)
-            {
-                for (int z = 0; z < chunkSize; z++)
+                for (int y = 1; y < chunkSize; y++)
                 {
-                    var blockPos = chunkPos + new Vector3(x, 0, z);
-
-                    var dirt = new Dirt(blockPos, $"Dirt ({x}{z})");
-                    _blocksNode.AddChild(dirt);
-
-                    for (int y = 1; y < chunkSize; y++)
-                    {
-                        blockPos.Y = -y;
-                        var stone = new Stone(blockPos, $"Dirt ({x}{z}.{y})");
-                        _blocksNode.AddChild(stone);
-                    }
+                    blockPos.Y = -y;
+                    var stone = new Stone(blockPos, $"Dirt ({x}{z}.{y})");
+                    _blocksNode.AddChild(stone);
                 }
             }
         }
+    }
 
-        /// <inheritdoc />
-        public void Update(double deltaTime, IInputContext input)
+    /// <inheritdoc />
+    public void Update(double deltaTime, IInputContext input)
+    {
+        uiElem.Transform.Rotation += 0.01f;
+
+        _input.HandleKeyboard(input.Keyboards[0], (float)deltaTime);
+    }
+
+    // TODO: Input system to let users change change key bindings?
+    /// <inheritdoc />
+    public void HandleKeyboard(IKeyboard input, double deltaTime)
+    {
+        for (int i = 0; i <= 9; i++)
         {
-            uiElem.Transform.Rotation += 0.01f;
-
-            _input.HandleKeyboard(input.Keyboards[0], (float)deltaTime);
-        }
-
-        // TODO: Input system to let users change change key bindings?
-        /// <inheritdoc />
-        public void HandleKeyboard(IKeyboard input, double deltaTime)
-        {
-            for (int i = 0; i <= 9; i++)
+            if (input.IsKeyPressed(Key.Number0 + i))
             {
-                if (input.IsKeyPressed(Key.Number0 + i))
-                {
-                    _inventory.SetSelectedSlot(i);
-                    Console.WriteLine($"Selected slot: {i} ({_inventory.SelectedSlot.Items.Type})");
-                }
-            }
-
-            input.KeyUp += Input_KeyUp;
-        }
-
-        private void Input_KeyUp(IKeyboard arg1, Key arg2, int arg3)
-        {
-            if (arg2 == Key.F)
-            {
-                CoreSettings.PrintFrameRate = !CoreSettings.PrintFrameRate;
-            }
-
-            if (arg2 == Key.L)
-            {
-                CoreSettings.UseWireFrame = !CoreSettings.UseWireFrame;
+                _inventory.SetSelectedSlot(i);
+                Console.WriteLine($"Selected slot: {i} ({_inventory.SelectedSlot.Items.Type})");
             }
         }
 
-        /// <inheritdoc />
-        public void HandleMouse(IMouse mouse) { }
+        input.KeyUp += Input_KeyUp;
+    }
 
-        /// <inheritdoc />
-        public void HandleMouseDown(IMouse mouse, MouseButton button) 
+    private void Input_KeyUp(IKeyboard arg1, Key arg2, int arg3)
+    {
+        if (arg2 == Key.F)
         {
-            if (button == MouseButton.Right)
+            CoreSettings.PrintFrameRate = !CoreSettings.PrintFrameRate;
+        }
+
+        if (arg2 == Key.L)
+        {
+            CoreSettings.UseWireFrame = !CoreSettings.UseWireFrame;
+        }
+    }
+
+    /// <inheritdoc />
+    public void HandleMouse(IMouse mouse) { }
+
+    /// <inheritdoc />
+    public void HandleMouseDown(IMouse mouse, MouseButton button) 
+    {
+        if (button == MouseButton.Right)
+        {
+            if (_inventory.SelectedSlot.Items.Type != BlockType.None && _inventory.SelectedSlot.Items.Amount > 0)
             {
-                if (_inventory.SelectedSlot.Items.Type != BlockType.None && _inventory.SelectedSlot.Items.Amount > 0)
-                {
-                    PlaceBlock();
-                    _inventory.SelectedSlot.Items.Amount -= 1;
+                PlaceBlock();
+                _inventory.SelectedSlot.Items.Amount -= 1;
 
-                    if (_inventory.SelectedSlot.Items.Amount < 0)
-                        _inventory.SelectedSlot.Items.Type = BlockType.None;
-                }
-                else
-                {
-                    Console.WriteLine($"No more {_inventory.SelectedSlot.Items.Type}s.");
-                }
+                if (_inventory.SelectedSlot.Items.Amount < 0)
+                    _inventory.SelectedSlot.Items.Type = BlockType.None;
             }
-
-            if (button == MouseButton.Left)
+            else
             {
-                var destoryedBlockType = DestroyBlock();
-                if (destoryedBlockType != BlockType.None)
-                {
-                    // TODO: The block should be added to the slot so that 0 is the last slot instead of 9.
-                    // TODO: The first block destoryed doesn't seem to be added to the inventory.
-                    Console.WriteLine($"Block destroyed: {destoryedBlockType}.");
-                    _inventory.AddToolbarItem(destoryedBlockType);
-                }
+                Console.WriteLine($"No more {_inventory.SelectedSlot.Items.Type}s.");
             }
         }
 
-        private BlockType DestroyBlock()
+        if (button == MouseButton.Left)
         {
-            if (!IsBlockInView(out GameObject? intersectingObject, out Vector3 _))
-                return BlockType.None;
-
-            var block = (BlockBase)intersectingObject!;
-            _blocksNode.RemoveChild(intersectingObject!);
-
-            return block.BlockType;
+            var destoryedBlockType = DestroyBlock();
+            if (destoryedBlockType != BlockType.None)
+            {
+                // TODO: The block should be added to the slot so that 0 is the last slot instead of 9.
+                // TODO: The first block destoryed doesn't seem to be added to the inventory.
+                Console.WriteLine($"Block destroyed: {destoryedBlockType}.");
+                _inventory.AddToolbarItem(destoryedBlockType);
+            }
         }
+    }
 
-        private void PlaceBlock()
-        {
-            if (!IsBlockInView(out GameObject? intersectingObject, out Vector3 hitPosition))
-                return;
+    private BlockType DestroyBlock()
+    {
+        if (!IsBlockInView(out GameObject? intersectingObject, out Vector3 _))
+            return BlockType.None;
 
-            var newBlockPosition = GetNewBlockPosition(hitPosition, intersectingObject!);
-            if (newBlockPosition == Camera.Position || newBlockPosition == hitPosition)
-                return;
+        var block = (BlockBase)intersectingObject!;
+        _blocksNode.RemoveChild(intersectingObject!);
 
-            var newBlock = BlockFactory.CreateBlock(_inventory.SelectedSlot.Items.Type, newBlockPosition, $"Dirt ({_blocksNode.Children.Count})");
-            _blocksNode.AddChild(newBlock);
+        return block.BlockType;
+    }
 
-            Console.WriteLine($"New block created: {newBlock.Transform.Position}, block in view location: {intersectingObject!.Transform.Position}");
+    private void PlaceBlock()
+    {
+        if (!IsBlockInView(out GameObject? intersectingObject, out Vector3 hitPosition))
+            return;
 
-        }
+        var newBlockPosition = GetNewBlockPosition(hitPosition, intersectingObject!);
+        if (newBlockPosition == Camera.Position || newBlockPosition == hitPosition)
+            return;
 
-        private static Vector3 GetNewBlockPosition(Vector3 hitPosition, GameObject intersectingObject)
-        {
-            Vector3 normal = Ray.GetClosestFaceNormal(hitPosition, intersectingObject);
-            return intersectingObject.Transform.Position + (normal * intersectingObject.Transform.Scale);
-        }
+        var newBlock = BlockFactory.CreateBlock(_inventory.SelectedSlot.Items.Type, newBlockPosition, $"Dirt ({_blocksNode.Children.Count})");
+        _blocksNode.AddChild(newBlock);
 
-        /// <summary>
-        ///     Checks whether a block is in view of the camera.
-        /// </summary>
-        /// <param name="intersectingObject"></param>
-        /// <param name="hitPosition"></param>
-        /// <returns></returns>
-        public bool IsBlockInView(out GameObject? intersectingObject, out Vector3 hitPosition)
-        {
-            Ray ray = new Ray(Camera.Position, Camera.Front);
-            return ray.IsGameObjectInView(_scene, out intersectingObject, out hitPosition, allowedTypes: typeof(BlockBase));
-        }
+        Console.WriteLine($"New block created: {newBlock.Transform.Position}, block in view location: {intersectingObject!.Transform.Position}");
 
-        /// <inheritdoc />
-        public void HandleMouseWheel(MouseWheelScrollDirection direction, ScrollWheel scrollWheel)
-        {
-            int slotIndex = _inventory.SelectedSlotIndex;
+    }
 
-            if (direction == MouseWheelScrollDirection.Up)
-                slotIndex++;
-            else if (direction == MouseWheelScrollDirection.Down)
-                slotIndex--;
+    private static Vector3 GetNewBlockPosition(Vector3 hitPosition, GameObject intersectingObject)
+    {
+        Vector3 normal = Ray.GetClosestFaceNormal(hitPosition, intersectingObject);
+        return intersectingObject.Transform.Position + (normal * intersectingObject.Transform.Scale);
+    }
 
-            if (slotIndex < 0)
-                slotIndex = 9;
-            else if (slotIndex > 9)
-                slotIndex = 0;
+    /// <summary>
+    ///     Checks whether a block is in view of the camera.
+    /// </summary>
+    /// <param name="intersectingObject"></param>
+    /// <param name="hitPosition"></param>
+    /// <returns></returns>
+    public bool IsBlockInView(out GameObject? intersectingObject, out Vector3 hitPosition)
+    {
+        Ray ray = new Ray(Camera.Position, Camera.Front);
+        return ray.IsGameObjectInView(_scene, out intersectingObject, out hitPosition, allowedTypes: typeof(BlockBase));
+    }
 
-            _inventory.SetSelectedSlot(slotIndex);
-            Console.WriteLine($"Selected slot: {slotIndex}");
+    /// <inheritdoc />
+    public void HandleMouseWheel(MouseWheelScrollDirection direction, ScrollWheel scrollWheel)
+    {
+        int slotIndex = _inventory.SelectedSlotIndex;
 
-        }
+        if (direction == MouseWheelScrollDirection.Up)
+            slotIndex++;
+        else if (direction == MouseWheelScrollDirection.Down)
+            slotIndex--;
+
+        if (slotIndex < 0)
+            slotIndex = 9;
+        else if (slotIndex > 9)
+            slotIndex = 0;
+
+        _inventory.SetSelectedSlot(slotIndex);
+        Console.WriteLine($"Selected slot: {slotIndex}");
+
     }
 }

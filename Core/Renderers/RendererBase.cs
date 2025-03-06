@@ -1,5 +1,5 @@
-﻿using Core.Interfaces;
-using Core.Shaders;
+﻿using Core.Shaders;
+using SharpEngine.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

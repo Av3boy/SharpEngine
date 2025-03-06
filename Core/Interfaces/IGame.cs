@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using Core.Enums;
+using SharpEngine.Core.Interfaces;
 using Silk.NET.Input;
 
 namespace Core.Interfaces;
@@ -18,7 +19,7 @@ public interface IGame
     /// <summary>
     ///     Gets or sets the camera of the game.
     /// </summary>
-    public Camera Camera { get; set; }
+    public CameraView Camera { get; set; }
 
     /// <summary>
     ///     Executed when a mouse button is pressed.

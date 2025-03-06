@@ -2,7 +2,8 @@
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
 using Silk.NET.OpenGL;
-using Shader = Core.Shaders.Shader;
+using Silk.NET.OpenGL.Extensions.ImGui;
+using MouseButton = Silk.NET.Input.MouseButton;
 
 using Core.Interfaces;
 using Core.Renderers;
@@ -10,16 +11,15 @@ using Core.Enums;
 using Core.Entities;
 using Core.Entities.Properties;
 using Core.Shaders;
+using SharpEngine.Core;
+using SharpEngine.Core.Scenes;
+using SharpEngine.Core.Entities.Views.Settings;
+using Shader = Core.Shaders.Shader;
 
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using MouseButton = Silk.NET.Input.MouseButton;
 using System.Threading.Tasks;
-using ImGuiNET;
-using Silk.NET.OpenGL.Extensions.ImGui;
-using SharpEngine.Core;
-using SharpEngine.Core.Scenes;
 
 namespace Core;
 
@@ -56,7 +56,7 @@ public class Window : SilkWindow
         Scene = scene;
 
         _window = Silk.NET.Windowing.Window.Create(options);
-        _game.Camera = new Camera(Vector3.UnitZ * 3, _window.Size.X / (float)_window.Size.Y);
+        _game.Camera = new CameraView(Vector3.UnitZ * 3, new DefaultViewSettings());
 
         _window.Update += OnUpdateFrame;
         _window.Render += RenderFrame;

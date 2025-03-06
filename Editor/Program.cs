@@ -1,7 +1,7 @@
-﻿using Core;
-using Core.Entities;
+﻿using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Scenes;
-using SharpEngine.Editor;
+
+namespace SharpEngine.Editor;
 
 /// <summary>
 ///    Represents the main entry point of the application.
@@ -18,6 +18,6 @@ public static class Program
         var editor = new Editor();
         var scene = args.Length > 0 ? Scene.LoadScene(args[0]) : new Scene();
 
-        using var window = new EditorWindow(editor, scene, new DefaultViewSettings(), editor.Camera);
+        using var window = new EditorWindow(editor, scene, new DefaultViewSettings());
     }
 }

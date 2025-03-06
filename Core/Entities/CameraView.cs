@@ -1,9 +1,6 @@
-﻿using Core.Interfaces;
-using Core.Renderers;
 using Core.Shaders;
-using Silk.NET.Input;
-using Silk.NET.Maths;
-using Silk.NET.Windowing;
+using SharpEngine.Core.Entities.Views;
+using SharpEngine.Core.Entities.Views.Settings;
 using System;
 using System.Numerics;
 using Plane = System.Numerics.Plane;
@@ -11,17 +8,20 @@ using Plane = System.Numerics.Plane;
 namespace Core.Entities;
 
 /// <summary>
-///     Represents a movable camera view.
+///     Represents a movable camera.
 /// </summary>
+/// <remarks>
+///     Basically the implementation from <see href="https://github.com/opentk/LearnOpenTK"/>.
+/// </remarks>
 public class CameraView : View
 {
     /// <summary>
-    ///     Initializes a new instance of <see cref="View"/>.
+    ///     Initializes a new instance of <see cref="CameraView"/>.
     /// </summary>
     /// <param name="position">The initial position of the camera.</param>
-    public CameraView(IViewSettings settings, Vector3? position = null) : base(settings)
+    public CameraView(Vector3 position, IViewSettings settings) : base(settings)
     {
-        Position = position ?? Vector3.UnitZ * 3;
+        Position = position;
         AspectRatio = settings.WindowOptions.Size.X / (float)settings.WindowOptions.Size.Y;
     }
 
@@ -48,8 +48,8 @@ public class CameraView : View
     // The field of view of the camera (radians)
     private float _fov = Math.PiOver2;
 
-    /// <summary>Gets or sets the position of the camera.</summary>
-    public Vector3 Position { get; set; }
+    /// <summary>Gets or sets the aspect ratio of the viewport, used for the projection matrix.</summary>
+    public float AspectRatio { private get; set; }
 
     /// <summary>
     ///     Gets or sets the pitch (rotation around the X axis) of the camera in degrees.
@@ -110,14 +110,14 @@ public class CameraView : View
     ///     Gets the view matrix of the camera.
     /// </summary>
     /// <returns>The view matrix.</returns>
-    public override Matrix4x4 GetViewMatrix()
+    public Matrix4x4 GetViewMatrix()
         => Matrix4x4.CreateLookAt(Position, Position + _front, _up);
 
     /// <summary>
     ///     Gets the projection matrix of the camera.
     /// </summary>
     /// <returns>The projection matrix.</returns>
-    public override Matrix4x4 GetProjectionMatrix()
+    public Matrix4x4 GetProjectionMatrix()
         => Matrix4x4.CreatePerspectiveFieldOfView(_fov, AspectRatio, 0.01f, 100f);
 
     /// <summary>
@@ -138,6 +138,35 @@ public class CameraView : View
         // not be what you need for all cameras so keep this in mind if you do not want a FPS camera.
         _right = Vector3.Normalize(Vector3.Cross(_front, Vector3.UnitY));
         _up = Vector3.Normalize(Vector3.Cross(_right, _front));
+    }
+
+    private bool firstMove;
+    private Vector2 lastPos;
+
+    // TODO: Move to the settings
+    /// <summary>Gets or sets the sensitivity of the camera to mouse movements.</summary>
+    public float Sensitivity { get; set; } = 0.2f;
+
+    /// <summary>
+    ///     Updates the camera's orientation based on the current mouse position.
+    /// </summary>
+    /// <param name="mousePosition">The current mouse position.</param>
+    public void UpdateMousePosition(Vector2 mousePosition)
+    {
+        if (firstMove)
+        {
+            lastPos = new Vector2(mousePosition.X, mousePosition.Y);
+            firstMove = false;
+        }
+        else // TODO: Split so that only the camera view will rotate
+        {
+            var deltaX = mousePosition.X - lastPos.X;
+            var deltaY = mousePosition.Y - lastPos.Y;
+            lastPos = new Vector2(mousePosition.X, mousePosition.Y);
+
+            Yaw += deltaX * Sensitivity;
+            Pitch -= deltaY * Sensitivity;
+        }
     }
 
     /// <summary>
@@ -198,86 +227,14 @@ public class CameraView : View
         return planes;
     }
 
-    /// <inheritdoc />
-    public override void UpdateMousePosition(Vector2 mousePosition)
-    {
-        base.UpdateMousePosition(mousePosition);
-
-        if (!firstMove)
-        {
-            var deltaX = mousePosition.X - lastPos.X;
-            var deltaY = mousePosition.Y - lastPos.Y;
-
-            Yaw += deltaX * Settings.Sensitivity;
-            Pitch -= deltaY * Settings.Sensitivity;
-        }
-    }
-}
-
-public interface IViewSettings : ISettings
-{
-    public float Sensitivity { get; set; }
-}
-
-public struct DefaultViewSettings : IViewSettings
-{
-    public DefaultViewSettings()
-    {
-        Sensitivity = 0.2f;
-    }
-
-    public float Sensitivity { get; set; }
-    public bool UseWireFrame { get; set; }
-    public bool PrintFrameRate { get; set; }
-    public RenderFlags RendererFlags { get; set; }
-    public WindowOptions WindowOptions { get; set; } = WindowOptions.Default with
-    {
-        Title = "SharpEngine",
-        Size = new Vector2D<int>(1280, 720),
-    };
-}
-
-public class View
-{
-    public View(IViewSettings settings)
-    {
-        Settings = settings;
-    }
-
-    public IViewSettings Settings { get; set; }
-
-    /// <summary>Gets or sets the aspect ratio of the viewport, used for the projection matrix.</summary>
-    public float AspectRatio { get; set; }
-
-    protected bool firstMove;
-    protected Vector2 lastPos;
-
-    public virtual Matrix4x4 GetViewMatrix() => Matrix4x4.Identity;
-    public virtual Matrix4x4 GetProjectionMatrix() => Matrix4x4.Identity;
-
     /// <summary>
     ///     Sets the shader uniforms for the camera.
     /// </summary>
     /// <param name="shader">The shader to set the uniforms on.</param>
-    public virtual void SetShaderUniforms(Shader shader)
+    public override void SetShaderUniforms(Shader shader)
     {
         shader.SetMatrix4("view", GetViewMatrix());
         shader.SetMatrix4("projection", GetProjectionMatrix());
-        shader.SetVector3("viewPos", Vector3.Zero);
-    }
-
-    /// <summary>
-    ///     Updates the camera's orientation based on the current mouse position.
-    /// </summary>
-    /// <param name="mousePosition">The current mouse position.</param>
-    public virtual void UpdateMousePosition(Vector2 mousePosition)
-    {
-        if (firstMove)
-        {
-            lastPos = new Vector2(mousePosition.X, mousePosition.Y);
-            firstMove = false;
-        }
-        else
-            lastPos = new Vector2(mousePosition.X, mousePosition.Y);
+        shader.SetVector3("viewPos", Position);
     }
 }

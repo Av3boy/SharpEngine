@@ -5,13 +5,12 @@ using Core.Primitives;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Attributes;
 
-using View = Core.Entities.View;
-
 using ImGuiNET;
 using Silk.NET.Input;
 using System.Numerics;
 using System.Reflection;
-using Core.Entities;
+
+using SharpEngine.Core.Entities.Views.Settings;
 
 namespace SharpEngine.Editor;
 
@@ -23,17 +22,17 @@ public class EditorWindow : Window
     /// <summary>
     ///     Initializes a new instance of <see cref="EditorWindow"/>.
     /// </summary>
+    /// <param name="game"></param>
     /// <param name="scene">The scene to be initialized.</param>
     /// <param name="settings">The settings for the editor window.</param>
-    /// <param name="view">The view for the window.</param>
-    public EditorWindow(IGame game, Scene scene, ISettings settings, Camera view) : base(game, scene, settings.WindowOptions)
-    //public EditorWindow(Scene scene, ISettings settings, View view) : base(scene, settings, view)
+    public EditorWindow(IGame game, Scene scene, IViewSettings settings) : base(game, scene, settings.WindowOptions)
     {
     }
 
     private bool _showContextMenu;
     private bool _updateContextMenuLocation;
 
+    /// <inheritdoc />
     public override void OnLoad()
     {
         base.OnLoad();
@@ -70,18 +69,14 @@ public class EditorWindow : Window
 
     private void RenderSceneNode(SceneNode node)
     {
-        foreach (var child in node.Children)
+        foreach (var child in node.Children.Where(child => ImGui.TreeNode(child.Name)))
         {
+            Scene.ActiveElement = child;
 
-            if (ImGui.TreeNode(child.Name))
-            {
-                Scene.ActiveElement = child;
-
-                ImGui.Indent();
-                RenderSceneNode(child);
-                ImGui.Unindent();
-                ImGui.TreePop();
-            }
+            ImGui.Indent();
+            RenderSceneNode(child);
+            ImGui.Unindent();
+            ImGui.TreePop();
         }
     }
 

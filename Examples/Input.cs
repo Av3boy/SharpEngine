@@ -13,9 +13,9 @@ public class Input
 
     public float MovementSpeed { get; set; } = 1.5f;
 
-    private readonly Camera _camera;
+    private readonly CameraView _camera;
 
-    public Input(Camera camera)
+    public Input(CameraView camera)
     {
         _camera = camera;
     }

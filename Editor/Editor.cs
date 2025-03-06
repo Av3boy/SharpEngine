@@ -1,14 +1,17 @@
 ﻿using Core.Entities;
 using Core.Enums;
 using Core.Interfaces;
+using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using Silk.NET.Input;
+
+namespace SharpEngine.Editor;
 
 public class Editor : IGame
 {
     public ISettings CoreSettings { get; } = new EditorSettings();
 
-    public Camera Camera { get; set; }
+    public CameraView Camera { get; set; }
 
     public void HandleKeyboard(IKeyboard input, double deltaTime)
     {

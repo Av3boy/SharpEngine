@@ -1,7 +1,6 @@
 ﻿using Core.Renderers;
-using Silk.NET.Windowing;
 
-namespace Core.Interfaces;
+namespace SharpEngine.Core.Interfaces;
 
 /// <summary>
 ///     Contains definitions for the settings the game engine supports.
@@ -18,7 +17,6 @@ public interface ISettings
     /// </summary>
     public bool PrintFrameRate { get; set; }
 
+    /// <summary>Gets or sets which renderer should be enabled for the current window.</summary>
     public RenderFlags RendererFlags { get; set; }
-
-    public WindowOptions WindowOptions { get; set; }
 }
