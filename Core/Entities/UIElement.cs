@@ -1,11 +1,11 @@
 ﻿using Core.Entities.Properties;
-using Core.Shaders;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Scenes;
+using SharpEngine.Core.Shaders;
 using Silk.NET.OpenGL;
 using System.Threading.Tasks;
 
-namespace Core.Entities;
+namespace SharpEngine.Core.Entities;
 
 /// <summary>
 ///     Represents a User Interface entity.

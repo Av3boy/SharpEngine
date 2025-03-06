@@ -1,5 +1,4 @@
-﻿using Core.Entities;
-using SharpEngine.Core.Entities;
+﻿using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Enums;
 
 using Silk.NET.Input;

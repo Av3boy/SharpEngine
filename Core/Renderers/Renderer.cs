@@ -1,9 +1,11 @@
-using Core.Entities;
-using Core.Shaders;
+using SharpEngine.Core;
+using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Renderers;
 using SharpEngine.Core.Scenes;
+using SharpEngine.Core.Shaders;
 using Silk.NET.OpenGL;
 using System;
 using System.Numerics;

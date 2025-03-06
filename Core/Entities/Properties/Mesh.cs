@@ -1,4 +1,5 @@
-﻿using SharpEngine.Core.Attributes;
+﻿using SharpEngine.Core;
+using SharpEngine.Core.Attributes;
 using Silk.NET.OpenGL;
 using System.Collections.Generic;
 
@@ -9,6 +10,7 @@ namespace Core.Entities.Properties;
 /// </summary>
 public class Mesh
 {
+    /// <summary>Gets or sets a indetifying name for the mesh.</summary>
     public string Name { get; set; } = "New Mesh";
 
     /// <summary>
@@ -63,7 +65,7 @@ public static class MeshExtensions
             vertices.Add(mesh.TextureCoordinates[texCoordIndex + 1]);
         }
 
-        return vertices.ToArray();
+        return [.. vertices];
     }
 }
 
@@ -107,5 +109,5 @@ public class MeshService
         return mesh;
     }
 
-    // TODO: Load mesh from file
+    // TODO: #3 & #2 Load mesh from file
 }

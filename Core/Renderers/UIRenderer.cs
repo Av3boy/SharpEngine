@@ -1,13 +1,13 @@
-﻿using Core.Entities;
-using Core.Shaders;
+﻿using SharpEngine.Core.Entities;
 using SharpEngine.Core.Interfaces;
-using SharpEngine.Core.Renderers;
 using SharpEngine.Core.Scenes;
+using SharpEngine.Core.Shaders;
 using Silk.NET.OpenGL;
+
 using System;
 using System.Threading.Tasks;
 
-namespace Core.Renderers;
+namespace SharpEngine.Core.Renderers;
 
 /// <summary>
 ///     Represents a renderer dedicated to drawing UI elements to the screen.
@@ -15,7 +15,6 @@ namespace Core.Renderers;
 public class UIRenderer : RendererBase
 {
     private readonly Scene _scene;
-
     private readonly UIShader _uiShader;
 
     /// <inheritdoc />
@@ -24,8 +23,6 @@ public class UIRenderer : RendererBase
     /// <summary>
     ///     Initializes a new instance of <see cref="UIRenderer"/>.
     /// </summary>
-    /// <param name="scene"></param>
-    /// <param name="game"></param>
     public UIRenderer(Scene scene, IGame game) : base(game.CoreSettings)
     {
         _scene = scene;

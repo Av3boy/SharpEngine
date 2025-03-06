@@ -1,6 +1,4 @@
-﻿using Core;
-
-using SharpEngine.Core.Scenes;
+﻿using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Attributes;
 
 using ImGuiNET;
@@ -11,6 +9,7 @@ using System.Reflection;
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Primitives;
+using SharpEngine.Core;
 
 namespace SharpEngine.Editor;
 

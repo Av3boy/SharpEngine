@@ -1,12 +1,13 @@
 using Core.Entities.Properties;
-using Core.Shaders;
 using SharpEngine.Core.Attributes;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Scenes;
+using SharpEngine.Core.Shaders;
+using SharpEngine.Core.Textures;
 using Silk.NET.OpenGL;
 using System.Threading.Tasks;
 
-namespace Core.Entities;
+namespace SharpEngine.Core.Entities;
 
 /// <summary>
 /// Represents a game object in the scene.

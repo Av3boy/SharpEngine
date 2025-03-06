@@ -1,4 +1,4 @@
-﻿namespace Core.Shaders;
+﻿namespace SharpEngine.Core.Shaders;
 
 public static class ShaderAttributes
 {

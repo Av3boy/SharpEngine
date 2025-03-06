@@ -1,11 +1,9 @@
-using Core.Shaders;
-using SharpEngine.Core;
-using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Entities.Views.Settings;
+using SharpEngine.Core.Shaders;
 using System.Numerics;
 using Plane = System.Numerics.Plane;
 
-namespace Core.Entities;
+namespace SharpEngine.Core.Entities.Views;
 
 /// <summary>
 ///     Represents a movable camera.

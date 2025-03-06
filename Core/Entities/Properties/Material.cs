@@ -1,5 +1,5 @@
-﻿using Core;
-using Core.Shaders;
+﻿using SharpEngine.Core.Shaders;
+using SharpEngine.Core.Textures;
 using System.Numerics;
 
 namespace SharpEngine.Core.Entities.Properties;

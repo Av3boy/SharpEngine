@@ -1,6 +1,6 @@
 ﻿using Silk.NET.OpenGL;
 
-namespace Core.Shaders;
+namespace SharpEngine.Core.Shaders;
 
 internal class UIShader : ShaderBase
 {

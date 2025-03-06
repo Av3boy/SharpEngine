@@ -1,4 +1,4 @@
-﻿using Core.Entities;
+﻿using SharpEngine.Core.Entities.Views;
 using Silk.NET.Input;
 
 namespace Minecraft;

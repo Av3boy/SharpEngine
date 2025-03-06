@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Core.Shaders;
+namespace SharpEngine.Core.Shaders;
 
 /// <summary>
 ///     Represents the base class for all shaders.

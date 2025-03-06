@@ -1,4 +1,3 @@
-using Core.Entities;
 using System.Numerics;
 
 namespace SharpEngine.Core.Entities.Lights;

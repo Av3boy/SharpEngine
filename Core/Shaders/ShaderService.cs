@@ -2,91 +2,90 @@
 using System.IO;
 using System.Collections.Generic;
 
-namespace Core.Shaders
+namespace SharpEngine.Core.Shaders;
+
+/// <summary>
+///     Contains all the shaders used in the game.
+/// </summary>
+public class ShaderService
 {
     /// <summary>
-    ///     Contains all the shaders used in the game.
+    ///     Gets the singleton instance of the <see cref="ShaderService"/>.
     /// </summary>
-    public class ShaderService
+    public static ShaderService Instance { get; } = new ShaderService();
+
+    // TODO: Cache data is never set
+    private readonly Dictionary<string, Shader> _shaderCache = new();
+
+    /// <summary>
+    ///    Gets or sets whether there are shaders to load.
+    /// </summary>
+    public bool HasShadersToLoad { get; set; } = true;
+
+    /// <summary>
+    ///     Private constructor to prevent instantiation.
+    /// </summary>
+    private ShaderService() { }
+
+    /// <summary>
+    ///     Gets all the shaders in the cache.
+    /// </summary>
+    /// <returns>All the shaders found from the cache.</returns>
+    public List<Shader> GetAll()
     {
-        /// <summary>
-        ///     Gets the singleton instance of the <see cref="ShaderService"/>.
-        /// </summary>
-        public static ShaderService Instance { get; } = new ShaderService();
+        HasShadersToLoad = false;
+        return new(_shaderCache.Values);
+    }
 
-        // TODO: Cache data is never set
-        private readonly Dictionary<string, Shader> _shaderCache = new();
+    /// <summary>
+    ///     Gets a shader by its name.
+    /// </summary>
+    /// <param name="name">The name of the shader to be found.</param>
+    /// <returns>The found shader.</returns>
+    /// <exception cref="KeyNotFoundException">
+    ///     Thrown if a shader by that is not found.
+    ///     This exception is thrown to make sure there are no unexpected issues made by the developer.
+    /// </exception>
+    public Shader GetByName(string name)
+    {
+        if (_shaderCache.TryGetValue(name, out var cachedShader))
+            return cachedShader;
 
-        /// <summary>
-        ///    Gets or sets whether there are shaders to load.
-        /// </summary>
-        public bool HasShadersToLoad { get; set; } = true;
+        throw new KeyNotFoundException($"Shader with name {name} not found in cache.");
+    }
 
-        /// <summary>
-        ///     Private constructor to prevent instantiation.
-        /// </summary>
-        private ShaderService() { }
+    /// <summary>
+    ///     Loads a shader from the specified vertex and fragment paths. <br />
+    ///     If the shader is loaded already, adds it to the cache.
+    /// </summary>
+    /// <param name="vertPath">The vertex shader full path.</param>
+    /// <param name="fragPath">The fragment shader full path.</param>
+    /// <param name="name">A name identifier for the shader.</param>
+    /// <returns>A shader with the given name.</returns>
+    public Shader? LoadShader(string vertPath, string fragPath, string name)
+    {
+        // Check if the shader is already in the cache
+        if (_shaderCache.TryGetValue(name, out var cachedShader))
+            return cachedShader;
 
-        /// <summary>
-        ///     Gets all the shaders in the cache.
-        /// </summary>
-        /// <returns>All the shaders found from the cache.</returns>
-        public List<Shader> GetAll()
+        if (!File.Exists(vertPath))
         {
-            HasShadersToLoad = false;
-            return new(_shaderCache.Values);
+            Console.WriteLine($"Vertex shader file not found: {vertPath}");
+            return null;
         }
 
-        /// <summary>
-        ///     Gets a shader by its name.
-        /// </summary>
-        /// <param name="name">The name of the shader to be found.</param>
-        /// <returns>The found shader.</returns>
-        /// <exception cref="KeyNotFoundException">
-        ///     Thrown if a shader by that is not found.
-        ///     This exception is thrown to make sure there are no unexpected issues made by the developer.
-        /// </exception>
-        public Shader GetByName(string name)
+        if (!File.Exists(fragPath))
         {
-            if (_shaderCache.TryGetValue(name, out var cachedShader))
-                return cachedShader;
-
-            throw new KeyNotFoundException($"Shader with name {name} not found in cache.");
+            Console.WriteLine($"Fragment shader file not found: {fragPath}");
+            return null;
         }
 
-        /// <summary>
-        ///     Loads a shader from the specified vertex and fragment paths. <br />
-        ///     If the shader is loaded already, adds it to the cache.
-        /// </summary>
-        /// <param name="vertPath">The vertex shader full path.</param>
-        /// <param name="fragPath">The fragment shader full path.</param>
-        /// <param name="name">A name identifier for the shader.</param>
-        /// <returns>A shader with the given name.</returns>
-        public Shader? LoadShader(string vertPath, string fragPath, string name)
-        {
-            // Check if the shader is already in the cache
-            if (_shaderCache.TryGetValue(name, out var cachedShader))
-                return cachedShader;
+        // Create a new shader instance and add it to the cache
+        var shader = new Shader(vertPath, fragPath, name);
+        _shaderCache[name] = shader;
 
-            if (!File.Exists(vertPath))
-            {
-                Console.WriteLine($"Vertex shader file not found: {vertPath}");
-                return null;
-            }
+        HasShadersToLoad = true;
 
-            if (!File.Exists(fragPath))
-            {
-                Console.WriteLine($"Fragment shader file not found: {fragPath}");
-                return null;
-            }
-
-            // Create a new shader instance and add it to the cache
-            var shader = new Shader(vertPath, fragPath, name);
-            _shaderCache[name] = shader;
-
-            HasShadersToLoad = true;
-
-            return shader;
-        }
+        return shader;
     }
 }

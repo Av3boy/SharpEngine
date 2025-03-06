@@ -26,7 +26,7 @@ public static class Program
         Scene scene = new Scene();
         Game game = new Game(scene, gameSettings);
 
-        using var window = new Core.Window(game, scene, gameSettings.WindowOptions);
+        using var window = new SharpEngine.Core.Window(game, scene, gameSettings.WindowOptions);
         window.Run();
     }
 }

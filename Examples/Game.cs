@@ -1,17 +1,16 @@
 using SharpEngine.Core;
-using SharpEngine.Core.Entities;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
+using SharpEngine.Core.Entities;
+using SharpEngine.Core.Entities.Lights;
+using SharpEngine.Core.Entities.Views;
 
 using Minecraft.Block;
 using Silk.NET.Input;
 
 using System;
 using System.Numerics;
-using SharpEngine.Core.Entities.Lights;
-using Core.Entities;
-using Core;
 
 namespace Minecraft;
 

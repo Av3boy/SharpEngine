@@ -8,11 +8,9 @@ using MouseButton = Silk.NET.Input.MouseButton;
 using Core.Renderers;
 using Core.Entities;
 using Core.Entities.Properties;
-using Core.Shaders;
-using SharpEngine.Core;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Entities.Views.Settings;
-using Shader = Core.Shaders.Shader;
+using Shader = SharpEngine.Core.Shaders.Shader;
 
 using System;
 using System.Collections.Generic;
@@ -20,8 +18,11 @@ using System.Numerics;
 using System.Threading.Tasks;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
+using SharpEngine.Core.Entities.Views;
+using SharpEngine.Core.Renderers;
+using SharpEngine.Core.Shaders;
 
-namespace Core;
+namespace SharpEngine.Core;
 
 /// <summary>
 ///     Represents the game window.
@@ -40,6 +41,10 @@ public class Window : SilkWindow
     private readonly IWindow _window;
 
     public static GL GL;
+
+    // TODO: Use these methods.
+    public static GL GetGL() => GL;
+    private static void SetGL(GL gl) => GL = gl;
 
     public IInputContext Input;
     private ImGuiController _imGuiController;
@@ -83,7 +88,7 @@ public class Window : SilkWindow
         // CursorShape = CursorShape.Hand;
 
         // Load all meshes from the mesh cache
-        MeshService.Instance.LoadMesh("cube", SharpEngine.Core.Primitives.Cube.Mesh);
+        MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
         _game.Initialize();
 
         _renderer = new Renderer(_game, Scene);
@@ -225,7 +230,7 @@ public class Window : SilkWindow
     protected void OnResize(Vector2D<int> size)
     {
         GL.Viewport(size);
-        _game.Camera.AspectRatio = (float)(size.X / size.Y);
+        _game.Camera.AspectRatio = size.X / size.Y;
     }
 
     /// <inheritdoc />

@@ -1,9 +1,7 @@
-﻿using Core.Entities.Properties;
-using SharpEngine.Core.Entities.Properties;
+﻿using SharpEngine.Core.Entities.Properties;
 using Silk.NET.OpenGL;
-using System;
 
-namespace Core.Shaders;
+namespace SharpEngine.Core.Shaders;
 
 internal class LightingShader : ShaderBase
 {
