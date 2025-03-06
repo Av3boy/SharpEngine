@@ -1,6 +1,5 @@
-﻿using Core.Entities;
-using Core.Enums;
-using Core.Interfaces;
+﻿using SharpEngine.Core.Entities;
+using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using Silk.NET.Input;

@@ -1,6 +1,6 @@
-﻿using Core.Entities.Properties;
+﻿using SharpEngine.Core.Entities.Properties;
 
-namespace Core.Primitives;
+namespace SharpEngine.Core.Primitives;
 
 /// <summary>
 ///     Used to create a primitive plane object.

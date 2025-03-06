@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Core.Entities.Properties;
+namespace SharpEngine.Core.Entities.Properties;
 
 /// <summary>
 ///     Represents a game object transformation in 3D space.

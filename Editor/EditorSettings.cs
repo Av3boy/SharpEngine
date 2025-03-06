@@ -1,8 +1,11 @@
-﻿using Core.Entities;
-using Core.Interfaces;
-using Core.Renderers;
-using SharpEngine.Core.Entities.Views.Settings;
+﻿using SharpEngine.Core.Entities.Views.Settings;
+using SharpEngine.Core.Renderers;
 
+namespace SharpEngine.Editor;
+
+/// <summary>
+///     Contains settings for the editor.
+/// </summary>
 public class EditorSettings : IViewSettings
 {
     /// <inheritdoc />

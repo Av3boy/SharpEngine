@@ -1,7 +1,8 @@
-﻿using Core.Shaders;
+﻿using SharpEngine.Core.Shaders;
+using SharpEngine.Core.Textures;
 using System.Numerics;
 
-namespace Core.Entities.Properties;
+namespace SharpEngine.Core.Entities.Properties;
 
 /// <summary>
 ///     Represents the material rendered onto a game object.

@@ -1,4 +1,4 @@
-﻿namespace Core.Entities.Properties;
+﻿namespace SharpEngine.Core.Entities.Properties;
 
 /// <summary>
 ///     Represents the data of a vertex.

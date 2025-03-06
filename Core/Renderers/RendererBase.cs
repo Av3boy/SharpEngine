@@ -1,23 +1,30 @@
-﻿using Core.Shaders;
-using SharpEngine.Core.Interfaces;
+﻿using SharpEngine.Core.Interfaces;
+
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Core.Renderers;
+namespace SharpEngine.Core.Renderers;
 
 /// <summary>
 ///     Contains definitions shared across all renderers.
 /// </summary>
-public abstract class RendererBase
+public abstract class RendererBase : IDisposable
 {
-    private ISettings _settings;
+    /// <summary>Gets or sets the settings for the renderer.</summary>
+    protected ISettings Settings;
 
+    /// <summary>
+    ///     Initializes a new instance of <see cref="RendererBase"/>.
+    /// </summary>
+    /// <param name="settings">The settings for the renderer.</param>
     protected RendererBase(ISettings settings)
     {
-        _settings = settings;
+        Settings = settings;
     }
 
+    /// <summary>
+    ///     Gets the flag for the renderers that this renderer represents.
+    /// </summary>
     public abstract RenderFlags RenderFlag { get; }
 
     /// <summary>
@@ -29,13 +36,17 @@ public abstract class RendererBase
     ///    Renders the scene.
     /// </summary>
     public abstract Task Render();
-}
 
-[Flags]
-public enum RenderFlags
-{
-    None = 0,
-    Renderer3D = 1,
-    UIRenderer = 2,
-    All = 3
+    /// <summary>
+    ///    Disposes the renderer.
+    /// </summary>
+    /// <param name="disposing">Whether the renderer should be disposed.</param>
+    protected virtual void Dispose(bool disposing) { }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 }

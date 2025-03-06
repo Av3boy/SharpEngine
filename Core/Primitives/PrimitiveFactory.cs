@@ -1,10 +1,10 @@
-﻿using Core.Entities;
-using Core.Entities.Properties;
+﻿using SharpEngine.Core.Entities;
+using SharpEngine.Core.Entities.Properties;
 
 using System;
 using System.Numerics;
 
-namespace Core.Primitives;
+namespace SharpEngine.Core.Primitives;
 
 /// <summary>
 ///     Used to create a primitive objects.
@@ -20,6 +20,8 @@ public static class PrimitiveFactory
         => Create(primitiveType, position, "DefaultTextures/debug.JPG");
 
     /// <inheritdoc cref="Create(PrimitiveType, Vector3)"/>
+    /// <param name="primitiveType">The type of primitive to be created.</param>
+    /// <param name="position">The position where the primitive should be created.</param>
     /// <param name="diffuseMapFile">The diffuse map texture file full path.</param>
     /// <param name="specularMapFile">The specular map texture file full path.</param>
     /// <param name="vertShaderFile">The vertex shader file full path.</param>

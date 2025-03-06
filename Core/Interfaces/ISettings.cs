@@ -1,4 +1,4 @@
-﻿using Core.Renderers;
+﻿using SharpEngine.Core.Renderers;
 
 namespace SharpEngine.Core.Interfaces;
 

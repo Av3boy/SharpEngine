@@ -11,7 +11,7 @@ public class SceneNode
     /// <summary>
     ///     Gets or sets the name of the node.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = "New Object";
 
     /// <summary>
     ///     Gets or sets the children of the node.

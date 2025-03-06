@@ -1,4 +1,4 @@
-﻿using Core.Entities;
+﻿using SharpEngine.Core.Entities;
 
 using System;
 using System.Collections.Generic;
@@ -18,6 +18,7 @@ public class Scene
 
     private string? _fileFullPath;
 
+    /// <summary>Gets or sets whether the scene has unsaved changes.</summary>
     public bool HasUnsavedChanges { get; set; }
 
     /// <summary>Gets or sets the name of the scene file.</summary>
@@ -50,7 +51,7 @@ public class Scene
 
     /// <summary>Gets or sets the active element in the scene.</summary>
     /// <remarks>Editor only.</remarks>
-    public SceneNode ActiveElement { get; set; }
+    public SceneNode? ActiveElement { get; set; }
 
     /// <summary>
     ///     Adds an empty node to the scene root.
@@ -195,6 +196,10 @@ public class Scene
         Name = System.IO.Path.GetFileNameWithoutExtension(sceneFile);
     }
 
+    /// <summary>
+    ///     Determines whether the scene has been saved before and has a save file.
+    /// </summary>
+    /// <returns><see langword="true"/> if the scene has a save file; otherwise, <see langword="false"/>.</returns>
     public bool HasSaveFile()
         => _fileFullPath is not null;
 

@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Core.Entities.Properties;
+namespace SharpEngine.Core.Entities.Properties;
 
 /// <summary>
 ///     Represents a quaternion for rotation.

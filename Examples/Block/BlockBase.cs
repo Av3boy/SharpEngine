@@ -1,5 +1,5 @@
-﻿using Core.Entities;
-using Core.Primitives;
+﻿using SharpEngine.Core.Entities;
+using SharpEngine.Core.Primitives;
 
 using System.Numerics;
 

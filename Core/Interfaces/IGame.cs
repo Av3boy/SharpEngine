@@ -1,9 +1,9 @@
-﻿using Core.Entities;
-using Core.Enums;
-using SharpEngine.Core.Interfaces;
+﻿using SharpEngine.Core.Entities;
+using SharpEngine.Core.Enums;
+
 using Silk.NET.Input;
 
-namespace Core.Interfaces;
+namespace SharpEngine.Core.Interfaces;
 
 /// <summary>
 ///     Contains definitions the Game class must implement.
@@ -24,7 +24,7 @@ public interface IGame
     /// <summary>
     ///     Executed when a mouse button is pressed.
     /// </summary>
-    public void HandleMouseDown(IMouse mouse, Silk.NET.Input.MouseButton button);
+    public void HandleMouseDown(IMouse mouse, MouseButton button);
 
     /// <summary>
     ///     A method executed when the mouse state is changed
@@ -43,6 +43,7 @@ public interface IGame
     ///     Executed when a key is pressed.
     /// </summary>
     /// <param name="input">The state of the keyboard on the current frame.</param>
+    /// <param name="deltaTime">The time since the last frame.</param>
     public void HandleKeyboard(IKeyboard input, double deltaTime);
 
     /// <summary>

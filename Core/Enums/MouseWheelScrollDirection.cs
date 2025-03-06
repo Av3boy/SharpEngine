@@ -1,7 +1,7 @@
 ﻿using Silk.NET.Input;
 using System;
 
-namespace Core.Enums;
+namespace SharpEngine.Core.Enums;
 
 /// <summary>
 ///     Contains the possible mouse wheel scroll directions.
