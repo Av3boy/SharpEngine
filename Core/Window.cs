@@ -5,22 +5,20 @@ using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using MouseButton = Silk.NET.Input.MouseButton;
 
-using Core.Renderers;
-using Core.Entities;
-using Core.Entities.Properties;
-using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Entities.Views.Settings;
+using SharpEngine.Core.Entities.Views;
+using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Scenes;
+using SharpEngine.Core.Enums;
+using SharpEngine.Core.Interfaces;
+using SharpEngine.Core.Renderers;
+using SharpEngine.Core.Shaders;
 using Shader = SharpEngine.Core.Shaders.Shader;
 
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
-using SharpEngine.Core.Enums;
-using SharpEngine.Core.Interfaces;
-using SharpEngine.Core.Entities.Views;
-using SharpEngine.Core.Renderers;
-using SharpEngine.Core.Shaders;
 
 namespace SharpEngine.Core;
 
@@ -35,26 +33,34 @@ public class Window : SilkWindow
     private Renderer _renderer;
     private UIRenderer _uiRenderer;
 
-    protected Scene Scene { get; private set; }
-    public override string Title { get; set; }
-
     private readonly IWindow _window;
+    private ImGuiController _imGuiController;
+
+    /// <summary>
+    ///     The scene that is currently being rendered.
+    /// </summary>
+    protected Scene Scene { get; private set; }
+
+    /// <inheritdoc />
+    public override string Title
+    {
+        get => _window.Title;
+        set => _window.Title = value;
+    }
 
     public static GL GL;
 
-    // TODO: Use these methods.
+    // TODO: Use this method.
     public static GL GetGL() => GL;
     private static void SetGL(GL gl) => GL = gl;
 
     public IInputContext Input;
-    private ImGuiController _imGuiController;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
     /// </summary>
     /// <param name="game">Contains the actual game implementation.</param>
     /// <param name="scene">Contains the game scene.</param>
-    /// <param name="options"></param>
     public Window(IGame game, Scene scene, WindowOptions options)
     {
         // TODO: Game should be refactored out of the window class.
@@ -75,7 +81,7 @@ public class Window : SilkWindow
     /// <inheritdoc />
     public override void OnLoad()
     {
-        GL = _window.CreateOpenGL();
+        SetGL(_window.CreateOpenGL());
 
         Input = _window.CreateInput();
         _window.MakeCurrent();
@@ -140,10 +146,6 @@ public class Window : SilkWindow
             Debug.LogInformation(ex.Message);
         }
     }
-
-    protected virtual void PreRender(double deltaTime) { }
-
-    protected virtual void AfterRender(double deltaTime) { }
 
     /// <summary>
     ///     Toggles the renderer between wireframe and fill mode.
@@ -234,7 +236,7 @@ public class Window : SilkWindow
     }
 
     /// <inheritdoc />
-    protected void OnMouseDown(IMouse mouse, MouseButton button)
+    protected override void OnMouseDown(IMouse mouse, MouseButton button)
         => _game.HandleMouseDown(mouse, button);
 
     /// <summary>
@@ -247,10 +249,11 @@ public class Window : SilkWindow
         Scene = scene;
     }
 
-    public void Dispose()
+    /// <inheritdoc />
+    protected override void Dispose(bool disposing)
     {
-        // TODO: Dispose of any / all resources
-
         _imGuiController.Dispose();
+
+        base.Dispose(disposing);
     }
 }

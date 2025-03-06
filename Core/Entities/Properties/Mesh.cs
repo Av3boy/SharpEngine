@@ -1,9 +1,8 @@
-﻿using SharpEngine.Core;
-using SharpEngine.Core.Attributes;
+﻿using SharpEngine.Core.Attributes;
 using Silk.NET.OpenGL;
 using System.Collections.Generic;
 
-namespace Core.Entities.Properties;
+namespace SharpEngine.Core.Entities.Properties;
 
 /// <summary>
 ///     Represents a game object mesh.

@@ -1,17 +1,17 @@
-using SharpEngine.Core;
 using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
-using SharpEngine.Core.Renderers;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
+
 using Silk.NET.OpenGL;
+
 using System;
 using System.Numerics;
 using System.Threading.Tasks;
 
-namespace Core.Renderers;
+namespace SharpEngine.Core.Renderers;
 
 /// <summary>
 ///     Represents the game renderer.
@@ -125,7 +125,7 @@ public class Renderer : RendererBase
     /// <param name="plane">The origin of where the distance to <paramref name="point"/> should be calculated.</param>
     /// <param name="point">The point the distance to is calculated.</param>
     /// <returns>The distance from <paramref name="plane"/> to <paramref name="point"/>.</returns>
-    public static float DistanceToPoint(System.Numerics.Plane plane, Vector3 point)
+    public static float DistanceToPoint(Plane plane, Vector3 point)
     {
         var normal = new Vector3(plane.Normal.X, plane.Normal.Y, plane.Normal.Z);
         return Vector3.Dot(normal, point) + plane.D;

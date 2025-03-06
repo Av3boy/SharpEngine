@@ -1,7 +1,7 @@
-﻿using Core.Renderers;
-using SharpEngine.Core.Interfaces;
-using Silk.NET.Windowing;
+﻿using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Renderers;
+
+using Silk.NET.Windowing;
 
 namespace Minecraft;
 

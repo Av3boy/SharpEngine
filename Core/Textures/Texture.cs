@@ -13,7 +13,7 @@ public class Texture
     /// <summary>
     ///     Initializes a new instance of <see cref="Texture"/>.
     /// </summary>
-    /// <param name="glHandle"></param>
+    /// <param name="glHandle">The handle to the texture.</param>
     public Texture(uint glHandle)
     {
         Handle = glHandle;

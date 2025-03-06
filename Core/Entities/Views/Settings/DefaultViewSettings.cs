@@ -1,6 +1,5 @@
-﻿using Core.Renderers;
-using SharpEngine.Core.Interfaces;
-using SharpEngine.Core.Renderers;
+﻿using SharpEngine.Core.Renderers;
+
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
 

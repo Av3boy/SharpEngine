@@ -1,4 +1,3 @@
-using Core.Entities.Properties;
 using SharpEngine.Core.Attributes;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Scenes;
