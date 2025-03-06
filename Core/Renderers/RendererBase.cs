@@ -1,5 +1,4 @@
-﻿using SharpEngine.Core.Interfaces;
-
+using SharpEngine.Core.Interfaces;
 using System;
 using System.Threading.Tasks;
 

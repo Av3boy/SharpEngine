@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using static Core.Window;
 using Silk.NET.OpenGL;
 using System.Numerics;
+using SharpEngine.Core;
 
 namespace Core.Shaders
 {

@@ -1,3 +1,4 @@
+using Core.Entities;
 using SharpEngine.Core.Entities;
 using SharpEngine.Core.Scenes;
 

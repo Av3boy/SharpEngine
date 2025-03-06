@@ -1,7 +1,7 @@
 using Core.Shaders;
+using SharpEngine.Core;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Entities.Views.Settings;
-using System;
 using System.Numerics;
 using Plane = System.Numerics.Plane;
 
@@ -126,9 +126,9 @@ public class CameraView : View
     private void UpdateVectors()
     {
         // First, the front matrix is calculated using some basic trigonometry.
-        _front.X = MathF.Cos(_pitch) * MathF.Cos(_yaw);
-        _front.Y = MathF.Sin(_pitch);
-        _front.Z = MathF.Cos(_pitch) * MathF.Sin(_yaw);
+        _front.X = System.MathF.Cos(_pitch) * System.MathF.Cos(_yaw);
+        _front.Y = System.MathF.Sin(_pitch);
+        _front.Z = System.MathF.Cos(_pitch) * System.MathF.Sin(_yaw);
 
         // We need to make sure the vectors are all normalized, as otherwise we would get some funky results.
         _front = Vector3.Normalize(_front);
@@ -231,7 +231,7 @@ public class CameraView : View
     ///     Sets the shader uniforms for the camera.
     /// </summary>
     /// <param name="shader">The shader to set the uniforms on.</param>
-    public override void SetShaderUniforms(Shader shader)
+    public void SetShaderUniforms(Shader shader)
     {
         shader.SetMatrix4("view", GetViewMatrix());
         shader.SetMatrix4("projection", GetProjectionMatrix());

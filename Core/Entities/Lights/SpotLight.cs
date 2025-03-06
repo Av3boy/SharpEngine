@@ -1,4 +1,4 @@
-﻿using SharpEngine.Core.Shaders;
+﻿using Core.Shaders;
 using System.Numerics;
 using System.Threading.Tasks;
 

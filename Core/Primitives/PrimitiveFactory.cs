@@ -1,4 +1,5 @@
-﻿using SharpEngine.Core.Entities;
+﻿using Core.Entities;
+using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Properties;
 
 using System;
