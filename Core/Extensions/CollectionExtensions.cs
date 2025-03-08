@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SharpEngine.Core.Extensions;
 
@@ -16,4 +17,22 @@ public static class CollectionExtensions
     /// <returns><see langword="true"/> if the item is in the collection; otherwise, <see langword="false"/>.</returns>
     public static bool IsAnyOf<T>(this T item, params T[] items)
         => items.Contains(item);
+
+    /// <summary>
+    ///     Adds the specified items to the collection.
+    /// </summary>
+    /// <remarks>
+    ///     The <see cref="IEnumerable{T}"/> cannot be modified directly, so a new collection is created with the items added.
+    /// </remarks>
+    /// <typeparam name="T">The type of the items.</typeparam>
+    /// <param name="collection">The collection to be updated</param>
+    /// <param name="items">The items to be added.</param>
+    /// <returns>The collection with the items added.</returns>
+    public static IEnumerable<T> AddRange<T>(this IEnumerable<T> collection, params T[] items)
+    {
+        foreach (var item in items)
+            collection = collection.Append(item);
+
+        return collection;
+    }
 }

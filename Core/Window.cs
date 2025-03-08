@@ -19,6 +19,8 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
+using SharpEngine.Core.Extensions;
+using System.Linq;
 
 namespace SharpEngine.Core;
 
@@ -30,6 +32,7 @@ public class Window : SilkWindow
     private readonly IGame _game;
 
     // TODO: Support multiple renderes (#19)
+    private IEnumerable<RendererBase> _renderers = [];
     private Renderer _renderer;
     private UIRenderer _uiRenderer;
 
@@ -97,11 +100,22 @@ public class Window : SilkWindow
         MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
         _game.Initialize();
 
-        _renderer = new Renderer(_game, Scene);
-        _uiRenderer = new UIRenderer(Scene, _game);
+        // Using reflection, find all renderers that implement the RendererBase.
+        var rendererTypes = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(assembly => assembly.GetTypes())
+            .Where(type => type.IsSubclassOf(typeof(RendererBase)) && !type.IsAbstract);
 
-        _renderer.Initialize();
-        _uiRenderer.Initialize();
+        foreach (var type in rendererTypes)
+        {
+            // Make sure the renderer has the correct constructor parameters!
+            var requiredArguments = new object[] { _game, Scene };
+            var renderer = (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
+
+            _renderers = _renderers.Append(renderer);
+        }
+
+        foreach (var renderer in _renderers)
+            renderer.Initialize();
 
         _imGuiController = new ImGuiController(GL, _window, Input);
     }
@@ -124,13 +138,9 @@ public class Window : SilkWindow
 
             UseShaders();
 
-            var renderTasks = new List<Task>();
-
-            if (_game.CoreSettings.RendererFlags.HasFlag(_renderer.RenderFlag))
-                renderTasks.Add(_renderer.Render());
-
-            if (_game.CoreSettings.RendererFlags.HasFlag(_uiRenderer.RenderFlag))
-                renderTasks.Add(_uiRenderer.Render());
+            var renderTasks = _renderers.Where(renderer => _game.CoreSettings.RendererFlags.HasFlag(renderer.RenderFlag))
+                                        .Select(renderer => renderer.Render())
+                                        .ToList();
 
             Task.WaitAll([.. renderTasks]);
 
