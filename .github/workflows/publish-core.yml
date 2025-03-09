@@ -16,7 +16,9 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x'  # Change if using a different .NET version
+          dotnet-version: '8.0.x'  # TODO: Create variable out of this
+
+      # TODO: Quality gates (Unit tests, sonar cloud?)
 
       - name: Restore dependencies
         run: dotnet restore
@@ -24,8 +26,12 @@ jobs:
       - name: Build project
         run: dotnet build --configuration Release --no-restore
 
+      # TODO: Create installer for launcher and editor bundle
+
       - name: Pack NuGet package
         run: dotnet pack --configuration Release --no-build --output nupkg
 
       - name: Publish to NuGet
         run: dotnet nuget push "nupkg/*.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+
+      # TODO: Publish the NuGet package to GitHub.
