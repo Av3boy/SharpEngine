@@ -37,7 +37,7 @@ public class Window : SilkWindow
     private UIRenderer _uiRenderer;
 
     private readonly IWindow _window;
-    private ImGuiController _imGuiController;
+    private ImGuiController? _imGuiController;
 
     /// <summary>
     ///     The scene that is currently being rendered.
@@ -84,40 +84,47 @@ public class Window : SilkWindow
     /// <inheritdoc />
     public override void OnLoad()
     {
-        SetGL(_window.CreateOpenGL());
-
-        Input = _window.CreateInput();
-        _window.MakeCurrent();
-
-        AssignInputEvents();
-
-        GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
-        // TODO: Set cursor shape
-        // CursorShape = CursorShape.Hand;
-
-        // Load all meshes from the mesh cache
-        MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
-        _game.Initialize();
-
-        // Using reflection, find all renderers that implement the RendererBase.
-        var rendererTypes = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(assembly => assembly.GetTypes())
-            .Where(type => type.IsSubclassOf(typeof(RendererBase)) && !type.IsAbstract);
-
-        foreach (var type in rendererTypes)
+        try
         {
-            // Make sure the renderer has the correct constructor parameters!
-            var requiredArguments = new object[] { _game, Scene };
-            var renderer = (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
+            SetGL(_window.CreateOpenGL());
 
-            _renderers = _renderers.Append(renderer);
+            Input = _window.CreateInput();
+            _window.MakeCurrent();
+
+            AssignInputEvents();
+
+            GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+            // TODO: Set cursor shape
+            // CursorShape = CursorShape.Hand;
+
+            // Load all meshes from the mesh cache
+            MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
+            _game.Initialize();
+
+            // Using reflection, find all renderers that implement the RendererBase.
+            var rendererTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(assembly => assembly.GetTypes())
+                .Where(type => type.IsSubclassOf(typeof(RendererBase)) && !type.IsAbstract);
+
+            foreach (var type in rendererTypes)
+            {
+                // Make sure the renderer has the correct constructor parameters!
+                var requiredArguments = new object[] { _game, Scene };
+                var renderer = (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
+
+                _renderers = _renderers.Append(renderer);
+            }
+
+            foreach (var renderer in _renderers)
+                renderer.Initialize();
+
+            _imGuiController = new ImGuiController(GL, _window, Input);
         }
-
-        foreach (var renderer in _renderers)
-            renderer.Initialize();
-
-        _imGuiController = new ImGuiController(GL, _window, Input);
+        catch (Exception ex)
+        {
+            Debug.LogInformation(ex.Message);
+        }
     }
 
     /// <summary>
@@ -130,7 +137,7 @@ public class Window : SilkWindow
         {
             PreRender(deltaTime);
 
-            _imGuiController.Update((float)deltaTime);
+            _imGuiController?.Update((float)deltaTime);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -149,7 +156,7 @@ public class Window : SilkWindow
 
             AfterRender(deltaTime);
 
-            _imGuiController.Render();
+            _imGuiController?.Render();
         }
         catch (Exception ex)
         {
@@ -262,7 +269,7 @@ public class Window : SilkWindow
     /// <inheritdoc />
     protected override void Dispose(bool disposing)
     {
-        _imGuiController.Dispose();
+        _imGuiController?.Dispose();
 
         base.Dispose(disposing);
     }

@@ -3,6 +3,7 @@ using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Textures;
+
 using Silk.NET.OpenGL;
 using System.Threading.Tasks;
 
@@ -28,13 +29,13 @@ public class GameObject : SceneNode
     public GameObject(string diffuseMapFile, string specularMapFile, string vertShaderFile, string fragShaderFile)
     {
         Material.DiffuseMap = TextureService.Instance.LoadTexture(diffuseMapFile);
+
+        // TODO: Make specular map optional
         Material.SpecularMap = TextureService.Instance.LoadTexture(specularMapFile);
         Material.Shader = ShaderService.Instance.LoadShader(vertShaderFile, fragShaderFile, "lighting");
 
         BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
     }
-
-    // TODO: Cleanup these properties
 
     /// <summary>
     ///     Gets or sets the mesh of the game object.
