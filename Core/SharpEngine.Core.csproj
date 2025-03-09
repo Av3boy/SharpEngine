@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>A purely C# game engine</Description>
+    <Description>Everrything needed to build games using a purely C# game engine.</Description>
     
     <!-- 
       Required by some low level OpenGL functions. 
@@ -9,6 +9,10 @@
     -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Platforms>AnyCPU;x64;x86</Platforms>
+    <GeneratePackageOnBuild>$(GenerateNuGetPackages)</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/Av3boy/SharpEngine</PackageProjectUrl>
+    <PackageTags>game-engine;</PackageTags>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     
   </PropertyGroup>
 
