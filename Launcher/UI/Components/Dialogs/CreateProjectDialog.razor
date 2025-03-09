@@ -1,0 +1,73 @@
+﻿@inherits DialogBase
+
+<div class="alert alert-light dialog @_createProjectDialogVisibleClass" role="alert" style="border: 1px solid grey">
+    <div class="alert-header">
+        Create new project
+        <DiscardIcon DiscardClicked="@DiscardAsync" />
+    </div>
+    <hr />
+
+    <EditForm EditContext="@_createProjectFormEditContext">
+        <ValidationSummary />
+
+        <div class="form-group" style="margin-bottom: 8px;">
+            <label for="project-name">Project Name</label>
+            <input class="form-control" id="project-name" placeholder="Enter project name">
+        </div>
+
+        <div class="form-group">
+            <label for="project-path">Path</label>
+            <div style="display: flex; align-items: center;gap: 8px;">
+                <input class="form-control" id="project-path" placeholder="Enter project path">
+                <input type="file" class="form-control-file" id="project-file">
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="flex-end">
+            <button type="button" class="btn btn-secondary" @onclick="CloseAsync">Cancel</button>
+            <button type="submit" class="btn btn-primary" @onclick="OnCreateProjectSubmitClickedAsync">Create project</button>
+        </div>
+    </EditForm>
+
+</div>
+
+@code {
+    private string _createProjectDialogVisibleClass => Visible ? "create-project-dialog-visible" : "create-project-dialog-hidden";
+
+    private EditContext _createProjectFormEditContext;
+    private Project _newProject;
+
+    /// <summary>Gets or sets the event executed when the project is created.</summary>
+    [Parameter]
+    public EventCallback<Project> OnProjectCreated { get; set; }
+
+    /// <summary>
+    ///     Initializes a new instance of <see cref="CreateProjectDialog"/>.
+    /// </summary>
+    public CreateProjectDialog()
+    {
+        _newProject = new();
+        _createProjectFormEditContext = new(_newProject);
+    }
+
+    /// <inheritdoc />
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _createProjectFormEditContext = new(_newProject);
+    }
+
+    private async Task OnCreateProjectSubmitClickedAsync()
+    {
+        if (_createProjectFormEditContext.Validate())
+            return;
+
+        await OnProjectCreated.InvokeAsync(_newProject);
+
+        _newProject = new();
+        await CloseAsync();
+    }
+}

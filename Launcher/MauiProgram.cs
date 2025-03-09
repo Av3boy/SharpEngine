@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Maui.LifecycleEvents;
+﻿using Launcher.Services;
+using Microsoft.Extensions.Logging;
 
 namespace Launcher;
 
@@ -24,8 +24,12 @@ public static class MauiProgram
 
 		builder.Services.AddMauiBlazorWebView();
 
+		builder.Services.AddScoped<INotificationService, NotificationService>();
+		builder.Services.AddScoped<IProjectInitializationService, ProjectInitializationService>();
+		builder.Services.AddScoped<IApplicationManager, ApplicationManager>();
+
 #if DEBUG
-		builder.Services.AddBlazorWebViewDeveloperTools();
+        builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
 #endif
 

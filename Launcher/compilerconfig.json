@@ -10,5 +10,13 @@
   {
     "outputFile": "UI/Components/DiscardIcon.razor.css",
     "inputFile": "UI/Components/DiscardIcon.razor.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/additional.razor.css",
+    "inputFile": "wwwroot/css/additional.razor.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/additional.css",
+    "inputFile": "wwwroot/css/additional.scss"
   }
 ]
