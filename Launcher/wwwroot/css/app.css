@@ -91,3 +91,9 @@ h1:focus {
     overflow: hidden;
     height: 100%;
 }
+
+p, h1, h4, a, td, tr, div, .prevent-select {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}

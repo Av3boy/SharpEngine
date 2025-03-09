@@ -6,5 +6,9 @@
   {
     "outputFile": "UI/Home.razor.css",
     "inputFile": "UI/Home.razor.scss"
+  },
+  {
+    "outputFile": "UI/Components/DiscardIcon.razor.css",
+    "inputFile": "UI/Components/DiscardIcon.razor.scss"
   }
 ]

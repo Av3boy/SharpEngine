@@ -21,8 +21,9 @@ public partial class App : Application
     {
         var window = base.CreateWindow(activationState);
 
-        window.Width = 800;
-        window.Height = 600;
+        window.Title = "SharpEngine Launcher";
+        window.Width = 700;
+        window.Height = 500;
 
         return window;
     }
