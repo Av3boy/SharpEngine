@@ -1,0 +1,10 @@
+﻿[
+  {
+    "outputFile": "UI/Home.css",
+    "inputFile": "UI/Home.scss"
+  },
+  {
+    "outputFile": "UI/Home.razor.css",
+    "inputFile": "UI/Home.razor.scss"
+  }
+]

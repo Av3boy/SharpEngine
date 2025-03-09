@@ -1,0 +1,203 @@
+﻿@page "/"
+
+@using Launcher.UI.Components
+
+<div class="alert alert-warning toast @_notificationVisibleClass" role="alert">
+    This is a warning alert with <a href="#" class="alert-link">an example link</a>. Give it a click if you like.
+    <span @onclick="@OnNotificationCloseClicked">&#10006;</span>
+</div>
+
+<div class="alert alert-danger dialog @_confirmDeleteVisibleClass" role="alert">
+    <div class="alert-header">
+        <h4 class="alert-heading">Delete Project</h4>
+        <span @onclick="@OnNotificationCloseClicked">&#10006;</span>
+    </div>
+
+    <p>
+        Deleting a project is a destructive action. <br />
+        Everything in your project directory will be removed including your assets. <br />
+        Are you sure you wish to proceed?
+    </p>
+
+    <hr>
+    <div class="flex-end">
+        <button type="button" class="btn btn-secondary" @onclick="OnCancelDeleteClicked">Cancel</button>
+        <button type="button" class="btn btn-danger" @onclick="OnDeleteProjectConfirmClicked">Delete Project</button>
+    </div>
+</div>
+
+<div class="alert alert-light dialog @_createProjectDialogVisibleClass" role="alert">
+    <div class="alert-header">
+        Create new project
+        <span @onclick="@OnCreateProjectDialogCloseClicked">&#10006;</span>
+    </div>
+    <hr />
+
+    <EditForm EditContext="@_createProjectFormEditContext">
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="exampleInputEmail1">Project Name</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter project name">
+        </div>
+
+        <div class="form-group">
+            <label for="exampleInputEmail1">Path</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter project path">
+        </div>
+
+        <div class="form-group">
+            <input type="file" class="form-control-file" id="exampleFormControlFile1">
+        </div>
+
+        <hr />
+
+        <div>
+            <button type="button" class="btn btn-secondary" @onclick="OnCancelCreateProjectClicked">Cancel</button>
+            <button type="submit" class="btn btn-primary" @onclick="OnCreateProjectSubmitClicked">Create project</button>
+        </div>
+    </EditForm>
+
+</div>
+
+<div class="header">
+    <h1>Projects</h1>
+
+    <div>
+        <button type="button" class="btn btn-secondary">Open existing</button>
+        <button type="button" class="btn btn-primary" @onclick="OnCreateProjectClicked">Create project</button>
+    </div>
+</div>
+
+<div class="content">
+    <Grid TItem="Project" Items="@Projects">
+        <Row>
+            <td>@context.Name</td>
+            <td>@context.LastModified</td>
+            <td>
+                <button type="button" class="btn btn-danger" @onclick="@(() => OnDleteProjectClicked(context))">Delete</button>
+            </td>
+        </Row>
+    </Grid>
+</div>
+
+@code {
+    private bool _showNotification = true;
+    private string _notificationVisibleClass => _showNotification ? "notification-visible" : "notification-hidden";
+
+    private bool _showConfirmDelete;
+    private string _confirmDeleteVisibleClass => _showConfirmDelete ? "confirm-delete-visible" : "confirm-delete-hidden";
+
+    private bool _showCreateProjectDialog;
+    private string _createProjectDialogVisibleClass => _showCreateProjectDialog ? "create-project-dialog-visible" : "create-project-dialog-hidden";
+
+    private const string _projectsFile = "projects.json";
+    private const string _launcherEnvironmentVariable = "SHARP_ENGINE_LAUNCHER_DIRECTORY";
+    private string _currentDirectory = AppContext.BaseDirectory;
+    private string _projectDirectory => Path.Join(_currentDirectory, _projectsFile);
+
+    private List<Project> Projects { get; set; } = new()
+    {
+        new Project { Name = "Project 1", LastModified = DateTime.Now },
+        new Project { Name = "Project 2", LastModified = DateTime.Now.AddDays(6).AddHours(2) },
+
+    };
+
+    private Project _selectedProject = new();
+
+    private EditContext _createProjectFormEditContext;
+
+    /// <inheritdoc />
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _createProjectFormEditContext = new(_selectedProject);
+
+        CheckEnvironmentVariable();
+        LoadProjects();
+    }
+
+    private void CheckEnvironmentVariable()
+    {
+        var launcherDirectory = Environment.GetEnvironmentVariable(_launcherEnvironmentVariable);
+        if (string.IsNullOrEmpty(launcherDirectory) || launcherDirectory != _currentDirectory)
+            Environment.SetEnvironmentVariable(_launcherEnvironmentVariable, _currentDirectory);
+    }
+
+    private void LoadProjects()
+    {
+        if (!File.Exists(_projectDirectory))
+            File.WriteAllText(_projectDirectory, "[]");
+
+        string json = File.ReadAllText(_projectDirectory);
+        Projects = System.Text.Json.JsonSerializer.Deserialize<List<Project>>(json);
+    }
+
+    private void OnNotificationCloseClicked()
+    => _showNotification = !_showNotification;
+
+    private void OnCreateProjectClicked()
+    {
+        _showCreateProjectDialog = true;
+        _selectedProject = new();
+
+        _createProjectFormEditContext = new(_selectedProject);
+    }
+
+    private async Task LoadFileAsync(InputFileChangeEventArgs e)
+    {
+        // TODO: Check if file is a "sharpproject.json" file
+
+        using var stream = e.File.OpenReadStream();
+        using var reader = new StreamReader(stream);
+        string fileContent = await reader.ReadToEndAsync();
+
+        //  TODO: Instead of appending the file, open it using the editor.
+        var project = System.Text.Json.JsonSerializer.Deserialize<Project>(fileContent);
+        Projects.Add(project);
+
+        // TODO: Close down the window when a valid project is loaded.
+        // Application.Current.CloseWindow(GetParentWindow());
+    }
+
+    private void OnDleteProjectClicked(Project project)
+    {
+        _selectedProject = project;
+        _showConfirmDelete = true;
+    }
+
+    private void OnDeleteProjectConfirmClicked()
+    {
+        var project = Projects.Find(p => p.Id == _selectedProject.Id);
+        Projects.Remove(project);
+
+        OnCancelDeleteClicked();
+    }
+
+    private void OnCancelDeleteClicked()
+    {
+        _selectedProject = new();
+        _showConfirmDelete = false;
+    }
+
+    private void OnCreateProjectDialogCloseClicked()
+    {
+        _selectedProject = new();
+        _showCreateProjectDialog = false;
+    }
+
+    private void OnCreateProjectSubmitClicked()
+    {
+        if (_createProjectFormEditContext.Validate())
+            return;
+
+        Projects.Add(_selectedProject);
+        OnCreateProjectDialogCloseClicked();
+    }
+
+    private void OnCancelCreateProjectClicked()
+    {
+        OnCreateProjectDialogCloseClicked();
+    }
+}
