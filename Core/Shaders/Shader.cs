@@ -186,10 +186,10 @@ public class Shader
     //     3. Use the appropriate GL.Uniform* function to set the uniform.
 
     /// <summary>
-    /// Set a uniform int on this shader.
+    ///     Set a uniform int on this shader.
     /// </summary>
-    /// <param name="name">The name of the uniform</param>
-    /// <param name="data">The data to set</param>
+    /// <param name="name">The name of the uniform.</param>
+    /// <param name="data">The data to set.</param>
     public void SetInt(string name, int data)
     {
         Window.GL.UseProgram(Handle);
@@ -197,10 +197,10 @@ public class Shader
     }
 
     /// <summary>
-    /// Set a uniform float on this shader.
+    ///     Set a uniform float on this shader.
     /// </summary>
-    /// <param name="name">The name of the uniform</param>
-    /// <param name="data">The data to set</param>
+    /// <param name="name">The name of the uniform.</param>
+    /// <param name="data">The data to set.</param>
     public void SetFloat(string name, float data)
     {
         Window.GL.UseProgram(Handle);
@@ -208,13 +208,14 @@ public class Shader
     }
 
     /// <summary>
-    /// Set a uniform Matrix4 on this shader
+    ///     Set a uniform Matrix4 on this shader
     /// </summary>
-    /// <param name="name">The name of the uniform</param>
-    /// <param name="data">The data to set</param>
+    /// <param name="name">The name of the uniform.</param>
+    /// <param name="data">The data to set.</param>
+    /// <param name="transpose">Determines whether or not the matrix should be transposed. Defaults to <see langword="true"/>.</param>
     /// <remarks>
     ///   <para>
-    ///   The matrix is transposed before being sent to the shader.
+    ///   The matrix is transposed before being sent to the shader unless <paramref name="transpose"/> is set to <see langword="false"/>.
     ///   </para>
     /// </remarks>
     public void SetMatrix4(string name, Matrix4x4 data, bool transpose = true)
@@ -224,10 +225,10 @@ public class Shader
     }
 
     /// <summary>
-    /// Set a uniform Vector3 on this shader.
+    ///     Set a uniform Vector3 on this shader.
     /// </summary>
-    /// <param name="name">The name of the uniform</param>
-    /// <param name="data">The data to set</param>
+    /// <param name="name">The name of the uniform.</param>
+    /// <param name="data">The data to set.</param>
     public void SetVector3(string name, Vector3 data)
     {
         Window.GL.UseProgram(Handle);

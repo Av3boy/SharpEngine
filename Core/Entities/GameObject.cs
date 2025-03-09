@@ -1,10 +1,12 @@
 using SharpEngine.Core.Attributes;
 using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Textures;
 
 using Silk.NET.OpenGL;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Entities;
@@ -17,7 +19,10 @@ public class GameObject : SceneNode
     /// <summary>
     ///     Initializes a new instance of the <see cref="GameObject"/>.
     /// </summary>
-    public GameObject() { }
+    public GameObject()
+    {
+        //BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GameObject"/> with specified textures and shaders.
@@ -40,7 +45,7 @@ public class GameObject : SceneNode
     /// <summary>
     ///     Gets or sets the mesh of the game object.
     /// </summary>
-    public Mesh Mesh { get; set; }
+    public List<Mesh> Mesh { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the material of the game object.

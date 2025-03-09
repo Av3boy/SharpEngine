@@ -151,16 +151,17 @@ public class Scene
     /// <param name="elements">The scene nodes to iterate over</param>
     /// <param name="action">The action to be executed for each element.</param>
     /// <returns>A <see cref="Task"/> representing an asynchronous operation.</returns>
-    public async Task IterateAsync<TEntityType>(List<TEntityType> elements, Func<TEntityType, Task> action) where TEntityType : SceneNode
+    public IEnumerable<Task> IterateAsync<TEntityType>(IEnumerable<SceneNode> elements, Func<SceneNode, Task> action)
     {
+        var tasks = new List<Task>();
+
         foreach (var entity in elements)
         {
-            await action(entity);
-
-            var children = entity.Children.OfType<TEntityType>().ToList();
-            if (children.Count != 0)
-                await IterateAsync(children, action);
+            tasks.Add(action(entity));
+            tasks.AddRange(IterateAsync(entity.Children, action));
         }
+
+        return tasks;
     }
 
     /// <summary>
@@ -169,8 +170,8 @@ public class Scene
     /// <param name="elements">The scene nodes to iterate over</param>
     /// <param name="action">The action to be executed for each element.</param>
     /// <returns>A <see cref="Task"/> representing an asynchronous operation.</returns>
-    public async Task IterateAsync(List<SceneNode> elements, Func<SceneNode, Task> action)
-        => await IterateAsync<SceneNode>(elements, action);
+    public IEnumerable<Task> IterateAsync(List<SceneNode> elements, Func<SceneNode, Task> action)
+        => IterateAsync<SceneNode>(elements, action);
 
     /// <summary>
     ///    Loads a scene from the given <paramref name="sceneFile"/>.
