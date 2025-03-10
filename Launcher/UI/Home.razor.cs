@@ -124,14 +124,7 @@ namespace Launcher.UI
 
         private void ProjectCreated(Project project)
         {
-            var projectDirectory = Path.GetDirectoryName(Path.GetFullPath(project.Path));
-            Directory.CreateDirectory(projectDirectory);
-
-            var json = System.Text.Json.JsonSerializer.Serialize(project);
-            File.WriteAllText(Path.Join(projectDirectory, $"{project.Name}.sharpproject"), json);
-
-            // TODO: Create visual studio project containing a reference to the Core project.
-
+            _projectInitializationService.Initialize(project);
             Projects.Add(project);
         }
 

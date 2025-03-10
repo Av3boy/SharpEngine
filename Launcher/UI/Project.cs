@@ -1,4 +1,8 @@
-﻿namespace Launcher.UI;
+﻿using Launcher.Attributes;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
+namespace Launcher.UI;
 
 /// <summary>
 ///     Represents a SharpEngine project.
@@ -13,15 +17,19 @@ public class Project
     /// <summary>
     ///     Gets or sets the name of the project.
     /// </summary>
-    public string Name { get; set; } = default!;
+    [Required]
+    public string? Name { get; set; }
 
     /// <summary>
     ///     Gets or sets the path to the project file.
     /// </summary>
-    public string Path { get; set; } = default!;
+    [Required]
+    [File]
+    public string? Path { get; set; }
 
     /// <summary>
     ///     Gets or sets when the project was last modified.
     /// </summary>
+    [JsonIgnore]
     public DateTime LastModified { get; set; }
 }

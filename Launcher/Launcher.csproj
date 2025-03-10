@@ -69,14 +69,7 @@
       <None Include="wwwroot\css\additional.scss" />
     </ItemGroup>
 
-    <ItemGroup>
-      
-        <!-- TODO: Just for shits and giggles, let's try to replace this with some other approach that could work on android :-D -->
-      <!--
-        <PackageReference Include="Microsoft.Build" Version="17.13.9" />
-        <PackageReference Include="Microsoft.Build.Locator" Version="1.7.8" />
-        -->
-      
+    <ItemGroup>      
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />

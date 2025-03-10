@@ -29,9 +29,29 @@ jobs:
       # TODO: Create installer for launcher and editor bundle
 
       - name: Pack NuGet package
-        run: dotnet pack --configuration Release --no-build --output nupkg
+        run: dotnet pack --configuration Release --no-build --output Core/bin/Release/
 
       - name: Publish to NuGet
-        run: dotnet nuget push "nupkg/*.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+        run: dotnet nuget push "Core/bin/Release/SharpEngine.Core.NET.1.0.0.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLISH_NUGET_PACKAGE }} --skip-duplicate
 
       # TODO: Publish the NuGet package to GitHub.
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUBLISH_REPO_PACKAGE }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload NuGet package to GitHub Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUBLISH_REPO_PACKAGE }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: Core/bin/Release/SharpEngine.Core.NET.1.0.0.nupkg
+          asset_name: SharpEngine.Core.NET.1.0.0.nupkg
+          asset_content_type: application/zip

@@ -7,27 +7,29 @@
     </div>
     <hr />
 
-    <EditForm EditContext="@_createProjectFormEditContext">
-        <ValidationSummary />
+    <EditForm Model="@_newProject" OnValidSubmit="@OnCreateProjectSubmitClickedAsync" >
+        <DataAnnotationsValidator/>
 
         <div class="form-group" style="margin-bottom: 8px;">
             <label for="project-name">Project Name</label>
-            <input class="form-control" id="project-name" placeholder="Enter project name">
+            <input class="form-control" id="project-name" placeholder="Enter project name" @bind-value="_newProject.Name">
+            <ValidationMessage For="@(() => _newProject.Name)" />
         </div>
 
         <div class="form-group">
             <label for="project-path">Path</label>
             <div style="display: flex; align-items: center;gap: 8px;">
-                <input class="form-control" id="project-path" placeholder="Enter project path">
+                <input class="form-control" id="project-path" placeholder="Enter project path" @bind-value="_newProject.Path">
                 <input type="file" class="form-control-file" id="project-file">
             </div>
+            <ValidationMessage For="@(() => _newProject.Path)" />
         </div>
 
         <hr />
 
         <div class="flex-end">
             <button type="button" class="btn btn-secondary" @onclick="CloseAsync">Cancel</button>
-            <button type="submit" class="btn btn-primary" @onclick="OnCreateProjectSubmitClickedAsync">Create project</button>
+            <button type="submit" class="btn btn-primary">Create project</button>
         </div>
     </EditForm>
 
@@ -62,9 +64,6 @@
 
     private async Task OnCreateProjectSubmitClickedAsync()
     {
-        if (_createProjectFormEditContext.Validate())
-            return;
-
         await OnProjectCreated.InvokeAsync(_newProject);
 
         _newProject = new();

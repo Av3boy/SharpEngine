@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Everrything needed to build games using a purely C# game engine.</Description>
+    <Description>Everything needed to build games using a purely C# game engine.</Description>
     
     <!-- 
       Required by some low level OpenGL functions. 

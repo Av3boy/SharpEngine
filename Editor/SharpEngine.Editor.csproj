@@ -18,7 +18,7 @@
   </PropertyGroup>
 
 	<ItemGroup>
-			<ProjectReference Include="..\Core\SharpEngine.Core.csproj" />
+			<ProjectReference Include="..\Core\SharpEngine.Core.NET.csproj" />
 	</ItemGroup>
 
   <ItemGroup>
