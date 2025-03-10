@@ -43,6 +43,7 @@ jobs:
           $Hour = [System.DateTime]::Now.Hour.ToString("00")
           $Minute = [System.DateTime]::Now.Minute.ToString("00")
           $Version = "{0}.{1}{2}.{3}{4}" -f $Year, $Month, $Day, $Hour, $Minute
+
           echo "BUILD_NUMBER=$Version" >> $GITHUB_ENV
           echo ${{ env.BUILD_NUMBER }}
 
@@ -50,7 +51,7 @@ jobs:
         run: dotnet pack Core/SharpEngine.Core.NET.csproj --configuration Release --no-build --output Core/bin/Release/ --version-suffix ${{ env.BUILD_NUMBER }}
 
       - name: Publish to NuGet
-        run: dotnet nuget push "Core/bin/Release/SharpEngine.Core.NET.${{ env.BUILD_NUMBER }}.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLISH_NUGET_PACKAGE }} --skip-duplicate
+        run: dotnet nuget push "Core/bin/Release/SharpEngine.Core.NET.*.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLISH_NUGET_PACKAGE }} --skip-duplicate
 
       # TODO: Publish the NuGet package to GitHub.
       - name: Create GitHub Release
@@ -70,6 +71,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PUBLISH_REPO_PACKAGE }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Core/bin/Release/SharpEngine.Core.NET.${{ env.BUILD_NUMBER }}.nupkg
-          asset_name: SharpEngine.Core.NET.${{ env.BUILD_NUMBER }}.nupkg
+          asset_path: Core/bin/Release/SharpEngine.Core.NET.*.nupkg
+          asset_name: SharpEngine.Core.NET.*.nupkg
           asset_content_type: application/zip
