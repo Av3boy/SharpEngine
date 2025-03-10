@@ -43,9 +43,9 @@ jobs:
           $Hour = [System.DateTime]::Now.Hour.ToString("00")
           $Minute = [System.DateTime]::Now.Minute.ToString("00")
           $Version = "{0}.{1}{2}.{3}{4}" -f $Year, $Month, $Day, $Hour, $Minute
+          echo $Version
 
-          echo "BUILD_NUMBER=$Version" >> "$GITHUB_OUTPUT"
-          echo $BUILD_NUMBER
+          echo "BUILD_NUMBER=$Version" >> $GITHUB_OUTPUT
 
       - name: Pack NuGet package
         run: dotnet pack Core/SharpEngine.Core.NET.csproj --configuration Release --no-build --output Core/bin/Release/ --version-suffix ${{ steps.set_build_number.outputs.BUILD_NUMBER }}
