@@ -45,6 +45,7 @@ jobs:
           $Version = "{0}.{1}{2}.{3}{4}" -f $Year, $Month, $Day, $Hour, $Minute
           echo $Version
 
+          echo "BUILD_NUMBER=$Version"
           echo "BUILD_NUMBER=$Version" >> $GITHUB_OUTPUT
 
       - name: Pack NuGet package
