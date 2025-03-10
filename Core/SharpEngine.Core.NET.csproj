@@ -13,7 +13,14 @@
     <PackageProjectUrl>https://github.com/Av3boy/SharpEngine</PackageProjectUrl>
     <PackageTags>game-engine;</PackageTags>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    
+
+    <Year>$([System.DateTime]::Now.Year)</Year>
+    <Month>$([System.DateTime]::Now.Month.ToString("00"))</Month>
+    <Day>$([System.DateTime]::Now.Day.ToString("00"))</Day>
+    <Hour>$([System.DateTime]::Now.Hour.ToString("00"))</Hour>
+    <Minute>$([System.DateTime]::Now.Minute)</Minute>
+    <Version>$([System.String]::Format("{0}.{1}{2}.{3}{4}", $(Year), $(Month), $(Day), $(Hour), $(Minute)))</Version>
+
   </PropertyGroup>
 
   <ItemGroup>
