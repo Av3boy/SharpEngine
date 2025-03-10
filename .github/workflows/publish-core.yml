@@ -21,7 +21,7 @@ jobs:
       # TODO: Quality gates (Unit tests, sonar cloud?)
 
       - name: Restore dependencies
-        run: dotnet restore /Core/SharpEngine.Core.csproj
+        run: dotnet restore ./Core/SharpEngine.Core.csproj
 
       - name: Build project
         run: dotnet build --configuration Release --no-restore
