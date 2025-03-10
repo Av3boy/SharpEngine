@@ -1,0 +1,34 @@
+﻿@inherits DialogBase
+
+<div class="alert alert-danger dialog @_confirmDeleteVisibleClass" role="alert">
+    <div class="alert-header">
+        <h4 class="alert-heading">Delete Project</h4>
+        <DiscardIcon DiscardClicked="@DiscardAsync" />
+    </div>
+
+    <p>
+        Deleting a project is a destructive action. <br />
+        Everything in your project directory will be removed including your assets. <br />
+        Are you sure you wish to proceed?
+    </p>
+
+    <hr>
+    <div class="flex-end">
+        <button type="button" class="btn btn-secondary" @onclick="CloseAsync">Cancel</button>
+        <button type="button" class="btn btn-danger" @onclick="OnDeleteProjectConfirmClickedAsync">Delete Project</button>
+    </div>
+</div>
+
+@code {
+    private string _confirmDeleteVisibleClass => Visible ? "confirm-delete-visible" : "confirm-delete-hidden";
+
+    /// <summary>Gets or sets the event exectued when the project deletion is confirmed.</summary>
+    [Parameter]
+    public EventCallback OnDeleteProjectConfirmed { get; set; }
+
+    private async Task OnDeleteProjectConfirmClickedAsync()
+    {
+        await OnDeleteProjectConfirmed.InvokeAsync();
+        await CloseAsync();
+    }
+}

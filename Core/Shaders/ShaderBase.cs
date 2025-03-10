@@ -10,6 +10,9 @@ public abstract class ShaderBase
     /// <summary>Gets the shader.</summary>
     public Shader? Shader { get; protected set; }
 
+    /// <summary>Gets or sets the vertex array object.</summary>
+    public uint Vao { get; set; }
+
     /// <summary>
     ///    Sets the attributes for the shader.
     /// </summary>

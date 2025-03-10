@@ -1,4 +1,4 @@
-﻿using SharpEngine.Core.Entities.Properties;
+﻿using SharpEngine.Core.Entities.Properties.Meshes;
 
 namespace SharpEngine.Core.Primitives;
 

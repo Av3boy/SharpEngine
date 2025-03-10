@@ -62,7 +62,8 @@ public class ShaderService
     /// <param name="fragPath">The fragment shader full path.</param>
     /// <param name="name">A name identifier for the shader.</param>
     /// <returns>A shader with the given name.</returns>
-    public Shader? LoadShader(string vertPath, string fragPath, string name)
+    /// <exception cref="FileNotFoundException">Thrown when either the vertex or fragment shader is not found.</exception>
+    public Shader LoadShader(string vertPath, string fragPath, string name)
     {
         // Check if the shader is already in the cache
         if (_shaderCache.TryGetValue(name, out var cachedShader))
@@ -71,13 +72,13 @@ public class ShaderService
         if (!File.Exists(vertPath))
         {
             Console.WriteLine($"Vertex shader file not found: {vertPath}");
-            return null;
+            throw new FileNotFoundException($"Vertex shader file not found: {vertPath}");
         }
 
         if (!File.Exists(fragPath))
         {
             Console.WriteLine($"Fragment shader file not found: {fragPath}");
-            return null;
+            throw new FileNotFoundException($"Fragment shader file not found: {fragPath}");
         }
 
         // Create a new shader instance and add it to the cache

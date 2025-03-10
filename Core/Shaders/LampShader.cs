@@ -8,6 +8,11 @@ internal class LampShader : ShaderBase
     public LampShader()
     {
         Shader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/shader.frag", "lamp");
+
+        Vao = Window.GL.GenVertexArray();
+        Window.GL.BindVertexArray(Vao);
+
+        SetAttributes();
     }
 
     /// <inheritdoc />

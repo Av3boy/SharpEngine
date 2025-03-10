@@ -41,7 +41,7 @@ public class UIRenderer : RendererBase
         
         _uiShader.Shader.Use();
 
-        _scene.UIElements.Add(new UIElement("uiElement"));
+        //_scene.UIElements.Add(new UIElement("uiElement"));
 
         _scene.Iterate(_scene.UIElements, elem => elem.Initialize());
 
@@ -54,7 +54,7 @@ public class UIRenderer : RendererBase
     }
 
     /// <inheritdoc />
-    public override async Task Render()
+    public override Task Render()
     {
         try
         {
@@ -62,11 +62,14 @@ public class UIRenderer : RendererBase
             Window.GL.DepthFunc(DepthFunction.Less);
 
             _uiShader.Shader.Use();
-            await _scene.IterateAsync(_scene.UIElements, elem => elem.Render());
+
+            var uiElementRenderTasks = _scene.IterateAsync<UIElement>(_scene.UIElements, elem => elem.Render());
+            return Task.WhenAll(uiElementRenderTasks);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine(e);
+            Console.WriteLine(ex);
+            return Task.FromException(ex);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
+
 using Silk.NET.OpenGL;
 using System.Threading.Tasks;
 
@@ -14,7 +16,7 @@ public class UIElement : SceneNode
     /// <summary>
     ///     Initializes a new instance of <see cref="UIElement"/>.
     /// </summary>
-    /// <param name="name"></param>
+    /// <param name="name">The name of the UI element.</param>
     public UIElement(string name)
     {
         Name = name;
@@ -32,6 +34,7 @@ public class UIElement : SceneNode
     };
 
     // TODO: Use actual mesh
+    /// <summary>Gets or sets the mesh of the UI element.</summary>
     public Mesh Mesh { get; set; }
 
     private readonly float[] _vertices =
@@ -83,10 +86,11 @@ public class UIElement : SceneNode
     public override Task Render()
     {
         Window.GL.BindVertexArray(_vertexArrayObject);
-
+        
         _uIShader.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
-
-        Window.GL.DrawElements(PrimitiveType.Triangles, (uint)_indices.Length, DrawElementsType.UnsignedInt, 0);
+        
+        uint a = 0;
+        Window.GL.DrawElements(PrimitiveType.Triangles, (uint)_indices.Length, DrawElementsType.UnsignedInt, ref a);
 
         return Task.CompletedTask;
     }

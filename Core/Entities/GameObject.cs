@@ -1,9 +1,12 @@
 using SharpEngine.Core.Attributes;
 using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Textures;
+
 using Silk.NET.OpenGL;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Entities;
@@ -16,7 +19,10 @@ public class GameObject : SceneNode
     /// <summary>
     ///     Initializes a new instance of the <see cref="GameObject"/>.
     /// </summary>
-    public GameObject() { }
+    public GameObject()
+    {
+        //BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GameObject"/> with specified textures and shaders.
@@ -28,18 +34,18 @@ public class GameObject : SceneNode
     public GameObject(string diffuseMapFile, string specularMapFile, string vertShaderFile, string fragShaderFile)
     {
         Material.DiffuseMap = TextureService.Instance.LoadTexture(diffuseMapFile);
+
+        // TODO: Make specular map optional
         Material.SpecularMap = TextureService.Instance.LoadTexture(specularMapFile);
         Material.Shader = ShaderService.Instance.LoadShader(vertShaderFile, fragShaderFile, "lighting");
 
         BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
     }
 
-    // TODO: Cleanup these properties
-
     /// <summary>
     ///     Gets or sets the mesh of the game object.
     /// </summary>
-    public Mesh Mesh { get; set; }
+    public List<Mesh> Mesh { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the material of the game object.

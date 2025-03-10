@@ -34,8 +34,8 @@ public static class PrimitiveFactory
             Transform = new Transform { Position = position },
             Mesh = primitiveType switch
             {
-                PrimitiveType.Cube => Cube.Mesh,
-                PrimitiveType.Plane => Plane.Mesh,
+                PrimitiveType.Cube => [Cube.Mesh],
+                PrimitiveType.Plane => [Plane.Mesh],
                 _ => throw new InvalidOperationException($"A primitive of type {primitiveType} does not exist.")
             }
         };

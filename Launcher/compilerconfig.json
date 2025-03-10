@@ -1,0 +1,22 @@
+﻿[
+  {
+    "outputFile": "UI/Home.css",
+    "inputFile": "UI/Home.scss"
+  },
+  {
+    "outputFile": "UI/Home.razor.css",
+    "inputFile": "UI/Home.razor.scss"
+  },
+  {
+    "outputFile": "UI/Components/DiscardIcon.razor.css",
+    "inputFile": "UI/Components/DiscardIcon.razor.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/additional.razor.css",
+    "inputFile": "wwwroot/css/additional.razor.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/additional.css",
+    "inputFile": "wwwroot/css/additional.scss"
+  }
+]

@@ -7,7 +7,6 @@ using MouseButton = Silk.NET.Input.MouseButton;
 
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Entities.Views;
-using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
@@ -19,8 +18,8 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
-using SharpEngine.Core.Extensions;
 using System.Linq;
+using SharpEngine.Core.Entities.Properties.Meshes;
 
 namespace SharpEngine.Core;
 
@@ -31,33 +30,27 @@ public class Window : SilkWindow
 {
     private readonly IGame _game;
 
-    // TODO: Support multiple renderes (#19)
     private IEnumerable<RendererBase> _renderers = [];
-    private Renderer _renderer;
-    private UIRenderer _uiRenderer;
 
-    private readonly IWindow _window;
-    private ImGuiController _imGuiController;
+    private ImGuiController? _imGuiController;
 
     /// <summary>
     ///     The scene that is currently being rendered.
     /// </summary>
     protected Scene Scene { get; private set; }
 
-    /// <inheritdoc />
-    public override string Title
-    {
-        get => _window.Title;
-        set => _window.Title = value;
-    }
-
+    /// <summary>The OpenGL context.</summary>
     public static GL GL;
 
     // TODO: Use this method.
+    /// <summary>
+    ///     Gets the current OpenGL context.
+    /// </summary>
+    /// <returns>The OpennGL context for this window.</returns>
     public static GL GetGL() => GL;
     private static void SetGL(GL gl) => GL = gl;
 
-    public IInputContext Input;
+    private bool _initialized;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
@@ -70,54 +63,71 @@ public class Window : SilkWindow
         _game = game;
         Scene = scene;
 
-        _window = Silk.NET.Windowing.Window.Create(options);
+        CreateWindow(options);
         _game.Camera = new CameraView(Vector3.UnitZ * 3, new DefaultViewSettings());
 
-        _window.Update += OnUpdateFrame;
-        _window.Render += RenderFrame;
-        _window.Resize += OnResize;
-        _window.Load += OnLoad;
+        CurrentWindow.Update += OnUpdateFrame;
+        CurrentWindow.Render += RenderFrame;
+        CurrentWindow.Resize += OnResize;
+        CurrentWindow.Load += OnLoad;
+        CurrentWindow.Closing += OnClosing;
 
-        _window.Run();
+        CurrentWindow.Run();
+    }
+
+    private void OnClosing()
+    {
+        // TODO: Scene unsaved changes warning.
     }
 
     /// <inheritdoc />
     public override void OnLoad()
     {
-        SetGL(_window.CreateOpenGL());
-
-        Input = _window.CreateInput();
-        _window.MakeCurrent();
-
-        AssignInputEvents();
-
-        GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
-        // TODO: Set cursor shape
-        // CursorShape = CursorShape.Hand;
-
-        // Load all meshes from the mesh cache
-        MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
-        _game.Initialize();
-
-        // Using reflection, find all renderers that implement the RendererBase.
-        var rendererTypes = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(assembly => assembly.GetTypes())
-            .Where(type => type.IsSubclassOf(typeof(RendererBase)) && !type.IsAbstract);
-
-        foreach (var type in rendererTypes)
+        try
         {
-            // Make sure the renderer has the correct constructor parameters!
-            var requiredArguments = new object[] { _game, Scene };
-            var renderer = (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
+            SetGL(CurrentWindow.CreateOpenGL());
 
-            _renderers = _renderers.Append(renderer);
+            Input = CurrentWindow.CreateInput();
+            CurrentWindow.MakeCurrent();
+
+            AssignInputEvents();
+
+            GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+            // TODO: Set cursor shape
+            // CursorShape = CursorShape.Hand;
+
+            // Load all meshes from the mesh cache
+            MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
+            _game.Initialize();
+
+            // Using reflection, find all renderers that implement the RendererBase.
+            var rendererTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(assembly => assembly.GetTypes())
+                .Where(type => type.IsSubclassOf(typeof(RendererBase)) && !type.IsAbstract);
+
+            foreach (var type in rendererTypes)
+            {
+                // Make sure the renderer has the correct constructor parameters!
+                // TODO: The static reference to the context will not work when multiple windows are implemented, since the context will be different.
+                // Also, the renderer should know nothing about the game, instead the camera should be passed.
+                var requiredArguments = new object[] { _game, Scene };
+                var renderer = (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
+
+                _renderers = _renderers.Append(renderer);
+            }
+
+            foreach (var renderer in _renderers)
+                renderer.Initialize();
+
+            _imGuiController = new ImGuiController(GL, CurrentWindow, Input);
+
+            _initialized = true;
         }
-
-        foreach (var renderer in _renderers)
-            renderer.Initialize();
-
-        _imGuiController = new ImGuiController(GL, _window, Input);
+        catch (Exception ex)
+        {
+            Debug.LogInformation(ex.Message);
+        }
     }
 
     /// <summary>
@@ -126,11 +136,16 @@ public class Window : SilkWindow
     /// <param name="deltaTime">The time since the last frame.</param>
     protected void RenderFrame(double deltaTime)
     {
+        while (!_initialized)
+        {
+            // Wait for the window to be initialized.
+        }
+
         try
         {
             PreRender(deltaTime);
 
-            _imGuiController.Update((float)deltaTime);
+            _imGuiController?.Update((float)deltaTime);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -149,7 +164,7 @@ public class Window : SilkWindow
 
             AfterRender(deltaTime);
 
-            _imGuiController.Render();
+            _imGuiController?.Render();
         }
         catch (Exception ex)
         {
@@ -177,6 +192,11 @@ public class Window : SilkWindow
     /// <inheritdoc />
     protected void OnUpdateFrame(double deltaTime)
     {
+        while (!_initialized)
+        {
+            // Wait for the window to be initialized.
+        }
+
         // TODO: GLFW_ISFOCUSED
         // if (!_window.IsFocused)
         //     return;
@@ -193,7 +213,7 @@ public class Window : SilkWindow
         _game.HandleMouse(mouse);
 
         if (keyboard.IsKeyPressed(Key.Escape))
-            _window.Close();
+            CurrentWindow.Close();
 
         _game.HandleKeyboard(keyboard, deltaTime);
 
@@ -218,7 +238,7 @@ public class Window : SilkWindow
     protected void KeyDown(IKeyboard keyboard, Key key, int keyCode)
     {
         if (key == Key.Escape)
-            _window.Close();
+            CurrentWindow.Close();
 
         // _game.HandleKeyboard(keyboard);
     }
@@ -262,8 +282,6 @@ public class Window : SilkWindow
     /// <inheritdoc />
     protected override void Dispose(bool disposing)
     {
-        _imGuiController.Dispose();
-
         base.Dispose(disposing);
     }
 }

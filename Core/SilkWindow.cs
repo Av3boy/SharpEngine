@@ -24,6 +24,9 @@ public abstract class SilkWindow : IWindow
     /// <inheritdoc />
     public bool IsClosing { get; set; }
 
+    public IInputContext Input { get; protected set; }
+
+
     /// <inheritdoc />
     public virtual Rectangle<int> BorderSize { get; }
 
@@ -37,7 +40,11 @@ public abstract class SilkWindow : IWindow
     public Vector2D<int> Size { get; set; }
 
     /// <inheritdoc />
-    public abstract string Title { get; set; }
+    public string Title
+    {
+        get => CurrentWindow.Title;
+        set => CurrentWindow.Title = value;
+    }
 
     /// <inheritdoc />
     public WindowState WindowState { get; set; }

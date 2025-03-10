@@ -1,0 +1,18 @@
+﻿@inherits DialogBase
+
+<div class="alert alert-@(Type.ToCssClass()) toast @_notificationVisibleClass" role="alert">
+    @ChildContent
+    <DiscardIcon DiscardClicked="@DiscardAsync" />
+</div>
+
+@code {
+    private string _notificationVisibleClass => Visible ? "notification-visible" : "notification-hidden";
+
+    /// <summary>Gets or sets the type of the notification.</summary>
+    [Parameter]
+    public NotificationType Type { get; set; } = NotificationType.Warning;
+
+    /// <summary>Gets or sets the child content of the notification.</summary>
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

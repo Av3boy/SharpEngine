@@ -18,9 +18,6 @@ namespace SharpEngine.Core.Renderers;
 /// </summary>
 public class Renderer : RendererBase
 {
-    private uint _vaoModel;
-    private uint _vaoLamp;
-
     private LampShader _lampShader;
     private LightingShader _lightingShader;
 
@@ -28,10 +25,7 @@ public class Renderer : RendererBase
     private readonly Scene _scene;
 
     // Read only once, load into OpenGL buffer once.
-    //
     // TODO: Multiple meshes
-    // TODO: Create mesh service to keep track of loaded meshes
-    // If already loaded, add mesh indetifier to a dictionary. If dict contains mesh, skip it.
 
     /// <inheritdoc />
     public override RenderFlags RenderFlag => RenderFlags.Renderer3D;
@@ -51,7 +45,6 @@ public class Renderer : RendererBase
     public override void Initialize()
     {
         InitializeShaders();
-        InitializeVertexArrays();
     }
 
     private void InitializeShaders()
@@ -60,49 +53,42 @@ public class Renderer : RendererBase
         _lampShader = new LampShader();
     }
 
-    private void InitializeVertexArrays()
-    {
-        _vaoModel = Window.GL.GenVertexArray();
-        Window.GL.BindVertexArray(_vaoModel);
-
-        _lightingShader.SetAttributes();
-
-        _vaoLamp = Window.GL.GenVertexArray();
-        Window.GL.BindVertexArray(_vaoLamp);
-
-        _lampShader.SetAttributes();
-    }
-
     /// <inheritdoc />
-    public override async Task Render()
+    public override Task Render()
     {
         try
         {
             Window.GL.Enable(EnableCap.DepthTest);
-            _game.Camera.SetShaderUniforms(_lightingShader.Shader);
 
-            Window.GL.BindVertexArray(_vaoModel);
-            await _scene.IterateAsync(_scene.Root.Children, RenderGameObject);
-            Window.GL.BindVertexArray(_vaoLamp);
+            _game.Camera.SetShaderUniforms(_lightingShader.Shader);
+            Window.GL.BindVertexArray(_lightingShader.Vao);
+
+            var gameObjectRenderTasks = _scene.IterateAsync(_scene.Root.Children, RenderGameObject);
+            var renderTask = Task.WhenAll(gameObjectRenderTasks);
+
+            Window.GL.BindVertexArray(_lampShader.Vao);
+
+            return renderTask;
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
+            return Task.FromException(ex);
         }
     }
 
-    private async Task RenderGameObject(SceneNode node)
+    private Task RenderGameObject(SceneNode node)
     {
-        if (node is GameObject gameObject)
-        {
-            // TODO: Fix culling for blocks that are partially in view
-            // Perform frustum culling
-            if (!IsInViewFrustum(gameObject.BoundingBox, _game.Camera))
-                return;
+        if (node is not GameObject gameObject)
+            return Task.CompletedTask;
 
-            // TODO: Skip blocks that are behind others relative to the camera
-            await gameObject.Render();
-        }
+        // TODO: Fix culling for blocks that are partially in view
+        // Perform frustum culling
+        if (!IsInViewFrustum(gameObject.BoundingBox, _game.Camera))
+            return Task.CompletedTask;
+
+        // TODO: Skip blocks that are behind others relative to the camera
+        return gameObject.Render();
     }
 
     private static bool IsInViewFrustum(BoundingBox boundingBox, CameraView camera)

@@ -28,6 +28,8 @@ public class EditorWindow : Window
     {
     }
 
+    private Project _project = new Project() { Path = @"C:\test" };
+
     private bool _showContextMenu;
     private bool _updateContextMenuLocation;
 
@@ -52,6 +54,40 @@ public class EditorWindow : Window
         RenderContextMenu();
         RenderScene();
         RenderActiveElementProperties(Scene.ActiveElement);
+        RenderAssets();
+    }
+
+    private void RenderAssets()
+    {
+        ImGui.Begin("Assets");
+
+        string assetsPath = _project.Path;
+        RenderDirectory(assetsPath);
+
+        ImGui.End();
+    }
+
+    private void RenderDirectory(string path)
+    {
+        string[] directories = System.IO.Directory.GetDirectories(path);
+        string[] files = System.IO.Directory.GetFiles(path);
+
+        foreach (var directory in directories)
+        {
+            if (ImGui.TreeNode(System.IO.Path.GetFileName(directory)))
+            {
+                RenderDirectory(directory);
+                ImGui.TreePop();
+            }
+        }
+
+        foreach (var file in files)
+        {
+            if (ImGui.Selectable(System.IO.Path.GetFileName(file)))
+            {
+                // Scene.ActiveElement = file; // Set the file as the active element
+            }
+        }
     }
 
     private void RenderScene()
@@ -90,7 +126,15 @@ public class EditorWindow : Window
         if (ImGui.Button("Load") && SelectFile(out string selectedFile))
             LoadScene(selectedFile);
 
+        if (ImGui.Button("Play"))
+            StartGame();
+
         ImGui.End();
+    }
+
+    private void StartGame()
+    {
+        // TOOD: build project and start it.
     }
 
     private void RenderContextMenu()
