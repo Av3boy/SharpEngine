@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  BuildNumber: ${{ steps.set_build_number.outputs.build_number }}
+  BuildNumber: 0.0.0
 
 jobs:
   publish:
