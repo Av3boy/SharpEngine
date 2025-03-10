@@ -51,7 +51,8 @@ jobs:
       - name: Pack NuGet package
         env: 
           BUILD_NUMBER: ${{ steps.set_build_number.outputs.BUILD_NUMBER }}
-        run: dotnet pack Core/SharpEngine.Core.NET.csproj --configuration Release --no-build --output Core/bin/Release/ --version-suffix $BUILD_NUMBER
+        run: |
+          echo "dotnet pack Core/SharpEngine.Core.NET.csproj --configuration Release --no-build --output Core/bin/Release/ --version-suffix $BUILD_NUMBER"
 
       - name: Publish to NuGet
         env: 
