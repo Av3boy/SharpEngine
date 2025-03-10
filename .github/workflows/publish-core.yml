@@ -27,12 +27,12 @@ jobs:
         run: dotnet restore Core/SharpEngine.Core.NET.csproj
 
       - name: Build project
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build Core/SharpEngine.Core.NET.csproj --configuration Release --no-restore
 
       # TODO: Create installer for launcher and editor bundle
 
       - name: Pack NuGet package
-        run: dotnet pack --configuration Release --no-build --output Core/bin/Release/
+        run: dotnet pack Core/SharpEngine.Core.NET.csproj --configuration Release --no-build --output Core/bin/Release/
 
       - name: Publish to NuGet
         run: dotnet nuget push "Core/bin/Release/SharpEngine.Core.NET.1.0.0.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLISH_NUGET_PACKAGE }} --skip-duplicate
