@@ -9,6 +9,9 @@ jobs:
   publish:
     runs-on: windows-latest  # Use Windows to support .NET SDK easily
 
+    env:
+      BUILD_NUMBER: ${{ github.run_id }}  # Unique build number using run_id
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -17,17 +20,6 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'  # TODO: Create variable out of this
-
-      - name: Set build number
-        id: set_build_number        
-        run: |
-          $Year = [System.DateTime]::Now.Year
-          $Month = [System.DateTime]::Now.Month.ToString("00")
-          $Day = [System.DateTime]::Now.Day.ToString("00")
-          $Hour = [System.DateTime]::Now.Hour.ToString("00")
-          $Minute = [System.DateTime]::Now.Minute.ToString("00")
-          $Version = "{0}.{1}{2}.{3}{4}" -f $Year, $Month, $Day, $Hour, $Minute
-          echo "BUILD_NUMBER=$Version" >> $GITHUB_ENV
 
       # TODO: Quality gates (Unit tests, sonar cloud?)
 
@@ -42,11 +34,23 @@ jobs:
 
       # TODO: Create installer for launcher and editor bundle
 
+      - name: Set build number
+        id: set_build_number        
+        run: |
+          $Year = [System.DateTime]::Now.Year
+          $Month = [System.DateTime]::Now.Month.ToString("00")
+          $Day = [System.DateTime]::Now.Day.ToString("00")
+          $Hour = [System.DateTime]::Now.Hour.ToString("00")
+          $Minute = [System.DateTime]::Now.Minute.ToString("00")
+          $Version = "{0}.{1}{2}.{3}{4}" -f $Year, $Month, $Day, $Hour, $Minute
+          echo "BUILD_NUMBER=$Version" >> $GITHUB_ENV
+          echo ${{ env.BUILD_NUMBER }}
+
       - name: Pack NuGet package
-        run: dotnet pack Core/SharpEngine.Core.NET.csproj --configuration Release --no-build --output Core/bin/Release/ --version-suffix $BUILD_NUMBER
+        run: dotnet pack Core/SharpEngine.Core.NET.csproj --configuration Release --no-build --output Core/bin/Release/ --version-suffix ${{ env.BUILD_NUMBER }}
 
       - name: Publish to NuGet
-        run: dotnet nuget push "Core/bin/Release/SharpEngine.Core.NET.$BUILD_NUMBER.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLISH_NUGET_PACKAGE }} --skip-duplicate
+        run: dotnet nuget push "Core/bin/Release/SharpEngine.Core.NET.${{ env.BUILD_NUMBER }}.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLISH_NUGET_PACKAGE }} --skip-duplicate
 
       # TODO: Publish the NuGet package to GitHub.
       - name: Create GitHub Release
@@ -66,6 +70,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PUBLISH_REPO_PACKAGE }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Core/bin/Release/SharpEngine.Core.NET.$BUILD_NUMBER.nupkg
-          asset_name: SharpEngine.Core.NET.$BUILD_NUMBER.nupkg
+          asset_path: Core/bin/Release/SharpEngine.Core.NET.${{ env.BUILD_NUMBER }}.nupkg
+          asset_name: SharpEngine.Core.NET.${{ env.BUILD_NUMBER }}.nupkg
           asset_content_type: application/zip
