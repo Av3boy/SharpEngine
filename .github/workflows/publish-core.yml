@@ -49,10 +49,14 @@ jobs:
           echo "BUILD_NUMBER=$Version" >> $GITHUB_OUTPUT
 
       - name: Pack NuGet package
-        run: dotnet pack Core/SharpEngine.Core.NET.csproj --configuration Release --no-build --output Core/bin/Release/ --version-suffix ${{ steps.set_build_number.outputs.BUILD_NUMBER }}
+        env: 
+          BUILD_NUMBER: ${{ steps.set_build_number.outputs.BUILD_NUMBER }}
+        run: dotnet pack Core/SharpEngine.Core.NET.csproj --configuration Release --no-build --output Core/bin/Release/ --version-suffix $BUILD_NUMBER
 
       - name: Publish to NuGet
-        run: dotnet nuget push "Core/bin/Release/SharpEngine.Core.NET.${{ steps.set_build_number.outputs.BUILD_NUMBER }}.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLISH_NUGET_PACKAGE }} --skip-duplicate
+        env: 
+          BUILD_NUMBER: ${{ steps.set_build_number.outputs.BUILD_NUMBER }}
+        run: dotnet nuget push "Core/bin/Release/SharpEngine.Core.NET.$BUILD_NUMBER.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLISH_NUGET_PACKAGE }} --skip-duplicate
 
       # TODO: Publish the NuGet package to GitHub.
       - name: Create GitHub Release
