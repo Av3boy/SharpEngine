@@ -4,52 +4,29 @@ using Microsoft.AspNetCore.Components.Forms;
 
 namespace Launcher.UI
 {
-    public class Message
-    {
-        public readonly Guid Id = Guid.NewGuid();
-        public string Contents { get; set; } = string.Empty;
-
-        public Message(string contents)
-        {
-            Contents = contents;
-        }
-    }
-
     /// <summary>Represents the home page of the launcher.</summary>
     public partial class Home : ComponentBase
     {
         [Inject]
-        private IProjectInitializationService _projectInitializationService { get; init; } = default!;
+        private IEditorService _editorService { get; init; } = default!;
 
         [Inject]
         private INotificationService _notificationService { get; init; } = default!;
 
-        [Inject]
-        private IApplicationManager _applicationManager { get; init; } = default!;
-
-        private bool _showNotification;
         private bool _showConfirmDelete;
         private bool _showCreateProjectDialog;
-
-        // TODO: The notification messages should be added into a separate service.
-        private Dictionary<Message, int> _notificationMessages = new()
-        {
-            { new("some message"), 2 },
-            { new("another"), 2 },
-        };
 
         private const string _projectsFile = "projects.json";
         private const string _launcherEnvironmentVariable = "SHARP_ENGINE_LAUNCHER_DIRECTORY";
         private readonly string _currentDirectory = AppContext.BaseDirectory;
-        private string _projectDirectory => Path.Join(_currentDirectory, _projectsFile);
+        private string _projectFilePath => Path.Join(_currentDirectory, _projectsFile);
 
-
-        private List<Project> Projects { get; set; } = new()
-        {
-            // TODO: Remove these mock projects once the actual projects are loaded.
-            new Project { Name = "Project 1", LastModified = DateTime.Now },
-            new Project { Name = "Project 2", LastModified = DateTime.Now.AddDays(6).AddHours(2) },
-        };
+        private List<Project> Projects { get; set; } = new();
+        //{
+        //    // TODO: Remove these mock projects once the actual projects are loaded.
+        //    new Project { Name = "Project 1", LastModified = DateTime.Now },
+        //    new Project { Name = "Project 2", LastModified = DateTime.Now.AddDays(6).AddHours(2) },
+        //};
 
         private Project _selectedProject = new();
 
@@ -63,7 +40,7 @@ namespace Launcher.UI
             // TODO: Check if GitHub has a new version released.
 
             CheckEnvironmentVariable();
-            // LoadProjects();
+            LoadProjects();
         }
 
         private void CheckEnvironmentVariable()
@@ -75,21 +52,30 @@ namespace Launcher.UI
 
         private void LoadProjects()
         {
-            if (!File.Exists(_projectDirectory))
-                File.WriteAllText(_projectDirectory, "[]");
+            if (!File.Exists(_projectFilePath))
+            {
+                File.WriteAllText(_projectFilePath, "[]");
+                return;
+            }
 
-            string json = File.ReadAllText(_projectDirectory);
+            string json = File.ReadAllText(_projectFilePath);
             var projects = System.Text.Json.JsonSerializer.Deserialize<List<Project>>(json);
 
             if (projects is not null)
                 Projects = projects;
             else
-                HandleMessage($"Unable to load projects.", json, projects);
+                _notificationService.Show($"Unable to load projects.", false, json, projects);
         }
 
         private async Task LoadFileAsync(InputFileChangeEventArgs e)
         {
-            // TODO: Check if file is a "sharpproject.json" file
+            const string sharpProjectExtension = ".sharpproject";
+            string fileName = e.File.Name;
+            if (!fileName.EndsWith(sharpProjectExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                _notificationService.Show($"The file '{fileName}' is not a valid project file.");
+                return;
+            }
 
             using var stream = e.File.OpenReadStream();
             using var reader = new StreamReader(stream);
@@ -100,7 +86,7 @@ namespace Launcher.UI
             if (project is not null)
                 Projects.Add(project);
             else
-                HandleMessage($"Unable to load project file.", project, e.File.Name, fileContent);
+                _notificationService.Show($"Unable to load project file.",  false, project, e.File.Name, fileContent);
         }
 
         private void OnCreateProjectClicked()
@@ -119,24 +105,13 @@ namespace Launcher.UI
             if (project is not null)
                 Projects.Remove(project);
             else
-                HandleMessage($"Unable to delete project '{project?.Name}'.", _selectedProject, Projects);
+                _notificationService.Show($"Unable to delete project '{project?.Name}'.", false, _selectedProject, Projects);
         }
 
         private void ProjectCreated(Project project)
         {
-            _projectInitializationService.Initialize(project);
+            _editorService.Initialize(project);
             Projects.Add(project);
-        }
-
-        private void HandleMessage(string message, params object?[] details)
-        {
-            // TODO: Get the message using the Id
-            // if (!_notificationMessages.TryGetValue(message, out int amount))
-                 _notificationMessages.Add(new Message(message), 1);
-            // else
-            //     _notificationMessages[message] = amount + 1;
-
-            // TODO: Log the message and details.
         }
     }
 }

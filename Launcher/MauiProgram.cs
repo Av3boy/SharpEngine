@@ -25,8 +25,7 @@ public static class MauiProgram
 		builder.Services.AddMauiBlazorWebView();
 
 		builder.Services.AddScoped<INotificationService, NotificationService>();
-		builder.Services.AddScoped<IProjectInitializationService, ProjectInitializationService>();
-		builder.Services.AddScoped<IApplicationManager, ApplicationManager>();
+		builder.Services.AddScoped<IEditorService, EditorService>();
 
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();

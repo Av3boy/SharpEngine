@@ -4,15 +4,7 @@
 @using Launcher.UI.Components.Dialogs
 @using System.Diagnostics
 
-@foreach (var notificationMessage in _notificationMessages)
-{
-    @* TODO: Show number on notification instead of showing multiple of the same. *@
-    @* TODO: Since the notification service is exposed to the whole application, we could remove this foreach and just handle that in the component itself *@
-    <Notification @bind-Visible="@_showNotification"> @*OnDiscardClicked="@(() => _)" *@
-        @notificationMessage.Key (1)
-    </Notification>
-}
-
+<Notification />
 <ConfirmDeleteDialog @bind-Visible="@_showConfirmDelete" OnDeleteProjectConfirmed="@OnDeleteProjectConfirm" />
 <CreateProjectDialog @bind-Visible="@_showCreateProjectDialog" OnProjectCreated="@ProjectCreated" />
 
@@ -20,7 +12,9 @@
     <h1>Projects</h1>
 
     <div>
+        @* TODO: Make this button work
         <button type="button" class="btn btn-secondary">Open existing</button>
+        *@
         <button type="button" class="btn btn-primary" @onclick="OnCreateProjectClicked">Create project</button>
     </div>
 </div>
@@ -31,26 +25,9 @@
             <td>@context.Name</td>
             <td>@context.LastModified</td>
             <td>
-                <button type="button" class="btn btn-primary" @onclick="@(() => OpenInEditor(context))">Open in editor</button>
+                <button type="button" class="btn btn-primary" @onclick="@(() => _editorService.OpenInEditor(context))">Open in editor</button>
                 <button type="button" class="btn btn-danger" @onclick="@(() => OnDeleteProjectClicked(context))">Delete</button>
             </td>
         </Row>
     </Grid>
 </div>
-
-@code {
-    // This method needs to be in the razor file due to the way the MAUI GetParentWindow method is exposed.
-    private void OpenInEditor(Project project)
-    {
-        if (!Path.Exists(project.Path))
-        {
-            HandleMessage($"The project file '{project.Path}' no longer exists.");
-            return;
-        }
-
-        // TODO: Close down the window when a valid project is loaded.
-        Process.Start("cmd");
-        _applicationManager.Close();
-        // Application.Current.CloseWindow(GetParentWindow());
-    }
-}

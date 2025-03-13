@@ -4,23 +4,25 @@ using System.Runtime.InteropServices;
 
 namespace Launcher.Services
 {
-    public interface IProjectInitializationService
+    public interface IEditorService
     {
         void Initialize(Project project);
+        void OpenInEditor(Project project);
     }
 
-    public class ProjectInitializationService : IProjectInitializationService
+    public class EditorService : IEditorService
     {
+        private const string SHARP_ENGINE_PROJECT_EXTENSION = ".sharpproject";
         private const string SHARP_ENGINE_CORE_NUGET_PACKAGE = "SharpEngine.Core";
         private const string FRAMEWORK = "net8.0";
 
         private readonly INotificationService _notificationService;
 
         /// <summary>
-        ///     Initializes a new instance of <see cref="ProjectInitializationService"/>.
+        ///     Initializes a new instance of <see cref="EditorService"/>.
         /// </summary>
         /// <param name="notificationService">The notification message service used to display messages in the UI.</param>
-        public ProjectInitializationService(INotificationService notificationService)
+        public EditorService(INotificationService notificationService)
         {
             _notificationService = notificationService;
         }
@@ -28,7 +30,6 @@ namespace Launcher.Services
         /// <inheritdoc />
         public void Initialize(Project project)
         {
-
             CreateProjectDirectory(project);
             CreateSharpEngineProject(project);
             CreateSolution(project);
@@ -43,7 +44,8 @@ namespace Launcher.Services
         private static void CreateSharpEngineProject(Project project)
         {
             var json = System.Text.Json.JsonSerializer.Serialize(project);
-            File.WriteAllText(Path.Join(project.Path, $"{project.Name}.sharpproject"), json);
+            string projectFilePath = Path.Join(project.Path, $"{project.Name}.{SHARP_ENGINE_PROJECT_EXTENSION}");
+            File.WriteAllText(projectFilePath, json);
         }
 
         private void CreateSolution(Project project)
@@ -65,19 +67,7 @@ namespace Launcher.Services
                 $"-c \"{createSolution}; {createProject}; {addProjectToSolution}; {installNugetPackage}\"";
 
             // Setup process
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "cmd.exe" : "/bin/sh",
-                    Arguments = arguments,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-
+            Process process = GetProcess(arguments);
             process.Start();
             process.WaitForExit();
 
@@ -92,6 +82,54 @@ namespace Launcher.Services
             string programContent = ""; // TODO: Replace with program content
 
             File.WriteAllText(programFilePath, programContent);
+        }
+
+        private static Process GetProcess(string arguments)
+            => new()
+            {
+
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "cmd.exe" : "/bin/sh",
+                    Arguments = arguments,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+        public void OpenInEditor(Project project)
+        {
+            if (!Path.Exists(project.Path))
+            {
+                _notificationService.Show($"The project file '{project.Path}' no longer exists.");
+                return;
+            }
+
+            try
+            {
+                const string editorPathEnvironmentVariable = "SHARPENGINE_EDITOR_PATH";
+                string? editorPath = Environment.GetEnvironmentVariable(editorPathEnvironmentVariable);
+                if (editorPath is null)
+                {
+                    _notificationService.Show("Editor variable not found");
+                    return;
+                }
+
+                const string editorExecutable = "SharpEngine.Editor.exe";
+
+                string projectFile = project.Path.EndsWith(SHARP_ENGINE_PROJECT_EXTENSION) ?
+                    project.Path : $"{project.Path}/{project.Name}.{SHARP_ENGINE_PROJECT_EXTENSION}";
+
+                var process = GetProcess($"{editorPath}/{editorExecutable} {projectFile}");
+                process.Start();
+                process.WaitForExit();
+            }
+            catch (Exception ex)
+            {
+                _notificationService.Show($"An error occurred while opening the project in the editor.", ex.Message);
+            }
         }
     }
 }
