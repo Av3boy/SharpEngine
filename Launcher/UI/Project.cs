@@ -24,12 +24,11 @@ public class Project
     ///     Gets or sets the path to the project file.
     /// </summary>
     [Required]
-    [File]
     public string? Path { get; set; }
 
     /// <summary>
     ///     Gets or sets when the project was last modified.
     /// </summary>
     [JsonIgnore]
-    public DateTime LastModified { get; set; }
+    public DateTime LastModified { get; set; } = DateTime.Now;
 }

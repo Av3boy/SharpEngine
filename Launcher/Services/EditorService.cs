@@ -4,15 +4,49 @@ using System.Runtime.InteropServices;
 
 namespace Launcher.Services
 {
+    /// <summary>
+    ///     Contains definitions for interacting with the editor.
+    /// </summary>
     public interface IEditorService
     {
+        /// <summary>
+        ///     Creates a new project and solution.
+        /// </summary>
+        /// <param name="project">The project to be created.</param>
         void Initialize(Project project);
+
+        /// <summary>
+        ///     Opens the specified project in the editor.
+        /// </summary>
+        /// <param name="filePath">The file to be opened.</param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing an asynchronous operation.
+        ///     The result of the operation contains the project that was loaded; <see langword="null" /> if the project could not be loaded.
+        /// </returns>
+        Task<Project?> LoadFileAsync(string filePath);
+
+        /// <summary>
+        ///     Loads the projects previously associated with the launcher.
+        /// </summary>
+        /// <param name="projectsFile">The projects file.</param>
+        /// <returns>
+        ///     All the found projects.
+        /// </returns>
+        List<Project> LoadProjects(string projectsFile);
+
+        /// <summary>
+        ///     Opens the specified project in the editor.
+        /// </summary>
+        /// <param name="project"></param>
         void OpenInEditor(Project project);
     }
 
+    /// <summary>
+    ///     Handles interactions with the editor.
+    /// </summary>
     public class EditorService : IEditorService
     {
-        private const string SHARP_ENGINE_PROJECT_EXTENSION = ".sharpproject";
+        private const string SHARP_ENGINE_PROJECT_EXTENSION = "sharpproject";
         private const string SHARP_ENGINE_CORE_NUGET_PACKAGE = "SharpEngine.Core";
         private const string FRAMEWORK = "net8.0";
 
@@ -30,15 +64,8 @@ namespace Launcher.Services
         /// <inheritdoc />
         public void Initialize(Project project)
         {
-            CreateProjectDirectory(project);
             CreateSharpEngineProject(project);
             CreateSolution(project);
-        }
-
-        private static void CreateProjectDirectory(Project project)
-        {
-            string projectDirectory = Path.GetDirectoryName(Path.GetFullPath(project.Path!))!;
-            Directory.CreateDirectory(projectDirectory);
         }
 
         private static void CreateSharpEngineProject(Project project)
@@ -53,9 +80,9 @@ namespace Launcher.Services
             string projectName = project.Name!.Replace(" ", "_");
 
             // Define individual commands
-            string createSolution = $"dotnet new sln -n {projectName}";
+            string createSolution = $"dotnet new sln -n {projectName} -o {project.Path}";
             string createProject = $"dotnet new console -n {projectName} -o {project.Path} -f {FRAMEWORK}";
-            string addProjectToSolution = $"dotnet sln {projectName}.sln add {project.Path}/{projectName}.csproj";
+            string addProjectToSolution = $"dotnet sln {project.Path}/{projectName}.sln add {project.Path}/{projectName}.csproj";
 
             // TODO: Add the nuget package after it's been published
             //string installNugetPackage = $"dotnet add {project.Path}/{projectName}.csproj package {SHARP_ENGINE_CORE_NUGET_PACKAGE}";
@@ -77,11 +104,14 @@ namespace Launcher.Services
 
             if (!string.IsNullOrWhiteSpace(error))
                 _notificationService.Show(error);
+            else
+                _notificationService.Show("Solution and project created successfully!");
 
-            string programFilePath = Path.Combine(project.Path!, "Program.cs");
-            string programContent = ""; // TODO: Replace with program content
-
-            File.WriteAllText(programFilePath, programContent);
+            // TODO: Set example programc.cs content with the minimal projects content.
+            // string programFilePath = Path.Combine(project.Path!, "Program.cs");
+            // string programContent = ""; // TODO: Replace with program content
+            // 
+            // File.WriteAllText(programFilePath, programContent);
         }
 
         private static Process GetProcess(string arguments)
@@ -99,6 +129,7 @@ namespace Launcher.Services
                 }
             };
 
+        /// <inheritdoc />
         public void OpenInEditor(Project project)
         {
             if (!Path.Exists(project.Path))
@@ -128,8 +159,42 @@ namespace Launcher.Services
             }
             catch (Exception ex)
             {
-                _notificationService.Show($"An error occurred while opening the project in the editor.", ex.Message);
+                _notificationService.Show($"An error occurred while opening the project in the editor.", false, ex.Message);
             }
+        }
+
+        /// <inheritdoc />
+        public List<Project> LoadProjects(string projectsFile)
+        {
+            if (!File.Exists(projectsFile))
+            {
+                File.WriteAllText(projectsFile, "[]");
+                return [];
+            }
+
+            string json = File.ReadAllText(projectsFile);
+            var projects = System.Text.Json.JsonSerializer.Deserialize<List<Project>>(json);
+
+            if (projects is not null)
+                return projects;
+
+            _notificationService.Show($"Unable to load projects.", false, json, projects);
+            return [];
+        }
+
+        /// <inheritdoc />
+        public async Task<Project?> LoadFileAsync(string filePath)
+        {
+            if (!filePath.EndsWith(SHARP_ENGINE_PROJECT_EXTENSION, StringComparison.OrdinalIgnoreCase))
+            {
+                _notificationService.Show($"The file '{filePath}' is not a valid project file.");
+                return null;
+            }
+
+            using var reader = new StreamReader(filePath);
+            string fileContent = await reader.ReadToEndAsync();
+
+            return System.Text.Json.JsonSerializer.Deserialize<Project>(fileContent);
         }
     }
 }

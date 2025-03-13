@@ -1,6 +1,7 @@
 ﻿using Launcher.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Launcher.UI
 {
@@ -16,77 +17,30 @@ namespace Launcher.UI
         private bool _showConfirmDelete;
         private bool _showCreateProjectDialog;
 
-        private const string _projectsFile = "projects.json";
-        private const string _launcherEnvironmentVariable = "SHARP_ENGINE_LAUNCHER_DIRECTORY";
-        private readonly string _currentDirectory = AppContext.BaseDirectory;
-        private string _projectFilePath => Path.Join(_currentDirectory, _projectsFile);
-
-        private List<Project> Projects { get; set; } = new();
-        //{
-        //    // TODO: Remove these mock projects once the actual projects are loaded.
-        //    new Project { Name = "Project 1", LastModified = DateTime.Now },
-        //    new Project { Name = "Project 2", LastModified = DateTime.Now.AddDays(6).AddHours(2) },
-        //};
-
+        private List<Project> Projects { get; set; } = [];
         private Project _selectedProject = new();
+        private const string _projectsFile = "projects.json";
+        private static readonly string[] _sharpProjectFilePickerExtension = [".sharpproject"];
 
+#if DEBUG
+        private string _projectsFilePath = Path.Join(Path.GetTempPath(), _projectsFile); 
+#else
+        private string _projectsFilePath = Path.Join(AppContext.BaseDirectory, _projectsFile);
+#endif
         /// <inheritdoc />
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            base.OnInitialized();
+            await base.OnInitializedAsync();
 
             // TODO: Get current launcher version
-
             // TODO: Check if GitHub has a new version released.
 
-            CheckEnvironmentVariable();
-            LoadProjects();
-        }
-
-        private void CheckEnvironmentVariable()
-        {
-            var launcherDirectory = Environment.GetEnvironmentVariable(_launcherEnvironmentVariable);
-            if (string.IsNullOrEmpty(launcherDirectory) || launcherDirectory != _currentDirectory)
-                Environment.SetEnvironmentVariable(_launcherEnvironmentVariable, _currentDirectory);
-        }
-
-        private void LoadProjects()
-        {
-            if (!File.Exists(_projectFilePath))
-            {
-                File.WriteAllText(_projectFilePath, "[]");
-                return;
-            }
-
-            string json = File.ReadAllText(_projectFilePath);
-            var projects = System.Text.Json.JsonSerializer.Deserialize<List<Project>>(json);
-
+            var projects = _editorService.LoadProjects(_projectsFilePath);
+            
             if (projects is not null)
-                Projects = projects;
+                Projects.AddRange(projects);
             else
-                _notificationService.Show($"Unable to load projects.", false, json, projects);
-        }
-
-        private async Task LoadFileAsync(InputFileChangeEventArgs e)
-        {
-            const string sharpProjectExtension = ".sharpproject";
-            string fileName = e.File.Name;
-            if (!fileName.EndsWith(sharpProjectExtension, StringComparison.OrdinalIgnoreCase))
-            {
-                _notificationService.Show($"The file '{fileName}' is not a valid project file.");
-                return;
-            }
-
-            using var stream = e.File.OpenReadStream();
-            using var reader = new StreamReader(stream);
-            string fileContent = await reader.ReadToEndAsync();
-
-            var project = System.Text.Json.JsonSerializer.Deserialize<Project>(fileContent);
-
-            if (project is not null)
-                Projects.Add(project);
-            else
-                _notificationService.Show($"Unable to load project file.",  false, project, e.File.Name, fileContent);
+                _notificationService.Show($"Unable to load project file.", false, projects);
         }
 
         private void OnCreateProjectClicked()
@@ -101,9 +55,11 @@ namespace Launcher.UI
         private void OnDeleteProjectConfirm()
         {
             var project = Projects.Find(p => p.Id == _selectedProject.Id);
-
             if (project is not null)
+            {
                 Projects.Remove(project);
+                // TODO: Delete project files
+            }
             else
                 _notificationService.Show($"Unable to delete project '{project?.Name}'.", false, _selectedProject, Projects);
         }
@@ -111,7 +67,48 @@ namespace Launcher.UI
         private void ProjectCreated(Project project)
         {
             _editorService.Initialize(project);
+            SetProjects(project);
+        }
+
+        private async Task OpenExistingFileAsync()
+        {
+            var pickedFile = await FilePicker.Default.PickAsync(new PickOptions
+            {
+                PickerTitle = "Select a SharpProject file",
+                FileTypes = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
+                {
+                    { DevicePlatform.WinUI, _sharpProjectFilePickerExtension },
+                    { DevicePlatform.MacCatalyst, _sharpProjectFilePickerExtension },
+                    { DevicePlatform.iOS, _sharpProjectFilePickerExtension },
+                    { DevicePlatform.Android, new[] { "application/octet-stream" } }
+                })
+            });
+
+            if (pickedFile?.FileName.EndsWith(".sharpproject") == false)
+            {
+                _notificationService.Show("Invalid file type selected. Please select a .sharpproject file.");
+                return;
+            }
+
+            var project = await _editorService.LoadFileAsync(pickedFile!.FullPath);
+            if (project is not null)
+                SetProjects(project);
+            else
+                _notificationService.Show($"Unable to load project file '{pickedFile.FullPath}'");
+        }
+
+        private void SetProjects(Project project)
+        {
+            bool projectAlreadyExists = Projects.Any(p => p.Path == project.Path || p.Name == project.Name);
+            if (projectAlreadyExists)
+            {
+                _notificationService.Show($"Project '{project.Name}' already exists.", false, project);
+                return;
+            }
+
             Projects.Add(project);
+            string json = JsonSerializer.Serialize(Projects);
+            File.WriteAllText(_projectsFilePath, json);
         }
     }
 }

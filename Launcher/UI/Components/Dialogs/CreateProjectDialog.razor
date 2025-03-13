@@ -20,7 +20,7 @@
             <label for="project-path">Path</label>
             <div style="display: flex; align-items: center;gap: 8px;">
                 <input class="form-control" id="project-path" placeholder="Enter project path" @bind-value="_newProject.Path">
-                <input type="file" class="form-control-file" id="project-file">
+                <button type="button" class="btn btn-primary" @onclick="HandleFileSelection">Browse...</button>
             </div>
             <ValidationMessage For="@(() => _newProject.Path)" />
         </div>
@@ -34,39 +34,3 @@
     </EditForm>
 
 </div>
-
-@code {
-    private string _createProjectDialogVisibleClass => Visible ? "create-project-dialog-visible" : "create-project-dialog-hidden";
-
-    private EditContext _createProjectFormEditContext;
-    private Project _newProject;
-
-    /// <summary>Gets or sets the event executed when the project is created.</summary>
-    [Parameter]
-    public EventCallback<Project> OnProjectCreated { get; set; }
-
-    /// <summary>
-    ///     Initializes a new instance of <see cref="CreateProjectDialog"/>.
-    /// </summary>
-    public CreateProjectDialog()
-    {
-        _newProject = new();
-        _createProjectFormEditContext = new(_newProject);
-    }
-
-    /// <inheritdoc />
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        _createProjectFormEditContext = new(_newProject);
-    }
-
-    private async Task OnCreateProjectSubmitClickedAsync()
-    {
-        await OnProjectCreated.InvokeAsync(_newProject);
-
-        _newProject = new();
-        await CloseAsync();
-    }
-}
