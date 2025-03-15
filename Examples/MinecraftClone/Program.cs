@@ -26,7 +26,7 @@ public static class Program
         Scene scene = new Scene();
         Minecraft game = new Minecraft(scene, gameSettings);
 
-        using var window = new SharpEngine.Core.Window(game, scene, gameSettings.WindowOptions);
+        using var window = new SharpEngine.Core.Window(game.Camera, scene, gameSettings);
         window.OnLoaded += () => game.Initialize();
         window.OnHandleMouse += game.HandleMouse;
         window.OnUpdate += game.Update;

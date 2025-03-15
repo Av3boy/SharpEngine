@@ -1,4 +1,5 @@
-﻿using Silk.NET.Core;
+﻿using SharpEngine.Core.Enums;
+using Silk.NET.Core;
 using Silk.NET.Core.Contexts;
 using Silk.NET.Input;
 using Silk.NET.Maths;
@@ -6,7 +7,6 @@ using Silk.NET.Windowing;
 
 using System;
 using System.Numerics;
-using System.Transactions;
 using MouseButton = Silk.NET.Input.MouseButton;
 
 namespace SharpEngine.Core;
@@ -25,8 +25,8 @@ public abstract class SilkWindow : IWindow
     /// <inheritdoc />
     public bool IsClosing { get; set; }
 
-    public IInputContext Input { get; protected set; }
-
+    /// <summary>Gets or sets the input context for the window.</summary>
+    public IInputContext? Input { get; protected set; }
 
     /// <inheritdoc />
     public virtual Rectangle<int> BorderSize { get; }
@@ -153,6 +153,9 @@ public abstract class SilkWindow : IWindow
     /// <inheritdoc />
     public event Action<double>? Render;
 
+    /// <summary>An event executed when the window has loaded.</summary>
+    public event Action? OnLoaded;
+
     /// <inheritdoc />
     public virtual void Close() => CurrentWindow.Close();
 
@@ -215,6 +218,9 @@ public abstract class SilkWindow : IWindow
     /// <inheritdoc />
     public virtual void Reset() => CurrentWindow.Reset();
 
+    /// <summary>
+    ///     Starts the window.
+    /// </summary>
     public void Run() => CurrentWindow.Run();
 
     /// <inheritdoc />
@@ -236,8 +242,6 @@ public abstract class SilkWindow : IWindow
         OnLoaded?.Invoke();
     }
 
-    public event Action? OnLoaded;
-
     /// <summary>
     ///     Handles operations needed to be executed after the renderers are finished.
     /// </summary>
@@ -251,5 +255,8 @@ public abstract class SilkWindow : IWindow
     protected virtual void PreRender(double deltaTime) { }
 
     // TODO: Scene unsaved changes warning.
+    /// <summary>
+    ///     Handles closing the application.
+    /// </summary>
     public virtual void OnClosing() { }
 }

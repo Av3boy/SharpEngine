@@ -21,7 +21,7 @@ public class Renderer : RendererBase
     private LampShader _lampShader;
     private LightingShader _lightingShader;
 
-    private readonly Game _game;
+    private readonly CameraView _camera;
     private readonly Scene _scene;
 
     // Read only once, load into OpenGL buffer once.
@@ -33,11 +33,11 @@ public class Renderer : RendererBase
     /// <summary>
     ///     Initializes a new instance of <see cref="Renderer"/>.
     /// </summary>
-    /// <param name="game">The game the renderer is being used for.</param>
+    /// <param name="camera">The game the renderer is being used for.</param>
     /// <param name="scene">The game scene to be rendered.</param>
-    public Renderer(Game game, Scene scene) : base(game.CoreSettings)
+    public Renderer(CameraView camera, ISettings settings, Scene scene) : base(settings)
     {
-        _game = game;
+        _camera = camera;
         _scene = scene;
     }
 
@@ -60,7 +60,7 @@ public class Renderer : RendererBase
         {
             Window.GL.Enable(EnableCap.DepthTest);
 
-            _game.Camera.SetShaderUniforms(_lightingShader.Shader);
+            _camera.SetShaderUniforms(_lightingShader.Shader);
             Window.GL.BindVertexArray(_lightingShader.Vao);
 
             var gameObjectRenderTasks = _scene.IterateAsync(_scene.Root.Children, RenderGameObject);
@@ -84,7 +84,7 @@ public class Renderer : RendererBase
 
         // TODO: Fix culling for blocks that are partially in view
         // Perform frustum culling
-        if (!IsInViewFrustum(gameObject.BoundingBox, _game.Camera))
+        if (!IsInViewFrustum(gameObject.BoundingBox, _camera))
             return Task.CompletedTask;
 
         // TODO: Skip blocks that are behind others relative to the camera

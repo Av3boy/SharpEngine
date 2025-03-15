@@ -23,7 +23,7 @@ public class EditorWindow : Window
     /// </summary>
     /// <param name="scene">Represents the current scene to be displayed in the editor window.</param>
     /// <param name="settings">Contains configuration options for how the view should be rendered.</param>
-    public EditorWindow(Scene scene, IViewSettings settings) : base(scene, settings.WindowOptions) { }
+    public EditorWindow(Scene scene, IViewSettings settings) : base(scene, settings) { }
 
     /// <inheritdoc />
     public override void OnLoad()
