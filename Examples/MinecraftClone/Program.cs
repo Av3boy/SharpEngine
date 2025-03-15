@@ -1,4 +1,5 @@
-﻿using SharpEngine.Core.Scenes;
+﻿using SharpEngine.Core.Interfaces;
+using SharpEngine.Core.Scenes;
 
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
@@ -12,7 +13,7 @@ public static class Program
 {
     private static void Main()
     {
-        Settings gameSettings = new()
+        DefaultSettings gameSettings = new()
         {
             UseWireFrame = false,
             WindowOptions = WindowOptions.Default with
@@ -23,9 +24,8 @@ public static class Program
         };
 
         Scene scene = new Scene();
-        Game game = new Game(scene, gameSettings);
+        Minecraft game = new Minecraft(scene, gameSettings);
 
         using var window = new SharpEngine.Core.Window(game, scene, gameSettings.WindowOptions);
-        window.Run();
     }
 }

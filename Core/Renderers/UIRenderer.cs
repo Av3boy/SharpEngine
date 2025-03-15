@@ -23,7 +23,7 @@ public class UIRenderer : RendererBase
     /// <summary>
     ///     Initializes a new instance of <see cref="UIRenderer"/>.
     /// </summary>
-    public UIRenderer(IGame game, Scene scene) : base(game.CoreSettings)
+    public UIRenderer(Game game, Scene scene) : base(game.CoreSettings)
     {
         _scene = scene;
 

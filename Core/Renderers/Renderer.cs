@@ -21,7 +21,7 @@ public class Renderer : RendererBase
     private LampShader _lampShader;
     private LightingShader _lightingShader;
 
-    private readonly IGame _game;
+    private readonly Game _game;
     private readonly Scene _scene;
 
     // Read only once, load into OpenGL buffer once.
@@ -35,7 +35,7 @@ public class Renderer : RendererBase
     /// </summary>
     /// <param name="game">The game the renderer is being used for.</param>
     /// <param name="scene">The game scene to be rendered.</param>
-    public Renderer(IGame game, Scene scene) : base(game.CoreSettings)
+    public Renderer(Game game, Scene scene) : base(game.CoreSettings)
     {
         _game = game;
         _scene = scene;

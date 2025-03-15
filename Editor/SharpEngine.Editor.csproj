@@ -15,10 +15,11 @@
 			<PackageReleaseNotes>Early release, expect broken / missing features.</PackageReleaseNotes>
 			<NeutralLanguage>en</NeutralLanguage>
 			<UseWindowsForms>true</UseWindowsForms>
+			<Configurations>Debug;Release;LauncherNonWindows</Configurations>
   </PropertyGroup>
 
 	<ItemGroup>
-			<ProjectReference Include="..\Core\SharpEngine.Core.NET.csproj" />
+			<ProjectReference Include="..\Core\SharpEngine.Core.csproj" />
 	</ItemGroup>
 
   <ItemGroup>

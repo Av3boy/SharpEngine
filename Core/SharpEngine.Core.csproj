@@ -7,12 +7,15 @@
       Required by some low level OpenGL functions. 
       We should see if there is a better way to approach where ever these unsafe contexts are being used.
     -->
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <GeneratePackageOnBuild>$(GenerateNuGetPackages)</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/Av3boy/SharpEngine</PackageProjectUrl>
     <PackageTags>game-engine;</PackageTags>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+
+    <!-- Required, atleast for now since another NuGet package with the SharpEngine.Core name already exists. -->
+    <PackageId>$(AssemblyName).NET</PackageId>
+    <Configurations>Debug;Release;LauncherNonWindows</Configurations>
     
   </PropertyGroup>
 

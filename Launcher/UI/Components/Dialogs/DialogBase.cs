@@ -22,21 +22,11 @@ namespace Launcher.UI.Components
         /// <summary>
         ///     Discards the dialog.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing an asyynchronous operation.</returns>
+        /// <returns>A <see cref="Task"/> representing an asynchronous operation.</returns>
         protected async Task CloseAsync()
         {
             Visible = false;
             await VisibleChanged.InvokeAsync(Visible);
-        }
-
-        /// <summary>
-        ///     Discards the dialog.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing an asyynchronous operation.</returns>
-        protected async Task DiscardAsync()
-        {
-            await OnDiscardClicked.InvokeAsync();
-            await CloseAsync();
         }
     }
 }

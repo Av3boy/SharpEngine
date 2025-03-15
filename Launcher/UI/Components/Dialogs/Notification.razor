@@ -1,18 +1,24 @@
-﻿@inherits DialogBase
+﻿@using Launcher.Services
+@inherits DialogBase
 
-<div class="alert alert-@(Type.ToCssClass()) toast @_notificationVisibleClass" role="alert">
-    @ChildContent
-    <DiscardIcon DiscardClicked="@DiscardAsync" />
+@inject INotificationService NotificationService
+
+<div>
+    @foreach (var notification in NotificationService.Notifications)
+    {
+        <div class="alert alert-@(Type.ToCssClass()) toast show" role="alert">
+            @notification.Key (@notification.Value)
+            <DiscardIcon DiscardClicked="@(() => NotificationService.Discard(notification.Key))" />
+        </div>
+    }
 </div>
 
 @code {
-    private string _notificationVisibleClass => Visible ? "notification-visible" : "notification-hidden";
-
     /// <summary>Gets or sets the type of the notification.</summary>
     [Parameter]
     public NotificationType Type { get; set; } = NotificationType.Warning;
 
-    /// <summary>Gets or sets the child content of the notification.</summary>
-    [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    /// <inheritdoc />
+    protected override void OnInitialized()
+        => NotificationService.SetOnNotificationsChanged(StateHasChanged);
 }

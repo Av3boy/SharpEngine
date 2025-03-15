@@ -15,9 +15,9 @@ public static class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        var editor = new Editor();
+        //var editor = new Editor();
         var scene = args.Length > 0 ? Scene.LoadScene(args[0]) : new Scene();
 
-        using var window = new EditorWindow(editor, scene, new DefaultViewSettings());
+        using var window = new EditorWindow(scene, new DefaultViewSettings());
     }
 }
