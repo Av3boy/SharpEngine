@@ -60,22 +60,22 @@ public abstract class SilkWindow : IWindow
     public bool TopMost { get; set; }
 
     /// <inheritdoc />
-    public IGLContext? SharedContext { get; }
+    public IGLContext? SharedContext => CurrentWindow.SharedContext;
 
     /// <inheritdoc />
-    public string? WindowClass { get; }
+    public string? WindowClass => CurrentWindow.WindowClass;
 
     /// <inheritdoc />
-    public nint Handle { get; }
+    public nint Handle => CurrentWindow.Handle;
 
     /// <inheritdoc />
-    public double Time { get; }
+    public double Time => CurrentWindow.Time;
 
     /// <inheritdoc />
-    public Vector2D<int> FramebufferSize { get; }
+    public Vector2D<int> FramebufferSize => CurrentWindow.FramebufferSize;
 
     /// <inheritdoc />
-    public bool IsInitialized { get; }
+    public bool IsInitialized => CurrentWindow.IsInitialized;
 
     /// <inheritdoc />
     public bool ShouldSwapAutomatically { get; set; }
@@ -99,28 +99,28 @@ public abstract class SilkWindow : IWindow
     public bool VSync { get; set; }
 
     /// <inheritdoc />
-    public VideoMode VideoMode { get; }
+    public VideoMode VideoMode => CurrentWindow.VideoMode;
 
     /// <inheritdoc />
-    public int? PreferredDepthBufferBits { get; }
+    public int? PreferredDepthBufferBits => CurrentWindow.PreferredDepthBufferBits;
 
     /// <inheritdoc />
-    public int? PreferredStencilBufferBits { get; }
+    public int? PreferredStencilBufferBits => CurrentWindow.PreferredStencilBufferBits;
 
     /// <inheritdoc />
-    public Vector4D<int>? PreferredBitDepth { get; }
+    public Vector4D<int>? PreferredBitDepth => CurrentWindow.PreferredBitDepth;
 
     /// <inheritdoc />
-    public int? Samples { get; }
+    public int? Samples => CurrentWindow.Samples;
 
     /// <inheritdoc />
-    public IGLContext? GLContext { get; }
+    public IGLContext? GLContext => CurrentWindow.GLContext;
 
     /// <inheritdoc />
-    public IVkSurface? VkSurface { get; }
+    public IVkSurface? VkSurface => CurrentWindow.VkSurface;
 
     /// <inheritdoc />
-    public INativeWindow? Native { get; }
+    public INativeWindow? Native => CurrentWindow.Native;
 
     /// <inheritdoc />
 
@@ -154,10 +154,10 @@ public abstract class SilkWindow : IWindow
     public event Action<double>? Render;
 
     /// <inheritdoc />
-    public virtual void Close() { }
+    public virtual void Close() => CurrentWindow.Close();
 
     /// <inheritdoc />
-    public virtual void ContinueEvents() { }
+    public virtual void ContinueEvents() => CurrentWindow.ContinueEvents();
 
     private IWindow? _currentWindow;
     
@@ -186,19 +186,19 @@ public abstract class SilkWindow : IWindow
     }
 
     /// <inheritdoc />
-    public virtual void DoEvents() { }
+    public virtual void DoEvents() => CurrentWindow.DoEvents();
 
     /// <inheritdoc />
-    public virtual void DoRender() { }
+    public virtual void DoRender() => CurrentWindow.DoRender();
 
     /// <inheritdoc />
-    public virtual void DoUpdate() { }
+    public virtual void DoUpdate() => CurrentWindow.DoUpdate();
 
     /// <inheritdoc />
-    public virtual void Focus() { }
+    public virtual void Focus() => CurrentWindow.Focus();
 
     /// <inheritdoc />
-    public virtual void Initialize() { }
+    public virtual void Initialize() => CurrentWindow.Initialize();
 
     /// <inheritdoc />
     public virtual object Invoke(Delegate d, params object[] args) => new();
@@ -213,7 +213,7 @@ public abstract class SilkWindow : IWindow
     public virtual Vector2D<int> PointToScreen(Vector2D<int> point) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public virtual void Reset() { }
+    public virtual void Reset() => CurrentWindow.Reset();
 
     public void Run() => CurrentWindow.Run();
 
@@ -221,7 +221,7 @@ public abstract class SilkWindow : IWindow
     public virtual void Run(Action onFrame) => onFrame();
 
     /// <inheritdoc />
-    public virtual void SetWindowIcon(ReadOnlySpan<RawImage> icons) { }
+    public virtual void SetWindowIcon(ReadOnlySpan<RawImage> icons) => CurrentWindow.SetWindowIcon(icons);
 
     /// <inheritdoc cref="IMouse.Click"/>
     public virtual void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) { }

@@ -27,5 +27,6 @@ public static class Program
         Minecraft game = new Minecraft(scene, gameSettings);
 
         using var window = new SharpEngine.Core.Window(game, scene, gameSettings.WindowOptions);
+        window.Run();
     }
 }
