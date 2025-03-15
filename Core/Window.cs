@@ -112,7 +112,6 @@ public class Window : SilkWindow
 
             // Load all meshes from the mesh cache
             MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
-            _game.Initialize();
 
             // Using reflection, find all renderers that implement the RendererBase.
             var rendererTypes = AppDomain.CurrentDomain.GetAssemblies()
@@ -228,15 +227,24 @@ public class Window : SilkWindow
 
         _game.Camera.UpdateMousePosition(mouse.Position);
 
-        _game.HandleMouse(mouse);
+        // _game.HandleMouse(mouse);
+        OnHandleMouse?.Invoke(mouse);
 
         if (keyboard.IsKeyPressed(Key.Escape))
             CurrentWindow.Close();
 
-        _game.HandleKeyboard(keyboard, deltaTime);
+        //_game.HandleKeyboard(keyboard, deltaTime);
+        OnHandleKeyboard?.Invoke(keyboard, deltaTime);
 
-        _game.Update(deltaTime, Input);
+        // _game.Update(deltaTime, Input);
+        OnUpdate.Invoke(deltaTime, Input);
     }
+
+    public event Action<IMouse>? OnHandleMouse;
+    public event Action<IKeyboard?, double>? OnHandleKeyboard;
+    public event Action<double, IInputContext>? OnUpdate;
+    public event Action<MouseWheelScrollDirection, ScrollWheel>? HandleMouseWheel;
+    public event Action<IMouse, MouseButton>? OnButtonMouseDown;
 
     // TODO: #21 Input system
     private void AssignInputEvents()
@@ -274,7 +282,8 @@ public class Window : SilkWindow
             _ => throw new NotImplementedException()
         };
 
-        _game.HandleMouseWheel(direction, sw);
+        // _game.HandleMouseWheel(direction, sw);
+        HandleMouseWheel?.Invoke(direction, sw);
 
         _game.Camera.Fov -= sw.Y;
     }
@@ -288,7 +297,8 @@ public class Window : SilkWindow
 
     /// <inheritdoc />
     protected void OnMouseDown(IMouse mouse, MouseButton button)
-        => _game.HandleMouseDown(mouse, button);
+        => OnButtonMouseDown?.Invoke(mouse, button);
+        //=> _game.HandleMouseDown(mouse, button);
 
     /// <summary>
     ///     Sets the current scene.

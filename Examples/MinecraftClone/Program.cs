@@ -27,6 +27,12 @@ public static class Program
         Minecraft game = new Minecraft(scene, gameSettings);
 
         using var window = new SharpEngine.Core.Window(game, scene, gameSettings.WindowOptions);
+        window.OnLoaded += () => game.Initialize();
+        window.OnHandleMouse += game.HandleMouse;
+        window.OnUpdate += game.Update;
+        window.OnHandleKeyboard += game.HandleKeyboard;
+        window.OnButtonMouseDown += game.HandleMouseDown;
+        window.HandleMouseWheel += game.HandleMouseWheel;
         window.Run();
     }
 }
