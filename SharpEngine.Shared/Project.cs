@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Launcher.UI;
@@ -30,4 +31,15 @@ public class Project
     /// </summary>
     [JsonIgnore]
     public DateTime LastModified { get; set; } = DateTime.Now;
+
+    /// <summary>
+    ///     Loads the given project file.
+    /// </summary>
+    /// <param name="projectFile">The file containing the project to load.</param>
+    /// <returns>The loaded project. If unable to load, <see langword="null" />.</returns>
+    public static Project? LoadProject(string projectFile)
+    {
+        var json = File.ReadAllText(projectFile);
+        return JsonSerializer.Deserialize<Project>(json);
+    }
 }

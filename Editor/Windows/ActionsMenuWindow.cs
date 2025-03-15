@@ -36,6 +36,14 @@ namespace SharpEngine.Editor.Windows
 
         private void StartGame()
         {
+            if (Project is null)
+            {
+                // TODO: This should never be possible. If the Project is null when it's loaded we should make sure it's initialized. 
+                // Editor service probably needs to be made shared so that we can initialize the project / solution when the editor is opened.
+
+                // TODO: Do we want to save here automatically or prompt the user to save?
+            }
+
             Debug.LogInformation($"Starting {Project.Name}.");
 
             Thread thread = new Thread(() =>

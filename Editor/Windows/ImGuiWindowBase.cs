@@ -11,10 +11,16 @@ namespace SharpEngine.Editor.Windows
     public abstract class ImGuiWindowBase
     {
         /// <summary>Gets or sets the currently active project.</summary>
-        public Project? Project { get; set; }
+        public Project Project { get; set; }
 
         /// <summary>Gets or sets the currently active scene.</summary>
-        public Scene? Scene { get; private set; }
+        public Scene Scene { get; private set; }
+
+        public ImGuiWindowBase()
+        {
+            Scene = new Scene();
+            Project = new Project();
+        }
 
         private readonly Dictionary<string, bool> _previousDockingStates = [];
 
