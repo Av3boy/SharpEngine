@@ -33,7 +33,7 @@ public struct DefaultViewSettings : IViewSettings
     public bool PrintFrameRate { get; set; }
 
     /// <inheritdoc />
-    public RenderFlags RendererFlags { get; set; }
+    public RenderFlags RendererFlags { get; set; } = RenderFlags.All;
 
     /// <inheritdoc />
     public WindowOptions WindowOptions { get; set; } = WindowOptions.Default with

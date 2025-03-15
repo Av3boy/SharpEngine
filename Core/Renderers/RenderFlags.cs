@@ -11,7 +11,7 @@ public enum RenderFlags
     /// <summary>No renderer should be enabled.</summary>
     None = 0,
 
-    /// <summary>All the vertices will for the mesh will be rendererd.</summary>
+    /// <summary>All the vertices will for the mesh will be rendered.</summary>
     Renderer3D = 1,
 
     /// <summary>

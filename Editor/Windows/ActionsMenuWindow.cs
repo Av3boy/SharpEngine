@@ -11,9 +11,6 @@ namespace SharpEngine.Editor.Windows
     /// </summary>
     public class ActionsMenuWindow : ImGuiWindowBase
     {
-        private Scene _scene;
-        private readonly Project _project;
-
         /// <inheritdoc />
         public override string Name => "Actions";
 
@@ -22,24 +19,13 @@ namespace SharpEngine.Editor.Windows
         /// </summary>
         public event Action? OnSceneLoaded;
 
-        /// <summary>
-        ///     Initializes a new instance of <see cref="ActionsMenuWindow"/>.
-        /// </summary>
-        /// <param name="scene">The scene that the actions menu will interact with.</param>
-        /// <param name="project">The project context in which the actions menu operates.</param>
-        public ActionsMenuWindow(Scene scene, Project project)
-        {
-            _scene = scene;
-            _project = project;
-        }
-
         /// <inheritdoc />
         public override void Render()
         {
             ImGui.Text("some text");
 
             if (ImGui.Button("Save"))
-                SaveScene(_scene);
+                SaveScene(Scene);
 
             if (ImGui.Button("Load") && SelectFile(out string selectedFile))
                 LoadScene(selectedFile);
@@ -50,11 +36,11 @@ namespace SharpEngine.Editor.Windows
 
         private void StartGame()
         {
-            Debug.LogInformation($"Starting {_project.Name}.");
+            Debug.LogInformation($"Starting {Project.Name}.");
 
             Thread thread = new Thread(() =>
             {
-                var process = ProcessExtensions.GetProcess($"dotnet run --project {_project.Path}/{_project.Name}.csproj", true);
+                var process = ProcessExtensions.GetProcess($"dotnet run --project {Project.Path}/{Project.Name}.csproj", true);
                 process.ErrorDataReceived += (sender, e) => Debug.LogInformation(e.Data);
                 process.OutputDataReceived += (sender, e) => Debug.LogInformation(e.Data);
                 process.Exited += (sender, e) => Debug.LogInformation("Process exited.");
@@ -131,7 +117,7 @@ namespace SharpEngine.Editor.Windows
             Console.WriteLine($"Loading scene from file: {sceneFile}.");
 
             var newScene = Scene.LoadScene(sceneFile);
-            _scene = newScene;
+            SetScene(newScene);
 
             Console.WriteLine("Scene loaded successfully!");
         }

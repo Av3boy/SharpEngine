@@ -16,18 +16,11 @@ public static class Program
     /// </summary>
     public static void Main(string[] _)
     {
-        var game = new Minimal(new DefaultSettings()
-        {
-            UseWireFrame = false,
-            WindowOptions = WindowOptions.Default with
-            {
-                Size = new Vector2D<int>(800, 600),
-                Title = "Minimal",
-            }
-        });
-
+        var game = new Minimal(new DefaultSettings());
         var scene = new Scene();
-        using var window = new SharpEngine.Core.Window(game, scene, game.CoreSettings.WindowOptions);
+
+        using var window = new SharpEngine.Core.Window(game.Camera, scene, game.Camera.Settings);
+        window.Run();
     }
 }
 

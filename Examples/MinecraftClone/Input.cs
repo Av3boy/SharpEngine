@@ -11,8 +11,8 @@ public class Input
     /// <summary>Gets or sets the mouse sensitivity of the camera.</summary>
     public float MouseSensitivity
     {
-        get => _camera.Sensitivity;
-        set => _camera.Sensitivity = value;
+        get => _camera.Settings.MouseSensitivity;
+        set => _camera.Settings.MouseSensitivity = value;
     }
 
     /// <summary>Gets or sets the movement speed of the camera.</summary>

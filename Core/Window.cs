@@ -1,25 +1,25 @@
-﻿using Silk.NET.Input;
-using Silk.NET.Maths;
-using Silk.NET.Windowing;
-using Silk.NET.OpenGL;
-using Silk.NET.OpenGL.Extensions.ImGui;
-using MouseButton = Silk.NET.Input.MouseButton;
-
-using SharpEngine.Core.Entities.Views.Settings;
+﻿using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.Views;
-using SharpEngine.Core.Scenes;
+using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Renderers;
+using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using Shader = SharpEngine.Core.Shaders.Shader;
 
+using Silk.NET.Input;
+using Silk.NET.Maths;
+using Silk.NET.OpenGL;
+using Silk.NET.OpenGL.Extensions.ImGui;
+using Silk.NET.Windowing;
+using MouseButton = Silk.NET.Input.MouseButton;
+
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using System.Linq;
-using SharpEngine.Core.Entities.Properties.Meshes;
 
 namespace SharpEngine.Core;
 
@@ -28,14 +28,27 @@ namespace SharpEngine.Core;
 /// </summary>
 public class Window : SilkWindow
 {
-    private readonly Game _game;
-    private static IWindow _window;
+    private readonly ISettings _settings;
+    private readonly CameraView _camera;
 
+    private bool _initialized;
     private IEnumerable<RendererBase> _renderers = [];
-
     private ImGuiController? _imGuiController;
 
-    public IInputContext Input { get; protected set; }
+    /// <summary>The event executed when mouse events are executed.</summary>
+    public event Action<IMouse>? OnHandleMouse;
+
+    /// <summary>The event executed when keyboard events are executed.</summary>
+    public event Action<IKeyboard, double>? OnHandleKeyboard;
+
+    /// <summary>The event executed when the window is updated.</summary>
+    public event Action<double, IInputContext>? OnUpdate;
+
+    /// <summary>The event executed when the mouse wheel is scrolled.</summary>
+    public event Action<MouseWheelScrollDirection, ScrollWheel>? HandleMouseWheel;
+
+    /// <summary>The event executed when a mouse button is clicked.</summary>
+    public event Action<IMouse, MouseButton>? OnButtonMouseDown;
 
     /// <summary>
     ///     The scene that is currently being rendered.
@@ -53,45 +66,57 @@ public class Window : SilkWindow
     public static GL GetGL() => GL;
     private static void SetGL(GL gl) => GL = gl;
 
-    private bool _initialized;
-
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
     /// </summary>
-    /// <param name="game">Contains the actual game implementation.</param>
+    /// <param name="camera">The camera the window should render from.</param>
     /// <param name="scene">Contains the game scene.</param>
-    public Window(Game game, Scene scene, WindowOptions options)
+    /// <param name="settings">The settings for the window.</param>
+    public Window(CameraView camera, Scene scene, IViewSettings settings)
     {
-        // TODO: Game should be refactored out of the window class.
-        _game = game;
         Scene = scene;
+        _settings = settings;
+        _camera = camera;
 
-        Initialize(options);
+        Initialize(settings.WindowOptions);
     }
 
-    public Window(Scene scene, WindowOptions options)
+    /// <summary>
+    ///     Initializes a new window without a dedicated camera.
+    /// </summary>
+    /// <param name="scene">Contains the game scene.</param>
+    /// <param name="settings">The settings for the window.</param>
+    public Window(Scene scene, IViewSettings settings)
     {
-        _game = new Game();
         Scene = scene;
+        _settings = settings;
+        _camera = new(Vector3.One, new DefaultViewSettings());
 
-        Initialize(options);
+        Initialize(settings.WindowOptions);
     }
 
     private void Initialize(WindowOptions options)
     {
-        _window = Silk.NET.Windowing.Window.Create(options);
-        _window.Update += OnUpdateFrame;
-        _window.Render += RenderFrame;
-        _window.Resize += OnResize;
-        _window.Load += OnLoad;
-        _window.Closing += OnClosing;
-
-        _window.Run();
+        CurrentWindow = CreateWindow(options);
+        CurrentWindow.Update += OnUpdateFrame;
+        CurrentWindow.Render += RenderFrame;
+        CurrentWindow.Resize += OnResize;
+        CurrentWindow.Load += OnLoad;
+        CurrentWindow.Closing += OnClosing;
     }
 
-    private void OnClosing()
+    /// <inheritdoc />
+    public override void Run(Action onFrame)
     {
-        // TODO: Scene unsaved changes warning.
+        try
+        {
+            base.Run(onFrame);
+            Run();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogInformation("Error running window: " + ex.Message, ex);
+        }
     }
 
     /// <inheritdoc />
@@ -99,11 +124,11 @@ public class Window : SilkWindow
     {
         try
         {
-            var context = _window.CreateOpenGL();
+            var context = CurrentWindow.CreateOpenGL();
             SetGL(context);
 
-            Input = _window.CreateInput();
-            _window.MakeCurrent();
+            Input = CurrentWindow.CreateInput();
+            CurrentWindow.MakeCurrent();
 
             AssignInputEvents();
 
@@ -114,7 +139,6 @@ public class Window : SilkWindow
 
             // Load all meshes from the mesh cache
             MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
-            _game.Initialize();
 
             // Using reflection, find all renderers that implement the RendererBase.
             var rendererTypes = AppDomain.CurrentDomain.GetAssemblies()
@@ -125,8 +149,7 @@ public class Window : SilkWindow
             {
                 // Make sure the renderer has the correct constructor parameters!
                 // TODO: The static reference to the context will not work when multiple windows are implemented, since the context will be different.
-                // Also, the renderer should know nothing about the game, instead the camera should be passed.
-                var requiredArguments = new object[] { _game, Scene };
+                var requiredArguments = new object[] { _camera, _settings, Scene };
                 var renderer = (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
 
                 _renderers = _renderers.Append(renderer);
@@ -135,7 +158,7 @@ public class Window : SilkWindow
             foreach (var renderer in _renderers)
                 renderer.Initialize();
 
-            _imGuiController = new ImGuiController(GL, _window, Input);
+            _imGuiController = new ImGuiController(GL, CurrentWindow, Input);
 
             _initialized = true;
         }
@@ -143,10 +166,9 @@ public class Window : SilkWindow
         {
             Debug.LogInformation("Error loading window: " + ex.Message, ex);
         }
+
+        base.OnLoad();
     }
-
-    protected virtual void PreRender(double deltaTime) { }
-
 
     /// <summary>
     ///    Renders the current view and all specified renderers.
@@ -167,17 +189,17 @@ public class Window : SilkWindow
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            ToggleWireFrame(_game.CoreSettings.UseWireFrame);
+            ToggleWireFrame(_settings.UseWireFrame);
 
             UseShaders();
 
-            var renderTasks = _renderers.Where(renderer => _game.CoreSettings.RendererFlags.HasFlag(renderer.RenderFlag))
+            var renderTasks = _renderers.Where(renderer => _settings.RendererFlags.HasFlag(renderer.RenderFlag))
                                         .Select(renderer => renderer.Render())
                                         .ToList();
 
             Task.WaitAll([.. renderTasks]);
 
-            // TODO: This call causes filckering in the new framework. Investigate why.
+            // TODO: This call causes flickering in the new framework. Investigate why.
             // _window.SwapBuffers();
 
             AfterRender(deltaTime);
@@ -189,9 +211,6 @@ public class Window : SilkWindow
             Debug.LogInformation(ex.Message);
         }
     }
-
-    protected virtual void AfterRender(double deltaTime) { }
-
 
     /// <summary>
     ///     Toggles the renderer between wireframe and fill mode.
@@ -222,28 +241,39 @@ public class Window : SilkWindow
         // if (!_window.IsFocused)
         //     return;
 
-        if (_game.CoreSettings.PrintFrameRate)
+        if (_settings.PrintFrameRate)
             Console.WriteLine($"FPS: {1f / deltaTime}");
 
         // TODO: Handle multiple mice?
-        var mouse = Input.Mice[0];
-        var keyboard = Input.Keyboards[0];
+        var mouse = Input?.Mice[0];
+        if (mouse is not null)
+        {
+            _camera.UpdateMousePosition(mouse.Position);
+            OnHandleMouse?.Invoke(mouse);
+        }
 
-        _game.Camera.UpdateMousePosition(mouse.Position);
+        var keyboard = Input?.Keyboards[0];
+        if (keyboard is not null)
+        {
+            if (keyboard.IsKeyPressed(Key.Escape))
+                CurrentWindow.Close();
 
-        _game.HandleMouse(mouse);
+            OnHandleKeyboard?.Invoke(keyboard, deltaTime);
+        }
 
-        if (keyboard.IsKeyPressed(Key.Escape))
-            _window.Close();
-
-        _game.HandleKeyboard(keyboard, deltaTime);
-
-        _game.Update(deltaTime, Input);
+        if (Input is not null)
+            OnUpdate?.Invoke(deltaTime, Input);
     }
 
     // TODO: #21 Input system
     private void AssignInputEvents()
     {
+        if (Input is null)
+        {
+            Debug.LogInformation("Input is null. No input events will be assigned.");
+            return;
+        }
+
         foreach (var keyboard in Input.Keyboards)
           keyboard.KeyDown += KeyDown;
 
@@ -255,16 +285,11 @@ public class Window : SilkWindow
         }
     }
 
-    public virtual void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) { }
-
-
     /// <inheritdoc />
     protected void KeyDown(IKeyboard keyboard, Key key, int keyCode)
     {
         if (key == Key.Escape)
-            _window.Close();
-
-        // _game.HandleKeyboard(keyboard);
+            CurrentWindow.Close();
     }
 
     /// <inheritdoc />
@@ -277,21 +302,20 @@ public class Window : SilkWindow
             _ => throw new NotImplementedException()
         };
 
-        _game.HandleMouseWheel(direction, sw);
-
-        _game.Camera.Fov -= sw.Y;
+        HandleMouseWheel?.Invoke(direction, sw);
+        _camera.Fov -= sw.Y;
     }
 
     /// <inheritdoc />
     protected void OnResize(Vector2D<int> size)
     {
         GL.Viewport(size);
-        _game.Camera.AspectRatio = size.X / size.Y;
+        _camera.AspectRatio = size.X / size.Y;
     }
 
     /// <inheritdoc />
-    protected void OnMouseDown(IMouse mouse, MouseButton button)
-        => _game.HandleMouseDown(mouse, button);
+    protected override void OnMouseDown(IMouse mouse, MouseButton button)
+        => OnButtonMouseDown?.Invoke(mouse, button);
 
     /// <summary>
     ///     Sets the current scene.
@@ -301,11 +325,5 @@ public class Window : SilkWindow
     {
         // TODO: Do we need to clear anything from e.g. the GPU when we change change the scene?
         Scene = scene;
-    }
-
-    /// <inheritdoc />
-    protected void Dispose(bool disposing)
-    {
-        //base.Dispose(disposing);
     }
 }

@@ -1,9 +1,6 @@
 ﻿using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 
-using Silk.NET.Maths;
-using Silk.NET.Windowing;
-
 namespace Minecraft;
 
 /// <summary>
@@ -15,17 +12,19 @@ public static class Program
     {
         DefaultSettings gameSettings = new()
         {
-            UseWireFrame = false,
-            WindowOptions = WindowOptions.Default with
-            {
-                Size = new Vector2D<int>(800, 600),
-                Title = "Minecraft",
-            }
+            UseWireFrame = false
         };
 
         Scene scene = new Scene();
         Minecraft game = new Minecraft(scene, gameSettings);
 
-        using var window = new SharpEngine.Core.Window(game, scene, gameSettings.WindowOptions);
+        using var window = new SharpEngine.Core.Window(game.Camera, scene, game.Camera.Settings);
+        window.OnLoaded += () => game.Initialize();
+        window.OnHandleMouse += game.HandleMouse;
+        window.OnUpdate += game.Update;
+        window.OnHandleKeyboard += game.HandleKeyboard;
+        window.OnButtonMouseDown += game.HandleMouseDown;
+        window.HandleMouseWheel += game.HandleMouseWheel;
+        window.Run();
     }
 }

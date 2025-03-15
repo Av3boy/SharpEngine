@@ -1,4 +1,5 @@
 ﻿using SharpEngine.Core.Entities;
+using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
@@ -23,10 +24,9 @@ public class UIRenderer : RendererBase
     /// <summary>
     ///     Initializes a new instance of <see cref="UIRenderer"/>.
     /// </summary>
-    public UIRenderer(Game game, Scene scene) : base(game.CoreSettings)
+    public UIRenderer(CameraView _, ISettings settings, Scene scene) : base(settings)
     {
         _scene = scene;
-
         _uiShader = new UIShader();
     }
 

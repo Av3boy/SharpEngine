@@ -19,19 +19,15 @@
   </PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="DefaultTextures\**" />
+	  <EmbeddedResource Remove="DefaultTextures\**" />
+	  <None Remove="DefaultTextures\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 			<ProjectReference Include="..\Core\SharpEngine.Core.csproj" />
 			<ProjectReference Include="..\SharpEngine.Shared\SharpEngine.Shared.csproj" />
 	</ItemGroup>
-
-  <ItemGroup>
-    <None Update="DefaultTextures\debug.JPG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DefaultTextures\" />
-  </ItemGroup>
 
 	<!--
 	TODO: Run conditionally or only if in admin mode.

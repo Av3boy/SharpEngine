@@ -1,4 +1,5 @@
-﻿using Silk.NET.Core;
+﻿using SharpEngine.Core.Enums;
+using Silk.NET.Core;
 using Silk.NET.Core.Contexts;
 using Silk.NET.Input;
 using Silk.NET.Maths;
@@ -13,7 +14,7 @@ namespace SharpEngine.Core;
 /// <summary>
 ///     Represents a class abstraction for the <see cref="IWindow"/> interface.
 /// </summary>
-public abstract class SilkWindow : IDisposable
+public abstract class SilkWindow : IWindow
 {
     /// <inheritdoc />
     public virtual IWindowHost? Parent { get; }
@@ -24,8 +25,8 @@ public abstract class SilkWindow : IDisposable
     /// <inheritdoc />
     public bool IsClosing { get; set; }
 
-    public IInputContext Input { get; protected set; }
-
+    /// <summary>Gets or sets the input context for the window.</summary>
+    public IInputContext? Input { get; protected set; }
 
     /// <inheritdoc />
     public virtual Rectangle<int> BorderSize { get; }
@@ -39,12 +40,12 @@ public abstract class SilkWindow : IDisposable
     /// <inheritdoc />
     public Vector2D<int> Size { get; set; }
 
-    // /// <inheritdoc />
-    // public string Title
-    // {
-    //     get => CurrentWindow.Title;
-    //     set => CurrentWindow.Title = value;
-    // }
+    /// <inheritdoc />
+    public string Title
+    {
+        get => CurrentWindow.Title;
+        set => CurrentWindow.Title = value;
+    }
 
     /// <inheritdoc />
     public WindowState WindowState { get; set; }
@@ -59,22 +60,22 @@ public abstract class SilkWindow : IDisposable
     public bool TopMost { get; set; }
 
     /// <inheritdoc />
-    public IGLContext? SharedContext { get; }
+    public IGLContext? SharedContext => CurrentWindow.SharedContext;
 
     /// <inheritdoc />
-    public string? WindowClass { get; }
+    public string? WindowClass => CurrentWindow.WindowClass;
 
     /// <inheritdoc />
-    public nint Handle { get; }
+    public nint Handle => CurrentWindow.Handle;
 
     /// <inheritdoc />
-    public double Time { get; }
+    public double Time => CurrentWindow.Time;
 
     /// <inheritdoc />
-    public Vector2D<int> FramebufferSize { get; }
+    public Vector2D<int> FramebufferSize => CurrentWindow.FramebufferSize;
 
     /// <inheritdoc />
-    public bool IsInitialized { get; }
+    public bool IsInitialized => CurrentWindow.IsInitialized;
 
     /// <inheritdoc />
     public bool ShouldSwapAutomatically { get; set; }
@@ -98,28 +99,28 @@ public abstract class SilkWindow : IDisposable
     public bool VSync { get; set; }
 
     /// <inheritdoc />
-    public VideoMode VideoMode { get; }
+    public VideoMode VideoMode => CurrentWindow.VideoMode;
 
     /// <inheritdoc />
-    public int? PreferredDepthBufferBits { get; }
+    public int? PreferredDepthBufferBits => CurrentWindow.PreferredDepthBufferBits;
 
     /// <inheritdoc />
-    public int? PreferredStencilBufferBits { get; }
+    public int? PreferredStencilBufferBits => CurrentWindow.PreferredStencilBufferBits;
 
     /// <inheritdoc />
-    public Vector4D<int>? PreferredBitDepth { get; }
+    public Vector4D<int>? PreferredBitDepth => CurrentWindow.PreferredBitDepth;
 
     /// <inheritdoc />
-    public int? Samples { get; }
+    public int? Samples => CurrentWindow.Samples;
 
     /// <inheritdoc />
-    public IGLContext? GLContext { get; }
+    public IGLContext? GLContext => CurrentWindow.GLContext;
 
     /// <inheritdoc />
-    public IVkSurface? VkSurface { get; }
+    public IVkSurface? VkSurface => CurrentWindow.VkSurface;
 
     /// <inheritdoc />
-    public INativeWindow? Native { get; }
+    public INativeWindow? Native => CurrentWindow.Native;
 
     /// <inheritdoc />
 
@@ -152,27 +153,30 @@ public abstract class SilkWindow : IDisposable
     /// <inheritdoc />
     public event Action<double>? Render;
 
-    /// <inheritdoc />
-    public virtual void Close() { }
+    /// <summary>An event executed when the window has loaded.</summary>
+    public event Action? OnLoaded;
 
     /// <inheritdoc />
-    public virtual void ContinueEvents() { }
-
-    // private IWindow? _currentWindow;
-    // 
-    // /// <summary>Gets or sets the current window.</summary>
-    // public IWindow CurrentWindow
-    // {
-    //     get => _currentWindow!;
-    //     set => _currentWindow = value;
-    // }
+    public virtual void Close() => CurrentWindow.Close();
 
     /// <inheritdoc />
-    // 7public IWindow CreateWindow(WindowOptions opts)
-    // 7{
-    // 7    CurrentWindow = Silk.NET.Windowing.Window.Create(opts);
-    // 7    return CurrentWindow;
-    // 7}
+    public virtual void ContinueEvents() => CurrentWindow.ContinueEvents();
+
+    private IWindow? _currentWindow;
+    
+    /// <summary>Gets or sets the current window.</summary>
+    public IWindow CurrentWindow
+    {
+        get => _currentWindow!;
+        set => _currentWindow = value;
+    }
+
+    /// <inheritdoc />
+    public IWindow CreateWindow(WindowOptions opts)
+    {
+        CurrentWindow = Silk.NET.Windowing.Window.Create(opts);
+        return CurrentWindow;
+    }
 
     /// <inheritdoc />
     protected virtual void Dispose(bool disposing) { }
@@ -185,19 +189,19 @@ public abstract class SilkWindow : IDisposable
     }
 
     /// <inheritdoc />
-    public virtual void DoEvents() { }
+    public virtual void DoEvents() => CurrentWindow.DoEvents();
 
     /// <inheritdoc />
-    public virtual void DoRender() { }
+    public virtual void DoRender() => CurrentWindow.DoRender();
 
     /// <inheritdoc />
-    public virtual void DoUpdate() { }
+    public virtual void DoUpdate() => CurrentWindow.DoUpdate();
 
     /// <inheritdoc />
-    public virtual void Focus() { }
+    public virtual void Focus() => CurrentWindow.Focus();
 
     /// <inheritdoc />
-    public virtual void Initialize() { }
+    public virtual void Initialize() => CurrentWindow.Initialize();
 
     /// <inheritdoc />
     public virtual object Invoke(Delegate d, params object[] args) => new();
@@ -212,13 +216,18 @@ public abstract class SilkWindow : IDisposable
     public virtual Vector2D<int> PointToScreen(Vector2D<int> point) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public virtual void Reset() { }
+    public virtual void Reset() => CurrentWindow.Reset();
+
+    /// <summary>
+    ///     Starts the window.
+    /// </summary>
+    public void Run() => CurrentWindow.Run();
 
     /// <inheritdoc />
-    public virtual void Run(Action onFrame) { }
+    public virtual void Run(Action onFrame) => onFrame();
 
     /// <inheritdoc />
-    public virtual void SetWindowIcon(ReadOnlySpan<RawImage> icons) { }
+    public virtual void SetWindowIcon(ReadOnlySpan<RawImage> icons) => CurrentWindow.SetWindowIcon(icons);
 
     /// <inheritdoc cref="IMouse.Click"/>
     public virtual void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) { }
@@ -228,17 +237,26 @@ public abstract class SilkWindow : IDisposable
 
     /// <summary>Loads the resources needed to display any objects within the scene / editor.</summary>
     /// <remarks>Called when the window is initialized.</remarks>
-    public abstract void OnLoad();
+    public virtual void OnLoad()
+    {
+        OnLoaded?.Invoke();
+    }
 
     /// <summary>
-    ///     Handles operations needed to be executed after the renderes are finished.
+    ///     Handles operations needed to be executed after the renderers are finished.
     /// </summary>
     /// <param name="deltaTime">Time since the last frame.</param>
     protected virtual void AfterRender(double deltaTime) { }
 
     /// <summary>
-    ///     Handles operations needed to be executed before the renderes are executed.
+    ///     Handles operations needed to be executed before the renderers are executed.
     /// </summary>
     /// <param name="deltaTime">Time since the last frame.</param>
     protected virtual void PreRender(double deltaTime) { }
+
+    // TODO: Scene unsaved changes warning.
+    /// <summary>
+    ///     Handles closing the application.
+    /// </summary>
+    public virtual void OnClosing() { }
 }

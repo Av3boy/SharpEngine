@@ -4,7 +4,7 @@ using Silk.NET.Windowing;
 namespace SharpEngine.Core.Entities.Views.Settings;
 
 /// <summary>
-///     Contains definitions for settings to control view behaviour.
+///     Contains definitions for settings to control view behavior.
 /// </summary>
 public interface IViewSettings : ISettings
 {
