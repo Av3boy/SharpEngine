@@ -11,7 +11,6 @@ namespace SharpEngine.Editor.Windows
     /// </summary>
     public class ContextMenuWindow : ImGuiWindowBase
     {
-        private readonly Scene _scene;
         private bool _showContextMenu;
         private bool _updateContextMenuLocation;
 
@@ -20,16 +19,6 @@ namespace SharpEngine.Editor.Windows
 
         /// <inheritdoc />
         public override ImGuiWindowFlags ImGuiWindowFlags => ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove;
-
-        /// <summary>
-        ///     Initializes a new context of the .
-        /// </summary>
-        /// <param name="scene">Represents the current scene where the context menu will be displayed.</param>
-        /// <param name="_">Discarded parameter. Required for getting the windows.</param>
-        public ContextMenuWindow(Scene scene, Project _)
-        {
-            _scene = scene;
-        }
 
         /// <summary>
         ///     Shows the context menu.
@@ -45,7 +34,10 @@ namespace SharpEngine.Editor.Windows
         {
             if (!_showContextMenu)
                 return;
-            
+
+            if (Scene is null)
+                throw new InvalidOperationException("Scene is not set.");
+
             if (_updateContextMenuLocation)
             {
                 ImGui.SetNextWindowPos(ImGui.GetMousePos());
@@ -57,10 +49,10 @@ namespace SharpEngine.Editor.Windows
             if (ImGui.Button("Create cube"))
             {
                 var cube = PrimitiveFactory.Create(PrimitiveType.Cube, new Vector3(0, 0, 0));
-                cube.Name = "Cube" + _scene.Root.Children.Count;
+                cube.Name = "Cube" + Scene.Root.Children.Count;
 
-                _scene.ActiveElement = cube;
-                _scene.Root.AddChild(cube);
+                Scene.ActiveElement = cube;
+                Scene.Root.AddChild(cube);
             }
 
             ImGui.End();

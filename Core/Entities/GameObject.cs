@@ -21,8 +21,8 @@ public class GameObject : SceneNode
     /// </summary>
     public GameObject()
     {
-        var shader = ShaderService.Instance.LoadShader("", "", "lighting");
-        var diffuse = TextureService.Instance.LoadTexture("");
+        var shader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/lighting.frag", "lighting");
+        var diffuse = TextureService.Instance.LoadTexture("Textures/DefaultTextures/debug.JPG");
         Material = new(shader, diffuse);
         
         BoundingBox = BoundingBox.CalculateBoundingBox(Transform);

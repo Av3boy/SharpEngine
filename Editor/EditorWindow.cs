@@ -9,8 +9,9 @@ using SharpEngine.Core.Scenes;
 
 using System.Numerics;
 using System.Reflection;
+using SharpEngine.Editor.Windows;
 
-namespace SharpEngine.Editor.Windows;
+namespace SharpEngine.Editor;
 
 /// <summary>
 ///     Represents an editor window.
@@ -36,7 +37,7 @@ public class EditorWindow : Window
         base.OnLoad();
 
         // Test only: remove later.
-        var cube = PrimitiveFactory.Create(PrimitiveType.Cube, new Vector3(1, 1, 1));
+        var cube = PrimitiveFactory.Create(PrimitiveType.Cube, new Vector3(3, 1, 1));
         cube.Name = "test";
 
         Scene.Root.Children.Add(cube);
@@ -49,20 +50,22 @@ public class EditorWindow : Window
 
         // Initialize all ImGuiWindowBase implementations
         for (int i = 0; i < windowTypes.Length; i++)
-        {
             try
             {
                 var type = windowTypes[i];
-                var window = Activator.CreateInstance(type, Scene, _project) ?? 
+                var window = Activator.CreateInstance(type) ?? 
                     throw new InvalidOperationException($"Error initializing window: {type}");
 
-                _windows.Add((ImGuiWindowBase)window);
+                var windowBase = (ImGuiWindowBase)window;
+                windowBase.SetScene(Scene);
+                windowBase.SetProject(_project);
+
+                _windows.Add(windowBase);
             }
             catch (Exception e)
             {
                 Debug.LogInformation(e.Message, e);
             }
-        }
 
         _contextMenuWindow = (ContextMenuWindow?)_windows.FirstOrDefault(w => w.GetType() == typeof(ContextMenuWindow));
         if (_contextMenuWindow is null)
@@ -113,8 +116,6 @@ public class EditorWindow : Window
         base.OnMouseClick(mouse, button, vector);
 
         if (button == MouseButton.Right)
-        {
             _contextMenuWindow?.ShowContextMenu();
-        }
     }
 }

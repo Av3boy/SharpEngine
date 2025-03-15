@@ -43,6 +43,9 @@
     <None Update="Shaders\shader.vert" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Shaders\uiShader.frag" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Shaders\uiShader.vert" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Textures\DefaultTextures\debug.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

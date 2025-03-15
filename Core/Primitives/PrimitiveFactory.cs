@@ -17,7 +17,7 @@ public static class PrimitiveFactory
     /// <param name="primitiveType">The type of primitive to create.</param>
     /// <param name="position">Where the game object should be placed.</param>
     public static GameObject Create(PrimitiveType primitiveType, Vector3 position)
-        => Create(primitiveType, position, "DefaultTextures/debug.JPG");
+        => Create(primitiveType, position, "Textures/DefaultTextures/debug.JPG");
 
     /// <inheritdoc cref="Create(PrimitiveType, Vector3)"/>
     /// <param name="primitiveType">The type of primitive to be created.</param>
@@ -29,7 +29,7 @@ public static class PrimitiveFactory
     /// <returns>A new game object.</returns>
     /// <exception cref="InvalidOperationException">Thrown when the specified primitive type does not exist.</exception>
     public static GameObject Create(PrimitiveType primitiveType, Vector3 position, string diffuseMapFile, string? specularMapFile = null, string? vertShaderFile = null, string? fragShaderFile = null)
-        => new(diffuseMapFile, specularMapFile ?? "DefaultTextures/debug.JPG", vertShaderFile ?? "Shaders/shader.vert", fragShaderFile ?? "Shaders/lighting.frag")
+        => new(diffuseMapFile, specularMapFile ?? "Textures/DefaultTextures/debug.JPG", vertShaderFile ?? "Shaders/shader.vert", fragShaderFile ?? "Shaders/lighting.frag")
         {
             Transform = new Transform { Position = position },
             Mesh = primitiveType switch
