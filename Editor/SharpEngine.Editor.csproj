@@ -20,6 +20,7 @@
 
 	<ItemGroup>
 			<ProjectReference Include="..\Core\SharpEngine.Core.csproj" />
+			<ProjectReference Include="..\SharpEngine.Shared\SharpEngine.Shared.csproj" />
 	</ItemGroup>
 
   <ItemGroup>

@@ -86,4 +86,8 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SharpEngine.Shared\SharpEngine.Shared.csproj" />
+    </ItemGroup>
+
 </Project>

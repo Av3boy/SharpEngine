@@ -80,8 +80,6 @@ public class Window : SilkWindow
     private void Initialize(WindowOptions options)
     {
         _window = Silk.NET.Windowing.Window.Create(options);
-        // _game.Camera = new CameraView(Vector3.UnitZ * 3, new DefaultViewSettings());
-
         _window.Update += OnUpdateFrame;
         _window.Render += RenderFrame;
         _window.Resize += OnResize;

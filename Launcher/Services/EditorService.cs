@@ -1,4 +1,5 @@
 ﻿using Launcher.UI;
+using SharpEngine.Shared;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -94,11 +95,11 @@ namespace Launcher.Services
                 $"-c \"{createSolution}; {createProject}; {addProjectToSolution}; {installNugetPackage}\"";
 
             // Setup process
-            Process process = GetProcess(arguments);
+            Process process = ProcessExtensions.GetProcess(arguments);
             process.Start();
             process.WaitForExit();
 
-            // Read and display output (optional)
+            // Read and display output
             string output = process.StandardOutput.ReadToEnd();
             string error = process.StandardError.ReadToEnd();
 
@@ -113,21 +114,6 @@ namespace Launcher.Services
             // 
             // File.WriteAllText(programFilePath, programContent);
         }
-
-        private static Process GetProcess(string arguments)
-            => new()
-            {
-
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "cmd.exe" : "/bin/sh",
-                    Arguments = arguments,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
 
         /// <inheritdoc />
         public void OpenInEditor(Project project)
@@ -153,7 +139,7 @@ namespace Launcher.Services
                 string projectFile = project.Path.EndsWith(SHARP_ENGINE_PROJECT_EXTENSION) ?
                     project.Path : $"{project.Path}/{project.Name}.{SHARP_ENGINE_PROJECT_EXTENSION}";
 
-                var process = GetProcess($"{editorPath}/{editorExecutable} {projectFile}");
+                var process = ProcessExtensions.GetProcess($"{editorPath}/{editorExecutable} {projectFile}");
                 process.Start();
                 process.WaitForExit();
             }

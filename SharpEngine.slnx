@@ -24,4 +24,7 @@
     <BuildType Solution="LauncherNonWindows|*" Project="Debug" />
     <Deploy />
   </Project>
+  <Project Path="SharpEngine.Shared/SharpEngine.Shared.csproj" Id="f0beecf6-ba81-40e2-aa60-fc5b1539fc65">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
 </Solution>
