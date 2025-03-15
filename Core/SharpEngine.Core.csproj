@@ -7,7 +7,6 @@
       Required by some low level OpenGL functions. 
       We should see if there is a better way to approach where ever these unsafe contexts are being used.
     -->
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <GeneratePackageOnBuild>$(GenerateNuGetPackages)</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/Av3boy/SharpEngine</PackageProjectUrl>

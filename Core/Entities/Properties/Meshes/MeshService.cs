@@ -30,14 +30,7 @@ public class MeshService
 
         var vertexBufferObject = Window.GL.GenBuffer();
         Window.GL.BindBuffer(GLEnum.ArrayBuffer, vertexBufferObject);
-
-        unsafe
-        {
-            fixed (float* meshDataPtr = meshData)
-            {
-                Window.GL.BufferData(GLEnum.ArrayBuffer, (uint)meshData.Length * sizeof(float), meshDataPtr, GLEnum.StaticDraw);
-            }
-        }
+        Window.GL.BufferData<float>(GLEnum.ArrayBuffer, (uint)meshData.Length * sizeof(float), meshData, GLEnum.StaticDraw);
 
         Meshes.Add(identifier, mesh);
         return mesh;

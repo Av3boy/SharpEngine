@@ -63,21 +63,15 @@ public class UIElement : SceneNode
         InitializeBuffers();
     }
 
-    private unsafe void InitializeBuffers()
+    private void InitializeBuffers()
     {
-        fixed (float* vertexDataPtr = _vertices)
-        {
-            var vertexBufferObject = Window.GL.GenBuffer();
-            Window.GL.BindBuffer(GLEnum.ArrayBuffer, vertexBufferObject);
-            Window.GL.BufferData(GLEnum.ArrayBuffer, (uint)_vertices.Length * sizeof(float), vertexDataPtr, GLEnum.StaticDraw);
-        }
+        var vertexBufferObject = Window.GL.GenBuffer();
+        Window.GL.BindBuffer(GLEnum.ArrayBuffer, vertexBufferObject);
+        Window.GL.BufferData<float>(GLEnum.ArrayBuffer, (uint)_vertices.Length * sizeof(float), _vertices, GLEnum.StaticDraw);
 
-        fixed (uint* indicieDataPtr = _indices)
-        {
-            var elementBufferObject = Window.GL.GenBuffer();
-            Window.GL.BindBuffer(GLEnum.ElementArrayBuffer, elementBufferObject);
-            Window.GL.BufferData(GLEnum.ElementArrayBuffer, (uint)_indices.Length * sizeof(uint), indicieDataPtr, GLEnum.StaticDraw);
-        }
+        var elementBufferObject = Window.GL.GenBuffer();
+        Window.GL.BindBuffer(GLEnum.ElementArrayBuffer, elementBufferObject);
+        Window.GL.BufferData<uint>(GLEnum.ElementArrayBuffer, (uint)_indices.Length * sizeof(uint), _indices, GLEnum.StaticDraw);
     }
 
     /// <summary>
