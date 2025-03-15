@@ -20,9 +20,7 @@ public class UIElement : SceneNode
     public UIElement(string name)
     {
         Name = name;
-
-        // TODO: This causes all the blocks in the scene to render as just a single triangle
-        // Mesh = MeshService.Instance.LoadMesh("plane", Primitives.Plane.Mesh);
+        Mesh = MeshService.Instance.LoadMesh("plane", Primitives.Plane.Mesh);
     }
 
     private readonly UIShader _uIShader = new();
@@ -35,7 +33,7 @@ public class UIElement : SceneNode
 
     // TODO: Use actual mesh
     /// <summary>Gets or sets the mesh of the UI element.</summary>
-    public Mesh Mesh { get; set; }
+    public Mesh Mesh { get; set; } = new();
 
     private readonly float[] _vertices =
     [

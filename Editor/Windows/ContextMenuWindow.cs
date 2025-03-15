@@ -6,9 +6,12 @@ using System.Numerics;
 
 namespace SharpEngine.Editor.Windows
 {
+    /// <summary>
+    ///     Represents the context menu window.
+    /// </summary>
     public class ContextMenuWindow : ImGuiWindowBase
     {
-        private Scene _scene;
+        private readonly Scene _scene;
         private bool _showContextMenu;
         private bool _updateContextMenuLocation;
 
@@ -22,7 +25,8 @@ namespace SharpEngine.Editor.Windows
         ///     Initializes a new context of the .
         /// </summary>
         /// <param name="scene">Represents the current scene where the context menu will be displayed.</param>
-        public ContextMenuWindow(Scene scene, Project project)
+        /// <param name="_">Discarded parameter. Required for getting the windows.</param>
+        public ContextMenuWindow(Scene scene, Project _)
         {
             _scene = scene;
         }

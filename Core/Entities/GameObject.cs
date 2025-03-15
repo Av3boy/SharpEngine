@@ -21,7 +21,11 @@ public class GameObject : SceneNode
     /// </summary>
     public GameObject()
     {
-        //BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
+        var shader = ShaderService.Instance.LoadShader("", "", "lighting");
+        var diffuse = TextureService.Instance.LoadTexture("");
+        Material = new(shader, diffuse);
+        
+        BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
     }
 
     /// <summary>
@@ -33,11 +37,14 @@ public class GameObject : SceneNode
     /// <param name="fragShaderFile">The file path of the fragment shader.</param>
     public GameObject(string diffuseMapFile, string specularMapFile, string vertShaderFile, string fragShaderFile)
     {
-        Material.DiffuseMap = TextureService.Instance.LoadTexture(diffuseMapFile);
-
-        // TODO: Make specular map optional
-        Material.SpecularMap = TextureService.Instance.LoadTexture(specularMapFile);
-        Material.Shader = ShaderService.Instance.LoadShader(vertShaderFile, fragShaderFile, "lighting");
+        var diffuse = TextureService.Instance.LoadTexture(diffuseMapFile);
+        var specularMap = TextureService.Instance.LoadTexture(specularMapFile);
+        var shader = ShaderService.Instance.LoadShader(vertShaderFile, fragShaderFile, "lighting");
+        
+        Material = new Material(shader, diffuse)
+        {
+            SpecularMap = specularMap
+        };
 
         BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
     }
@@ -51,7 +58,7 @@ public class GameObject : SceneNode
     ///     Gets or sets the material of the game object.
     /// </summary>
     [Inspector(DisplayInInspector = false)]
-    public Material Material { get; set; } = new();
+    public Material Material { get; set; }
 
     private Transform _transform = new();
 
@@ -78,15 +85,17 @@ public class GameObject : SceneNode
     public override Task Render()
     {
         Material.DiffuseMap.Use(TextureUnit.Texture0);
-        Material.SpecularMap.Use(TextureUnit.Texture1);
-
         Material.Shader.SetInt("material.diffuse", Material.diffuseUnit);
-        Material.Shader.SetInt("material.specular", Material.specularUnit);
-        Material.Shader.SetVector3("material.specular", Material.Specular);
-        Material.Shader.SetFloat("material.shininess", Material.Shininess);
+
+        if (Material.SpecularMap is not null)
+        {
+            Material.SpecularMap.Use(TextureUnit.Texture1);
+            Material.Shader.SetInt("material.specular", Material.specularUnit);
+            Material.Shader.SetVector3("material.specular", Material.Specular);
+            Material.Shader.SetFloat("material.shininess", Material.Shininess);
+        }
 
         Material.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
-
         Window.GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
 
         return Task.CompletedTask;

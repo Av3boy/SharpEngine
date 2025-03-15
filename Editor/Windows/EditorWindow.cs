@@ -1,10 +1,12 @@
 ﻿using ImGuiNET;
 using Launcher.UI;
+using Silk.NET.Input;
+
 using SharpEngine.Core;
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Primitives;
 using SharpEngine.Core.Scenes;
-using Silk.NET.Input;
+
 using System.Numerics;
 using System.Reflection;
 
@@ -17,6 +19,9 @@ public class EditorWindow : Window
 {
     private Project _project = new Project() { Path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\Examples\Minimal"), Name = "Minimal" };
     private readonly List<ImGuiWindowBase> _windows = [];
+
+    private ContextMenuWindow? _contextMenuWindow;
+    private ActionsMenuWindow? _actionsMenuWindow;
 
     /// <summary>
     ///     Initializes an editor window with a specified scene and view settings.
@@ -58,6 +63,14 @@ public class EditorWindow : Window
                 Debug.LogInformation(e.Message, e);
             }
         }
+
+        _contextMenuWindow = (ContextMenuWindow?)_windows.FirstOrDefault(w => w.GetType() == typeof(ContextMenuWindow));
+        if (_contextMenuWindow is null)
+            Debug.LogInformation("ContextMenuWindow not found.");
+
+        _actionsMenuWindow = (ActionsMenuWindow?)_windows.FirstOrDefault(w => w.GetType() == typeof(ActionsMenuWindow));
+        if (_actionsMenuWindow is null)
+            Debug.LogInformation("ActionsMenuWindow not found.");
     }
 
     /// <inheritdoc />
@@ -101,8 +114,7 @@ public class EditorWindow : Window
 
         if (button == MouseButton.Right)
         {
-            var contextMenuWindow = _windows.FirstOrDefault(w => w.GetType() == typeof(ContextMenuWindow));
-            ((ContextMenuWindow?)contextMenuWindow)?.ShowContextMenu();
+            _contextMenuWindow?.ShowContextMenu();
         }
     }
 }

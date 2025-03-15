@@ -18,8 +18,8 @@ namespace SharpEngine.Core.Renderers;
 /// </summary>
 public class Renderer : RendererBase
 {
-    private LampShader _lampShader;
-    private LightingShader _lightingShader;
+    private readonly LampShader _lampShader;
+    private readonly LightingShader _lightingShader;
 
     private readonly CameraView _camera;
     private readonly Scene _scene;
@@ -34,21 +34,13 @@ public class Renderer : RendererBase
     ///     Initializes a new instance of <see cref="Renderer"/>.
     /// </summary>
     /// <param name="camera">The game the renderer is being used for.</param>
+    /// <param name="settings">The settings for the renderer.</param>
     /// <param name="scene">The game scene to be rendered.</param>
     public Renderer(CameraView camera, ISettings settings, Scene scene) : base(settings)
     {
         _camera = camera;
         _scene = scene;
-    }
 
-    /// <inheritdoc />
-    public override void Initialize()
-    {
-        InitializeShaders();
-    }
-
-    private void InitializeShaders()
-    {
         _lightingShader = new LightingShader();
         _lampShader = new LampShader();
     }
@@ -60,7 +52,7 @@ public class Renderer : RendererBase
         {
             Window.GL.Enable(EnableCap.DepthTest);
 
-            _camera.SetShaderUniforms(_lightingShader.Shader);
+            _camera.SetShaderUniforms(_lightingShader.Shader!);
             Window.GL.BindVertexArray(_lightingShader.Vao);
 
             var gameObjectRenderTasks = _scene.IterateAsync(_scene.Root.Children, RenderGameObject);

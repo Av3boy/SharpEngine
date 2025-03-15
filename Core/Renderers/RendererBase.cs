@@ -29,7 +29,7 @@ public abstract class RendererBase : IDisposable
     /// <summary>
     ///     Initializes the renderer.
     /// </summary>
-    public abstract void Initialize();
+    public virtual void Initialize() { }
 
     /// <summary>
     ///    Renders the scene.

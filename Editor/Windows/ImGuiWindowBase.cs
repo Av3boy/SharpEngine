@@ -1,4 +1,6 @@
 using ImGuiNET;
+using Launcher.UI;
+using SharpEngine.Core.Scenes;
 using Silk.NET.Windowing;
 
 namespace SharpEngine.Editor.Windows
@@ -8,12 +10,31 @@ namespace SharpEngine.Editor.Windows
     /// </summary>
     public abstract class ImGuiWindowBase
     {
+        /// <summary>Gets or sets the currently active project.</summary>
+        public Project? Project { get; set; }
+
+        /// <summary>Gets or sets the currently active scene.</summary>
+        public Scene? Scene { get; private set; }
+
         private readonly Dictionary<string, bool> _previousDockingStates = [];
 
         /// <summary>Gets the name of the window.</summary>
         public abstract string Name { get; }
 
+        /// <inheritdoc />
         public virtual ImGuiWindowFlags ImGuiWindowFlags => ImGuiWindowFlags.None;
+
+        /// <summary>
+        ///     Sets the current scene.
+        /// </summary>
+        /// <param name="scene">The new scene.</param>
+        public void SetScene(Scene scene) => Scene = scene;
+
+        /// <summary>
+        ///     Sets the current project.
+        /// </summary>
+        /// <param name="project">The new project.</param>
+        public void SetProject(Project project) => Project = project;
 
         /// <summary>
         ///     Renders a new ImGui window to the main window.

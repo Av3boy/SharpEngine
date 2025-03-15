@@ -28,7 +28,7 @@ public class Minecraft : Game
     private Input _input;
     private readonly Inventory _inventory;
 
-    private readonly UIElement uiElem;
+    private UIElement uiElem;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Minecraft"/>.
@@ -39,24 +39,31 @@ public class Minecraft : Game
         CoreSettings = settings;
 
         _inventory = new Inventory();
-        // uiElem = new UIElement("uiElement");
     }
 
     /// <inheritdoc />
     public override void Initialize()
     {
-        base.Initialize();
+        try
+        {
+            base.Initialize();
 
-        _input = new Input(Camera);
-        _inventory.Initialize();
+            _input = new Input(Camera);
+            _inventory.Initialize();
 
-        _lightsNode = _scene.Root.AddChild("lights");
-        _blocksNode = _scene.Root.AddChild("blocks");
+            _lightsNode = _scene.Root.AddChild("lights");
+            _blocksNode = _scene.Root.AddChild("blocks");
 
-        // TODO: Fix UI renderer
-        // _scene.UIElements.Add(uiElem);
+            // TODO: Fix UI renderer
+            uiElem = new UIElement("uiElement");
+            _scene.UIElements.Add(uiElem);
 
-        InitializeWorld();
+            InitializeWorld();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
     }
 
     private void InitializeWorld()
@@ -129,10 +136,12 @@ public class Minecraft : Game
     /// <inheritdoc />
     public override void Update(double deltaTime, IInputContext input)
     {
-        // uiElem.Transform.Rotation += 0.01f;
-
+        UpdateUI();
         _input.HandleKeyboard(input.Keyboards[0], (float)deltaTime);
     }
+
+    private void UpdateUI()
+        => uiElem.Transform.Rotation += 0.01f;
 
     // TODO: Input system to let users change change key bindings?
     /// <inheritdoc />

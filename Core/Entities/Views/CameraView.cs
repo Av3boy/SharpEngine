@@ -17,6 +17,7 @@ public class CameraView : View
     ///     Initializes a new instance of <see cref="CameraView"/>.
     /// </summary>
     /// <param name="position">The initial position of the camera.</param>
+    /// <param name="settings">The settings for the camera.</param>
     public CameraView(Vector3 position, IViewSettings settings) : base(settings)
     {
         Position = position;
@@ -46,9 +47,6 @@ public class CameraView : View
     // The field of view of the camera (radians)
     private float _fov = Math.PiOver2;
 
-    /// <summary>Gets or sets the aspect ratio of the viewport, used for the projection matrix.</summary>
-    public float AspectRatio { private get; set; }
-
     /// <summary>
     ///     Gets or sets the pitch (rotation around the X axis) of the camera in degrees.
     /// </summary>
@@ -61,7 +59,7 @@ public class CameraView : View
         set
         {
             // We clamp the pitch value between -89 and 89 to prevent the camera from going upside down, and a bunch
-            // of weird "bugs" when you are using euler angles for rotation.
+            // of weird "bugs" when you are using Euler angles for rotation.
             // If you want to read more about this you can try researching a topic called gimbal lock
             var angle = System.Math.Clamp(value, -89f, 89f);
             _pitch = Math.DegreesToRadians(angle);
@@ -108,14 +106,14 @@ public class CameraView : View
     ///     Gets the view matrix of the camera.
     /// </summary>
     /// <returns>The view matrix.</returns>
-    public Matrix4x4 GetViewMatrix()
+    public override Matrix4x4 GetViewMatrix()
         => Matrix4x4.CreateLookAt(Position, Position + _front, _up);
 
     /// <summary>
     ///     Gets the projection matrix of the camera.
     /// </summary>
     /// <returns>The projection matrix.</returns>
-    public Matrix4x4 GetProjectionMatrix()
+    public override Matrix4x4 GetProjectionMatrix()
         => Matrix4x4.CreatePerspectiveFieldOfView(_fov, AspectRatio, 0.01f, 100f);
 
     /// <summary>
@@ -138,18 +136,11 @@ public class CameraView : View
         _up = Vector3.Normalize(Vector3.Cross(_right, _front));
     }
 
-    private bool firstMove;
-    private Vector2 lastPos;
-
-    // TODO: Move to the settings
-    /// <summary>Gets or sets the sensitivity of the camera to mouse movements.</summary>
-    public float Sensitivity { get; set; } = 0.2f;
-
     /// <summary>
     ///     Updates the camera's orientation based on the current mouse position.
     /// </summary>
     /// <param name="mousePosition">The current mouse position.</param>
-    public void UpdateMousePosition(Vector2 mousePosition)
+    public override void UpdateMousePosition(Vector2 mousePosition)
     {
         if (firstMove)
         {
@@ -162,8 +153,8 @@ public class CameraView : View
             var deltaY = mousePosition.Y - lastPos.Y;
             lastPos = new Vector2(mousePosition.X, mousePosition.Y);
 
-            Yaw += deltaX * Sensitivity;
-            Pitch -= deltaY * Sensitivity;
+            Yaw += deltaX * Settings.MouseSensitivity;
+            Pitch -= deltaY * Settings.MouseSensitivity;
         }
     }
 
@@ -229,7 +220,7 @@ public class CameraView : View
     ///     Sets the shader uniforms for the camera.
     /// </summary>
     /// <param name="shader">The shader to set the uniforms on.</param>
-    public void SetShaderUniforms(Shader shader)
+    public override void SetShaderUniforms(Shader shader)
     {
         shader.SetMatrix4("view", GetViewMatrix());
         shader.SetMatrix4("projection", GetProjectionMatrix());

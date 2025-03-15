@@ -35,7 +35,7 @@ namespace Launcher.Services
     public class NotificationService : INotificationService
     {
         /// <inheritdoc />
-        public Dictionary<string, int> Notifications { get; set; } = new();
+        public Dictionary<string, int> Notifications { get; set; } = [];
 
         private event Action? OnNotificationsChanged;
         private readonly Logger _log;

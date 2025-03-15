@@ -10,28 +10,17 @@ namespace SharpEngine.Editor.Windows
     /// </summary>
     public class AssetsWindow : ImGuiWindowBase
     {
-        private Project _project;
-
-        /// <summary>
-        ///     Initializes a new instance <see cref="AssetsWindow" />.
-        /// </summary>
-        /// <param name="scene"></param>
-        /// <param name="project"></param>
-        public AssetsWindow(Scene scene, Project project)
-        {
-            _project = project;
-        }
-
         /// <inheritdoc />
         public override string Name => "Assets";
 
         /// <inheritdoc />
         public override void Render()
         {
-            RenderDirectory(_project.Path);
+            if (!string.IsNullOrWhiteSpace(Project?.Path))
+                RenderDirectory(Project.Path);
         }
 
-        private void RenderDirectory(string path)
+        private static void RenderDirectory(string path)
         {
             string[] directories = Directory.GetDirectories(path);
             string[] files = Directory.GetFiles(path);

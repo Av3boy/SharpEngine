@@ -17,7 +17,7 @@ public class TextureService
     ///     Gets the singleton instance of <see cref="TextureService"/>.
     /// </summary>
     public static TextureService Instance { get; } = new TextureService();
-    private readonly Dictionary<string, Texture> _textureCache = new();
+    private readonly Dictionary<string, Texture> _textureCache = [];
 
     // Private constructor to prevent instantiation
     private TextureService() { }
@@ -29,6 +29,9 @@ public class TextureService
     /// <returns>The loaded texture program.</returns>
     public Texture LoadTexture(string path)
     {
+        if (string.IsNullOrWhiteSpace(path))
+            throw new FileNotFoundException("No texture file provided.");
+
         // Check if the texture is already in the cache
         if (_textureCache.TryGetValue(path, out var cachedTexture))
             return cachedTexture;

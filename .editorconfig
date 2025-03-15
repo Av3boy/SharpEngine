@@ -2,3 +2,7 @@
 
 # IDE0290: Use primary constructor
 csharp_style_prefer_primary_constructors = false
+
+# IDE0130: Namespace does not match folder structure, Justification = "Either one is fine, depending on the sittuation you might want to use block type but file scoped is default."
+dotnet_diagnostic.IDE0130.severity = silent
+csharp_style_namespace_declarations = file_scoped:silent

@@ -85,14 +85,14 @@ namespace Launcher.Services
             string createProject = $"dotnet new console -n {projectName} -o {project.Path} -f {FRAMEWORK}";
             string addProjectToSolution = $"dotnet sln {project.Path}/{projectName}.sln add {project.Path}/{projectName}.csproj";
 
-            // TODO: Add the nuget package after it's been published
-            //string installNugetPackage = $"dotnet add {project.Path}/{projectName}.csproj package {SHARP_ENGINE_CORE_NUGET_PACKAGE}";
-            string installNugetPackage = "echo done";
+            // TODO: Add the NuGet package after it's been published
+            //string installNuGetPackage = $"dotnet add {project.Path}/{projectName}.csproj package {SHARP_ENGINE_CORE_NUGET_PACKAGE}";
+            string installNuGetPackage = "echo done";
 
             // Determine the correct argument string based on platform
             string arguments = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
-                 $"/c {createSolution} && {createProject} && {addProjectToSolution} && {installNugetPackage}" :
-                $"-c \"{createSolution}; {createProject}; {addProjectToSolution}; {installNugetPackage}\"";
+                 $"/c {createSolution} && {createProject} && {addProjectToSolution} && {installNuGetPackage}" :
+                $"-c \"{createSolution}; {createProject}; {addProjectToSolution}; {installNuGetPackage}\"";
 
             // Setup process
             Process process = ProcessExtensions.GetProcess(arguments);
@@ -108,7 +108,7 @@ namespace Launcher.Services
             else
                 _notificationService.Show("Solution and project created successfully!");
 
-            // TODO: Set example programc.cs content with the minimal projects content.
+            // TODO: Set example program.cs content with the minimal projects content.
             // string programFilePath = Path.Combine(project.Path!, "Program.cs");
             // string programContent = ""; // TODO: Replace with program content
             // 
@@ -164,7 +164,7 @@ namespace Launcher.Services
             if (projects is not null)
                 return projects;
 
-            _notificationService.Show($"Unable to load projects.", false, json, projects);
+            _notificationService.Show($"Unable to load projects.", false, json, projects?.ToArray());
             return [];
         }
 

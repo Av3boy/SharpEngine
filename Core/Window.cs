@@ -39,7 +39,7 @@ public class Window : SilkWindow
     public event Action<IMouse>? OnHandleMouse;
 
     /// <summary>The event executed when keyboard events are executed.</summary>
-    public event Action<IKeyboard?, double>? OnHandleKeyboard;
+    public event Action<IKeyboard, double>? OnHandleKeyboard;
 
     /// <summary>The event executed when the window is updated.</summary>
     public event Action<double, IInputContext>? OnUpdate;
@@ -72,7 +72,7 @@ public class Window : SilkWindow
     /// <param name="camera">The camera the window should render from.</param>
     /// <param name="scene">Contains the game scene.</param>
     /// <param name="settings">The settings for the window.</param>
-    public Window(CameraView camera, Scene scene, ISettings settings)
+    public Window(CameraView camera, Scene scene, IViewSettings settings)
     {
         Scene = scene;
         _settings = settings;
@@ -86,7 +86,7 @@ public class Window : SilkWindow
     /// </summary>
     /// <param name="scene">Contains the game scene.</param>
     /// <param name="settings">The settings for the window.</param>
-    public Window(Scene scene, ISettings settings)
+    public Window(Scene scene, IViewSettings settings)
     {
         Scene = scene;
         _settings = settings;
@@ -108,8 +108,15 @@ public class Window : SilkWindow
     /// <inheritdoc />
     public override void Run(Action onFrame)
     {
-        base.Run(onFrame);
-        Run();
+        try
+        {
+            base.Run(onFrame);
+            Run();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogInformation("Error running window: " + ex.Message, ex);
+        }
     }
 
     /// <inheritdoc />
@@ -192,7 +199,7 @@ public class Window : SilkWindow
 
             Task.WaitAll([.. renderTasks]);
 
-            // TODO: This call causes filckering in the new framework. Investigate why.
+            // TODO: This call causes flickering in the new framework. Investigate why.
             // _window.SwapBuffers();
 
             AfterRender(deltaTime);
@@ -238,24 +245,35 @@ public class Window : SilkWindow
             Console.WriteLine($"FPS: {1f / deltaTime}");
 
         // TODO: Handle multiple mice?
-        var mouse = Input.Mice[0];
-        var keyboard = Input.Keyboards[0];
+        var mouse = Input?.Mice[0];
+        if (mouse is not null)
+        {
+            _camera.UpdateMousePosition(mouse.Position);
+            OnHandleMouse?.Invoke(mouse);
+        }
 
-        _camera.UpdateMousePosition(mouse.Position);
+        var keyboard = Input?.Keyboards[0];
+        if (keyboard is not null)
+        {
+            if (keyboard.IsKeyPressed(Key.Escape))
+                CurrentWindow.Close();
 
-        OnHandleMouse?.Invoke(mouse);
+            OnHandleKeyboard?.Invoke(keyboard, deltaTime);
+        }
 
-        if (keyboard.IsKeyPressed(Key.Escape))
-            CurrentWindow.Close();
-
-        OnHandleKeyboard?.Invoke(keyboard, deltaTime);
-
-        OnUpdate?.Invoke(deltaTime, Input);
+        if (Input is not null)
+            OnUpdate?.Invoke(deltaTime, Input);
     }
 
     // TODO: #21 Input system
     private void AssignInputEvents()
     {
+        if (Input is null)
+        {
+            Debug.LogInformation("Input is null. No input events will be assigned.");
+            return;
+        }
+
         foreach (var keyboard in Input.Keyboards)
           keyboard.KeyDown += KeyDown;
 
@@ -296,7 +314,7 @@ public class Window : SilkWindow
     }
 
     /// <inheritdoc />
-    protected void OnMouseDown(IMouse mouse, MouseButton button)
+    protected override void OnMouseDown(IMouse mouse, MouseButton button)
         => OnButtonMouseDown?.Invoke(mouse, button);
 
     /// <summary>
