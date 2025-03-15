@@ -6,6 +6,7 @@ using Silk.NET.Windowing;
 
 using System;
 using System.Numerics;
+using System.Transactions;
 using MouseButton = Silk.NET.Input.MouseButton;
 
 namespace SharpEngine.Core;
@@ -13,7 +14,7 @@ namespace SharpEngine.Core;
 /// <summary>
 ///     Represents a class abstraction for the <see cref="IWindow"/> interface.
 /// </summary>
-public abstract class SilkWindow : IDisposable
+public abstract class SilkWindow : IWindow
 {
     /// <inheritdoc />
     public virtual IWindowHost? Parent { get; }
@@ -39,12 +40,12 @@ public abstract class SilkWindow : IDisposable
     /// <inheritdoc />
     public Vector2D<int> Size { get; set; }
 
-    // /// <inheritdoc />
-    // public string Title
-    // {
-    //     get => CurrentWindow.Title;
-    //     set => CurrentWindow.Title = value;
-    // }
+    /// <inheritdoc />
+    public string Title
+    {
+        get => CurrentWindow.Title;
+        set => CurrentWindow.Title = value;
+    }
 
     /// <inheritdoc />
     public WindowState WindowState { get; set; }
@@ -158,21 +159,21 @@ public abstract class SilkWindow : IDisposable
     /// <inheritdoc />
     public virtual void ContinueEvents() { }
 
-    // private IWindow? _currentWindow;
-    // 
-    // /// <summary>Gets or sets the current window.</summary>
-    // public IWindow CurrentWindow
-    // {
-    //     get => _currentWindow!;
-    //     set => _currentWindow = value;
-    // }
+    private IWindow? _currentWindow;
+    
+    /// <summary>Gets or sets the current window.</summary>
+    public IWindow CurrentWindow
+    {
+        get => _currentWindow!;
+        set => _currentWindow = value;
+    }
 
     /// <inheritdoc />
-    // 7public IWindow CreateWindow(WindowOptions opts)
-    // 7{
-    // 7    CurrentWindow = Silk.NET.Windowing.Window.Create(opts);
-    // 7    return CurrentWindow;
-    // 7}
+    public IWindow CreateWindow(WindowOptions opts)
+    {
+        CurrentWindow = Silk.NET.Windowing.Window.Create(opts);
+        return CurrentWindow;
+    }
 
     /// <inheritdoc />
     protected virtual void Dispose(bool disposing) { }
@@ -214,8 +215,10 @@ public abstract class SilkWindow : IDisposable
     /// <inheritdoc />
     public virtual void Reset() { }
 
+    public void Run() => CurrentWindow.Run();
+
     /// <inheritdoc />
-    public virtual void Run(Action onFrame) { }
+    public virtual void Run(Action onFrame) => onFrame();
 
     /// <inheritdoc />
     public virtual void SetWindowIcon(ReadOnlySpan<RawImage> icons) { }
@@ -228,17 +231,25 @@ public abstract class SilkWindow : IDisposable
 
     /// <summary>Loads the resources needed to display any objects within the scene / editor.</summary>
     /// <remarks>Called when the window is initialized.</remarks>
-    public abstract void OnLoad();
+    public virtual void OnLoad()
+    {
+        OnLoaded?.Invoke();
+    }
+
+    public event Action? OnLoaded;
 
     /// <summary>
-    ///     Handles operations needed to be executed after the renderes are finished.
+    ///     Handles operations needed to be executed after the renderers are finished.
     /// </summary>
     /// <param name="deltaTime">Time since the last frame.</param>
     protected virtual void AfterRender(double deltaTime) { }
 
     /// <summary>
-    ///     Handles operations needed to be executed before the renderes are executed.
+    ///     Handles operations needed to be executed before the renderers are executed.
     /// </summary>
     /// <param name="deltaTime">Time since the last frame.</param>
     protected virtual void PreRender(double deltaTime) { }
+
+    // TODO: Scene unsaved changes warning.
+    public virtual void OnClosing() { }
 }

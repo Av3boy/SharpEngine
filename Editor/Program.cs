@@ -20,5 +20,8 @@ public static class Program
         var scene = args.Length > 0 ? Scene.LoadScene(args[0]) : new Scene();
 
         using var window = new EditorWindow(scene, new DefaultViewSettings());
+        window.OnLoaded += () => Console.WriteLine("test");
+
+        window.Run();
     }
 }

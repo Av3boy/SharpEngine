@@ -5,8 +5,6 @@ using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using MouseButton = Silk.NET.Input.MouseButton;
 
-using SharpEngine.Core.Entities.Views.Settings;
-using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
@@ -29,7 +27,7 @@ namespace SharpEngine.Core;
 public class Window : SilkWindow
 {
     private readonly Game _game;
-    private static IWindow _window;
+    private static IWindow CurrentWindow;
 
     private IEnumerable<RendererBase> _renderers = [];
 
@@ -79,19 +77,19 @@ public class Window : SilkWindow
 
     private void Initialize(WindowOptions options)
     {
-        _window = Silk.NET.Windowing.Window.Create(options);
-        _window.Update += OnUpdateFrame;
-        _window.Render += RenderFrame;
-        _window.Resize += OnResize;
-        _window.Load += OnLoad;
-        _window.Closing += OnClosing;
-
-        _window.Run();
+        CurrentWindow = CreateWindow(options);
+        CurrentWindow.Update += OnUpdateFrame;
+        CurrentWindow.Render += RenderFrame;
+        CurrentWindow.Resize += OnResize;
+        CurrentWindow.Load += OnLoad;
+        CurrentWindow.Closing += OnClosing;
     }
 
-    private void OnClosing()
+    /// <inheritdoc />
+    public override void Run(Action onFrame)
     {
-        // TODO: Scene unsaved changes warning.
+        base.Run(onFrame);
+        Run();
     }
 
     /// <inheritdoc />
@@ -99,11 +97,11 @@ public class Window : SilkWindow
     {
         try
         {
-            var context = _window.CreateOpenGL();
+            var context = CurrentWindow.CreateOpenGL();
             SetGL(context);
 
-            Input = _window.CreateInput();
-            _window.MakeCurrent();
+            Input = CurrentWindow.CreateInput();
+            CurrentWindow.MakeCurrent();
 
             AssignInputEvents();
 
@@ -135,7 +133,7 @@ public class Window : SilkWindow
             foreach (var renderer in _renderers)
                 renderer.Initialize();
 
-            _imGuiController = new ImGuiController(GL, _window, Input);
+            _imGuiController = new ImGuiController(GL, CurrentWindow, Input);
 
             _initialized = true;
         }
@@ -143,10 +141,9 @@ public class Window : SilkWindow
         {
             Debug.LogInformation("Error loading window: " + ex.Message, ex);
         }
+
+        base.OnLoad();
     }
-
-    protected virtual void PreRender(double deltaTime) { }
-
 
     /// <summary>
     ///    Renders the current view and all specified renderers.
@@ -234,7 +231,7 @@ public class Window : SilkWindow
         _game.HandleMouse(mouse);
 
         if (keyboard.IsKeyPressed(Key.Escape))
-            _window.Close();
+            CurrentWindow.Close();
 
         _game.HandleKeyboard(keyboard, deltaTime);
 
@@ -262,7 +259,7 @@ public class Window : SilkWindow
     protected void KeyDown(IKeyboard keyboard, Key key, int keyCode)
     {
         if (key == Key.Escape)
-            _window.Close();
+            CurrentWindow.Close();
 
         // _game.HandleKeyboard(keyboard);
     }
