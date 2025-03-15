@@ -1,4 +1,5 @@
 ﻿using SharpEngine.Core.Renderers;
+using Silk.NET.Windowing;
 
 namespace SharpEngine.Core.Interfaces;
 
@@ -19,4 +20,23 @@ public interface ISettings
 
     /// <summary>Gets or sets which renderer should be enabled for the current window.</summary>
     public RenderFlags RendererFlags { get; set; }
+
+    /// <summary>Gets or sets the settings for a window.</summary>
+    WindowOptions WindowOptions { get; set; }
+}
+
+/// <inheritdoc cref="ISettings" />
+public class DefaultSettings : ISettings
+{
+    /// <inheritdoc/>
+    public bool UseWireFrame { get; set; }
+
+    /// <inheritdoc/>
+    public bool PrintFrameRate { get; set; }
+
+    /// <inheritdoc/>
+    public RenderFlags RendererFlags { get; set; } = RenderFlags.All;
+
+    /// <inheritdoc/>
+    public WindowOptions WindowOptions { get; set; }
 }

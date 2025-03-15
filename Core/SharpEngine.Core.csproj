@@ -13,6 +13,10 @@
     <PackageProjectUrl>https://github.com/Av3boy/SharpEngine</PackageProjectUrl>
     <PackageTags>game-engine;</PackageTags>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+
+    <!-- Required, atleast for now since another NuGet package with the SharpEngine.Core name already exists. -->
+    <PackageId>$(AssemblyName).NET</PackageId>
+    <Configurations>Debug;Release;LauncherNonWindows</Configurations>
     
   </PropertyGroup>
 

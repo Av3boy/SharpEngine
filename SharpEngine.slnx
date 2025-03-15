@@ -1,0 +1,27 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="LauncherNonWindows" />
+    <BuildType Name="Release" />
+  </Configurations>
+  <Folder Name="/Examples/">
+    <Project Path="Examples/MinecraftClone/Minecraft.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Debug" />
+    </Project>
+    <Project Path="Examples/Minimal/Minimal.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="Core/SharpEngine.Core.csproj" />
+  <Project Path="Editor/SharpEngine.Editor.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Debug" />
+  </Project>
+  <Project Path="Launcher/Launcher.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Debug" />
+    <Deploy />
+  </Project>
+</Solution>

@@ -13,7 +13,7 @@ namespace SharpEngine.Core;
 /// <summary>
 ///     Represents a class abstraction for the <see cref="IWindow"/> interface.
 /// </summary>
-public abstract class SilkWindow : IWindow
+public abstract class SilkWindow : IDisposable
 {
     /// <inheritdoc />
     public virtual IWindowHost? Parent { get; }
@@ -39,12 +39,12 @@ public abstract class SilkWindow : IWindow
     /// <inheritdoc />
     public Vector2D<int> Size { get; set; }
 
-    /// <inheritdoc />
-    public string Title
-    {
-        get => CurrentWindow.Title;
-        set => CurrentWindow.Title = value;
-    }
+    // /// <inheritdoc />
+    // public string Title
+    // {
+    //     get => CurrentWindow.Title;
+    //     set => CurrentWindow.Title = value;
+    // }
 
     /// <inheritdoc />
     public WindowState WindowState { get; set; }
@@ -158,21 +158,21 @@ public abstract class SilkWindow : IWindow
     /// <inheritdoc />
     public virtual void ContinueEvents() { }
 
-    private IWindow? _currentWindow;
-
-    /// <summary>Gets or sets the current window.</summary>
-    public IWindow CurrentWindow
-    {
-        get => _currentWindow ?? this;
-        set => _currentWindow = value;
-    }
+    // private IWindow? _currentWindow;
+    // 
+    // /// <summary>Gets or sets the current window.</summary>
+    // public IWindow CurrentWindow
+    // {
+    //     get => _currentWindow!;
+    //     set => _currentWindow = value;
+    // }
 
     /// <inheritdoc />
-    public virtual IWindow CreateWindow(WindowOptions opts)
-    {
-        CurrentWindow = Silk.NET.Windowing.Window.Create(opts);
-        return CurrentWindow;
-    }
+    // 7public IWindow CreateWindow(WindowOptions opts)
+    // 7{
+    // 7    CurrentWindow = Silk.NET.Windowing.Window.Create(opts);
+    // 7    return CurrentWindow;
+    // 7}
 
     /// <inheritdoc />
     protected virtual void Dispose(bool disposing) { }

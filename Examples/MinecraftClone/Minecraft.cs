@@ -4,7 +4,6 @@ using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Lights;
-using SharpEngine.Core.Entities.Views;
 
 using Minecraft.Block;
 using Silk.NET.Input;
@@ -14,47 +13,48 @@ using System.Numerics;
 
 namespace Minecraft;
 
-public class Game : IGame
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Justification = Those values are set in the Initialize method.
+
+/// <summary>
+///     Contains the logic for the Minecraft game.
+/// </summary>
+public class Minecraft : Game
 {
-    // TODO: Add documentation to the code
-
-    /// <summary>Gets or sets the player camera.</summary>
-    public CameraView Camera { get; set; }
-
-    /// <inheritdoc />
-    public ISettings CoreSettings { get; }
-
     private readonly Scene _scene;
 
     private SceneNode _lightsNode;
     private SceneNode _blocksNode;
 
     private Input _input;
-    private Inventory _inventory;
+    private readonly Inventory _inventory;
 
-    UIElement uiElem;
+    private readonly UIElement uiElem;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="Game"/>.
+    ///     Initializes a new instance of the <see cref="Minecraft"/>.
     /// </summary>
-    public Game(Scene scene, ISettings settings)
+    public Minecraft(Scene scene, ISettings settings)
     {
         _scene = scene;
         CoreSettings = settings;
+
+        _inventory = new Inventory();
+        // uiElem = new UIElement("uiElement");
     }
 
     /// <inheritdoc />
-    public void Initialize()
+    public override void Initialize()
     {
+        base.Initialize();
+
         _input = new Input(Camera);
-        _inventory = new Inventory();
         _inventory.Initialize();
 
         _lightsNode = _scene.Root.AddChild("lights");
         _blocksNode = _scene.Root.AddChild("blocks");
 
-        uiElem = new UIElement("uiElement");
-        _scene.UIElements.Add(uiElem);
+        // TODO: Fix UI renderer
+        // _scene.UIElements.Add(uiElem);
 
         InitializeWorld();
     }
@@ -93,7 +93,7 @@ public class Game : IGame
     {
         // TODO: Generate chunks when player moves
 
-        // TODO: Generate chunks using 3d perlin noise
+        // TODO: Generate chunks using 3d Perlin noise
 
         const int chunkSize = 16;
         const int numChunks = 3;
@@ -127,16 +127,16 @@ public class Game : IGame
     }
 
     /// <inheritdoc />
-    public void Update(double deltaTime, IInputContext input)
+    public override void Update(double deltaTime, IInputContext input)
     {
-        uiElem.Transform.Rotation += 0.01f;
+        // uiElem.Transform.Rotation += 0.01f;
 
         _input.HandleKeyboard(input.Keyboards[0], (float)deltaTime);
     }
 
     // TODO: Input system to let users change change key bindings?
     /// <inheritdoc />
-    public void HandleKeyboard(IKeyboard input, double deltaTime)
+    public override void HandleKeyboard(IKeyboard input, double deltaTime)
     {
         for (int i = 0; i <= 9; i++)
         {
@@ -164,10 +164,10 @@ public class Game : IGame
     }
 
     /// <inheritdoc />
-    public void HandleMouse(IMouse mouse) { }
+    public override void HandleMouse(IMouse mouse) { }
 
     /// <inheritdoc />
-    public void HandleMouseDown(IMouse mouse, MouseButton button) 
+    public override void HandleMouseDown(IMouse mouse, MouseButton button) 
     {
         if (button == MouseButton.Right)
         {
@@ -187,13 +187,13 @@ public class Game : IGame
 
         if (button == MouseButton.Left)
         {
-            var destoryedBlockType = DestroyBlock();
-            if (destoryedBlockType != BlockType.None)
+            var destroyedBlockType = DestroyBlock();
+            if (destroyedBlockType != BlockType.None)
             {
                 // TODO: The block should be added to the slot so that 0 is the last slot instead of 9.
-                // TODO: The first block destoryed doesn't seem to be added to the inventory.
-                Console.WriteLine($"Block destroyed: {destoryedBlockType}.");
-                _inventory.AddToolbarItem(destoryedBlockType);
+                // TODO: The first block destroyed doesn't seem to be added to the inventory.
+                Console.WriteLine($"Block destroyed: {destroyedBlockType}.");
+                _inventory.AddToolbarItem(destroyedBlockType);
             }
         }
     }
@@ -244,7 +244,7 @@ public class Game : IGame
     }
 
     /// <inheritdoc />
-    public void HandleMouseWheel(MouseWheelScrollDirection direction, ScrollWheel scrollWheel)
+    public override void HandleMouseWheel(MouseWheelScrollDirection direction, ScrollWheel scrollWheel)
     {
         int slotIndex = _inventory.SelectedSlotIndex;
 

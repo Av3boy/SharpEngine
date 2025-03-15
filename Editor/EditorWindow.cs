@@ -21,10 +21,9 @@ public class EditorWindow : Window
     /// <summary>
     ///     Initializes a new instance of <see cref="EditorWindow"/>.
     /// </summary>
-    /// <param name="game"></param>
     /// <param name="scene">The scene to be initialized.</param>
     /// <param name="settings">The settings for the editor window.</param>
-    public EditorWindow(IGame game, Scene scene, IViewSettings settings) : base(game, scene, settings.WindowOptions)
+    public EditorWindow(Scene scene, IViewSettings settings) : base(scene, settings.WindowOptions)
     {
     }
 

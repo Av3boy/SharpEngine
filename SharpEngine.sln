@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher", "Launcher\Launcher.csproj", "{3751B661-BE0E-9CD7-CA51-361A34450372}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minimal", "Examples\Minimal\Minimal.csproj", "{1BEC06D8-094D-8BC2-288E-E2C4C13F3D2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpEngine.Editor", "Editor\SharpEngine.Editor.csproj", "{F72A74DC-54F9-0C76-2D40-32D2524683F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpEngine.Core.NET", "Core\SharpEngine.Core.NET.csproj", "{6B242114-B3AC-D598-A74D-D84B64702471}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minecraft", "Examples\MinecraftClone\Minecraft.csproj", "{E8A75C3B-1D82-8B30-C854-AD35FB123CDC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3751B661-BE0E-9CD7-CA51-361A34450372}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3751B661-BE0E-9CD7-CA51-361A34450372}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3751B661-BE0E-9CD7-CA51-361A34450372}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{3751B661-BE0E-9CD7-CA51-361A34450372}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3751B661-BE0E-9CD7-CA51-361A34450372}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3751B661-BE0E-9CD7-CA51-361A34450372}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{1BEC06D8-094D-8BC2-288E-E2C4C13F3D2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BEC06D8-094D-8BC2-288E-E2C4C13F3D2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BEC06D8-094D-8BC2-288E-E2C4C13F3D2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BEC06D8-094D-8BC2-288E-E2C4C13F3D2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F72A74DC-54F9-0C76-2D40-32D2524683F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F72A74DC-54F9-0C76-2D40-32D2524683F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F72A74DC-54F9-0C76-2D40-32D2524683F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F72A74DC-54F9-0C76-2D40-32D2524683F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B242114-B3AC-D598-A74D-D84B64702471}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B242114-B3AC-D598-A74D-D84B64702471}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B242114-B3AC-D598-A74D-D84B64702471}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B242114-B3AC-D598-A74D-D84B64702471}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8A75C3B-1D82-8B30-C854-AD35FB123CDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8A75C3B-1D82-8B30-C854-AD35FB123CDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8A75C3B-1D82-8B30-C854-AD35FB123CDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8A75C3B-1D82-8B30-C854-AD35FB123CDC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1BEC06D8-094D-8BC2-288E-E2C4C13F3D2E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{E8A75C3B-1D82-8B30-C854-AD35FB123CDC} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {78D50298-A91B-44A5-A78E-4858134662B2}
+	EndGlobalSection
+EndGlobal

@@ -28,11 +28,14 @@ namespace SharpEngine.Core;
 /// </summary>
 public class Window : SilkWindow
 {
-    private readonly IGame _game;
+    private readonly Game _game;
+    private static IWindow _window;
 
     private IEnumerable<RendererBase> _renderers = [];
 
     private ImGuiController? _imGuiController;
+
+    public IInputContext Input { get; protected set; }
 
     /// <summary>
     ///     The scene that is currently being rendered.
@@ -46,7 +49,7 @@ public class Window : SilkWindow
     /// <summary>
     ///     Gets the current OpenGL context.
     /// </summary>
-    /// <returns>The OpennGL context for this window.</returns>
+    /// <returns>The OpenGL context for this window.</returns>
     public static GL GetGL() => GL;
     private static void SetGL(GL gl) => GL = gl;
 
@@ -57,22 +60,35 @@ public class Window : SilkWindow
     /// </summary>
     /// <param name="game">Contains the actual game implementation.</param>
     /// <param name="scene">Contains the game scene.</param>
-    public Window(IGame game, Scene scene, WindowOptions options)
+    public Window(Game game, Scene scene, WindowOptions options)
     {
         // TODO: Game should be refactored out of the window class.
         _game = game;
         Scene = scene;
 
-        CreateWindow(options);
-        _game.Camera = new CameraView(Vector3.UnitZ * 3, new DefaultViewSettings());
+        Initialize(options);
+    }
 
-        CurrentWindow.Update += OnUpdateFrame;
-        CurrentWindow.Render += RenderFrame;
-        CurrentWindow.Resize += OnResize;
-        CurrentWindow.Load += OnLoad;
-        CurrentWindow.Closing += OnClosing;
+    public Window(Scene scene, WindowOptions options)
+    {
+        _game = new Game();
+        Scene = scene;
 
-        CurrentWindow.Run();
+        Initialize(options);
+    }
+
+    private void Initialize(WindowOptions options)
+    {
+        _window = Silk.NET.Windowing.Window.Create(options);
+        // _game.Camera = new CameraView(Vector3.UnitZ * 3, new DefaultViewSettings());
+
+        _window.Update += OnUpdateFrame;
+        _window.Render += RenderFrame;
+        _window.Resize += OnResize;
+        _window.Load += OnLoad;
+        _window.Closing += OnClosing;
+
+        _window.Run();
     }
 
     private void OnClosing()
@@ -85,10 +101,11 @@ public class Window : SilkWindow
     {
         try
         {
-            SetGL(CurrentWindow.CreateOpenGL());
+            var context = _window.CreateOpenGL();
+            SetGL(context);
 
-            Input = CurrentWindow.CreateInput();
-            CurrentWindow.MakeCurrent();
+            Input = _window.CreateInput();
+            _window.MakeCurrent();
 
             AssignInputEvents();
 
@@ -120,15 +137,18 @@ public class Window : SilkWindow
             foreach (var renderer in _renderers)
                 renderer.Initialize();
 
-            _imGuiController = new ImGuiController(GL, CurrentWindow, Input);
+            _imGuiController = new ImGuiController(GL, _window, Input);
 
             _initialized = true;
         }
         catch (Exception ex)
         {
-            Debug.LogInformation(ex.Message);
+            Debug.LogInformation("Error loading window: " + ex.Message, ex);
         }
     }
+
+    protected virtual void PreRender(double deltaTime) { }
+
 
     /// <summary>
     ///    Renders the current view and all specified renderers.
@@ -172,6 +192,9 @@ public class Window : SilkWindow
         }
     }
 
+    protected virtual void AfterRender(double deltaTime) { }
+
+
     /// <summary>
     ///     Toggles the renderer between wireframe and fill mode.
     /// </summary>
@@ -213,7 +236,7 @@ public class Window : SilkWindow
         _game.HandleMouse(mouse);
 
         if (keyboard.IsKeyPressed(Key.Escape))
-            CurrentWindow.Close();
+            _window.Close();
 
         _game.HandleKeyboard(keyboard, deltaTime);
 
@@ -234,11 +257,14 @@ public class Window : SilkWindow
         }
     }
 
+    public virtual void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) { }
+
+
     /// <inheritdoc />
     protected void KeyDown(IKeyboard keyboard, Key key, int keyCode)
     {
         if (key == Key.Escape)
-            CurrentWindow.Close();
+            _window.Close();
 
         // _game.HandleKeyboard(keyboard);
     }
@@ -266,7 +292,7 @@ public class Window : SilkWindow
     }
 
     /// <inheritdoc />
-    protected override void OnMouseDown(IMouse mouse, MouseButton button)
+    protected void OnMouseDown(IMouse mouse, MouseButton button)
         => _game.HandleMouseDown(mouse, button);
 
     /// <summary>
@@ -280,8 +306,8 @@ public class Window : SilkWindow
     }
 
     /// <inheritdoc />
-    protected override void Dispose(bool disposing)
+    protected void Dispose(bool disposing)
     {
-        base.Dispose(disposing);
+        //base.Dispose(disposing);
     }
 }
