@@ -42,6 +42,8 @@ namespace SharpEngine.Editor.Windows
                 // Editor service probably needs to be made shared so that we can initialize the project / solution when the editor is opened.
 
                 // TODO: Do we want to save here automatically or prompt the user to save?
+                Debug.LogInformation("The project was null");
+                return;
             }
 
             Debug.LogInformation($"Starting {Project.Name}.");

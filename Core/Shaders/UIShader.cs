@@ -7,7 +7,7 @@ internal class UIShader : ShaderBase
 {
     public UIShader()
     {
-        Shader = new Shader(PathExtensions.GetPath("Shaders/uiShader.vert"), PathExtensions.GetPath("Shaders/uiShader.frag"), "ui");
+        Shader = new Shader(PathExtensions.GetAssemblyPath("Shaders/uiShader.vert"), PathExtensions.GetAssemblyPath("Shaders/uiShader.frag"), "ui");
     }
 
     /// <inheritdoc />

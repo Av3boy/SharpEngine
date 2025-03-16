@@ -11,9 +11,9 @@ namespace SharpEngine.Core.Primitives;
 /// </summary>
 public static class PrimitiveFactory
 {
-    private static string DebugTexture => PathExtensions.GetPath("Textures/DefaultTextures/debug.JPG");
-    private static string DefaultVertexShader => PathExtensions.GetPath("Shaders/shader.vert");
-    private static string DefaultFragmentShader => PathExtensions.GetPath("Shaders/lighting.frag");
+    private static string DebugTexture => PathExtensions.GetAssemblyPath("Textures/DefaultTextures/debug.JPG");
+    private static string DefaultVertexShader => PathExtensions.GetAssemblyPath("Shaders/shader.vert");
+    private static string DefaultFragmentShader => PathExtensions.GetAssemblyPath("Shaders/lighting.frag");
 
     /// <summary>
     ///     Creates a new <see cref="GameObject"/> by the given primitive type.

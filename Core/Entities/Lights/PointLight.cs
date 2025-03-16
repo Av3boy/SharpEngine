@@ -25,7 +25,7 @@ public class PointLight : Light
 
         _index = index;
 
-        Material.Shader = ShaderService.Instance.LoadShader(PathExtensions.GetPath("Shaders/shader.vert"), PathExtensions.GetPath("Shaders/lighting.frag"), "lighting");
+        Material.Shader = ShaderService.Instance.LoadShader(PathExtensions.GetAssemblyPath("Shaders/shader.vert"), PathExtensions.GetAssemblyPath("Shaders/lighting.frag"), "lighting");
         LampShader = new LampShader();
 
     }

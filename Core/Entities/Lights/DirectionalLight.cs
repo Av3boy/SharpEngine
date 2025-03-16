@@ -24,7 +24,7 @@ public class DirectionalLight : Light
         Diffuse = new Vector3(0.4f, 0.4f, 0.4f);
         Specular = new Vector3(0.5f, 0.5f, 0.5f);
 
-        Material.Shader = ShaderService.Instance.LoadShader(PathExtensions.GetPath("Shaders/shader.vert"), PathExtensions.GetPath("Shaders/lighting.frag"), "lighting");
+        Material.Shader = ShaderService.Instance.LoadShader(PathExtensions.GetAssemblyPath("Shaders/shader.vert"), PathExtensions.GetAssemblyPath("Shaders/lighting.frag"), "lighting");
     }
 
     /// <inheritdoc />

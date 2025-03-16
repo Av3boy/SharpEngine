@@ -2,24 +2,28 @@
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Enums;
+using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Renderers;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
-using Shader = SharpEngine.Core.Shaders.Shader;
-
+using Silk.NET.Core;
+using Silk.NET.GLFW;
 using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
-using MouseButton = Silk.NET.Input.MouseButton;
-
+using StbImageSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using MouseButton = Silk.NET.Input.MouseButton;
+using Shader = SharpEngine.Core.Shaders.Shader;
 
 namespace SharpEngine.Core;
 
@@ -129,6 +133,8 @@ public class Window : SilkWindow
 
             Input = CurrentWindow.CreateInput();
             CurrentWindow.MakeCurrent();
+
+            SetWindowIcon(PathExtensions.GetAssemblyPath("_Resources/icon.png"));
 
             AssignInputEvents();
 

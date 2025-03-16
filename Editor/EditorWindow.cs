@@ -6,10 +6,10 @@ using SharpEngine.Core;
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Primitives;
 using SharpEngine.Core.Scenes;
+using SharpEngine.Editor.Windows;
 
 using System.Numerics;
 using System.Reflection;
-using SharpEngine.Editor.Windows;
 
 namespace SharpEngine.Editor;
 
@@ -18,7 +18,7 @@ namespace SharpEngine.Editor;
 /// </summary>
 public class EditorWindow : Window
 {
-    private Project _project;
+    private readonly Project _project;
     private readonly List<ImGuiWindowBase> _windows = [];
 
     private ContextMenuWindow? _contextMenuWindow;

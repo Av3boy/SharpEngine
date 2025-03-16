@@ -4,8 +4,9 @@ using Silk.NET.Core.Contexts;
 using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
-
+using StbImageSharp;
 using System;
+using System.IO;
 using System.Numerics;
 using MouseButton = Silk.NET.Input.MouseButton;
 
@@ -228,6 +229,19 @@ public abstract class SilkWindow : IWindow
 
     /// <inheritdoc />
     public virtual void SetWindowIcon(ReadOnlySpan<RawImage> icons) => CurrentWindow.SetWindowIcon(icons);
+
+    /// <summary>
+    ///     Sets the window icon.
+    /// </summary>
+    /// <param name="path">The file path to the image that will be used as the window icon.</param>
+    public void SetWindowIcon(string path)
+    {
+        using var stream = File.OpenRead(path);
+        var imageData = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
+
+        var rawImage = new RawImage(imageData.Width, imageData.Height, imageData.Data);
+        SetWindowIcon([rawImage]);
+    }
 
     /// <inheritdoc cref="IMouse.Click"/>
     public virtual void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) { }

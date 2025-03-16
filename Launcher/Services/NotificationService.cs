@@ -14,6 +14,10 @@ namespace Launcher.Services
         /// <summary>Sets the event executed when the notifications are changed.</summary>
         void SetOnNotificationsChanged(Action action);
 
+        /// <summary>
+        ///     Sets the action to invoke functions asynchronously.
+        /// </summary>
+        /// <param name="action">The action for asynchronous invocation.</param>
         void SetInvokeAsync(Func<Func<Task>, Task> action);
 
         /// <summary>
@@ -29,6 +33,16 @@ namespace Launcher.Services
         /// <param name="writeToFile">Determines whether the message should be logged to a file.</param>
         /// <param name="details">The details that should be logged with the message.</param>
         void Show(string message, bool writeToFile = false, params object?[] details);
+
+        /// <summary>
+        ///     Displays a notification message in the UI.
+        /// </summary>
+        /// <param name="message">The message to be displayed.</param>
+        /// <param name="writeToFile">Determines whether the message should be logged to a file.</param>
+        /// <param name="details">The details that should be logged with the message.</param>
+        /// <returns>
+        ///     A <see cref="Task"/> representing an asynchronous operation.
+        /// </returns>
         Task ShowAsync(string message, bool writeToFile = false, params object?[] details);
     }
 
@@ -43,7 +57,7 @@ namespace Launcher.Services
         private event Action? OnNotificationsChanged;
         private readonly Logger _log;
 
-        public Func<Func<Task>, Task>? InvokeAsync;
+        private Func<Func<Task>, Task>? _invokeAsync;
 
         /// <summary>
         ///    Initializes a new instance of <see cref="NotificationService"/>.
@@ -59,15 +73,17 @@ namespace Launcher.Services
         public void SetOnNotificationsChanged(Action action)
             => OnNotificationsChanged = action;
 
+        /// <inheritdoc />
         public void SetInvokeAsync(Func<Func<Task>, Task> action)
-            => InvokeAsync = action;
+            => _invokeAsync = action;
 
+        /// <inheritdoc />
         public async Task ShowAsync(string message, bool writeToFile = false, params object?[] details)
         {
             ShowMessage(message, writeToFile, details);
 
-            if (InvokeAsync is not null)
-                await InvokeAsync(() =>
+            if (_invokeAsync is not null)
+                await _invokeAsync(() =>
                 {
                     OnNotificationsChanged?.Invoke();
                     return Task.CompletedTask;

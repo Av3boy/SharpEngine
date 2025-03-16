@@ -22,7 +22,7 @@ public class SpotLight : Light
         Linear = 0.09f;
         Quadratic = 0.032f;
 
-        Material.Shader = ShaderService.Instance.LoadShader(PathExtensions.GetPath("Shaders/shader.vert"), PathExtensions.GetPath("Shaders/lighting.frag"), "lighting");
+        Material.Shader = ShaderService.Instance.LoadShader(PathExtensions.GetAssemblyPath("Shaders/shader.vert"), PathExtensions.GetAssemblyPath("Shaders/lighting.frag"), "lighting");
     }
 
     /// <summary>

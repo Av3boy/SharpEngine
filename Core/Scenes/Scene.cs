@@ -106,7 +106,7 @@ public class Scene
     /// <summary>
     ///     Gets all game objects in the scene.
     /// </summary>
-    /// <returns>All the gameobjects in the current scene.</returns>
+    /// <returns>All the game objects in the current scene.</returns>
     public List<GameObject> GetAllGameObjects()
     {
         // TODO: Can we make this async?
@@ -193,6 +193,10 @@ public class Scene
         return new();
     }
 
+    /// <summary>
+    ///     Sets the full path and name of the scene file.
+    /// </summary>
+    /// <param name="sceneFile">The full path of the file to be set and processed for name extraction.</param>
     public void SetFileFullPath(string sceneFile)
     {
         _fileFullPath = sceneFile;
