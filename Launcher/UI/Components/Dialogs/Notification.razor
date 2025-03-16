@@ -3,14 +3,16 @@
 
 @inject INotificationService NotificationService
 
-<div>
+<div style="width: 100%; height: 100%; position: absolute; pointer-events: none;">
+    <div style="position: relative; display: flex; top: 50px; flex-direction: column; align-items: end;">
     @foreach (var notification in NotificationService.Notifications)
     {
-        <div class="alert alert-@(Type.ToCssClass()) toast show" role="alert">
-            @notification.Key (@notification.Value)
+        <div class="alert alert-@(Type.ToCssClass())" role="alert" style="pointer-events: auto;">
+            @notification.Key @(notification.Value > 1 ? $"({notification.Value})" : "")
             <DiscardIcon DiscardClicked="@(() => NotificationService.Discard(notification.Key))" />
         </div>
     }
+    </div>
 </div>
 
 @code {
@@ -20,5 +22,8 @@
 
     /// <inheritdoc />
     protected override void OnInitialized()
-        => NotificationService.SetOnNotificationsChanged(StateHasChanged);
+    {
+        NotificationService.SetInvokeAsync(InvokeAsync);
+        NotificationService.SetOnNotificationsChanged(StateHasChanged);
+    }
 }

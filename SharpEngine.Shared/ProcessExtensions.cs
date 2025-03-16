@@ -22,11 +22,49 @@ public class ProcessExtensions
             StartInfo = new ProcessStartInfo
             {
                 FileName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "cmd.exe" : "/bin/sh",
-                Arguments = arguments,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = createWindow
+                Arguments = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"/k {arguments}" : $"-k \"{arguments}\"",
+                UseShellExecute = true,
+                RedirectStandardOutput = false,
+                CreateNoWindow = false,
+                WindowStyle = ProcessWindowStyle.Normal
             }
         };
+
+    public static void RunProcess(string arguments, bool createWindow = true, Action<string>? onMessage = null)
+    {
+        void SendMessage(string msg)
+        {
+            if (!string.IsNullOrWhiteSpace(msg))
+                onMessage?.Invoke(msg);
+        }
+
+        var process = GetProcess(arguments, createWindow);
+        process.ErrorDataReceived += (sender, e) => SendMessage(e.Data);
+        process.OutputDataReceived += (sender, e) => SendMessage(e.Data);
+        process.Exited += (sender, e) => SendMessage("Process exited.");
+
+        var start = new ThreadStart(() =>
+        {
+            try
+            {
+                process.Start();
+
+                // Start reading output and error streams
+                // process.BeginOutputReadLine();
+                // process.BeginErrorReadLine();
+
+                // Wait for the process to exit
+                process.WaitForExit();
+            }
+            catch (Exception ex)
+            {
+                SendMessage($"Exception occurred: {ex.Message}");
+            }
+        });
+
+        Thread thread = new Thread(start);
+        thread.Start();
+
+        SendMessage("Editor launched.");
+    }
 }

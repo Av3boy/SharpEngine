@@ -180,6 +180,8 @@ public class Scene
     /// <returns>The scene from the given file. Loads an empty scene if unable to load the scene.</returns>
     public static Scene LoadScene(string sceneFile)
     {
+        Console.WriteLine(sceneFile);
+
         var loadedScene = JsonSerializer.Deserialize<Scene>(sceneFile);
 
         if (loadedScene is not null)
@@ -191,7 +193,7 @@ public class Scene
         return new();
     }
 
-    private void SetFileFullPath(string sceneFile)
+    public void SetFileFullPath(string sceneFile)
     {
         _fileFullPath = sceneFile;
         Name = System.IO.Path.GetFileNameWithoutExtension(sceneFile);
@@ -203,6 +205,13 @@ public class Scene
     /// <returns><see langword="true"/> if the scene has a save file; otherwise, <see langword="false"/>.</returns>
     public bool HasSaveFile()
         => _fileFullPath is not null;
+
+    /// <summary>
+    ///     Saves the scene.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing an asynchronous operation.</returns>
+    public async Task SaveScene()
+        => await SaveScene(_fileFullPath!);
 
     /// <summary>
     ///     Saves the scene to the given <paramref name="fileName"/>.

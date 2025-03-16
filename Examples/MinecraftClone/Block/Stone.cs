@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using SharpEngine.Core.Extensions;
+using System.Numerics;
 
 namespace Minecraft.Block;
 
@@ -12,8 +13,10 @@ internal class Stone : BlockBase
     /// </summary>
     /// <param name="position">The position where the block is created.</param>
     /// <param name="name">The name of the object in the scene.</param>
-    public Stone(Vector3 position, string name)
-        : base(position, name, "Resources/container2.png", "Resources/container2_specular.png", "Shaders/shader.vert", "Shaders/lighting.frag") { }
+    public Stone(Vector3 position, string name) : base(position, name, PathExtensions.GetPath("Resources/container2.png"), 
+                                                                       PathExtensions.GetPath("Resources/container2_specular.png"), 
+                                                                       PathExtensions.GetPath("Shaders/shader.vert"),
+                                                                       PathExtensions.GetPath("Shaders/lighting.frag")) { }
 
     /// <inheritdoc />
     public override BlockType BlockType => BlockType.Stone;

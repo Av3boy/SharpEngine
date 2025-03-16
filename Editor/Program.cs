@@ -1,6 +1,10 @@
-﻿using SharpEngine.Core.Entities.Views.Settings;
+﻿using Launcher.UI;
+using SharpEngine.Core;
+using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Editor.Windows;
+using SharpEngine.Shared;
+using System.Reflection;
 
 namespace SharpEngine.Editor;
 
@@ -16,12 +20,40 @@ public static class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        //var editor = new Editor();
-        var scene = args.Length > 0 ? Scene.LoadScene(args[0]) : new Scene();
+        try
+        {
+            var editorPath = Environment.GetEnvironmentVariable(EnvironmentVariables.EDITOR_PATH_ENVIRONMENT_VARIABLE);
+            if (string.IsNullOrWhiteSpace(editorPath))
+                Environment.SetEnvironmentVariable(EnvironmentVariables.EDITOR_PATH_ENVIRONMENT_VARIABLE, System.Environment.ProcessPath, EnvironmentVariableTarget.User);
 
-        using var window = new EditorWindow(scene, new DefaultViewSettings());
-        window.OnLoaded += () => Console.WriteLine("test");
+            string? sceneFile = null;
+            string? projectFile = null;
 
-        window.Run();
+            foreach (var arg in args)
+            {
+                if (arg.EndsWith(".sharpscene", StringComparison.OrdinalIgnoreCase))
+                    sceneFile = arg;
+
+                else if (arg.EndsWith(".sharpproject", StringComparison.OrdinalIgnoreCase))
+                    projectFile = arg;
+            }
+
+            var scene = !string.IsNullOrEmpty(sceneFile) ? Scene.LoadScene(sceneFile) : new Scene();
+            var project = !string.IsNullOrEmpty(projectFile) ? Project.LoadProject(projectFile)
+#if DEBUG
+                // TODO: We should create an additional getter for the .sharpproject file.
+                : new Project() { Path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\Examples\Minimal"), Name = "Minimal" };
+#else
+                : new Project();
+#endif
+            using var window = new EditorWindow(scene, project!, new DefaultViewSettings());
+            window.OnLoaded += () => Console.WriteLine("test");
+
+            window.Run();
+        }
+        catch (Exception e)
+        {
+            Debug.LogInformation($"Failed to start the editor: {e.Message}", e, true);
+        }
     }
 }

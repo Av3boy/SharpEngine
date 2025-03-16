@@ -18,7 +18,7 @@ namespace SharpEngine.Editor;
 /// </summary>
 public class EditorWindow : Window
 {
-    private Project _project = new Project() { Path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\Examples\Minimal"), Name = "Minimal" };
+    private Project _project;
     private readonly List<ImGuiWindowBase> _windows = [];
 
     private ContextMenuWindow? _contextMenuWindow;
@@ -28,8 +28,12 @@ public class EditorWindow : Window
     ///     Initializes an editor window with a specified scene and view settings.
     /// </summary>
     /// <param name="scene">Represents the current scene to be displayed in the editor window.</param>
+    /// <param name="project">The project loaded to the editor.</param>
     /// <param name="settings">Contains configuration options for how the view should be rendered.</param>
-    public EditorWindow(Scene scene, IViewSettings settings) : base(scene, settings) { }
+    public EditorWindow(Scene scene, Project project, IViewSettings settings) : base(scene, settings) 
+    {
+        _project = project;
+    }
 
     /// <inheritdoc />
     public override void OnLoad()
@@ -50,6 +54,7 @@ public class EditorWindow : Window
 
         // Initialize all ImGuiWindowBase implementations
         for (int i = 0; i < windowTypes.Length; i++)
+        {
             try
             {
                 var type = windowTypes[i];
@@ -66,6 +71,7 @@ public class EditorWindow : Window
             {
                 Debug.LogInformation(e.Message, e);
             }
+        }
 
         _contextMenuWindow = (ContextMenuWindow?)_windows.FirstOrDefault(w => w.GetType() == typeof(ContextMenuWindow));
         if (_contextMenuWindow is null)
@@ -74,6 +80,8 @@ public class EditorWindow : Window
         _actionsMenuWindow = (ActionsMenuWindow?)_windows.FirstOrDefault(w => w.GetType() == typeof(ActionsMenuWindow));
         if (_actionsMenuWindow is null)
             Debug.LogInformation("ActionsMenuWindow not found.");
+        else
+            _actionsMenuWindow.OnSceneLoaded += SetScene;
     }
 
     /// <inheritdoc />

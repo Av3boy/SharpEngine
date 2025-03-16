@@ -1,4 +1,5 @@
-﻿using SharpEngine.Core.Shaders;
+﻿using SharpEngine.Core.Extensions;
+using SharpEngine.Core.Shaders;
 using System.Numerics;
 using System.Threading.Tasks;
 
@@ -24,7 +25,7 @@ public class PointLight : Light
 
         _index = index;
 
-        Material.Shader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/lighting.frag", "lighting");
+        Material.Shader = ShaderService.Instance.LoadShader(PathExtensions.GetPath("Shaders/shader.vert"), PathExtensions.GetPath("Shaders/lighting.frag"), "lighting");
         LampShader = new LampShader();
 
     }

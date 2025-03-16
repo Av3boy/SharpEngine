@@ -1,4 +1,5 @@
 ﻿using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Extensions;
 using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Shaders;
@@ -7,7 +8,7 @@ internal class LightingShader : ShaderBase
 {
     public LightingShader()
     {
-        Shader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/lighting.frag", "lighting");
+        Shader = ShaderService.Instance.LoadShader(PathExtensions.GetPath("Shaders/shader.vert"), PathExtensions.GetPath("Shaders/lighting.frag"), "lighting");
 
         Vao = Window.GL.GenVertexArray();
         Window.GL.BindVertexArray(Vao);

@@ -14,6 +14,8 @@ namespace Launcher.Services
         /// <summary>Sets the event executed when the notifications are changed.</summary>
         void SetOnNotificationsChanged(Action action);
 
+        void SetInvokeAsync(Func<Func<Task>, Task> action);
+
         /// <summary>
         ///     Discards a notification message from the UI.
         /// </summary>
@@ -27,6 +29,7 @@ namespace Launcher.Services
         /// <param name="writeToFile">Determines whether the message should be logged to a file.</param>
         /// <param name="details">The details that should be logged with the message.</param>
         void Show(string message, bool writeToFile = false, params object?[] details);
+        Task ShowAsync(string message, bool writeToFile = false, params object?[] details);
     }
 
     /// <summary>
@@ -39,6 +42,8 @@ namespace Launcher.Services
 
         private event Action? OnNotificationsChanged;
         private readonly Logger _log;
+
+        public Func<Func<Task>, Task>? InvokeAsync;
 
         /// <summary>
         ///    Initializes a new instance of <see cref="NotificationService"/>.
@@ -54,8 +59,31 @@ namespace Launcher.Services
         public void SetOnNotificationsChanged(Action action)
             => OnNotificationsChanged = action;
 
+        public void SetInvokeAsync(Func<Func<Task>, Task> action)
+            => InvokeAsync = action;
+
+        public async Task ShowAsync(string message, bool writeToFile = false, params object?[] details)
+        {
+            ShowMessage(message, writeToFile, details);
+
+            if (InvokeAsync is not null)
+                await InvokeAsync(() =>
+                {
+                    OnNotificationsChanged?.Invoke();
+                    return Task.CompletedTask;
+                });
+        }
+
         /// <inheritdoc />
         public void Show(string message, bool writeToFile = false, params object?[] details)
+        {
+            ShowMessage(message, writeToFile, details);
+
+            // Notify UI about the change
+            OnNotificationsChanged?.Invoke();
+        }
+
+        private void ShowMessage(string message, bool writeToFile = false, params object?[] details)
         {
             if (writeToFile)
                 _log.Information(message, details);
@@ -64,9 +92,6 @@ namespace Launcher.Services
                 Notifications[message] = count + 1;
             else
                 Notifications.Add(message, 1);
-
-            // Notify UI about the change
-            OnNotificationsChanged?.Invoke();
         }
 
         /// <inheritdoc />

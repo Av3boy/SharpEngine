@@ -118,6 +118,8 @@ namespace Launcher.Services
         /// <inheritdoc />
         public void OpenInEditor(Project project)
         {
+            _notificationService.Show($"Starting {project.Name}..");
+
             if (!Path.Exists(project.Path))
             {
                 _notificationService.Show($"The project file '{project.Path}' no longer exists.");
@@ -126,22 +128,17 @@ namespace Launcher.Services
 
             try
             {
-                const string editorPathEnvironmentVariable = "SHARPENGINE_EDITOR_PATH";
-                string? editorPath = Environment.GetEnvironmentVariable(editorPathEnvironmentVariable);
-                if (editorPath is null)
+                string? editorExecutableFilePath = Environment.GetEnvironmentVariable(EnvironmentVariables.EDITOR_PATH_ENVIRONMENT_VARIABLE);
+                if (editorExecutableFilePath is null)
                 {
                     _notificationService.Show("Editor variable not found");
                     return;
                 }
 
-                const string editorExecutable = "SharpEngine.Editor.exe";
-
                 string projectFile = project.Path.EndsWith(SHARP_ENGINE_PROJECT_EXTENSION) ?
-                    project.Path : $"{project.Path}/{project.Name}.{SHARP_ENGINE_PROJECT_EXTENSION}";
+                    project.Path : $"{project.Path}\\{project.Name}.{SHARP_ENGINE_PROJECT_EXTENSION}";
 
-                var process = ProcessExtensions.GetProcess($"{editorPath}/{editorExecutable} {projectFile}");
-                process.Start();
-                process.WaitForExit();
+                ProcessExtensions.RunProcess($"{editorExecutableFilePath} {projectFile}", true, msg => _notificationService.ShowAsync(msg));
             }
             catch (Exception ex)
             {
