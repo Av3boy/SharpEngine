@@ -28,6 +28,9 @@ namespace Launcher.UI.Components.Dialogs
         {
             var result = await FolderPicker.Default.PickAsync();
 
+            if (result is null || !result.IsSuccessful)
+                return;
+
             if (result is not null && result.IsSuccessful)
                 _newProject.Path = result.Folder.Path;
             else

@@ -16,12 +16,20 @@
 			<NeutralLanguage>en</NeutralLanguage>
 			<UseWindowsForms>true</UseWindowsForms>
 			<Configurations>Debug;Release;LauncherNonWindows</Configurations>
+			<PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
 	<ItemGroup>
 	  <Compile Remove="DefaultTextures\**" />
 	  <EmbeddedResource Remove="DefaultTextures\**" />
 	  <None Remove="DefaultTextures\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\icon.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 
 	<ItemGroup>

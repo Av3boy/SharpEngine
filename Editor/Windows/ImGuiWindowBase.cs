@@ -16,6 +16,9 @@ namespace SharpEngine.Editor.Windows
         /// <summary>Gets or sets the currently active scene.</summary>
         public Scene Scene { get; private set; }
 
+        /// <summary>
+        ///     Initializes a new instance of <see cref="ImGuiWindowBase"/>.
+        /// </summary>
         public ImGuiWindowBase()
         {
             Scene = new Scene();

@@ -8,7 +8,7 @@ internal class LightingShader : ShaderBase
 {
     public LightingShader()
     {
-        Shader = ShaderService.Instance.LoadShader(PathExtensions.GetPath("Shaders/shader.vert"), PathExtensions.GetPath("Shaders/lighting.frag"), "lighting");
+        Shader = ShaderService.Instance.LoadShader(PathExtensions.GetAssemblyPath("Shaders/shader.vert"), PathExtensions.GetAssemblyPath("Shaders/lighting.frag"), "lighting");
 
         Vao = Window.GL.GenVertexArray();
         Window.GL.BindVertexArray(Vao);

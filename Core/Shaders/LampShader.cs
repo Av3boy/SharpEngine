@@ -8,7 +8,7 @@ internal class LampShader : ShaderBase
 {
     public LampShader()
     {
-        Shader = ShaderService.Instance.LoadShader(PathExtensions.GetPath("Shaders/shader.vert"), PathExtensions.GetPath("Shaders/shader.frag"), "lamp");
+        Shader = ShaderService.Instance.LoadShader(PathExtensions.GetAssemblyPath("Shaders/shader.vert"), PathExtensions.GetAssemblyPath("Shaders/shader.frag"), "lamp");
 
         Vao = Window.GL.GenVertexArray();
         Window.GL.BindVertexArray(Vao);

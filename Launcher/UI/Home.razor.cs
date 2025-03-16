@@ -23,9 +23,9 @@ namespace Launcher.UI
         private static readonly string[] _sharpProjectFilePickerExtension = [".sharpproject"];
 
 #if DEBUG
-        private string _projectsFilePath = Path.Join(Path.GetTempPath(), _projectsFile); 
+        private readonly string _projectsFilePath = Path.Join(Path.GetTempPath(), _projectsFile);
 #else
-        private string _projectsFilePath = Path.Join(AppContext.BaseDirectory, _projectsFile);
+        private readonly string _projectsFilePath = Path.Join(AppContext.BaseDirectory, _projectsFile);
 #endif
         /// <inheritdoc />
         protected override async Task OnInitializedAsync()
@@ -80,17 +80,20 @@ namespace Launcher.UI
                     { DevicePlatform.WinUI, _sharpProjectFilePickerExtension },
                     { DevicePlatform.MacCatalyst, _sharpProjectFilePickerExtension },
                     { DevicePlatform.iOS, _sharpProjectFilePickerExtension },
-                    { DevicePlatform.Android, new[] { "application/octet-stream" } }
+                    { DevicePlatform.Android, [ "application/octet-stream" ] }
                 })
             });
 
-            if (pickedFile?.FileName.EndsWith(".sharpproject") == false)
+            if (pickedFile == null)
+                return;
+
+            if (pickedFile.FileName.EndsWith(".sharpproject") == false)
             {
                 _notificationService.Show("Invalid file type selected. Please select a .sharpproject file.");
                 return;
             }
 
-            var project = await _editorService.LoadFileAsync(pickedFile!.FullPath);
+            var project = await _editorService.LoadFileAsync(pickedFile.FullPath);
             if (project is not null)
                 SetProjects(project);
             else

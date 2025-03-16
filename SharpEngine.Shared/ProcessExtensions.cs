@@ -30,9 +30,15 @@ public class ProcessExtensions
             }
         };
 
+    /// <summary>
+    ///     Runs the given commands using the terminal of the current platform.
+    /// </summary>
+    /// <param name="arguments">The commands to be executed.</param>
+    /// <param name="createWindow">Determines whether the process should create a new window.</param>
+    /// <param name="onMessage">The action that's invoked when a message is sent by the process handler.</param>
     public static void RunProcess(string arguments, bool createWindow = true, Action<string>? onMessage = null)
     {
-        void SendMessage(string msg)
+        void SendMessage(string? msg)
         {
             if (!string.IsNullOrWhiteSpace(msg))
                 onMessage?.Invoke(msg);
