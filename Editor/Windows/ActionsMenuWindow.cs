@@ -17,7 +17,7 @@ namespace SharpEngine.Editor.Windows
         /// <summary>
         ///     An event executed when a new scene is loaded.
         /// </summary>
-        public event Action? OnSceneLoaded;
+        public event Action<Scene>? OnSceneLoaded;
 
         /// <inheritdoc />
         public override void Render()
@@ -45,37 +45,24 @@ namespace SharpEngine.Editor.Windows
             }
 
             Debug.LogInformation($"Starting {Project.Name}.");
-
-            Thread thread = new Thread(() =>
-            {
-                var process = ProcessExtensions.GetProcess($"dotnet run --project {Project.Path}/{Project.Name}.csproj", true);
-                process.ErrorDataReceived += (sender, e) => Debug.LogInformation(e.Data);
-                process.OutputDataReceived += (sender, e) => Debug.LogInformation(e.Data);
-                process.Exited += (sender, e) => Debug.LogInformation("Process exited.");
-
-                process.Start();
-
-                // Read and display output
-                string output = process.StandardOutput.ReadToEnd();
-                string error = process.StandardError.ReadToEnd();
-
-                if (!string.IsNullOrWhiteSpace(output))
-                    Debug.LogInformation(output);
-                
-                if (!string.IsNullOrWhiteSpace(error))
-                    Debug.LogInformation(error);
-            });
-
-            thread.Start();
+            ProcessExtensions.RunProcess($"dotnet run --project {Project.Path}/{Project.Name}.csproj", true, msg => Debug.LogInformation(msg));
         }
 
-        private static void SaveScene(Scene scene)
+        private void SaveScene(Scene scene)
         {
             Console.WriteLine("Saving..");
 
-            if (!scene.HasUnsavedChanges && !scene.HasSaveFile())
+            if (!scene.HasUnsavedChanges && scene.HasSaveFile())
             {
                 Console.WriteLine("No changes to save.");
+                return;
+            }
+
+            if (scene.HasSaveFile())
+            {
+                scene.SaveScene().Wait();
+                OnSceneLoaded?.Invoke(scene);
+                Console.WriteLine("File saved successfully!");
                 return;
             }
 
@@ -92,6 +79,8 @@ namespace SharpEngine.Editor.Windows
             if (dialogResult == DialogResult.OK)
             {
                 scene.SaveScene(dialog.FileName).Wait();
+                Scene.SetFileFullPath(dialog.FileName);
+
                 Console.WriteLine("File saved successfully!");
             }
             else

@@ -1,6 +1,6 @@
 ﻿using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Properties;
-
+using SharpEngine.Core.Extensions;
 using System;
 using System.Numerics;
 
@@ -11,13 +11,17 @@ namespace SharpEngine.Core.Primitives;
 /// </summary>
 public static class PrimitiveFactory
 {
+    private static string DebugTexture => PathExtensions.GetPath("Textures/DefaultTextures/debug.JPG");
+    private static string DefaultVertexShader => PathExtensions.GetPath("Shaders/shader.vert");
+    private static string DefaultFragmentShader => PathExtensions.GetPath("Shaders/lighting.frag");
+
     /// <summary>
     ///     Creates a new <see cref="GameObject"/> by the given primitive type.
     /// </summary>
     /// <param name="primitiveType">The type of primitive to create.</param>
     /// <param name="position">Where the game object should be placed.</param>
     public static GameObject Create(PrimitiveType primitiveType, Vector3 position)
-        => Create(primitiveType, position, "Textures/DefaultTextures/debug.JPG");
+        => Create(primitiveType, position, DebugTexture);
 
     /// <inheritdoc cref="Create(PrimitiveType, Vector3)"/>
     /// <param name="primitiveType">The type of primitive to be created.</param>
@@ -29,7 +33,7 @@ public static class PrimitiveFactory
     /// <returns>A new game object.</returns>
     /// <exception cref="InvalidOperationException">Thrown when the specified primitive type does not exist.</exception>
     public static GameObject Create(PrimitiveType primitiveType, Vector3 position, string diffuseMapFile, string? specularMapFile = null, string? vertShaderFile = null, string? fragShaderFile = null)
-        => new(diffuseMapFile, specularMapFile ?? "Textures/DefaultTextures/debug.JPG", vertShaderFile ?? "Shaders/shader.vert", fragShaderFile ?? "Shaders/lighting.frag")
+        => new(diffuseMapFile, specularMapFile ?? DebugTexture, vertShaderFile ?? DefaultVertexShader, fragShaderFile ?? DefaultFragmentShader)
         {
             Transform = new Transform { Position = position },
             Mesh = primitiveType switch

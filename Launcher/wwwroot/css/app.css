@@ -97,3 +97,8 @@ p, h1, h4, a, td, tr, div, .prevent-select {
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
 }
+
+.page {
+    height: 100%;
+    display: flow-root;
+}

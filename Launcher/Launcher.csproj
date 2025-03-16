@@ -30,7 +30,7 @@
         <ApplicationTitle>Launcher</ApplicationTitle>
 
         <!-- App Identifier -->
-        <ApplicationId>com.companyname.launcher</ApplicationId>
+        <ApplicationId>com.sharpengine.launcher</ApplicationId>
 
         <!-- Versions -->
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>

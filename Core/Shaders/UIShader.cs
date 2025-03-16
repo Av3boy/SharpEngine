@@ -1,4 +1,5 @@
-﻿using Silk.NET.OpenGL;
+﻿using SharpEngine.Core.Extensions;
+using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Shaders;
 
@@ -6,7 +7,7 @@ internal class UIShader : ShaderBase
 {
     public UIShader()
     {
-        Shader = new Shader("Shaders/uiShader.vert", "Shaders/uiShader.frag", "ui");
+        Shader = new Shader(PathExtensions.GetPath("Shaders/uiShader.vert"), PathExtensions.GetPath("Shaders/uiShader.frag"), "ui");
     }
 
     /// <inheritdoc />

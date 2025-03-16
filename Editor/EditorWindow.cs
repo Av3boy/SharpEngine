@@ -28,6 +28,7 @@ public class EditorWindow : Window
     ///     Initializes an editor window with a specified scene and view settings.
     /// </summary>
     /// <param name="scene">Represents the current scene to be displayed in the editor window.</param>
+    /// <param name="project">The project loaded to the editor.</param>
     /// <param name="settings">Contains configuration options for how the view should be rendered.</param>
     public EditorWindow(Scene scene, Project project, IViewSettings settings) : base(scene, settings) 
     {
@@ -79,6 +80,8 @@ public class EditorWindow : Window
         _actionsMenuWindow = (ActionsMenuWindow?)_windows.FirstOrDefault(w => w.GetType() == typeof(ActionsMenuWindow));
         if (_actionsMenuWindow is null)
             Debug.LogInformation("ActionsMenuWindow not found.");
+        else
+            _actionsMenuWindow.OnSceneLoaded += SetScene;
     }
 
     /// <inheritdoc />

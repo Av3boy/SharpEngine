@@ -1,12 +1,15 @@
 using SharpEngine.Core.Attributes;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Properties.Meshes;
+using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Textures;
 
 using Silk.NET.OpenGL;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Entities;
@@ -21,8 +24,8 @@ public class GameObject : SceneNode
     /// </summary>
     public GameObject()
     {
-        var shader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/lighting.frag", "lighting");
-        var diffuse = TextureService.Instance.LoadTexture("Textures/DefaultTextures/debug.JPG");
+        var shader = ShaderService.Instance.LoadShader(PathExtensions.GetPath("Shaders/shader.vert"), PathExtensions.GetPath("Shaders/lighting.frag"), "lighting");
+        var diffuse = TextureService.Instance.LoadTexture(PathExtensions.GetPath("Textures/DefaultTextures/debug.JPG"));
         Material = new(shader, diffuse);
         
         BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
