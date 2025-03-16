@@ -26,10 +26,6 @@
         <EnableDefaultCssItems>false</EnableDefaultCssItems>
         <Nullable>enable</Nullable>
 
-      <!--
-        <ApplicationIcon>Resources\AppIcon\icon.svg</ApplicationIcon>
--->
-
         <!-- Display name -->
         <ApplicationTitle>Launcher</ApplicationTitle>
 
