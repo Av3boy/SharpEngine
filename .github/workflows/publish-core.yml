@@ -7,6 +7,7 @@ on:
     paths:
       - 'Core/**'
       - '.github/workflows/publish-nuget.yml'
+  workflow_dispatch:
 
 permissions:
   contents: write
