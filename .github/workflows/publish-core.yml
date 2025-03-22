@@ -1,57 +1,64 @@
-name: Publish NuGet Package
+name: Publish Core to NuGet
 
 on:
   push:
     branches:
-      - main
+      - '**'
+    paths:
+      - 'Core/**'
+      - '.github/workflows/publish-nuget.yml'
+
+permissions:
+  contents: write
 
 jobs:
   publish:
-    runs-on: windows-latest  # Use Windows to support .NET SDK easily
+    runs-on: ubuntu-latest
+    env:
+      RUN_TAG_STEP: true
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'  # TODO: Create variable out of this
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.x'
 
-      # TODO: Quality gates (Unit tests, sonar cloud?)
+    - name: Generate new semantic version
+      id: version
+      uses: mathieudutour/github-tag-action@v6.1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        release_branches: main
+        pre_release_branches: ".*"
+        dry_run: true
 
-      - name: Restore dependencies
-        run: dotnet restore
+    - name: Patch version in .csproj
+      run: |
+        csproj_file="Core/SharpEngine.Core.csproj"
+        version="${{ steps.version.outputs.new_version }}"
+        echo "Setting version to $version in $csproj_file"
+        sed -i "s|<Version>.*</Version>|<Version>$version</Version>|" "$csproj_file"
+      shell: bash
 
-      - name: Build project
-        run: dotnet build --configuration Release --no-restore
+    #- name: Build Project
+    #  run: dotnet build Core/SharpEngine.Core.csproj --configuration Release
 
-      # TODO: Create installer for launcher and editor bundle
+    #- name: Pack NuGet Package
+    #  run: dotnet pack Core/SharpEngine.Core.csproj --configuration Release --no-build -o ./nupkgs
 
-      - name: Pack NuGet package
-        run: dotnet pack --configuration Release --no-build --output Core/bin/Release/
+    #- name: Push Package to NuGet
+    #  run: dotnet nuget push ./nupkgs/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLISH_NUGET_PACKAGE }}
 
-      - name: Publish to NuGet
-        run: dotnet nuget push "Core/bin/Release/SharpEngine.Core.NET.1.0.0.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLISH_NUGET_PACKAGE }} --skip-duplicate
+    # - name: Publish package in github
+    #   run: echo "Publishing package"
 
-      # TODO: Publish the NuGet package to GitHub.
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PUBLISH_REPO_PACKAGE }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
+    # Tagging already handled by github-tag-action
+    # - name: Create Git Tag for New Version
+    #   if: env.RUN_TAG_STEP == 'true'
+    #   run: ...
 
-      - name: Upload NuGet package to GitHub Release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PUBLISH_REPO_PACKAGE }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Core/bin/Release/SharpEngine.Core.NET.1.0.0.nupkg
-          asset_name: SharpEngine.Core.NET.1.0.0.nupkg
-          asset_content_type: application/zip
+    # - name: Publish Launcher and Editor zip
+    #   run: echo "Publishing Launcher and Editor zip"
