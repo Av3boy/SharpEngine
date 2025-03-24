@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 
@@ -166,14 +166,18 @@ public class Shader
     ///     Checks if the shader attribute exists within the current shader.
     /// </summary>
     /// <param name="attribName">The name of the attribute that's being looked for.</param>
-    /// <returns>If the attribute exists, the location of the attribute in the shader; otherwise -1.</returns>
-    public int GetAttribLocation(string attribName)
+    /// <param name="location">Outputs the location of the attribute in the shader if found; otherwise -1.</param>
+    /// <returns>If the attribute exists, <see langword="true"/>; otherwise, <see langword="false"/>. </returns>
+    public bool TryGetAttribLocation(string attribName, out int location)
     {
-        int location = Window.GL.GetAttribLocation(Handle, attribName);
-        if (location == -1)
+        location = Window.GL.GetAttribLocation(Handle, attribName);
+        if (location == ShaderAttributes.AttributeLocationNotFound)
+        {
             Console.WriteLine($"Attribute '{attribName}' not found in shader program.");
+            return false;
+        }
 
-        return location;
+        return true;
     }
 
     // Uniform setters

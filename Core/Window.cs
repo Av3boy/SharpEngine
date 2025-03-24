@@ -1,4 +1,4 @@
-﻿using SharpEngine.Core.Entities.Properties.Meshes;
+using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Enums;
@@ -7,23 +7,20 @@ using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Renderers;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
-using Silk.NET.Core;
-using Silk.NET.GLFW;
+using Shader = SharpEngine.Core.Shaders.Shader;
+
 using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
-using StbImageSharp;
+using MouseButton = Silk.NET.Input.MouseButton;
+
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using MouseButton = Silk.NET.Input.MouseButton;
-using Shader = SharpEngine.Core.Shaders.Shader;
 
 namespace SharpEngine.Core;
 
@@ -32,7 +29,7 @@ namespace SharpEngine.Core;
 /// </summary>
 public class Window : SilkWindow
 {
-    private readonly ISettings _settings;
+    private readonly IViewSettings _settings;
     private readonly CameraView _camera;
 
     private bool _initialized;
@@ -69,6 +66,7 @@ public class Window : SilkWindow
     /// <returns>The OpenGL context for this window.</returns>
     public static GL GetGL() => GL;
     private static void SetGL(GL gl) => GL = gl;
+    public Window() { }
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
@@ -81,8 +79,6 @@ public class Window : SilkWindow
         Scene = scene;
         _settings = settings;
         _camera = camera;
-
-        Initialize(settings.WindowOptions);
     }
 
     /// <summary>
@@ -94,14 +90,14 @@ public class Window : SilkWindow
     {
         Scene = scene;
         _settings = settings;
-        _camera = new(Vector3.One, new DefaultViewSettings());
-
-        Initialize(settings.WindowOptions);
+        _camera = new(Vector3.One, settings);
     }
 
-    private void Initialize(WindowOptions options)
+    private bool _windowInitialized;
+
+    public void Initialize<T>() where T : SilkWindow, new()
     {
-        CurrentWindow = CreateWindow(options);
+        CurrentWindow = SilkWindow.Create<T>(_settings.WindowOptions);
         CurrentWindow.Update += OnUpdateFrame;
         CurrentWindow.Render += RenderFrame;
         CurrentWindow.Resize += OnResize;
@@ -112,6 +108,9 @@ public class Window : SilkWindow
     /// <inheritdoc />
     public override void Run(Action onFrame)
     {
+        if (!_windowInitialized)
+            throw new Exception("Window not been initialized for this instance. Try calling 'window.Initialize()' first.");
+
         try
         {
             base.Run(onFrame);
