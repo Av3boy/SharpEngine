@@ -37,7 +37,7 @@ internal class LightingShader : ShaderBase
         Window.GL.EnableVertexAttribArray(normalLocationUint);
         Window.GL.VertexAttribPointer(normalLocationUint, VertexData.NormalsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.NormalsOffset);
         
-        if (!Shader!.TryGetAttribLocation(ShaderAttributes.Normal, out int texCoordLocation))
+        if (!Shader!.TryGetAttribLocation(ShaderAttributes.TexCoords, out int texCoordLocation))
             return false;
         
         var texCoordLocationUint = (uint)texCoordLocation;

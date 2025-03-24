@@ -79,6 +79,7 @@ public class Window : SilkWindow
         Scene = scene;
         _settings = settings;
         _camera = camera;
+        Initialize();
     }
 
     /// <summary>
@@ -91,13 +92,15 @@ public class Window : SilkWindow
         Scene = scene;
         _settings = settings;
         _camera = new(Vector3.One, settings);
+        Initialize();
     }
 
     private bool _windowInitialized;
 
-    public void Initialize<T>() where T : SilkWindow, new()
+    // public void Initialize<T>() where T : SilkWindow, new()
+    private void Initialize()
     {
-        CurrentWindow = SilkWindow.Create<T>(_settings.WindowOptions);
+        CurrentWindow = CreateWindow(_settings.WindowOptions);
         CurrentWindow.Update += OnUpdateFrame;
         CurrentWindow.Render += RenderFrame;
         CurrentWindow.Resize += OnResize;
