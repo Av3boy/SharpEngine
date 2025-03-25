@@ -20,7 +20,7 @@ public class UIElement : SceneNode
     public UIElement(string name)
     {
         Name = name;
-        Mesh = MeshService.Instance.LoadMesh("plane", Primitives.Plane.Mesh);
+        // Mesh = MeshService.Instance.LoadMesh("plane", Primitives.Plane.Mesh);
     }
 
     private readonly UIShader _uIShader = new();
@@ -33,7 +33,7 @@ public class UIElement : SceneNode
 
     // TODO: Use actual mesh
     /// <summary>Gets or sets the mesh of the UI element.</summary>
-    public Mesh Mesh { get; set; } = new();
+    public Mesh Mesh { get; set; } // = new();
 
     private readonly float[] _vertices =
     [
@@ -56,33 +56,44 @@ public class UIElement : SceneNode
     public void Initialize()
     {
         _vertexArrayObject = Window.GL.GenVertexArray();
-        Window.GL.BindVertexArray(_vertexArrayObject);
+        Bind();
 
         InitializeBuffers();
     }
 
-    private void InitializeBuffers()
+    public void Bind()
     {
-        var vertexBufferObject = Window.GL.GenBuffer();
-        Window.GL.BindBuffer(GLEnum.ArrayBuffer, vertexBufferObject);
-        Window.GL.BufferData<float>(GLEnum.ArrayBuffer, (uint)_vertices.Length * sizeof(float), _vertices, GLEnum.StaticDraw);
+        Window.GL.BindVertexArray(_vertexArrayObject);
+    }
 
-        var elementBufferObject = Window.GL.GenBuffer();
-        Window.GL.BindBuffer(GLEnum.ElementArrayBuffer, elementBufferObject);
-        Window.GL.BufferData<uint>(GLEnum.ElementArrayBuffer, (uint)_indices.Length * sizeof(uint), _indices, GLEnum.StaticDraw);
+    private unsafe void InitializeBuffers()
+    {
+        fixed (float* vertexDataPtr = &_vertices[0])
+        {
+            var vertexBufferObject = Window.GL.GenBuffer();
+            Window.GL.BindBuffer(GLEnum.ArrayBuffer, vertexBufferObject);
+            Window.GL.BufferData(GLEnum.ArrayBuffer, (nuint)(_vertices.Length * sizeof(float)), vertexDataPtr, GLEnum.StaticDraw);
+        }
+
+        fixed (void* indicieDataPtr = &_indices[0])
+        {
+            var elementBufferObject = Window.GL.GenBuffer();
+            Window.GL.BindBuffer(GLEnum.ElementArrayBuffer, elementBufferObject);
+            Window.GL.BufferData(GLEnum.ElementArrayBuffer, (nuint)(_indices.Length * sizeof(uint)), indicieDataPtr, GLEnum.StaticDraw);
+        }
+
     }
 
     /// <summary>
     ///     Render the UI element.
     /// </summary>
-    public override Task Render()
+    public unsafe override Task Render()
     {
         Window.GL.BindVertexArray(_vertexArrayObject);
         
         _uIShader.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
         
-        uint a = 0;
-        Window.GL.DrawElements(PrimitiveType.Triangles, (uint)_indices.Length, DrawElementsType.UnsignedInt, ref a);
+        Window.GL.DrawElements(PrimitiveType.Triangles, (uint)_indices.Length, DrawElementsType.UnsignedInt, null);
 
         return Task.CompletedTask;
     }

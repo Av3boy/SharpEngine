@@ -16,6 +16,7 @@
     <!-- Required, atleast for now since another NuGet package with the SharpEngine.Core name already exists. -->
     <PackageId>$(AssemblyName).NET</PackageId>
     <Configurations>Debug;Release;LauncherNonWindows</Configurations>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     
   </PropertyGroup>
 

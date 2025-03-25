@@ -41,7 +41,7 @@ public class UIRenderer : RendererBase
         
         _uiShader.Shader.Use();
 
-        //_scene.UIElements.Add(new UIElement("uiElement"));
+        _scene.UIElements.Add(new UIElement("uiElement"));
 
         _scene.Iterate(_scene.UIElements, elem => elem.Initialize());
 
@@ -61,9 +61,15 @@ public class UIRenderer : RendererBase
             Window.GL.Disable(EnableCap.DepthTest);
             Window.GL.DepthFunc(DepthFunction.Less);
 
+            foreach (var item in _scene.UIElements)
+            {
+                item.Bind();
+            }
+
             _uiShader.Shader.Use();
 
             var uiElementRenderTasks = _scene.IterateAsync<UIElement>(_scene.UIElements, elem => elem.Render());
+
             return Task.WhenAll(uiElementRenderTasks);
         }
         catch (Exception ex)
