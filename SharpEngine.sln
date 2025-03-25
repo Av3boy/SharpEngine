@@ -26,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultipleWindows", "Examples\MultipleWindows\MultipleWindows.csproj", "{0AF16D15-5BD2-4FED-9C6A-227DE6A56C5E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioPlayer", "Examples\AudioPlayer\AudioPlayer.csproj", "{BE62A8C9-E83E-4D68-B3BC-BE8099BD66A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,12 @@ Global
 		{0AF16D15-5BD2-4FED-9C6A-227DE6A56C5E}.LauncherNonWindows|Any CPU.Build.0 = Release|Any CPU
 		{0AF16D15-5BD2-4FED-9C6A-227DE6A56C5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AF16D15-5BD2-4FED-9C6A-227DE6A56C5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE62A8C9-E83E-4D68-B3BC-BE8099BD66A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE62A8C9-E83E-4D68-B3BC-BE8099BD66A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE62A8C9-E83E-4D68-B3BC-BE8099BD66A2}.LauncherNonWindows|Any CPU.ActiveCfg = Release|Any CPU
+		{BE62A8C9-E83E-4D68-B3BC-BE8099BD66A2}.LauncherNonWindows|Any CPU.Build.0 = Release|Any CPU
+		{BE62A8C9-E83E-4D68-B3BC-BE8099BD66A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE62A8C9-E83E-4D68-B3BC-BE8099BD66A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,5 +94,6 @@ Global
 		{E8A75C3B-1D82-8B30-C854-AD35FB123CDC} = {B36A84DF-456D-A817-6EDD-3EC3E7F6E11F}
 		{1BEC06D8-094D-8BC2-288E-E2C4C13F3D2E} = {B36A84DF-456D-A817-6EDD-3EC3E7F6E11F}
 		{0AF16D15-5BD2-4FED-9C6A-227DE6A56C5E} = {B36A84DF-456D-A817-6EDD-3EC3E7F6E11F}
+		{BE62A8C9-E83E-4D68-B3BC-BE8099BD66A2} = {B36A84DF-456D-A817-6EDD-3EC3E7F6E11F}
 	EndGlobalSection
 EndGlobal

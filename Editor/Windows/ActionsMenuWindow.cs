@@ -1,6 +1,7 @@
 using ImGuiNET;
 using Launcher.UI;
 using SharpEngine.Core;
+using SharpEngine.Core.Audio;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Shared;
 
@@ -22,8 +23,6 @@ namespace SharpEngine.Editor.Windows
         /// <inheritdoc />
         public override void Render()
         {
-            ImGui.Text("some text");
-
             if (ImGui.Button("Save"))
                 SaveScene(Scene);
 
@@ -32,6 +31,26 @@ namespace SharpEngine.Editor.Windows
 
             if (ImGui.Button("Play"))
                 StartGame();
+
+            if (ImGui.Button("Test audio"))
+                PlayTestAudio();
+        }
+
+        private void PlayTestAudio()
+        {
+            try
+            {
+                string filePath = ""; // TODO: Replace with absolute path to .wav file.
+
+                var audioPlayer = new WavPlayer();
+                audioPlayer.AudioProperties.IsLooping = false;
+
+                audioPlayer.Play(filePath);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogInformation($"Error during audio playback: {ex.Message}");
+            }
         }
 
         private void StartGame()
