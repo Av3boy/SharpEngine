@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "AudioPlayer": {
-      "commandName": "Project",
-      "commandLineArgs": "\"F:\\downloads\\What is Love ( Meme Sound Effect ) #EP14.wav\""
-    }
-  }
-}
