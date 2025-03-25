@@ -31,7 +31,7 @@ public class Shader
     /// </remarks>
     /// <param name="vertPath">The vertex shader full path.</param>
     /// <param name="fragPath">The fragment shader full path.</param>
-    /// <param name="name">The identfier name of the shader.</param>
+    /// <param name="name">The identifier name of the shader.</param>
     public Shader(string vertPath, string fragPath, string name)
     {
         Name = name;
@@ -44,10 +44,16 @@ public class Shader
 
         // Load and compile shader
         if (!LoadShader(ShaderType.VertexShader, vertPath, out uint vertexShader))
+        {
+            Console.WriteLine("Unable to load vertex shader.");
             return;
+        }
 
         if (!LoadShader(ShaderType.FragmentShader, fragPath, out uint fragmentShader))
+        {
+            Console.WriteLine("Unable to load fragment shader.");
             return;
+        }
 
         // These two shaders must then be merged into a shader program, which can then be used by OpenGL.
         // To do this, create a program...
@@ -59,7 +65,11 @@ public class Shader
         Window.GL.AttachShader(Handle, fragmentShader);
 
         // And then link them together.
-        LinkProgram(Handle);
+        if (!LinkProgram(Handle))
+        {
+            Console.WriteLine("Unable to link shader program.");
+            return;
+        }
 
         // When the shader program is linked, it no longer needs the individual shaders attached to it; the compiled code is copied into the shader program.
         // Detach them, and then delete them.
@@ -91,7 +101,12 @@ public class Shader
         // GL.CreateShader will create an empty shader (obviously). The ShaderType enum denotes which type of shader will be created.
         shader = Window.GL.CreateShader(shaderType);
         Window.GL.ShaderSource(shader, shaderSource);
-        CompileShader(shader);
+
+        if (!CompileShader(shader))
+        {
+            Console.WriteLine($"Unable to load {shaderType} shader from '{shaderPath}'.");
+            return false;
+        }
 
         return true;
     }
@@ -102,7 +117,7 @@ public class Shader
         Window.GL.GetProgram(Handle, GLEnum.ActiveUniforms, out var numberOfUniforms);
 
         // Next, allocate the dictionary to hold the locations.
-        _uniformLocations = new Dictionary<string, int>();
+        _uniformLocations = [];
 
         // Loop over all the uniforms,
         for (uint i = 0; i < numberOfUniforms; i++)
@@ -129,31 +144,39 @@ public class Shader
         });
     }
 
-    private static void CompileShader(uint shader)
+    private static bool CompileShader(uint shader)
     {
         // Try to compile the shader
         Window.GL.CompileShader(shader);
 
         // Check for compilation errors
-        Window.GL.GetShader(shader, GLEnum.CompileStatus, out var code);
-        if (code != (int)GLEnum.True)
+        Window.GL.GetShader(shader, GLEnum.CompileStatus, out var statusCode);
+        if (statusCode != (int)GLEnum.True)
         {
             // We can use `GL.GetShaderInfoLog(shader)` to get information about the error.
             var infoLog = Window.GL.GetShaderInfoLog(shader);
-            throw new InvalidOperationException($"Error occurred whilst compiling Shader({shader}).\n\n{infoLog}");
+            Console.WriteLine($"Error occurred whilst compiling Shader({shader}).\n\n{infoLog}");
+
+            return false;
         }
+
+        return true;
     }
 
-    private static void LinkProgram(uint program)
+    private static bool LinkProgram(uint program)
     {
         Window.GL.LinkProgram(program);
-
-        Window.GL.GetProgram(program, GLEnum.LinkStatus, out var code);
-        if (code != (int)GLEnum.True)
+        Window.GL.GetProgram(program, GLEnum.LinkStatus, out var statusCode);
+        
+        if (statusCode != (int)GLEnum.True)
         {
             string infoLog = Window.GL.GetProgramInfoLog(program);
-            throw new InvalidOperationException($"Error occurred whilst linking Program({program}): {infoLog}");
+            Console.WriteLine($"Error occurred whilst linking Program({program}): {infoLog}");
+
+            return false;
         }
+
+        return true;
     }
 
     /// <summary>
