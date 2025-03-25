@@ -1,5 +1,6 @@
 using ImGuiNET;
 using Launcher.UI;
+using SharpEngine.Core.Entities;
 using SharpEngine.Core.Primitives;
 using SharpEngine.Core.Scenes;
 using System.Numerics;
@@ -13,6 +14,7 @@ namespace SharpEngine.Editor.Windows
     {
         private bool _showContextMenu;
         private bool _updateContextMenuLocation;
+        private GameObject? IntersectedObject;
 
         /// <inheritdoc />
         public override string Name => "Context Menu";
@@ -23,39 +25,63 @@ namespace SharpEngine.Editor.Windows
         /// <summary>
         ///     Shows the context menu.
         /// </summary>
-        public void ShowContextMenu()
+        /// <param name="intersectedObject">The object the cursor right-clicked on.</param>
+        public void ShowContextMenu(GameObject? intersectedObject = null)
         {
+            IntersectedObject = intersectedObject;
             _updateContextMenuLocation = true;
             _showContextMenu = true;
+        }
+
+        /// <inheritdoc />
+        public override void PreRender()
+        {
+            if (_updateContextMenuLocation)
+            {
+                ImGui.SetNextWindowPos(ImGui.GetMousePos());
+                _updateContextMenuLocation = false;
+            }
         }
 
         /// <inheritdoc />
         public override void Render()
         {
             if (!_showContextMenu)
+            {
+                IntersectedObject = null;
                 return;
-
-            if (Scene is null)
-                throw new InvalidOperationException("Scene is not set.");
-
-            if (_updateContextMenuLocation)
-            {
-                ImGui.SetNextWindowPos(ImGui.GetMousePos());
-                _updateContextMenuLocation = false;
             }
 
-            ImGui.Begin("Context Menu", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove);
+            if (Scene is not null)
+                RenderSceneActions();
 
-            if (ImGui.Button("Create cube"))
+            if (IntersectedObject is not null)
+                RenderIntersectedObjectActions();
+        }
+
+        private void RenderIntersectedObjectActions()
+        {
+            if (ImGui.Button("Delete"))
             {
-                var cube = PrimitiveFactory.Create(PrimitiveType.Cube, new Vector3(0, 0, 0));
-                cube.Name = "Cube" + Scene.Root.Children.Count;
-
-                Scene.ActiveElement = cube;
-                Scene.Root.AddChild(cube);
+                Scene.Root.RemoveChild(IntersectedObject);
+                IntersectedObject = null;
             }
+        }
 
-            ImGui.End();
+        private void RenderSceneActions()
+        {
+            var values = Enum.GetValues<PrimitiveType>();
+            foreach (var value in values)
+            {
+                if (ImGui.Button($"Create {value}"))
+                {
+                    var cube = PrimitiveFactory.Create(value, new Vector3(0, 0, 0));
+                    cube.Name = value.ToString() + Scene.Root.Children.Count;
+
+                    Scene.ActiveElement = cube;
+                    Scene.Root.AddChild(cube);
+                }
+            }
         }
     }
 }

@@ -29,12 +29,13 @@ namespace SharpEngine.Core;
 /// </summary>
 public class Window : SilkWindow
 {
-    private readonly IViewSettings _settings;
-    private readonly CameraView _camera;
-
     private bool _initialized;
     private IEnumerable<RendererBase> _renderers = [];
     private ImGuiController? _imGuiController;
+
+    public readonly CameraView Camera;
+
+    public IViewSettings Settings;
 
     /// <summary>The event executed when mouse events are executed.</summary>
     public event Action<IMouse>? OnHandleMouse;
@@ -77,8 +78,8 @@ public class Window : SilkWindow
     public Window(CameraView camera, Scene scene, IViewSettings settings)
     {
         Scene = scene;
-        _settings = settings;
-        _camera = camera;
+        Settings = settings;
+        Camera = camera;
         Initialize();
     }
 
@@ -90,8 +91,9 @@ public class Window : SilkWindow
     public Window(Scene scene, IViewSettings settings)
     {
         Scene = scene;
-        _settings = settings;
-        _camera = new(Vector3.One, settings);
+        Settings = settings;
+        Camera = new(Vector3.One, settings);
+
         Initialize();
     }
 
@@ -100,7 +102,7 @@ public class Window : SilkWindow
     // public void Initialize<T>() where T : SilkWindow, new()
     private void Initialize()
     {
-        CurrentWindow = CreateWindow(_settings.WindowOptions);
+        CurrentWindow = CreateWindow(Settings.WindowOptions);
         CurrentWindow.Update += OnUpdateFrame;
         CurrentWindow.Render += RenderFrame;
         CurrentWindow.Resize += OnResize;
@@ -157,7 +159,7 @@ public class Window : SilkWindow
             {
                 // Make sure the renderer has the correct constructor parameters!
                 // TODO: The static reference to the context will not work when multiple windows are implemented, since the context will be different.
-                var requiredArguments = new object[] { _camera, _settings, Scene };
+                var requiredArguments = new object[] { Camera, Settings, Scene };
                 var renderer = (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
 
                 _renderers = _renderers.Append(renderer);
@@ -197,11 +199,11 @@ public class Window : SilkWindow
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            ToggleWireFrame(_settings.UseWireFrame);
+            ToggleWireFrame(Settings.UseWireFrame);
 
             UseShaders();
 
-            var renderTasks = _renderers.Where(renderer => _settings.RendererFlags.HasFlag(renderer.RenderFlag))
+            var renderTasks = _renderers.Where(renderer => Settings.RendererFlags.HasFlag(renderer.RenderFlag))
                                         .Select(renderer => renderer.Render())
                                         .ToList();
 
@@ -249,14 +251,14 @@ public class Window : SilkWindow
         // if (!_window.IsFocused)
         //     return;
 
-        if (_settings.PrintFrameRate)
+        if (Settings.PrintFrameRate)
             Console.WriteLine($"FPS: {1f / deltaTime}");
 
         // TODO: Handle multiple mice?
         var mouse = Input?.Mice[0];
         if (mouse is not null)
         {
-            _camera.UpdateMousePosition(mouse.Position);
+            Camera.UpdateMousePosition(mouse.Position);
             OnHandleMouse?.Invoke(mouse);
         }
 
@@ -311,14 +313,14 @@ public class Window : SilkWindow
         };
 
         HandleMouseWheel?.Invoke(direction, sw);
-        _camera.Fov -= sw.Y;
+        Camera.Fov -= sw.Y;
     }
 
     /// <inheritdoc />
     protected void OnResize(Vector2D<int> size)
     {
         GL.Viewport(size);
-        _camera.AspectRatio = size.X / size.Y;
+        Camera.AspectRatio = size.X / size.Y;
     }
 
     /// <inheritdoc />

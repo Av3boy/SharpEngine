@@ -1,12 +1,15 @@
 ﻿using ImGuiNET;
 using Launcher.UI;
-using Silk.NET.Input;
 
 using SharpEngine.Core;
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Primitives;
 using SharpEngine.Core.Scenes;
+using SharpEngine.Core.Entities;
+
 using SharpEngine.Editor.Windows;
+
+using Silk.NET.Input;
 
 using System.Numerics;
 using System.Reflection;
@@ -23,8 +26,6 @@ public class EditorWindow : Window
 
     private ContextMenuWindow? _contextMenuWindow;
     private ActionsMenuWindow? _actionsMenuWindow;
-
-    public EditorWindow() { }
 
     /// <summary>
     ///     Initializes an editor window with a specified scene and view settings.
@@ -132,7 +133,31 @@ public class EditorWindow : Window
     {
         base.OnMouseClick(mouse, button, vector);
 
-        if (button == MouseButton.Right)
-            _contextMenuWindow?.ShowContextMenu();
+        if (button == Settings.PrimaryButton)
+        {
+            if (ImGui.IsAnyItemHovered())
+            {
+                // TODO: Right-clicked on an ImGui component
+            }
+            else
+            {
+                // TODO: Right-clicked outside of ImGui components
+                Camera.IsInView(Scene, out GameObject? intersectingObject, out Vector3 hitPosition);
+                _contextMenuWindow?.ShowContextMenu(intersectingObject);
+            }
+        }
+
+        if (button == Settings.SecondaryButton)
+        {
+            if (ImGui.IsAnyItemHovered())
+            {
+                // TODO: Left-clicked on an ImGui component
+            }
+            else
+            {
+                Camera.IsInView(Scene, out GameObject? intersectingObject, out Vector3 hitPosition);
+                Scene.ActiveElement = intersectingObject;
+            }
+        }
     }
 }

@@ -13,14 +13,10 @@ namespace SharpEngine.Core;
 /// </summary>
 public class Ray
 {
-    /// <summary>
-    ///     Gets or sets the ray origin.
-    /// </summary>
+    /// <summary>Gets or sets the ray origin.</summary>
     public Vector3 Origin { get; set; }
 
-    /// <summary>
-    ///    Gets or sets the ray direction.
-    /// </summary>
+    /// <summary>Gets or sets the ray direction.</summary>
     public Vector3 Direction { get; set; }
 
     /// <summary>
@@ -35,7 +31,7 @@ public class Ray
     }
 
     /// <summary>
-    ///   Checks if the ray intersects with any objects in the scene.
+    ///     Checks if the ray intersects with any objects in the scene.
     /// </summary>
     /// <param name="scene">The scene to check for intersections.</param>
     /// <param name="intersectingObject">The intersecting object; <see langword="null"/> if the ray did not intersect an object.</param>
@@ -49,7 +45,7 @@ public class Ray
 
         var sceneNodes = scene.GetAllGameObjects();
         
-        if (allowedTypes.Any())
+        if (allowedTypes.Length != 0)
             sceneNodes = [.. sceneNodes.Where(go => allowedTypes.Any(type => type.IsInstanceOfType(go)))];
 
         for (float t = 0; t < maxDistance; t += stepSize)
@@ -70,7 +66,7 @@ public class Ray
     }
 
     /// <summary>
-    ///   Determines if a point is inside a given object.
+    ///     Determines if a point is inside a given object.
     /// </summary>
     /// <param name="point">The point to check.</param>
     /// <param name="obj">The object to check against.</param>
@@ -86,7 +82,7 @@ public class Ray
     }
 
     /// <summary>
-    ///   Gets the normal of the closest face of an object to a given point.
+    ///     Gets the normal of the closest face of an object to a given point.
     /// </summary>
     /// <param name="point">The point to check.</param>
     /// <param name="obj">The object to check against.</param>

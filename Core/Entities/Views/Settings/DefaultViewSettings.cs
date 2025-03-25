@@ -1,5 +1,5 @@
 ﻿using SharpEngine.Core.Renderers;
-
+using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
 
@@ -19,7 +19,7 @@ public struct DefaultViewSettings : IViewSettings
     }
 
     /// <summary>
-    /// Convenience wrapper around creating a new WindowProperties with sensible defaults.
+    ///     Convenience wrapper around creating a new WindowProperties with sensible defaults.
     /// </summary>
     public static ViewSettings Default { get; private set; }
 
@@ -41,4 +41,10 @@ public struct DefaultViewSettings : IViewSettings
         Title = "SharpEngine",
         Size = new Vector2D<int>(1280, 720),
     };
+
+    /// <inheritdoc />
+    public MouseButton PrimaryButton { get; set; } = MouseButton.Left;
+
+    /// <inheritdoc />
+    public MouseButton SecondaryButton { get; set; } = MouseButton.Right;
 }

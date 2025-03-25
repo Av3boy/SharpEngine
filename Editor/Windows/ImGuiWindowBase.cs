@@ -7,6 +7,7 @@ using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
+using System.Reflection.PortableExecutable;
 using System.Threading;
 
 namespace SharpEngine.Editor.Windows
@@ -51,11 +52,15 @@ namespace SharpEngine.Editor.Windows
         /// <param name="project">The new project.</param>
         public void SetProject(Project project) => Project = project;
 
+        public virtual void PreRender() { }
+
         /// <summary>
         ///     Renders a new ImGui window to the main window.
         /// </summary>
         public void RenderWindow()
         {
+            PreRender();
+
             ImGui.Begin(Name, ImGuiWindowFlags);
 
             Render();
