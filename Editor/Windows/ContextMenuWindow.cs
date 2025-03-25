@@ -20,7 +20,7 @@ namespace SharpEngine.Editor.Windows
         public override string Name => "Context Menu";
 
         /// <inheritdoc />
-        public override ImGuiWindowFlags ImGuiWindowFlags => ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove;
+        public override ImGuiWindowFlags ImGuiWindowFlags => ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.AlwaysAutoResize;
 
         /// <summary>
         ///     Shows the context menu.

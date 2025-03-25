@@ -1,14 +1,8 @@
 using ImGuiNET;
 using Launcher.UI;
+
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Scenes;
-using Silk.NET.Input;
-using Silk.NET.Maths;
-using Silk.NET.OpenGL;
-using Silk.NET.OpenGL.Extensions.ImGui;
-using Silk.NET.Windowing;
-using System.Reflection.PortableExecutable;
-using System.Threading;
 
 namespace SharpEngine.Editor.Windows
 {
@@ -52,6 +46,9 @@ namespace SharpEngine.Editor.Windows
         /// <param name="project">The new project.</param>
         public void SetProject(Project project) => Project = project;
 
+        /// <summary>
+        ///     Executes operations required before rendering the ImGui window.
+        /// </summary>
         public virtual void PreRender() { }
 
         /// <summary>
@@ -82,7 +79,10 @@ namespace SharpEngine.Editor.Windows
         protected virtual void OnWindowUndocked()
         {
             Console.WriteLine($"Window {Name} was undocked.");
-            CreateSilkWindow();
+
+            // TODO: This method of doing this does not work (at least in .Net 8).
+            // See issue #44 for more information.
+            //CreateSilkWindow();
         }
 
         private void CreateSilkWindow()
