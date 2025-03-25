@@ -14,10 +14,9 @@ internal class UIShader : ShaderBase
     public override bool SetAttributes()
     {
         if (!base.SetAttributes())
-            return false; 
+            return false;
 
-        var vertexLocation = Shader!.GetAttribLocation(ShaderAttributes.Pos);
-        if (vertexLocation == ShaderAttributes.AttributeLocationNotFound)
+        if (!Shader!.TryGetAttribLocation(ShaderAttributes.Pos, out int vertexLocation))
             return false;
 
         uint vertexLocationUInt = (uint)vertexLocation;

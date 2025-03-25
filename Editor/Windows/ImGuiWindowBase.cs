@@ -1,7 +1,13 @@
 using ImGuiNET;
 using Launcher.UI;
+using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Scenes;
+using Silk.NET.Input;
+using Silk.NET.Maths;
+using Silk.NET.OpenGL;
+using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
+using System.Threading;
 
 namespace SharpEngine.Editor.Windows
 {
@@ -56,14 +62,8 @@ namespace SharpEngine.Editor.Windows
 
             // Check docking state
             bool isDocked = ImGui.IsWindowDocked();
-            if (_previousDockingStates.TryGetValue(Name, out bool wasDocked))
-            {
-                if (wasDocked && !isDocked)
-                {
-                    // Window was undocked
-                    OnWindowUndocked();
-                }
-            }
+            if (_previousDockingStates.TryGetValue(Name, out bool wasDocked) && wasDocked && !isDocked)
+                OnWindowUndocked();
 
             // Update previous docking state
             _previousDockingStates[Name] = isDocked;
@@ -82,20 +82,30 @@ namespace SharpEngine.Editor.Windows
 
         private void CreateSilkWindow()
         {
-            // TODO: Use the Core window.
-            var window = Window.Create(WindowOptions.Default with
+            try
             {
-                Title = Name
-            });
+                var thread = new Thread(() =>
+                {
 
-            window.Load += () =>
+                    var window = new Core.Window(new(), new DefaultViewSettings());
+
+                    window.Closing += () => _previousDockingStates[Name] = false;
+                    window.OnAfterRender += deltaTime =>
+                    {
+                        ImGui.Begin(Name, ImGuiWindowFlags);
+                        Render();
+                        ImGui.End();
+                    };
+
+                    window.Run();
+                });
+
+                thread.Start();
+            }
+            catch (Exception ex)
             {
-                // TODO: Initialize the ImGui context like we do in the Core window.
-            };
-
-            window.Render += delta => Render();
-
-            window.Run();
+                Console.WriteLine($"Failed to create window: {ex.Message}");
+            }
         }
 
         /// <summary>
