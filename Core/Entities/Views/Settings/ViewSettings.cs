@@ -1,6 +1,5 @@
-﻿using SharpEngine.Core.Interfaces;
-using SharpEngine.Core.Renderers;
-using Silk.NET.Maths;
+﻿using SharpEngine.Core.Renderers;
+using Silk.NET.Input;
 using Silk.NET.Windowing;
 
 namespace SharpEngine.Core.Entities.Views.Settings;
@@ -47,4 +46,10 @@ public struct ViewSettings : IViewSettings
 
     /// <inheritdoc />
     public WindowOptions WindowOptions { get; set; }
+
+    /// <inheritdoc />
+    public MouseButton PrimaryButton { get; set; } = MouseButton.Left;
+
+    /// <inheritdoc />
+    public MouseButton SecondaryButton { get; set; } = MouseButton.Right;
 }

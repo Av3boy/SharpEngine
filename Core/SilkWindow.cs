@@ -190,14 +190,14 @@ public abstract class SilkWindow : IWindow
         return CurrentWindow;
     }
 
-    public static T Create<T>(WindowOptions opts) where T : SilkWindow, new()
-    {
-        var instance = new T();
-        var winndow = instance.CreateWindow(opts);
-
-        instance.CurrentWindow = winndow;
-        return instance;
-    }
+    // public static T Create<T>(WindowOptions opts) where T : SilkWindow, new()
+    // {
+    //     var instance = new T();
+    //     var winndow = instance.CreateWindow(opts);
+    // 
+    //     instance.CurrentWindow = winndow;
+    //     return instance;
+    // }
 
     /// <inheritdoc />
     protected virtual void Dispose(bool disposing) { }

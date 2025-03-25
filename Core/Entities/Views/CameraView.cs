@@ -24,20 +24,6 @@ public class CameraView : View
         AspectRatio = settings.WindowOptions.Size.X / (float)settings.WindowOptions.Size.Y;
     }
 
-    // Those vectors are directions pointing outwards from the camera to define how it rotated.
-    private Vector3 _front = -Vector3.UnitZ;
-    private Vector3 _up = Vector3.UnitY;
-    private Vector3 _right = Vector3.UnitX;
-
-    /// <summary>Gets the front vector of the camera.</summary>
-    public Vector3 Front => _front;
-
-    /// <summary>Gets the up vector of the camera.</summary>
-    public Vector3 Up => _up;
-
-    /// <summary>Gets the right vector of the camera.</summary>
-    public Vector3 Right => _right;
-
     // Rotation around the X axis (radians)
     private float _pitch;
 

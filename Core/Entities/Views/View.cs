@@ -1,5 +1,8 @@
 ﻿using SharpEngine.Core.Entities.Views.Settings;
+using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
+using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace SharpEngine.Core.Entities.Views;
@@ -17,6 +20,20 @@ public class View
     {
         Settings = settings;
     }
+
+    // Those vectors are directions pointing outwards from the camera to define how it rotated.
+    protected Vector3 _front = -Vector3.UnitZ;
+    protected Vector3 _up = Vector3.UnitY;
+    protected Vector3 _right = Vector3.UnitX;
+
+    /// <summary>Gets the front vector of the camera.</summary>
+    public Vector3 Front => _front;
+
+    /// <summary>Gets the up vector of the camera.</summary>
+    public Vector3 Up => _up;
+
+    /// <summary>Gets the right vector of the camera.</summary>
+    public Vector3 Right => _right;
 
     /// <summary>Gets or sets the settings for the view.</summary>
     public IViewSettings Settings { get; set; }
@@ -65,4 +82,18 @@ public class View
             firstMove = false;
         }
     }
+
+    /// <summary>
+    ///     Checks whether a game object is in view of the camera.
+    /// </summary>
+    /// <remarks>
+    ///     Uses a step based ray marching algorithm to check if any object is in view of the camera.
+    /// </remarks>
+    /// <param name="scene">The scene where the check should be applied to.</param>
+    /// <param name="allowedTypes">The types that are allowed to be hit.</param>
+    /// <param name="intersectingObject">The first object that the ray intersected.</param>
+    /// <param name="hitPosition">The position where the object was hit.</param>
+    /// <returns><see langword="true"/> if any object was hit; otherwise, <see langword="false"/>.</returns>
+    public bool IsInView(Scene scene, out GameObject? intersectingObject, out Vector3 hitPosition, params Type[] allowedTypes)
+        => new Ray(Position, Front).IsGameObjectInView(scene, out intersectingObject, out hitPosition, allowedTypes);
 }

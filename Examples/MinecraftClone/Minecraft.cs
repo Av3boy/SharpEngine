@@ -209,7 +209,7 @@ public class Minecraft : Game
 
     private BlockType DestroyBlock()
     {
-        if (!IsBlockInView(out GameObject? intersectingObject, out Vector3 _))
+        if (!Camera.IsInView(_scene, out GameObject? intersectingObject, out Vector3 _, allowedTypes: typeof(BlockBase)))
             return BlockType.None;
 
         var block = (BlockBase)intersectingObject!;
@@ -220,7 +220,7 @@ public class Minecraft : Game
 
     private void PlaceBlock()
     {
-        if (!IsBlockInView(out GameObject? intersectingObject, out Vector3 hitPosition))
+        if (!Camera.IsInView(_scene, out GameObject? intersectingObject, out Vector3 hitPosition, allowedTypes: typeof(BlockBase)))
             return;
 
         var newBlockPosition = GetNewBlockPosition(hitPosition, intersectingObject!);
@@ -238,18 +238,6 @@ public class Minecraft : Game
     {
         Vector3 normal = Ray.GetClosestFaceNormal(hitPosition, intersectingObject);
         return intersectingObject.Transform.Position + (normal * intersectingObject.Transform.Scale);
-    }
-
-    /// <summary>
-    ///     Checks whether a block is in view of the camera.
-    /// </summary>
-    /// <param name="intersectingObject"></param>
-    /// <param name="hitPosition"></param>
-    /// <returns></returns>
-    public bool IsBlockInView(out GameObject? intersectingObject, out Vector3 hitPosition)
-    {
-        Ray ray = new Ray(Camera.Position, Camera.Front);
-        return ray.IsGameObjectInView(_scene, out intersectingObject, out hitPosition, allowedTypes: typeof(BlockBase));
     }
 
     /// <inheritdoc />

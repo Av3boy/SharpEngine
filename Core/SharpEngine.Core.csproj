@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>Everything needed to build games using a purely C# game engine.</Description>
@@ -11,18 +11,23 @@
 
     <!-- Required, atleast for now since another NuGet package with the SharpEngine.Core name already exists. -->
     <PackageId>$(AssemblyName).NET</PackageId>
-    <Configurations>Debug;Release;LauncherNonWindows</Configurations>    
+    <Configurations>Debug;Release;LauncherNonWindows</Configurations>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SilkVersion>2.22.0</SilkVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-
-    <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.22.0" />
-
-    <PackageReference Include="Silk.NET.Input" Version="2.22.0" />
-    <PackageReference Include="Silk.NET.OpenGL" Version="2.22.0" />
-    <PackageReference Include="Silk.NET.Windowing" Version="2.22.0" />
+    
+    <PackageReference Include="Silk.NET.OpenAL" Version="$(SilkVersion)" />
+    <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="$(SilkVersion)" />
+    <PackageReference Include="Silk.NET.Input" Version="$(SilkVersion)" />
+    <PackageReference Include="Silk.NET.OpenGL" Version="$(SilkVersion)" />
+    <PackageReference Include="Silk.NET.Windowing" Version="$(SilkVersion)" />
     
     <PackageReference Include="StbImageSharp" Version="2.30.15" />
     <PackageReference Include="System.Text.Json" Version="8.0.5" />

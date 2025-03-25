@@ -11,13 +11,20 @@ namespace SharpEngine.Editor.Windows;
 public class PropertiesWindow : ImGuiWindowBase
 {
     /// <inheritdoc />
-    public override string Name => "Properties";
+    public override string Name => Scene.ActiveElement is null ? "Properties" : Scene.ActiveElement!.Name + " properties";
 
     /// <inheritdoc />
     public override void Render()
     {
         if (Scene.ActiveElement is not null)
             RenderActiveElementProperties(Scene.ActiveElement);
+
+        if (Scene.ActiveElement is null)
+        {
+            ImGui.Text("No properties to display.");
+            ImGui.End();
+            return;
+        }
     }
 
     /// <summary>
@@ -28,16 +35,6 @@ public class PropertiesWindow : ImGuiWindowBase
     /// <param name="currentDepth">Marks the starting level or the currently rendered level of properties.</param>
     public void RenderActiveElementProperties(object obj, int maxRecursionDepth = 5, int currentDepth = 0)
     {
-        if (currentDepth == 0)
-            ImGui.Begin(obj is null ? "Properties" : Scene.ActiveElement!.Name + " properties");
-
-        if (obj is null)
-        {
-            ImGui.Text("No properties to display.");
-            ImGui.End();
-            return;
-        }
-
         if (currentDepth > maxRecursionDepth)
             return;
 
@@ -49,6 +46,10 @@ public class PropertiesWindow : ImGuiWindowBase
 
             foreach (var property in properties)
             {
+                // Skip properties with index parameters
+                if (property.GetIndexParameters().Length > 0)
+                    continue;
+
                 var inspectorAttribute = property.GetCustomAttribute<InspectorAttribute>();
                 if (inspectorAttribute != null && !inspectorAttribute.DisplayInInspector)
                 {
@@ -83,8 +84,5 @@ public class PropertiesWindow : ImGuiWindowBase
         {
             Console.WriteLine(e);
         }
-
-        if (currentDepth == 0)
-            ImGui.End();
     }
 }

@@ -19,27 +19,21 @@ internal class Program
 
     static void StartWindow(IWindow window)
     {
-        var thread = new Thread(() =>
+        window.Load += () =>
         {
-            window.Load += () =>
+            Console.WriteLine($"Hello from window: " + window.Title);
+
+            var gl = GL.GetApi(window);
+
+            unsafe
             {
-                Console.WriteLine($"Hello from window: " + window.Title);
+                var versionPtr = gl.GetString(StringName.Version);
+                string? version = SilkMarshal.PtrToString((nint)versionPtr);
+                Console.WriteLine($"OpenGL version: {version}");
+            }
 
-                var gl = GL.GetApi(window);
+        };
 
-                unsafe
-                {
-                    var versionPtr = gl.GetString(StringName.Version);
-                    string? version = SilkMarshal.PtrToString((nint)versionPtr);
-                    Console.WriteLine($"OpenGL version: {version}");
-                }
-
-            };
-
-            window.Run();
-        });
-
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
+        window.Run();
     }
 }

@@ -1,7 +1,5 @@
 using ImGuiNET;
 using Launcher.UI;
-using SharpEngine.Core;
-using SharpEngine.Core.Scenes;
 
 namespace SharpEngine.Editor.Windows
 {
