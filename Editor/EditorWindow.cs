@@ -99,6 +99,31 @@ public class EditorWindow : Window
     {
         base.AfterRender(deltaTime);
 
+        EnableDocking();
+        RenderMenuBar();
+
+        bool visible = true;
+        ImGui.Begin("Unsaved changes", ref visible, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoMove);
+        ImGui.Text("There are unsaved changes in the project. Are you sure you want to exist without saving?");
+        
+        if (ImGui.Button("Save"))
+        {
+            // Save the scene and exit
+        }
+
+        if (ImGui.Button("Exit without saving"))
+        {
+            // TODO: shut down the application
+        }
+
+        ImGui.End();
+
+        foreach (var window in _windows)
+            window.RenderWindow();
+    }
+
+    private static void EnableDocking()
+    {
         // Enable docking
         ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.DockingEnable;
 
@@ -123,9 +148,58 @@ public class EditorWindow : Window
         ImGui.DockSpace(dockSpaceId, Vector2.Zero, ImGuiDockNodeFlags.PassthruCentralNode);
 
         ImGui.End();
+    }
 
-        foreach (var window in _windows)
-            window.RenderWindow();
+    private void RenderMenuBar()
+    {
+        // Add a main menu bar
+        if (ImGui.BeginMainMenuBar())
+        {
+            RenderFileMenu();
+
+            if (ImGui.BeginMenu("Edit"))
+            {
+                ImGui.EndMenu();
+            }
+
+            if (ImGui.BeginMenu("Windows"))
+            {
+                foreach (var window in _windows)
+                {
+                    if (ImGui.MenuItem(window.Name))
+                        window.Open();
+                }
+
+                ImGui.EndMenu();
+            }
+
+            ImGui.EndMainMenuBar();
+        }
+    }
+
+    private static void RenderFileMenu()
+    {
+        if (ImGui.BeginMenu("File"))
+        {
+            if (ImGui.MenuItem("New"))
+            {
+                // Handle New action
+            }
+            if (ImGui.MenuItem("Open"))
+            {
+                // Handle Open action
+            }
+            if (ImGui.MenuItem("Save"))
+            {
+                // Handle Save action
+            }
+            if (ImGui.MenuItem("Exit"))
+            {
+                // Handle Exit action
+            }
+
+            ImGui.EndMenu();
+        }
     }
 
     /// <inheritdoc />

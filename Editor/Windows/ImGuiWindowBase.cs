@@ -17,6 +17,15 @@ namespace SharpEngine.Editor.Windows
         /// <summary>Gets or sets the currently active scene.</summary>
         public Scene Scene { get; private set; }
 
+        /// <summary>Gets the name of the window.</summary>
+        public abstract string Name { get; }
+
+        /// <inheritdoc />
+        public virtual ImGuiWindowFlags ImGuiWindowFlags => ImGuiWindowFlags.None;
+
+        private readonly Dictionary<string, bool> _previousDockingStates = [];
+        private bool _isVisible = true;
+
         /// <summary>
         ///     Initializes a new instance of <see cref="ImGuiWindowBase"/>.
         /// </summary>
@@ -25,14 +34,6 @@ namespace SharpEngine.Editor.Windows
             Scene = new Scene();
             Project = new Project();
         }
-
-        private readonly Dictionary<string, bool> _previousDockingStates = [];
-
-        /// <summary>Gets the name of the window.</summary>
-        public abstract string Name { get; }
-
-        /// <inheritdoc />
-        public virtual ImGuiWindowFlags ImGuiWindowFlags => ImGuiWindowFlags.None;
 
         /// <summary>
         ///     Sets the current scene.
@@ -46,6 +47,8 @@ namespace SharpEngine.Editor.Windows
         /// <param name="project">The new project.</param>
         public void SetProject(Project project) => Project = project;
 
+        public void Open() => _isVisible = true;
+
         /// <summary>
         ///     Executes operations required before rendering the ImGui window.
         /// </summary>
@@ -56,9 +59,12 @@ namespace SharpEngine.Editor.Windows
         /// </summary>
         public void RenderWindow()
         {
+            if (!_isVisible)
+                return;
+
             PreRender();
 
-            ImGui.Begin(Name, ImGuiWindowFlags);
+            ImGui.Begin(Name, ref _isVisible, ImGuiWindowFlags);
 
             Render();
 
