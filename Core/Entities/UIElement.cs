@@ -4,6 +4,7 @@ using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 
 using Silk.NET.OpenGL;
+using System;
 using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Entities;
@@ -80,13 +81,13 @@ public class UIElement : SceneNode
     /// <summary>
     ///     Render the UI element.
     /// </summary>
-    public unsafe override Task Render()
+    public override Task Render()
     {
         Window.GL.BindVertexArray(_vertexArrayObject);
         
         _uIShader.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
         
-        Window.GL.DrawElements(PrimitiveType.Triangles, (uint)_indices.Length, DrawElementsType.UnsignedInt, null);
+        Window.GL.DrawElements<uint>(PrimitiveType.Triangles, (uint)_indices.Length, DrawElementsType.UnsignedInt, []);
 
         return Task.CompletedTask;
     }
