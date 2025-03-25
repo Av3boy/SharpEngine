@@ -1,4 +1,4 @@
-﻿using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Extensions;
 using Silk.NET.OpenGL;
 
@@ -22,9 +22,12 @@ internal class LampShader : ShaderBase
         if (!base.SetAttributes())
             return false;
 
-        var positionLocation = (uint)Shader!.GetAttribLocation(ShaderAttributes.Pos);
-        Window.GL.EnableVertexAttribArray(positionLocation);
-        Window.GL.VertexAttribPointer(positionLocation, 3, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
+        if (!Shader!.TryGetAttribLocation(ShaderAttributes.Pos, out int positionLocation))
+            return false;
+
+        var positionLocationUint = (uint)positionLocation;
+        Window.GL.EnableVertexAttribArray(positionLocationUint);
+        Window.GL.VertexAttribPointer(positionLocationUint, 3, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
 
         return true;
     }
