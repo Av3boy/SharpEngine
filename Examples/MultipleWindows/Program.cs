@@ -43,8 +43,8 @@ public static partial class Program
             window.Reset();
             window.Dispose();
 
-            i--; // Adjust the index to account for the removed item
             _windows.RemoveAt(i);
+            i--; // Adjust the index to account for the removed item
             
             if (_windows.Count == 0)
                 _cancellationTokenSource.Cancel();
@@ -71,18 +71,27 @@ public static partial class Program
             }
         });
 
-    private static void CreateWindow(WindowOptions options)
+    private static IWindow CreateWindow()
     {
-        options.Title = "Window" + _windows.Count;
+        var options = WindowOptions.Default with
+        {
+            Title = "Window" + _windows.Count,
 
-        // This is to make sure the windows don't overlap
-        options.Position = new Vector2D<int>(
+            // This is to make sure the windows don't overlap
+            Position = new Vector2D<int>(
             x: 500 + (50 * _windows.Count),
-            y: 400 + (50 * _windows.Count));
+            y: 400 + (50 * _windows.Count))
+        };
 
         var window = Window.Create(options);
         window.Initialize();
 
+        return window;
+    }
+
+    private static void CreateWindow(WindowOptions options)
+    {
+        var window = CreateWindow();
         var inputContext = window.CreateInput();
         foreach (var mouse in inputContext.Mice)
             mouse.Click += Mouse_Click;
