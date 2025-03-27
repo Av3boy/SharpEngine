@@ -11,7 +11,7 @@ using System;
 using System.IO;
 using System.Numerics;
 
-namespace SharpEngine.Core;
+namespace SharpEngine.Core.Windowing;
 
 /// <summary>
 ///     Represents an abstraction for the <see cref="IWindow"/> interface.

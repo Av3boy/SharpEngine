@@ -1,4 +1,5 @@
 ﻿using SharpEngine.Core.Extensions;
+using SharpEngine.Core.Windowing;
 using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Shaders;

@@ -5,7 +5,7 @@ using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Textures;
-
+using SharpEngine.Core.Windowing;
 using Silk.NET.OpenGL;
 using System.Collections.Generic;
 using System.IO;

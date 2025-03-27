@@ -22,7 +22,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 
-namespace SharpEngine.Core;
+namespace SharpEngine.Core.Windowing;
 
 /// <summary>
 ///     Represents the game window.

@@ -98,7 +98,7 @@ namespace SharpEngine.Editor.Windows
                 var thread = new Thread(() =>
                 {
 
-                    var window = new Core.Window(new(), new DefaultViewSettings());
+                    var window = new Core.Windowing.Window(new(), new DefaultViewSettings());
 
                     window.Closing += () => _previousDockingStates[Name] = false;
                     window.OnAfterRender += deltaTime =>

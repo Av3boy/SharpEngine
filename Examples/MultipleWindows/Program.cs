@@ -1,11 +1,8 @@
-﻿using Silk.NET.Core.Native;
-using Silk.NET.GLFW;
-using Silk.NET.Input;
+﻿using Silk.NET.Input;
 using Silk.NET.Maths;
-using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
+
 using System.Collections.Concurrent;
-using SharpEngine.Core;
 using SharpEngine.Core.Entities.Views.Settings;
 
 // An example provided a lovely person in this thread:
@@ -17,9 +14,13 @@ public static partial class Program
     private static readonly ConcurrentQueue<WindowOptions> _windowQueue = [];
     private static readonly CancellationTokenSource _cancellationTokenSource = new();
 
+    /// <summary>
+    ///     The main entry point of the application.
+    /// </summary>
+    /// <param name="_">Arguments discarded.</param>
     public static void Main(string[] _)
     {
-        StartWindowQueue();
+        StartWindowQueueTask();
 
         while (!_cancellationTokenSource.IsCancellationRequested)
         {
@@ -59,10 +60,10 @@ public static partial class Program
             return;
         
         while (_windowQueue.TryDequeue(out var options))
-            CreateWindow(options);
+            EnqueueWindow(options);
     }
 
-    private static void StartWindowQueue()
+    private static void StartWindowQueueTask()
         => Task.Run(async () =>
         {
             _windowQueue.Enqueue(WindowOptions.Default);
@@ -73,7 +74,7 @@ public static partial class Program
             }
         });
 
-    private static SharpEngine.Core.Window CreateWindow()
+    private static SharpEngine.Core.Windowing.Window CreateWindow()
     {
         var options = new DefaultViewSettings() with
         {
@@ -89,16 +90,16 @@ public static partial class Program
         };
 
         //var window = Window.Create(options);
-        var window = new SharpEngine.Core.Window(new(), options);
+        var window = new SharpEngine.Core.Windowing.Window(new(), options);
         window.Initialize();
 
         return window;
     }
 
-    private static void CreateWindow(WindowOptions options)
+    private static void EnqueueWindow(WindowOptions options)
     {
         var window = CreateWindow();
-        foreach (var mouse in window.Input.Mice)
+        foreach (var mouse in window!.Input!.Mice)
             mouse.Click += Mouse_Click;
 
         _inputContexts.Add(window.Input);

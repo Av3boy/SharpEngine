@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Numerics;
 
 using Silk.NET.OpenGL;
+using SharpEngine.Core.Windowing;
 
 namespace SharpEngine.Core.Shaders;
 
@@ -41,6 +42,12 @@ public class Shader
         //   The vertex shader won't be too important here, but they'll be more important later.
         // The fragment shader is responsible for then converting the vertices to "fragments", which represent all the data OpenGL needs to draw a pixel.
         //   The fragment shader is what we'll be using the most here.
+
+        if (!vertPath.EndsWith(".vert"))
+            Console.WriteLine("Vertex shaders should have the file extension '.vert' for easier manageability.");
+
+        if (!fragPath.EndsWith(".frag"))
+            Console.WriteLine("Fragment shaders should have the file extension '.frag' for easier manageability.");
 
         // Load and compile shader
         if (!LoadShader(ShaderType.VertexShader, vertPath, out uint vertexShader))

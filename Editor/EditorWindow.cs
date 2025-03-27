@@ -13,6 +13,7 @@ using Silk.NET.Input;
 
 using System.Numerics;
 using System.Reflection;
+using SharpEngine.Core.Windowing;
 
 namespace SharpEngine.Editor;
 
@@ -159,6 +160,17 @@ public class EditorWindow : Window
 
             if (ImGui.BeginMenu("Edit"))
             {
+                if (ImGui.MenuItem("Settings"))
+                {
+                    // Handle New action
+
+                    // TODO: Select preferred editor
+                    // Required fields:
+                    // radio button, each defined editor (store as json)
+                    // textbox,Path to executable
+                    // textbox, cli argument to open a file
+                }
+
                 ImGui.EndMenu();
             }
 
@@ -209,13 +221,15 @@ public class EditorWindow : Window
 
         if (button == Settings.PrimaryButton)
         {
-            if (ImGui.IsAnyItemHovered())
+            // TODO: This probably isn't doable using ImGui. Figure out a new way or wait until UI is written using the Core 2D renderer.
+            if (ImGui.IsItemClicked((ImGuiMouseButton)button))
             {
-                // TODO: Right-clicked on an ImGui component
+                // Clicked on an ImGui component
+                uint hoveredItemId = ImGui.GetID("");
+                Debug.LogInformation($"Clicked on ImGui component with ID: {hoveredItemId}");
             }
             else
             {
-                // TODO: Right-clicked outside of ImGui components
                 Camera.IsInView(Scene, out GameObject? intersectingObject, out Vector3 hitPosition);
                 _contextMenuWindow?.ShowContextMenu(intersectingObject);
             }
@@ -223,9 +237,11 @@ public class EditorWindow : Window
 
         if (button == Settings.SecondaryButton)
         {
-            if (ImGui.IsAnyItemHovered())
+            if (ImGui.IsItemClicked((ImGuiMouseButton)button))
             {
-                // TODO: Left-clicked on an ImGui component
+                // Clicked on an ImGui component
+                uint hoveredItemId = ImGui.GetID("");
+                Debug.LogInformation($"Clicked on ImGui component with ID: {hoveredItemId}");
             }
             else
             {

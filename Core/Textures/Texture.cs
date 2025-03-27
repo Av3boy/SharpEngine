@@ -1,4 +1,5 @@
-﻿using Silk.NET.OpenGL;
+﻿using SharpEngine.Core.Windowing;
+using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Textures;
 

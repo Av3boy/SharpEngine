@@ -1,0 +1,10 @@
+﻿<div class="sidebar">
+    <ul>
+        @ChildContent
+    </ul>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public RenderFragment ChildContent { get; set; }
+}

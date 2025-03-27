@@ -1,0 +1,12 @@
+﻿<li class="sidebar-item" style="cursor: pointer; list-style: none; padding: 0.5rem 1em;" @onclick="@OnItemClicked"><Icon IconType="Icon" /></li>
+
+@code {
+    [Parameter]
+    public SvgIcon Icon { get; set; }
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    private async Task OnItemClicked()
+        => await OnClick.InvokeAsync();
+}

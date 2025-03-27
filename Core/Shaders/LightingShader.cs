@@ -1,5 +1,6 @@
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Extensions;
+using SharpEngine.Core.Windowing;
 using Silk.NET.OpenGL;
 using System;
 

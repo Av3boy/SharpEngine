@@ -3,6 +3,7 @@ using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
+using SharpEngine.Core.Windowing;
 using Silk.NET.OpenGL;
 
 using System;

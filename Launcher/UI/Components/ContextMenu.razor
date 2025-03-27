@@ -1,0 +1,46 @@
+﻿@if (showMenu)
+{
+    <div class="context-menu" style="top:@menuYpx; left:@menuXpx;">
+        @ChildContent(Context)
+    </div>
+}
+
+<style>
+    .context-menu {
+        position: absolute;
+        z-index: 1000;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 8px;
+    }
+</style>
+
+@code {
+    [Inject]
+    private IJSRuntime JS { get; set; }
+
+    [Parameter]
+    public RenderFragment<object> ChildContent { get; set; }
+
+    public object Context { get; set; }
+
+    private bool showMenu = false;
+    private int menuX, menuY;
+
+    private string menuXpx => $"{menuX}px";
+    private string menuYpx => $"{menuY}px";
+
+    public void Open(MouseEventArgs e, object context)
+    {
+        menuX = (int)e.ClientX;
+        menuY = (int)e.ClientY;
+        showMenu = true;
+
+        Context = context;
+
+        // Prevent the default browser context menu
+        JS.InvokeVoidAsync("preventContextMenu");
+    }
+}

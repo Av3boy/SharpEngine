@@ -159,7 +159,10 @@ namespace Launcher.Services
             var projects = System.Text.Json.JsonSerializer.Deserialize<List<Project>>(json);
 
             if (projects is not null)
+            {
+                // TOOD: Resolve last modified
                 return projects;
+            }
 
             _notificationService.Show($"Unable to load projects.", false, json, projects?.ToArray());
             return [];

@@ -1,0 +1,28 @@
+﻿<div style="border: 1px solid black">
+    <button type="submit" style="border: none; background: none;"><Icon IconType="SvgIcon.Lens" /></button>
+    <input type="text" placeholder="Search.." name="search" style="border: none;" value="@Value" @onchange="@OnChangeAsync">
+</div>
+
+@code {
+    [Parameter]
+    public string Value { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public int DebounceDelayMilliseconds { get; set; } = 1000;
+
+    private CancellationTokenSource _tokenSource { get; set; } = new();
+
+    private async Task OnChangeAsync(ChangeEventArgs e)
+    {
+        _tokenSource = new CancellationTokenSource();
+        var token = _tokenSource.Token;
+
+        await Task.Delay(DebounceDelayMilliseconds, token);
+
+        Value = e.Value?.ToString() ?? string.Empty;
+        await ValueChanged.InvokeAsync(Value);
+    }
+}
