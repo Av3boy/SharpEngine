@@ -1,39 +1,98 @@
 ﻿using Silk.NET.Core.Native;
 using Silk.NET.GLFW;
+using Silk.NET.Input;
+using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
+using System.Collections.Concurrent;
 
-internal class Program
+// An example provided a lovely person in this thread:
+// https://github.com/dotnet/Silk.NET/issues/2436#issuecomment-2752966073
+public static partial class Program
 {
-    static void Main()
+    private static readonly List<IWindow> _windows = [];
+    private static readonly List<IInputContext> _inputContexts = [];
+    private static readonly ConcurrentQueue<WindowOptions> _windowQueue = [];
+    private static readonly CancellationTokenSource _cancellationTokenSource = new();
+
+    public static void Main(string[] _)
     {
-        var options1 = WindowOptions.Default with { Title = "Window 1", WindowClass = "MyWindowClass1" };
-        var options2 = WindowOptions.Default with { Title = "Window 2", WindowClass = "MyWindowClass2" };
+        StartWindowQueue();
 
-        var window1 = Window.Create(options1);
-        var window2 = Window.Create(options2);
+        while (!_cancellationTokenSource.IsCancellationRequested)
+        {
+            for (int i = 0; i < _windows.Count; i++)
+                UpdateWindow(ref i);
 
-        StartWindow(window1);
-        StartWindow(window2);
+            DequeueWindows();
+        }
     }
 
-    static void StartWindow(IWindow window)
+    private static void UpdateWindow(ref int i)
     {
-        window.Load += () =>
+        var window = _windows[i];
+        if (window is null)
+            return;
+
+        window.DoEvents();
+        window.DoUpdate();
+        window.DoRender();
+
+        if (window.IsClosing)
         {
-            Console.WriteLine($"Hello from window: " + window.Title);
+            window.Reset();
+            window.Dispose();
 
-            var gl = GL.GetApi(window);
+            i--; // Adjust the index to account for the removed item
+            _windows.RemoveAt(i);
+            
+            if (_windows.Count == 0)
+                _cancellationTokenSource.Cancel();
+        }
+    }
 
-            unsafe
+    private static void DequeueWindows()
+    {
+        if (_cancellationTokenSource.IsCancellationRequested)
+            return;
+        
+        while (_windowQueue.TryDequeue(out var options))
+            CreateWindow(options);
+    }
+
+    private static void StartWindowQueue()
+        => Task.Run(async () =>
+        {
+            _windowQueue.Enqueue(WindowOptions.Default);
+            while (!_cancellationTokenSource.IsCancellationRequested)
             {
-                var versionPtr = gl.GetString(StringName.Version);
-                string? version = SilkMarshal.PtrToString((nint)versionPtr);
-                Console.WriteLine($"OpenGL version: {version}");
+                await Task.Delay(1000);
+                Console.WriteLine("Running loop on background thread...");
             }
+        });
 
-        };
+    private static void CreateWindow(WindowOptions options)
+    {
+        options.Title = "Window" + _windows.Count;
 
-        window.Run();
+        // This is to make sure the windows don't overlap
+        options.Position = new Vector2D<int>(
+            x: 500 + (50 * _windows.Count),
+            y: 400 + (50 * _windows.Count));
+
+        var window = Window.Create(options);
+        window.Initialize();
+
+        var inputContext = window.CreateInput();
+        foreach (var mouse in inputContext.Mice)
+            mouse.Click += Mouse_Click;
+
+        _inputContexts.Add(inputContext);
+        _windows.Add(window);
+    }
+
+    private static void Mouse_Click(IMouse args1, Silk.NET.Input.MouseButton arg2, System.Numerics.Vector2 arg3)
+    {
+        _windowQueue.Enqueue(WindowOptions.Default);
     }
 }
