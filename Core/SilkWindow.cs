@@ -28,22 +28,38 @@ public abstract class SilkWindow : IWindow
     public IMonitor? Monitor { get; set; }
 
     /// <inheritdoc />
-    public bool IsClosing { get; set; }
+    public bool IsClosing
+    { 
+        get => CurrentWindow.IsClosing;
+        set => CurrentWindow.IsClosing = value;
+    }
 
     /// <summary>Gets or sets the input context for the window.</summary>
     public IInputContext? Input { get; protected set; }
 
     /// <inheritdoc />
-    public virtual Rectangle<int> BorderSize { get; }
+    public virtual Rectangle<int> BorderSize => CurrentWindow.BorderSize;
 
     /// <inheritdoc />
-    public bool IsVisible { get; set; }
+    public bool IsVisible
+    {
+        get => CurrentWindow.IsVisible;
+        set => CurrentWindow.IsVisible = value;
+    }
 
     /// <inheritdoc />
-    public Vector2D<int> Position { get; set; }
+    public Vector2D<int> Position
+    {
+        get => CurrentWindow.Position;
+        set => CurrentWindow.Position = value;
+    }
 
     /// <inheritdoc />
-    public Vector2D<int> Size { get; set; }
+    public Vector2D<int> Size
+    {
+        get => CurrentWindow.Size;
+        set => CurrentWindow.Size = value;
+    }
 
     /// <inheritdoc />
     public string Title
@@ -56,13 +72,21 @@ public abstract class SilkWindow : IWindow
     public WindowState WindowState { get; set; }
 
     /// <inheritdoc />
-    public WindowBorder WindowBorder { get; set; }
+    public WindowBorder WindowBorder
+    {
+        get => CurrentWindow.WindowBorder;
+        set => CurrentWindow.WindowBorder = value;
+    }
 
     /// <inheritdoc />
-    public bool TransparentFramebuffer { get; }
+    public bool TransparentFramebuffer => CurrentWindow.TransparentFramebuffer;
 
     /// <inheritdoc />
-    public bool TopMost { get; set; }
+    public bool TopMost
+    {
+        get => CurrentWindow.TopMost;
+        set => CurrentWindow.TopMost = value;
+    }
 
     /// <inheritdoc />
     public IGLContext? SharedContext => CurrentWindow.SharedContext;

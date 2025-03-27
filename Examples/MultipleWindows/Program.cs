@@ -5,6 +5,8 @@ using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
 using System.Collections.Concurrent;
+using SharpEngine.Core;
+using SharpEngine.Core.Entities.Views.Settings;
 
 // An example provided a lovely person in this thread:
 // https://github.com/dotnet/Silk.NET/issues/2436#issuecomment-2752966073
@@ -71,19 +73,23 @@ public static partial class Program
             }
         });
 
-    private static IWindow CreateWindow()
+    private static SharpEngine.Core.Window CreateWindow()
     {
-        var options = WindowOptions.Default with
+        var options = new DefaultViewSettings() with
         {
-            Title = "Window" + _windows.Count,
+            WindowOptions = WindowOptions.Default with
+            {
+                Title = "Window" + _windows.Count,
 
-            // This is to make sure the windows don't overlap
-            Position = new Vector2D<int>(
-            x: 500 + (50 * _windows.Count),
-            y: 400 + (50 * _windows.Count))
+                // This is to make sure the windows don't overlap
+                Position = new Vector2D<int>(
+                    x: 500 + (50 * _windows.Count),
+                    y: 400 + (50 * _windows.Count))
+            }
         };
 
-        var window = Window.Create(options);
+        //var window = Window.Create(options);
+        var window = new SharpEngine.Core.Window(new(), options);
         window.Initialize();
 
         return window;
@@ -92,11 +98,10 @@ public static partial class Program
     private static void CreateWindow(WindowOptions options)
     {
         var window = CreateWindow();
-        var inputContext = window.CreateInput();
-        foreach (var mouse in inputContext.Mice)
+        foreach (var mouse in window.Input.Mice)
             mouse.Click += Mouse_Click;
 
-        _inputContexts.Add(inputContext);
+        _inputContexts.Add(window.Input);
         _windows.Add(window);
     }
 
