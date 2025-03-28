@@ -1,8 +1,8 @@
 using ImGuiNET;
-using Launcher.UI;
 
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Scenes;
+using SharpEngine.Shared.Dto;
 
 namespace SharpEngine.Editor.Windows
 {

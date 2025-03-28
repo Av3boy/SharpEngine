@@ -1,5 +1,4 @@
-﻿@inherits FlyoutBase
-
+﻿@using Launcher.Enums
 <div class="flyout" style="display: @_isVisibleStyle;">
     <div class="flyout-header">
         <div class="flyout-header-content">
@@ -12,9 +11,7 @@
                 <h2>@Title</h2>
             }
         </div>
-        <div>
-            <button type="button"><Icon IconType="SvgIcon.Close" /></button>
-        </div>
+        <button type="button" @onclick="@Close"><Icon IconType="SvgIcon.Close" /></button>
     </div>
     <div class="flyout-content">
         @Content
@@ -37,5 +34,17 @@
     [Parameter]
     public string Title { get; set; } = default!;
 
-    private string _isVisibleStyle => IsVisible ? "visible" : "hidden";
+    [Parameter]
+    public bool IsVisible { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> IsVisibleChanged { get; set; }
+
+    private string _isVisibleStyle => IsVisible ? "grid" : "none";
+
+    private async Task Close()
+    {
+        IsVisible = false;
+        await IsVisibleChanged.InvokeAsync(IsVisible);
+    }
 }

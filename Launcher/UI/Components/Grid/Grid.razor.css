@@ -1,0 +1,19 @@
+﻿.auto-width-table {
+  table-layout: auto;
+  width: 100%;
+}
+
+.auto-width-table th, .auto-width-table td {
+  white-space: nowrap;
+  padding: 8px;
+  text-align: left;
+}
+
+.table-header {
+  border-bottom: 1px solid black;
+}
+
+.table-content {
+  overflow-y: scroll;
+  height: 250px;
+}

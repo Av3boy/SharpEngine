@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Launcher.Services;
 using CommunityToolkit.Maui.Storage;
+using SharpEngine.Shared.Dto;
 
 namespace Launcher.UI.Components.Dialogs
 {

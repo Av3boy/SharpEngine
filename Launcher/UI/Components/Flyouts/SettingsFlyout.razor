@@ -1,12 +1,19 @@
 ﻿@inherits FlyoutBase
 
-<Flyout Title="Settings">
+<Flyout Title="Settings" @bind-IsVisible="@IsVisible">
     <Footer>
-        <button type="button">Save</button>
-        <button type="button" @onclick="@OnClose">Cancel</button>
+        <button type="button" class="btn btn-primary" @onclick="@SaveSettings">Save</button>
+        <button type="button" class="btn btn-light" @onclick="@Close">Cancel</button>
     </Footer>
 </Flyout>
 
 @code {
+    [Inject]
+    private INotificationService _notificationService { get; init; } = default!;
 
+    private async Task SaveSettings()
+    {
+        _notificationService.Show("Settings saved.");
+        await Close();
+    }
 }

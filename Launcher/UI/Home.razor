@@ -1,10 +1,11 @@
 ﻿@page "/"
 
+@using System.Diagnostics
 @using Launcher.UI.Components
 @using Launcher.UI.Components.Dialogs
-@using System.Diagnostics
+@using Launcher.UI.Components.Grid
+@using SharpEngine.Shared.Dto
 
-<Notification />
 <ConfirmDeleteDialog @bind-Visible="@_showConfirmDelete" OnDeleteProjectConfirmed="@OnDeleteProjectConfirm" />
 <CreateProjectDialog @bind-Visible="@_showCreateProjectDialog" OnProjectCreated="@ProjectCreated" />
 
@@ -17,19 +18,21 @@
     </div>
 </div>
 
-<Searchbox ValueChanged="SearchProjects" />
-
 <!-- TOOD: Skeleton loading -->
 <div class="content">
-    <Grid TItem="Project" Items="@_filteredProjects">
-        <Row>
-            <td>@context.Name</td>
+    <Searchbox ValueChanged="SearchProjects" />
+    <Grid TItem="Project" Items="@_filteredProjects" FilterChanged="OnFiltersChanged">
+        <GridRowTemplate>
+            <td>
+                <p>@context.Name</p>
+                <p>@context.Path</p>
+            </td>
             <td>@context.LastModified</td>
             <td>
                 <button type="button" class="btn btn-primary" @onclick="@(() => _editorService.OpenInEditor(context))">Open in editor</button>
                 <button type="button" class="btn btn-light" @onclick="@(() => _contextMenu!.Open(new(), context))">...</button>
             </td>
-        </Row>
+        </GridRowTemplate>
     </Grid>
 </div>
 

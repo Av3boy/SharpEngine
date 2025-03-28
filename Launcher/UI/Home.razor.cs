@@ -1,7 +1,10 @@
 ﻿using Launcher.Services;
 using Microsoft.AspNetCore.Components;
+using SharpEngine.Shared.Dto;
 using System.Diagnostics;
 using System.Text.Json;
+
+using FilterMode = Launcher.Enums.FilterMode;
 
 namespace Launcher.UI
 {
@@ -157,6 +160,12 @@ namespace Launcher.UI
             }
 
             Projects.Remove(foundProject);
+        }
+
+        private void OnFiltersChanged(Dictionary<string, FilterMode> filters)
+        {
+            _filteredProjects = [.. Projects.FilterBy(filters)];
+            StateHasChanged();
         }
     }
 }

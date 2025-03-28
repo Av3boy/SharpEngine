@@ -1,4 +1,5 @@
-﻿<div style="border: 1px solid black">
+﻿@using Launcher.Enums
+<div class="@CssClass" style="border: 1px solid black; width: 40%; justify-self: end;">
     <button type="submit" style="border: none; background: none;"><Icon IconType="SvgIcon.Lens" /></button>
     <input type="text" placeholder="Search.." name="search" style="border: none;" value="@Value" @onchange="@OnChangeAsync">
 </div>
@@ -12,6 +13,9 @@
 
     [Parameter]
     public int DebounceDelayMilliseconds { get; set; } = 1000;
+
+    [Parameter]
+    public string? CssClass { get; set; }
 
     private CancellationTokenSource _tokenSource { get; set; } = new();
 

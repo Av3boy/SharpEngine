@@ -8,10 +8,6 @@
     "inputFile": "UI/Home.razor.scss"
   },
   {
-    "outputFile": "UI/Components/DiscardIcon.razor.css",
-    "inputFile": "UI/Components/DiscardIcon.razor.scss"
-  },
-  {
     "outputFile": "wwwroot/css/additional.razor.css",
     "inputFile": "wwwroot/css/additional.razor.scss"
   },
@@ -22,5 +18,21 @@
   {
     "outputFile": "UI/Components/Dialogs/ConfirmDeleteDialog.razor.css",
     "inputFile": "UI/Components/Dialogs/ConfirmDeleteDialog.razor.scss"
+  },
+  {
+    "outputFile": "UI/Components/Navigation/SideBarItem.razor.css",
+    "inputFile": "UI/Components/Navigation/SideBarItem.razor.scss"
+  },
+  {
+    "outputFile": "UI/Components/Flyouts/Flyout.razor.css",
+    "inputFile": "UI/Components/Flyouts/Flyout.razor.scss"
+  },
+  {
+    "outputFile": "UI/Components/Grid.razor.css",
+    "inputFile": "UI/Components/Grid.razor.scss"
+  },
+  {
+    "outputFile": "UI/Components/Grid/GridHeader.razor.css",
+    "inputFile": "UI/Components/Grid/GridHeader.razor.scss"
   }
 ]

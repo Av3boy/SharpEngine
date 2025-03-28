@@ -3,7 +3,7 @@ using Launcher.UI;
 using SharpEngine.Core;
 using SharpEngine.Core.Audio;
 using SharpEngine.Core.Scenes;
-using SharpEngine.Shared;
+using SharpEngine.Shared.Extensions;
 
 namespace SharpEngine.Editor.Windows
 {

@@ -18,4 +18,10 @@ public class FlyoutBase : ComponentBase
         IsVisible = visibility;
         await IsVisibleChanged.InvokeAsync(visibility);
     }
+
+    public virtual async Task Close()
+    {
+        await OnClose.InvokeAsync();
+        await OnIsVisibleChangedAsync(false);
+    }
 }

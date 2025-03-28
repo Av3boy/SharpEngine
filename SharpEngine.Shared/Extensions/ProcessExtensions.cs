@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace SharpEngine.Shared;
+namespace SharpEngine.Shared.Extensions;
 
 /// <summary>
 ///     Contains extensions for handling processes.
@@ -68,7 +68,7 @@ public class ProcessExtensions
             }
         });
 
-        Thread thread = new Thread(start);
+        var thread = new Thread(start);
         thread.Start();
 
         SendMessage("Editor launched.");

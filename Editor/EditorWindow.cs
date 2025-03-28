@@ -1,5 +1,4 @@
 ﻿using ImGuiNET;
-using Launcher.UI;
 
 using SharpEngine.Core;
 using SharpEngine.Core.Entities.Views.Settings;
@@ -14,6 +13,7 @@ using Silk.NET.Input;
 using System.Numerics;
 using System.Reflection;
 using SharpEngine.Core.Windowing;
+using SharpEngine.Shared.Dto;
 
 namespace SharpEngine.Editor;
 

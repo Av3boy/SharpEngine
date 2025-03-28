@@ -1,8 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using SharpEngine.Shared.Attributes;
 
-namespace Launcher.UI;
+namespace SharpEngine.Shared.Dto;
 
 /// <summary>
 ///     Represents a SharpEngine project.
@@ -30,6 +32,8 @@ public class Project
     ///     Gets or sets when the project was last modified.
     /// </summary>
     [JsonIgnore]
+    [DisplayName("Last Modified")]
+    [Filter(false)]
     public DateTime LastModified { get; set; } = DateTime.Now;
 
     /// <summary>
