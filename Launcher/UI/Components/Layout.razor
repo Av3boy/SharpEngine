@@ -1,9 +1,4 @@
-﻿@using Launcher.Enums
-@using Launcher.UI.Components.Dialogs
-@using Launcher.UI.Components.Flyouts
-@using Launcher.UI.Components.Navigation
-
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 
 <div class="page">
     <Notification />
@@ -13,7 +8,7 @@
         <SideBarItem Icon="SvgIcon.Cog" OnClick="@OpenSettingsFlyout" />
     </Sidebar>
 
-    <div class="content" style="margin: 0 1em; padding: 0; display: grid; grid-template-rows: 100px auto;">
+    <div class="content">
         @Body
     </div>
 </div>

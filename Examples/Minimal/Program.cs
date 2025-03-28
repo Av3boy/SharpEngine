@@ -19,7 +19,7 @@ public static class Program
         var game = new Minimal(new DefaultSettings());
         var scene = new Scene();
 
-        using var window = new SharpEngine.Core.Window(game.Camera, scene, game.Camera.Settings);
+        using var window = new SharpEngine.Core.Windowing.Window(game.Camera, scene, game.Camera.Settings);
         window.Run();
     }
 }

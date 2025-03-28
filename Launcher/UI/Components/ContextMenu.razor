@@ -1,31 +1,18 @@
 ﻿@if (showMenu)
 {
     <div class="context-menu" style="top:@menuYpx; left:@menuXpx;">
-        @ChildContent(Context)
+        @ChildContent(_context!)
     </div>
 }
 
-<style>
-    .context-menu {
-        position: absolute;
-        z-index: 1000;
-        background-color: white;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        padding: 8px;
-    }
-</style>
-
 @code {
     [Inject]
-    private IJSRuntime JS { get; set; }
+    private IJSRuntime JS { get; init; } = default!;
 
     [Parameter]
     public RenderFragment<object> ChildContent { get; set; }
 
-    public object Context { get; set; }
-
+    private object? _context;
     private bool showMenu = false;
     private int menuX, menuY;
 
@@ -38,7 +25,7 @@
         menuY = (int)e.ClientY;
         showMenu = true;
 
-        Context = context;
+        _context = context;
 
         // Prevent the default browser context menu
         JS.InvokeVoidAsync("preventContextMenu");

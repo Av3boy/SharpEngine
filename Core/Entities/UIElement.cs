@@ -3,8 +3,8 @@ using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
+
 using Silk.NET.OpenGL;
-using System;
 using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Entities;
@@ -62,6 +62,9 @@ public class UIElement : SceneNode
         InitializeBuffers();
     }
 
+    /// <summary>
+    ///     Binds the VAO to the current context.
+    /// </summary>
     public void Bind()
     {
         Window.GL.BindVertexArray(_vertexArrayObject);

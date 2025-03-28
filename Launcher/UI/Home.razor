@@ -1,11 +1,5 @@
 ﻿@page "/"
 
-@using System.Diagnostics
-@using Launcher.UI.Components
-@using Launcher.UI.Components.Dialogs
-@using Launcher.UI.Components.Grid
-@using SharpEngine.Shared.Dto
-
 <ConfirmDeleteDialog @bind-Visible="@_showConfirmDelete" OnDeleteProjectConfirmed="@OnDeleteProjectConfirm" />
 <CreateProjectDialog @bind-Visible="@_showCreateProjectDialog" OnProjectCreated="@ProjectCreated" />
 
@@ -30,7 +24,7 @@
             <td>@context.LastModified</td>
             <td>
                 <button type="button" class="btn btn-primary" @onclick="@(() => _editorService.OpenInEditor(context))">Open in editor</button>
-                <button type="button" class="btn btn-light" @onclick="@(() => _contextMenu!.Open(new(), context))">...</button>
+                <button type="button" class="btn btn-light" @onclick="@((e) => _contextMenu!.Open(e, context))">...</button>
             </td>
         </GridRowTemplate>
     </Grid>
@@ -45,7 +39,3 @@
         <button type="button" class="btn btn-danger" @onclick="@(() => OnDeleteProjectClicked(project))">Delete</button>
     }
 </ContextMenu>
-
-@code {
-    private ContextMenu? _contextMenu;
-}

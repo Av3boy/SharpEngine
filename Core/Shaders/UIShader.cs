@@ -6,6 +6,9 @@ namespace SharpEngine.Core.Shaders;
 
 internal class UIShader : ShaderBase
 {
+    /// <summary>
+    ///     Initializes a new instance of <see cref="UIShader" />.
+    /// </summary>
     public UIShader()
     {
         Shader = new Shader(PathExtensions.GetAssemblyPath("Shaders/uiShader.vert"), PathExtensions.GetAssemblyPath("Shaders/uiShader.frag"), "ui");

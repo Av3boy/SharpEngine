@@ -1,10 +1,11 @@
 ﻿using Launcher.Services;
+using Launcher.UI.Components;
 using Microsoft.AspNetCore.Components;
 using SharpEngine.Shared.Dto;
 using System.Diagnostics;
 using System.Text.Json;
 
-using FilterMode = Launcher.Enums.FilterMode;
+using FilterMode = SharpEngine.Shared.Enums.FilterMode;
 
 namespace Launcher.UI
 {
@@ -19,6 +20,8 @@ namespace Launcher.UI
 
         private bool _showConfirmDelete;
         private bool _showCreateProjectDialog;
+
+        private ContextMenu? _contextMenu;
 
         private List<Project> Projects
         {

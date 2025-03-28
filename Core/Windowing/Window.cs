@@ -3,7 +3,6 @@ using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Extensions;
-using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Renderers;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
@@ -33,8 +32,14 @@ public class Window : SilkWindow
     private IEnumerable<RendererBase> _renderers = [];
     private ImGuiController? _imGuiController;
 
+    /// <summary>
+    ///     Gets or sets the view for the window.
+    /// </summary>
     public readonly CameraView Camera;
 
+    /// <summary>
+    ///     Gets the settings for the current window.
+    /// </summary>
     public IViewSettings Settings;
 
     /// <summary>The event executed when mouse events are executed.</summary>
@@ -67,8 +72,7 @@ public class Window : SilkWindow
     /// <returns>The OpenGL context for this window.</returns>
     public static GL GetGL() => GL;
     private static void SetGL(GL gl) => GL = gl;
-    public Window() { }
-
+    
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
     /// </summary>
@@ -99,7 +103,6 @@ public class Window : SilkWindow
 
     private bool _windowInitialized;
 
-    // public void Initialize<T>() where T : SilkWindow, new()
     private void Initialize()
     {
         CurrentWindow = CreateWindow(Settings.WindowOptions);

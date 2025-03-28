@@ -12,7 +12,7 @@ namespace Launcher.Attributes
         public override bool IsValid(object? value)
         {
             if (value is string path)
-                return System.IO.File.Exists(path);
+                return File.Exists(path);
 
             return false;
         }

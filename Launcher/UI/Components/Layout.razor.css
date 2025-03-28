@@ -1,0 +1,6 @@
+﻿.content {
+  margin: 0 1em;
+  padding: 0;
+  display: grid;
+  grid-template-rows: 100px auto;
+}

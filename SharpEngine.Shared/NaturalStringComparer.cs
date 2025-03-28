@@ -2,6 +2,9 @@
 
 namespace Launcher.UI;
 
+/// <summary>
+///     Checks if two strings are equal in a natural way.
+/// </summary>
 public class NaturalStringComparer : IComparer<string>
 {
     /// <inheritdoc />
@@ -28,7 +31,7 @@ public class NaturalStringComparer : IComparer<string>
         return (len1 - i).CompareTo(len2 - j);
     }
 
-    private int CompareCharacters(string s1, string s2, ref int i, ref int j)
+    private static int CompareCharacters(string s1, string s2, ref int i, ref int j)
     {
         char c1 = s1[i];
         char c2 = s2[j];
@@ -37,9 +40,12 @@ public class NaturalStringComparer : IComparer<string>
         if (char.IsDigit(c1) && char.IsDigit(c2))
         {
             int start1 = i;
-            while (i < s1.Length && char.IsDigit(s1[i])) i++;
+            while (i < s1.Length && char.IsDigit(s1[i]))
+                i++;
+
             int start2 = j;
-            while (j < s2.Length && char.IsDigit(s2[j])) j++;
+            while (j < s2.Length && char.IsDigit(s2[j]))
+                j++;
 
             string numStr1 = s1.Substring(start1, i - start1);
             string numStr2 = s2.Substring(start2, j - start2);

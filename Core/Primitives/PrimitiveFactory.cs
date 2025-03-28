@@ -1,6 +1,7 @@
 ﻿using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Extensions;
+
 using System;
 using System.Numerics;
 

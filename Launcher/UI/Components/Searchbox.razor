@@ -1,19 +1,22 @@
-﻿@using Launcher.Enums
-<div class="@CssClass" style="border: 1px solid black; width: 40%; justify-self: end;">
-    <button type="submit" style="border: none; background: none;"><Icon IconType="SvgIcon.Lens" /></button>
-    <input type="text" placeholder="Search.." name="search" style="border: none;" value="@Value" @onchange="@OnChangeAsync">
+﻿<div class="searchbox @CssClass">
+    <button type="submit" class="searchbox-btn"><Icon IconType="SvgIcon.Lens" /></button>
+    <input type="text" class="searchbox-input" placeholder="Search.." name="search" value="@Value" @onchange="@OnChangeAsync">
 </div>
 
 @code {
+    /// <summary>Gets or sets the value of the search box.</summary>
     [Parameter]
     public string Value { get; set; } = default!;
 
+    /// <summary>Gets or sets the event executed when the value of the search box changes.</summary>
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
 
+    /// <summary>Gets or sets the delay in milliseconds before the value is updated after the user stops typing.</summary>
     [Parameter]
     public int DebounceDelayMilliseconds { get; set; } = 1000;
 
+    /// <summary>Gets or sets any extra CSS classes to apply to the search box.</summary>
     [Parameter]
     public string? CssClass { get; set; }
 

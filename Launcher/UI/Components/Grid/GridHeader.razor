@@ -1,6 +1,4 @@
-﻿@using Launcher.Enums
-
-<th scope="col">
+﻿<th scope="col">
     <button type="button" class="btn btn-light @_filterClass" @onclick="@OnFilterClicked">
         @Title
         <Icon IconType="@_icon" SizePx="16" />
@@ -8,18 +6,19 @@
 </th>
 
 @code {
-    /// <summary>
-    ///     Gets or sets the contents of the grid row header.
-    /// </summary>
+    /// <summary>Gets or sets the contents of the grid row header.</summary>
     [Parameter]
     public string Title { get; set; } = default!;
 
+    /// <summary>Gets or sets whether filtering is allowed for the header.</summary>
     [Parameter]
     public bool AllowFiltering { get; set; }
 
+    /// <summary>Gets or sets the event executed when the filter mode changes.</summary>
     [Parameter]
     public EventCallback<FilterMode> FilterChanged { get; set; }
 
+    /// <summary>Gets or sets the filter mode of the header.</summary>
     [Parameter]
     public FilterMode FilterMode { get; set; } = FilterMode.None;
 

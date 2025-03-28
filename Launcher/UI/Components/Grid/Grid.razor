@@ -51,6 +51,7 @@
     private List<GridHeaderInfo> _headers { get; set; } = [];
     private Dictionary<string, FilterMode> _filterModes { get; set; } = new();
 
+    /// <inheritdoc />
     protected override Task OnInitializedAsync()
     {
         GetHeaders();

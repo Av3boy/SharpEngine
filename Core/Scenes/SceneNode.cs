@@ -16,7 +16,7 @@ public class SceneNode
     /// <summary>
     ///     Gets or sets the children of the node.
     /// </summary>
-    public List<SceneNode> Children { get; set; } = new();
+    public List<SceneNode> Children { get; set; } = [];
 
     /// <summary>
     ///     Initializes a new empty <see cref="SceneNode"/>.

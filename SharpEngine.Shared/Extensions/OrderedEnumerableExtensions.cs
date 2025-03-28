@@ -1,9 +1,11 @@
 ﻿using Launcher.UI;
 using SharpEngine.Shared.Dto;
+using SharpEngine.Shared.Enums;
 using SharpEngine.Shared.Extensions;
 
-using FilterMode = Launcher.Enums.FilterMode;
-
+/// <summary>
+///     Handles ordering collections.
+/// </summary>
 public static class OrderedEnumerableExtensions
 {
     /// <summary>

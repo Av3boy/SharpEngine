@@ -1,10 +1,11 @@
-﻿@using Launcher.Enums
-<li class="sidebar-item" style="cursor: pointer; list-style: none; padding: 0.5rem 1em;" @onclick="@OnItemClicked"><Icon IconType="Icon" /></li>
+﻿<li class="sidebar-item" @onclick="@OnItemClicked"><Icon IconType="Icon" /></li>
 
 @code {
+    /// <summary>Gets or set the icon for the sidebar item.</summary>
     [Parameter]
     public SvgIcon Icon { get; set; }
 
+    /// <summary>Gets or sets the event executed when the sidebar item is clicked.</summary>
     [Parameter]
     public EventCallback OnClick { get; set; }
 

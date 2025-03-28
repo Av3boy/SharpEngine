@@ -1,19 +1,15 @@
-﻿@using Launcher.Enums
-@using Launcher.Services
-@inherits DialogBase
+﻿@inherits DialogBase
 
 @inject INotificationService NotificationService
 
-<div style="width: 100%; height: 100%; position: absolute; pointer-events: none;">
-    <div style="position: relative; display: flex; top: 50px; flex-direction: column; align-items: end;">
+<div class="notification-container">
+    <div class="notification">
 
         @foreach (var notification in NotificationService.Notifications)
         {
-            <div class="alert alert-@(Type.ToCssClass())" role="alert" style="pointer-events: auto;">
+            <div class="alert alert-@(Type.ToCssClass()) notification-content" role="alert">
                 @notification.Key @(notification.Value > 1 ? $"({notification.Value})" : "")
-                <span @onclick="@(() => NotificationService.Discard(notification.Key))">
-                    <Icon IconType="SvgIcon.Discard" />
-                </span>
+                <DiscardIcon DiscardClicked="@(() => NotificationService.Discard(notification.Key))" />
             </div>
         }
 

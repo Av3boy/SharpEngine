@@ -217,9 +217,9 @@ public abstract class SilkWindow : IWindow
     // public static T Create<T>(WindowOptions opts) where T : SilkWindow, new()
     // {
     //     var instance = new T();
-    //     var winndow = instance.CreateWindow(opts);
+    //     var window = instance.CreateWindow(opts);
     // 
-    //     instance.CurrentWindow = winndow;
+    //     instance.CurrentWindow = window;
     //     return instance;
     // }
 

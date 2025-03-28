@@ -40,7 +40,7 @@ public static class Math
     ///    Converts a value in <paramref name="radians"/> to degrees.
     /// </summary>
     /// <param name="radians">The radians to convert.</param>
-    /// <returns>The given <paramref name="radians"/> as degress.</returns>
+    /// <returns>The given <paramref name="radians"/> as degrees.</returns>
     public static float RadiansToDegrees(float radians)
         => radians * (180 / MathF.PI);
 }

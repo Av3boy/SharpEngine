@@ -2,12 +2,14 @@ using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Windowing;
 using Silk.NET.OpenGL;
-using System;
 
 namespace SharpEngine.Core.Shaders;
 
 internal class LightingShader : ShaderBase
 {
+    /// <summary>
+    ///     Initializes a new instance of <see cref="LightingShader" />.
+    /// </summary>
     public LightingShader()
     {
         Shader = ShaderService.Instance.LoadShader(PathExtensions.GetAssemblyPath("Shaders/shader.vert"), PathExtensions.GetAssemblyPath("Shaders/lighting.frag"), "lighting");

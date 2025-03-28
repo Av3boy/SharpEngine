@@ -21,7 +21,6 @@ public class View
         Settings = settings;
     }
 
-    // Those vectors are directions pointing outwards from the camera to define how it rotated.
     protected Vector3 _front = -Vector3.UnitZ;
     protected Vector3 _up = Vector3.UnitY;
     protected Vector3 _right = Vector3.UnitX;
@@ -35,14 +34,14 @@ public class View
     /// <summary>Gets the right vector of the camera.</summary>
     public Vector3 Right => _right;
 
+        /// <summary>Gets or sets the position of the camera.</summary>
+    public Vector3 Position { get; set; }
+
     /// <summary>Gets or sets the settings for the view.</summary>
     public IViewSettings Settings { get; set; }
 
     /// <summary>Gets or sets the aspect ratio of the viewport, used for the projection matrix.</summary>
     public float AspectRatio { get; set; }
-
-    /// <summary>Gets or sets the position of the camera.</summary>
-    public Vector3 Position { get; set; }
 
     private protected bool firstMove;
     private protected Vector2 lastPos;

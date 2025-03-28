@@ -1,10 +1,11 @@
-﻿<div class="sidebar" style="border-right: 1px solid black;">
-    <ul style="padding: 0;">
+﻿<div class="sidebar">
+    <ul>
         @ChildContent
     </ul>
 </div>
 
 @code {
+    /// <summary>Gets or sets the sidebar items to be rendered within the sidebar.</summary>
     [Parameter, EditorRequired]
     public RenderFragment ChildContent { get; set; }
 }

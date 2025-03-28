@@ -1,6 +1,7 @@
 ﻿using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Shaders;
+
 using System.Numerics;
 using System.Threading.Tasks;
 

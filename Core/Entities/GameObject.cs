@@ -6,16 +6,16 @@ using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Textures;
 using SharpEngine.Core.Windowing;
+
 using Silk.NET.OpenGL;
+
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Entities;
 
 /// <summary>
-/// Represents a game object in the scene.
+///     Represents a game object in the scene.
 /// </summary>
 public class GameObject : SceneNode
 {
@@ -32,7 +32,7 @@ public class GameObject : SceneNode
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GameObject"/> with specified textures and shaders.
+    ///     Initializes a new instance of the <see cref="GameObject"/> with specified textures and shaders.
     /// </summary>
     /// <param name="diffuseMapFile">The file path of the diffuse map texture.</param>
     /// <param name="specularMapFile">The file path of the specular map texture.</param>

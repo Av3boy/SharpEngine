@@ -34,5 +34,29 @@
   {
     "outputFile": "UI/Components/Grid/GridHeader.razor.css",
     "inputFile": "UI/Components/Grid/GridHeader.razor.scss"
+  },
+  {
+    "outputFile": "UI/Components/Dialogs/CreateProjectDialog.razor.css",
+    "inputFile": "UI/Components/Dialogs/CreateProjectDialog.razor.scss"
+  },
+  {
+    "outputFile": "UI/Components/Navigation/Sidebar.razor.css",
+    "inputFile": "UI/Components/Navigation/Sidebar.razor.scss"
+  },
+  {
+    "outputFile": "UI/Components/Notification/Notification.razor.css",
+    "inputFile": "UI/Components/Notification/Notification.razor.scss"
+  },
+  {
+    "outputFile": "UI/Components/ContextMenu.razor.css",
+    "inputFile": "UI/Components/ContextMenu.razor.scss"
+  },
+  {
+    "outputFile": "UI/Components/Layout.razor.css",
+    "inputFile": "UI/Components/Layout.razor.scss"
+  },
+  {
+    "outputFile": "UI/Components/Searchbox.razor.css",
+    "inputFile": "UI/Components/Searchbox.razor.scss"
   }
 ]
