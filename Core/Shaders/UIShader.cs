@@ -12,7 +12,7 @@ internal class UIShader : ShaderBase
     /// </summary>
     public UIShader()
     {
-        Shader = new Shader(PathExtensions.GetAssemblyPath("Shaders/uiShader.vert"), PathExtensions.GetAssemblyPath("Shaders/uiShader.frag"), "ui");
+        Shader = new Shader(PathExtensions.GetAssemblyPath("Shaders\\uiShader.vert"), PathExtensions.GetAssemblyPath("Shaders\\uiShader.frag"), "ui");
     }
 
     /// <inheritdoc />
@@ -21,14 +21,7 @@ internal class UIShader : ShaderBase
         if (!base.SetAttributes())
             return false;
 
-        if (!Shader!.TryGetAttribLocation(ShaderAttributes.Pos, out int vertexLocation))
-            return false;
-
-        uint vertexLocationUInt = (uint)vertexLocation;
-        Window.GL.EnableVertexAttribArray(vertexLocationUInt);
-        Window.GL.VertexAttribPointer(vertexLocationUInt, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float), 0);
-
-        /*if (!Shader!.TryGetAttribLocation(ShaderAttributes.Pos, out int positionLocation))
+        if (!Shader!.TryGetAttribLocation(ShaderAttributes.Pos, out int positionLocation))
             return false;
 
         var positionLocationUint = (uint)positionLocation;
@@ -48,7 +41,6 @@ internal class UIShader : ShaderBase
         var texCoordLocationUint = (uint)texCoordLocation;
         Window.GL.EnableVertexAttribArray(texCoordLocationUint);
         Window.GL.VertexAttribPointer(texCoordLocationUint, VertexData.TexCoordsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.TexCoordsOffset);
-        */
 
         return true;
     }

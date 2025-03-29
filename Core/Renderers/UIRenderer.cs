@@ -1,4 +1,4 @@
-﻿using SharpEngine.Core.Entities;
+﻿using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
@@ -18,6 +18,7 @@ public class UIRenderer : RendererBase
 {
     private readonly Scene _scene;
     private readonly UIShader _uiShader;
+    private readonly CameraView _camera;
 
     /// <inheritdoc />
     public override RenderFlags RenderFlag => RenderFlags.UIRenderer;
@@ -25,10 +26,11 @@ public class UIRenderer : RendererBase
     /// <summary>
     ///     Initializes a new instance of <see cref="UIRenderer"/>.
     /// </summary>
-    public UIRenderer(CameraView _, ISettings settings, Scene scene) : base(settings)
+    public UIRenderer(CameraView camera, ISettings settings, Scene scene) : base(settings)
     {
         _scene = scene;
         _uiShader = new UIShader();
+        _camera = camera;
     }
 
     /// <inheritdoc />
@@ -61,6 +63,8 @@ public class UIRenderer : RendererBase
         {
             Window.GL.Disable(EnableCap.DepthTest);
             Window.GL.DepthFunc(DepthFunction.Less);
+
+            _camera.SetShaderUniforms(_uiShader.Shader!);
 
             foreach (var item in _scene.UIElements)
             {

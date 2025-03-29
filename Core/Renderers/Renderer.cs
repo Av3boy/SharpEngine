@@ -49,6 +49,7 @@ public class Renderer : RendererBase
     /// <inheritdoc />
     public override Task Render()
     {
+        return Task.CompletedTask;
         try
         {
             Window.GL.Enable(EnableCap.DepthTest);

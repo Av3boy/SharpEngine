@@ -7,12 +7,12 @@ using SharpEngine.Core.Windowing;
 using Silk.NET.OpenGL;
 using System.Threading.Tasks;
 
-namespace SharpEngine.Core.Entities;
+namespace SharpEngine.Core.Entities.UI;
 
 /// <summary>
 ///     Represents a User Interface entity.
 /// </summary>
-public class UIElement : SceneNode
+public class UIElement : GameObject
 {
     /// <summary>
     ///     Initializes a new instance of <see cref="UIElement"/>.
@@ -27,14 +27,15 @@ public class UIElement : SceneNode
     private readonly UIShader _uIShader = new();
 
     /// <summary>Gets or sets the 2D space transformation of the UI element.</summary>
-    public Transform2D Transform { get; set; } = new()
+    public new Transform2D Transform { get; set; } = new()
     {
-        //Rotation = 180
-        Scale = new System.Numerics.Vector2(0.5f, 0.5f)
+        //Rotation = 180,
+        Scale = new System.Numerics.Vector2(0.5f, 0.5f),
+        //Position = new System.Numerics.Vector2(1, 0),
     };
 
     /// <summary>Gets or sets the mesh of the UI element.</summary>
-    public Mesh Mesh { get; set; }
+    public new Mesh Mesh { get; set; }
 
     private uint _vertexArrayObject;
 

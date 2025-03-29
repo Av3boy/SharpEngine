@@ -10,6 +10,7 @@ using Silk.NET.Input;
 
 using System;
 using System.Numerics;
+using SharpEngine.Core.Entities.UI;
 
 namespace Minecraft;
 
