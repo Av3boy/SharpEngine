@@ -1,11 +1,11 @@
-﻿namespace SharpEngine.Core.Entities.Properties;
+﻿namespace SharpEngine.Core.Entities.Properties.Meshes;
 
 /// <summary>
 ///     Represents the data of a vertex.
 /// </summary>
 public struct VertexData
 {
-    /// <summary>The stride or lenght of the vertex data object.</summary>
+    /// <summary>The stride or length of the vertex data object.</summary>
     public const int Stride = 8 * sizeof(float);
 
     /// <summary>The size of the vertices in the vertex data object.</summary>

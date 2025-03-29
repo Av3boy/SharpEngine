@@ -57,8 +57,6 @@ public class UIRenderer : RendererBase
     /// <inheritdoc />
     public override Task Render()
     {
-        return Task.CompletedTask;
-
         try
         {
             Window.GL.Disable(EnableCap.DepthTest);

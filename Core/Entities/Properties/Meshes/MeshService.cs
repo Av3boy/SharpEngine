@@ -1,5 +1,6 @@
 ﻿using SharpEngine.Core.Windowing;
 using Silk.NET.OpenGL;
+using System;
 using System.Collections.Generic;
 
 namespace SharpEngine.Core.Entities.Properties.Meshes;
@@ -35,6 +36,11 @@ public class MeshService
 
         Meshes.Add(identifier, mesh);
         return mesh;
+    }
+
+    public Mesh LoadMesh(string identifier, string meshFilePath)
+    {
+        throw new NotImplementedException("Loading meshes from files is not currently supported.");
     }
 
     // TODO: #3 & #2 Load mesh from file

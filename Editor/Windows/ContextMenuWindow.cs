@@ -85,6 +85,12 @@ namespace SharpEngine.Editor.Windows
                     Scene.Root.AddChild(cube);
                 }
             }
+
+            if (ImGui.Button("Empty"))
+            {
+                var element = Scene.ActiveElement ?? Scene.Root;
+                element.AddChild(new SceneNode("Empty"));
+            }
         }
     }
 }

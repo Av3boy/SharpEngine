@@ -136,7 +136,7 @@ public class Minecraft : Game
     /// <inheritdoc />
     public override void Update(double deltaTime, IInputContext input)
     {
-        UpdateUI();
+        // UpdateUI();
         _input.HandleKeyboard(input.Keyboards[0], (float)deltaTime);
     }
 

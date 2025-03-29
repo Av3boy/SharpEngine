@@ -27,4 +27,7 @@ public class Mesh
     /// </summary>
     [Inspector(DisplayInInspector = false)]
     public float[] TextureCoordinates { get; set; } = [];
+
+    [Inspector(DisplayInInspector = false)]
+    public uint[] Indices { get; set; } = [];
 }

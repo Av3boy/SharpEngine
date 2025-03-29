@@ -21,7 +21,7 @@ public class UIElement : SceneNode
     public UIElement(string name)
     {
         Name = name;
-        // Mesh = MeshService.Instance.LoadMesh("plane", Primitives.Plane.Mesh);
+        Mesh = MeshService.Instance.LoadMesh(nameof(Primitives.Plane), Primitives.Plane.Mesh);
     }
 
     private readonly UIShader _uIShader = new();
@@ -29,27 +29,12 @@ public class UIElement : SceneNode
     /// <summary>Gets or sets the 2D space transformation of the UI element.</summary>
     public Transform2D Transform { get; set; } = new()
     {
-        Rotation = 180
+        //Rotation = 180
+        Scale = new System.Numerics.Vector2(0.5f, 0.5f)
     };
 
-    // TODO: Use actual mesh
     /// <summary>Gets or sets the mesh of the UI element.</summary>
-    public Mesh Mesh { get; set; } // = new();
-
-    private readonly float[] _vertices =
-    [
-        // Position         Texture coordinates
-         0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,  // top right
-         0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom right
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom left
-        -0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // top left
-    ];
-
-    private readonly uint[] _indices =
-    [
-       0, 1, 3,
-       1, 2, 3
-    ];
+    public Mesh Mesh { get; set; }
 
     private uint _vertexArrayObject;
 
@@ -74,11 +59,11 @@ public class UIElement : SceneNode
     {
         var vertexBufferObject = Window.GL.GenBuffer();
         Window.GL.BindBuffer(GLEnum.ArrayBuffer, vertexBufferObject);
-        Window.GL.BufferData<float>(GLEnum.ArrayBuffer, _vertices, GLEnum.StaticDraw);
+        Window.GL.BufferData<float>(GLEnum.ArrayBuffer, Mesh.GetVertices(), GLEnum.StaticDraw);
 
         var elementBufferObject = Window.GL.GenBuffer();
         Window.GL.BindBuffer(GLEnum.ElementArrayBuffer, elementBufferObject);
-        Window.GL.BufferData<uint>(GLEnum.ElementArrayBuffer, _indices, GLEnum.StaticDraw);
+        Window.GL.BufferData<uint>(GLEnum.ElementArrayBuffer, Mesh.Indices, GLEnum.StaticDraw);
     }
 
     /// <summary>
@@ -90,7 +75,7 @@ public class UIElement : SceneNode
         
         _uIShader.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
         
-        Window.GL.DrawElements<uint>(PrimitiveType.Triangles, (uint)_indices.Length, DrawElementsType.UnsignedInt, []);
+        Window.GL.DrawElements<uint>(PrimitiveType.Triangles, (uint)Mesh.Indices.Length, DrawElementsType.UnsignedInt, []);
 
         return Task.CompletedTask;
     }
