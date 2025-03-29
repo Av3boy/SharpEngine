@@ -29,7 +29,7 @@ public class Minecraft : Game
     private Input _input;
     private readonly Inventory _inventory;
 
-    private UIElement uiElem;
+    private UIElement _uiElem;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Minecraft"/>.
@@ -56,8 +56,10 @@ public class Minecraft : Game
             _blocksNode = _scene.Root.AddChild("blocks");
 
             // TODO: Fix UI renderer
-            uiElem = new UIElement("uiElement");
-            _scene.UIElements.Add(uiElem);
+            _uiElem = new UIElement("uiElement");
+            _uiElem.Transform.Scale = new Vector2(0.5f, 0.5f);
+
+            _scene.UIElements.Add(_uiElem);
 
             InitializeWorld();
         }
@@ -90,11 +92,6 @@ public class Minecraft : Game
             Diffuse = new Vector3(1.0f, 1.0f, 1.0f),
             Specular = new Vector3(1.0f, 1.0f, 1.0f),
         });
-
-        // var _lightingShader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/lighting.frag", "lighting");
-        // _lightingShader.SetInt("numDirLights", 1);
-        // _lightingShader.SetInt("numPointLights", 4);
-        // _lightingShader.SetInt("numSpotLights", 1);
     }
 
     private void InitializeChunks()
@@ -137,12 +134,12 @@ public class Minecraft : Game
     /// <inheritdoc />
     public override void Update(double deltaTime, IInputContext input)
     {
-        // UpdateUI();
+        UpdateUI();
         _input.HandleKeyboard(input.Keyboards[0], (float)deltaTime);
     }
 
     private void UpdateUI()
-        => uiElem.Transform.Rotation += 0.01f;
+        => _uiElem.Transform.Rotation += 0.01f;
 
     // TODO: Input system to let users change change key bindings?
     /// <inheritdoc />

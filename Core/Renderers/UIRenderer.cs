@@ -34,29 +34,6 @@ public class UIRenderer : RendererBase
     }
 
     /// <inheritdoc />
-    public override void Initialize()
-    {
-        if (_uiShader.Shader is null)
-        {
-            Console.WriteLine("The UI shader is null. This is broken mostly when the exe is started outside the solution. This needs to be fixed later.");
-            return;
-        }   
-        
-        _uiShader.Shader.Use();
-
-        _scene.UIElements.Add(new UIElement("uiElement"));
-
-        _scene.Iterate(_scene.UIElements, elem => elem.Initialize());
-
-        InitializeVertexArrays();
-    }
-
-    private void InitializeVertexArrays()
-    {
-        _uiShader.SetAttributes();
-    }
-
-    /// <inheritdoc />
     public override Task Render()
     {
         try

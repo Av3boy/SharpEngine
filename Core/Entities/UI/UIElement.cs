@@ -22,17 +22,14 @@ public class UIElement : GameObject
     {
         Name = name;
         Mesh = MeshService.Instance.LoadMesh(nameof(Primitives.Plane), Primitives.Plane.Mesh);
+
+        Initialize();
     }
 
-    private readonly UIShader _uIShader = new();
+    private readonly UIShader _uiShader = new();
 
     /// <summary>Gets or sets the 2D space transformation of the UI element.</summary>
-    public new Transform2D Transform { get; set; } = new()
-    {
-        Rotation = 50,
-        Scale = new System.Numerics.Vector2(0.5f, 0.5f),
-        Position = new System.Numerics.Vector2(0, 20),
-    };
+    public new Transform2D Transform { get; set; } = new();
 
     /// <summary>Gets or sets the mesh of the UI element.</summary>
     public new Mesh Mesh { get; set; }
@@ -46,6 +43,9 @@ public class UIElement : GameObject
         Bind();
 
         InitializeBuffers();
+
+        _uiShader.Shader.Use();
+        _uiShader.SetAttributes();
     }
 
     /// <summary>
@@ -74,15 +74,9 @@ public class UIElement : GameObject
     {
         Window.GL.BindVertexArray(_vertexArrayObject);
 
-        // Extract position, rotation, and scale from Transform
-        var position = Transform.Position;
-        var rotation = Transform.Rotation;
-        var scale = Transform.Scale;
-
-        // Set the position, rotation, and scale uniforms in the shader
-        _uIShader.Shader.SetVector2("position", position);
-        _uIShader.Shader.SetFloat("rotation", rotation);
-        _uIShader.Shader.SetVector2("scale", scale);
+        _uiShader.Shader.SetVector2("position", Transform.Position);
+        _uiShader.Shader.SetFloat("rotation", Transform.Rotation);
+        _uiShader.Shader.SetVector2("scale", Transform.Scale);
 
         Window.GL.DrawElements<uint>(PrimitiveType.Triangles, (uint)Mesh.Indices.Length, DrawElementsType.UnsignedInt, []);
 
