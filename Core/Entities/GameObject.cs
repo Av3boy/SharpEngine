@@ -1,7 +1,6 @@
 using SharpEngine.Core.Attributes;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Properties.Meshes;
-using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Textures;
@@ -24,8 +23,9 @@ public class GameObject : SceneNode
     /// </summary>
     public GameObject()
     {
-        var shader = ShaderService.Instance.LoadShader(PathExtensions.GetAssemblyPath("Shaders/shader.vert"), PathExtensions.GetAssemblyPath("Shaders/lighting.frag"), "lighting");
-        var diffuse = TextureService.Instance.LoadTexture(PathExtensions.GetAssemblyPath("Textures/DefaultTextures/debug.JPG"));
+        // TODO: Using lightning shader here will most likely break stuff, it needs to be refactored out.
+        var shader = ShaderService.Instance.LoadShader(_Resources.Default.VertexShader, _Resources.Default.FragmentShader, "lighting");
+        var diffuse = TextureService.Instance.LoadTexture(_Resources.Default.DebugTexture);
         Material = new(shader, diffuse);
         
         BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
@@ -38,16 +38,12 @@ public class GameObject : SceneNode
     /// <param name="specularMapFile">The file path of the specular map texture.</param>
     /// <param name="vertShaderFile">The file path of the vertex shader.</param>
     /// <param name="fragShaderFile">The file path of the fragment shader.</param>
-    public GameObject(string diffuseMapFile, string specularMapFile, string vertShaderFile, string fragShaderFile)
+    public GameObject(string? diffuseMapFile = null, string? specularMapFile = null, string? vertShaderFile = null, string? fragShaderFile = null)
     {
-        var diffuse = TextureService.Instance.LoadTexture(diffuseMapFile);
-        var specularMap = TextureService.Instance.LoadTexture(specularMapFile);
-        var shader = ShaderService.Instance.LoadShader(vertShaderFile, fragShaderFile, "lighting");
-        
-        Material = new Material(shader, diffuse)
-        {
-            SpecularMap = specularMap
-        };
+        var shader = ShaderService.Instance.LoadShader(vertShaderFile ?? _Resources.Default.VertexShader, fragShaderFile ?? _Resources.Default.FragmentShader, "lighting");
+        var diffuse = TextureService.Instance.LoadTexture(diffuseMapFile ?? _Resources.Default.DebugTexture);
+        var specular = string.IsNullOrEmpty(specularMapFile) ? null : TextureService.Instance.LoadTexture(specularMapFile!);
+        Material = new Material(shader, diffuse, specular);
 
         BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
     }
@@ -90,15 +86,21 @@ public class GameObject : SceneNode
         Material.DiffuseMap.Use(TextureUnit.Texture0);
         Material.Shader.SetInt("material.diffuse", Material.diffuseUnit);
 
-        if (Material.SpecularMap is not null)
+        if (Material.UseSpecularMap)
         {
             Material.SpecularMap.Use(TextureUnit.Texture1);
             Material.Shader.SetInt("material.specular", Material.specularUnit);
             Material.Shader.SetVector3("material.specular", Material.Specular);
             Material.Shader.SetFloat("material.shininess", Material.Shininess);
         }
+        else
+        {
+            Material.Shader.SetInt("material.specular", 0);
+            Material.Shader.SetVector3("material.specular", new System.Numerics.Vector3(0));
+            Material.Shader.SetFloat("material.shininess", 0);
+        }
 
-        Material.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
+            Material.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
         Window.GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
 
         return Task.CompletedTask;

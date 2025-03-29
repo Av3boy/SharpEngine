@@ -12,10 +12,11 @@ public class Material
     /// <summary>
     ///     Initializes a new instance of <see cref="Material"/>.
     /// </summary>
-    public Material(Shader shader, Texture diffuseMap)
+    public Material(Shader shader, Texture diffuseMap, Texture? specularMap = null)
     {
         Shader = shader;
         DiffuseMap = diffuseMap;
+        SpecularMap = specularMap ?? diffuseMap;
 
         Specular = new(0.5f, 0.5f, 0.5f);
         Shininess = 32.0f;
@@ -29,7 +30,9 @@ public class Material
     /// <summary>
     ///   Gets or sets the specular map texture.
     /// </summary>
-    public Texture? SpecularMap { get; set; }
+    public Texture SpecularMap { get; set; }
+
+    public bool UseSpecularMap => SpecularMap.Handle != DiffuseMap.Handle;
 
     /// <summary>
     ///    Gets or sets the shader used to render the material.

@@ -30,7 +30,7 @@ public static class PrimitiveFactory
     /// <returns>A new game object.</returns>
     /// <exception cref="InvalidOperationException">Thrown when the specified primitive type does not exist.</exception>
     public static GameObject Create(PrimitiveType primitiveType, Vector3 position, string diffuseMapFile, string? specularMapFile = null, string? vertShaderFile = null, string? fragShaderFile = null)
-        => new(diffuseMapFile, specularMapFile ?? _Resources.Default.DebugTexture, vertShaderFile ?? _Resources.Default.VertexShader, fragShaderFile ?? _Resources.Default.FragmentShader)
+        => new(diffuseMapFile, specularMapFile, vertShaderFile ?? _Resources.Default.VertexShader, fragShaderFile ?? _Resources.Default.FragmentShader)
         {
             Transform = new Transform { Position = position },
             Mesh = primitiveType switch
