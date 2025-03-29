@@ -12,17 +12,13 @@ namespace SharpEngine.Core.Primitives;
 /// </summary>
 public static class PrimitiveFactory
 {
-    private static string DebugTexture => PathExtensions.GetAssemblyPath("Textures/DefaultTextures/debug.JPG");
-    private static string DefaultVertexShader => PathExtensions.GetAssemblyPath("Shaders/shader.vert");
-    private static string DefaultFragmentShader => PathExtensions.GetAssemblyPath("Shaders/lighting.frag");
-
     /// <summary>
     ///     Creates a new <see cref="GameObject"/> by the given primitive type.
     /// </summary>
     /// <param name="primitiveType">The type of primitive to create.</param>
     /// <param name="position">Where the game object should be placed.</param>
     public static GameObject Create(PrimitiveType primitiveType, Vector3 position)
-        => Create(primitiveType, position, DebugTexture);
+        => Create(primitiveType, position, _Resources.Default.DebugTexture);
 
     /// <inheritdoc cref="Create(PrimitiveType, Vector3)"/>
     /// <param name="primitiveType">The type of primitive to be created.</param>
@@ -34,7 +30,7 @@ public static class PrimitiveFactory
     /// <returns>A new game object.</returns>
     /// <exception cref="InvalidOperationException">Thrown when the specified primitive type does not exist.</exception>
     public static GameObject Create(PrimitiveType primitiveType, Vector3 position, string diffuseMapFile, string? specularMapFile = null, string? vertShaderFile = null, string? fragShaderFile = null)
-        => new(diffuseMapFile, specularMapFile ?? DebugTexture, vertShaderFile ?? DefaultVertexShader, fragShaderFile ?? DefaultFragmentShader)
+        => new(diffuseMapFile, specularMapFile ?? _Resources.Default.DebugTexture, vertShaderFile ?? _Resources.Default.VertexShader, fragShaderFile ?? _Resources.Default.FragmentShader)
         {
             Transform = new Transform { Position = position },
             Mesh = primitiveType switch

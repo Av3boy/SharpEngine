@@ -209,6 +209,10 @@ public class EditorWindow : Window
             {
                 // Handle Exit action
             }
+            if (ImGui.MenuItem("Publish"))
+            {
+                // Handle Publish action
+            }
 
             ImGui.EndMenu();
         }
