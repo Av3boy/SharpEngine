@@ -29,9 +29,9 @@ public class UIElement : GameObject
     /// <summary>Gets or sets the 2D space transformation of the UI element.</summary>
     public new Transform2D Transform { get; set; } = new()
     {
-        //Rotation = 180,
+        Rotation = 50,
         Scale = new System.Numerics.Vector2(0.5f, 0.5f),
-        //Position = new System.Numerics.Vector2(1, 0),
+        Position = new System.Numerics.Vector2(0, 20),
     };
 
     /// <summary>Gets or sets the mesh of the UI element.</summary>
@@ -73,9 +73,17 @@ public class UIElement : GameObject
     public override Task Render()
     {
         Window.GL.BindVertexArray(_vertexArrayObject);
-        
-        _uIShader.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
-        
+
+        // Extract position, rotation, and scale from Transform
+        var position = Transform.Position;
+        var rotation = Transform.Rotation;
+        var scale = Transform.Scale;
+
+        // Set the position, rotation, and scale uniforms in the shader
+        _uIShader.Shader.SetVector2("position", position);
+        _uIShader.Shader.SetFloat("rotation", rotation);
+        _uIShader.Shader.SetVector2("scale", scale);
+
         Window.GL.DrawElements<uint>(PrimitiveType.Triangles, (uint)Mesh.Indices.Length, DrawElementsType.UnsignedInt, []);
 
         return Task.CompletedTask;

@@ -61,10 +61,8 @@ public class UIRenderer : RendererBase
     {
         try
         {
-            Window.GL.Disable(EnableCap.DepthTest);
+            Window.GL.Enable(EnableCap.DepthTest);
             Window.GL.DepthFunc(DepthFunction.Less);
-
-            _camera.SetShaderUniforms(_uiShader.Shader!);
 
             foreach (var item in _scene.UIElements)
             {

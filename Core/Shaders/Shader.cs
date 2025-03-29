@@ -1,12 +1,11 @@
-using System;
-using System.IO;
-using System.Collections.Generic;
-
-using System.Text.RegularExpressions;
-using System.Numerics;
-
-using Silk.NET.OpenGL;
 using SharpEngine.Core.Windowing;
+using Silk.NET.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Numerics;
+using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SharpEngine.Core.Shaders;
 
@@ -278,5 +277,11 @@ public class Shader
     {
         Window.GL.UseProgram(Handle);
         TrySetUniform(name, data, Window.GL.Uniform3);
+    }
+
+    public void SetVector2(string name, Vector2 data)
+    {
+        Window.GL.UseProgram(Handle);
+        TrySetUniform(name, data, Window.GL.Uniform2);
     }
 }

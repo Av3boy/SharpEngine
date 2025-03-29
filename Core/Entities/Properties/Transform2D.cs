@@ -27,5 +27,5 @@ public class Transform2D : Transform
     /// </summary>
     public new Matrix4x4 ModelMatrix => Matrix4x4.CreateScale(new Vector3(Scale.X, Scale.Y, 0)) *
                                         Matrix4x4.CreateRotationZ(Rotation) *
-                                        Matrix4x4.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
+                                        Matrix4x4.CreateTranslation(new Vector3(Position.X * 0.01f, Position.Y * 0.01f, 0));
 }
