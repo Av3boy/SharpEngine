@@ -323,7 +323,9 @@ public class Window : SilkWindow
     protected void OnResize(Vector2D<int> size)
     {
         GL.Viewport(size);
-        Camera.AspectRatio = size.X / size.Y;
+        
+        if (size != Vector2D<int>.Zero)
+            Camera.AspectRatio = size.X / size.Y;
     }
 
     /// <inheritdoc />

@@ -47,7 +47,7 @@ public class Scene
     private List<SceneNode> Nodes { get; set; } = [];
 
     /// <summary>Gets or sets the UI elements in the scene.</summary>
-    public List<UIElement> UIElements { get; private set; } = [];
+    public List<SceneNode> UIElements { get; private set; } = [];
 
     /// <summary>Gets or sets the active element in the scene.</summary>
     /// <remarks>Editor only.</remarks>
@@ -104,26 +104,27 @@ public class Scene
     }
 
     /// <summary>
-    ///     Gets all game objects in the scene.
+    ///     Gets all the objects in the scene of type <typeparamref name="T"/>.
     /// </summary>
+    /// <typeparam name="T">The type of the objects to be retrieved.</typeparam>
     /// <returns>All the game objects in the current scene.</returns>
-    public List<GameObject> GetAllGameObjects()
+    public List<T> GetObjectsOfType<T>(SceneNode? root = null)
     {
         // TODO: Can we make this async?
-        var gameObjects = new List<GameObject>();
-        static void FindGameObjects(SceneNode node, List<GameObject> gameObjects)
+        var result = new List<T>();
+        static void FindsObjects(SceneNode node, List<T> result)
         {
-            if (node is GameObject gameObject)
-                gameObjects.Add(gameObject);
+            if (node is T obj)
+                result.Add(obj);
 
             foreach (var child in node.Children)
-                FindGameObjects(child, gameObjects);
+                FindsObjects(child, result);
         }
 
-        foreach (var node in Root.Children)
-            FindGameObjects(node, gameObjects);
+        foreach (var node in root?.Children ?? Root.Children)
+            FindsObjects(node, result);
 
-        return gameObjects;
+        return result;
     }
 
     /// <summary>

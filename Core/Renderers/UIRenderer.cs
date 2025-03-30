@@ -7,6 +7,7 @@ using SharpEngine.Core.Windowing;
 using Silk.NET.OpenGL;
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Renderers;
@@ -41,12 +42,13 @@ public class UIRenderer : RendererBase
             Window.GL.Enable(EnableCap.DepthTest);
             Window.GL.DepthFunc(DepthFunction.Less);
 
-            foreach (var item in _scene.UIElements)
+            _uiShader.Shader.Use();
+
+            var objects = _scene.GetObjectsOfType<UIElement>(); // TODO: This is really unoptimized, need to figure out a better solution.
+            foreach (var item in objects)
             {
                 item.Bind();
             }
-
-            _uiShader.Shader.Use();
 
             var uiElementRenderTasks = _scene.IterateAsync<UIElement>(_scene.UIElements, elem => elem.Render());
 

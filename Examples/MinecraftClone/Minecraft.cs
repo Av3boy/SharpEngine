@@ -11,6 +11,8 @@ using Silk.NET.Input;
 using System;
 using System.Numerics;
 using SharpEngine.Core.Entities.UI;
+using SharpEngine.Core.Windowing;
+using SharpEngine.Core.Entities.UI.Layouts;
 
 namespace Minecraft;
 
@@ -30,6 +32,8 @@ public class Minecraft : Game
     private readonly Inventory _inventory;
 
     private UIElement _uiElem;
+
+    public Window Window { get; set; }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Minecraft"/>.
@@ -55,11 +59,21 @@ public class Minecraft : Game
             _lightsNode = _scene.Root.AddChild("lights");
             _blocksNode = _scene.Root.AddChild("blocks");
 
+            var gridLayout = new GridLayout<UIElement>();
+
             // TODO: Fix UI renderer
             _uiElem = new UIElement("uiElement");
-            _uiElem.Transform.Scale = new Vector2(0.5f, 0.5f);
-
+            _uiElem.Transform.Scale = new Vector2(0.2f, 0.2f);
+            //_uiElem.Transform.Position = new Vector2(-30, 0);
             _scene.UIElements.Add(_uiElem);
+
+            var uiElem2 = new UIElement("uiElement");
+            uiElem2.Transform.Scale = new Vector2(0.2f, 0.2f);
+            //uiElem2.Transform.Position = new Vector2(30, 0);
+
+            //gridLayout.AddChild(_uiElem, uiElem2);
+
+            _scene.UIElements.Add(gridLayout);
 
             InitializeWorld();
         }
@@ -134,7 +148,7 @@ public class Minecraft : Game
     /// <inheritdoc />
     public override void Update(double deltaTime, IInputContext input)
     {
-        UpdateUI();
+        //UpdateUI();
         _input.HandleKeyboard(input.Keyboards[0], (float)deltaTime);
     }
 

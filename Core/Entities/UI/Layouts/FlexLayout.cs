@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpEngine.Core.Scenes;
+using System;
 using System.Numerics;
 
 namespace SharpEngine.Core.Entities.UI.Layouts;
@@ -7,7 +8,7 @@ namespace SharpEngine.Core.Entities.UI.Layouts;
 ///     Represents a layout that dynamically distributes items in a flex layout.
 /// </summary>
 /// <typeparam name="T">The type of items in the collection.</typeparam>
-public class FlexLayout<T> : LayoutBase<T>
+public class FlexLayout<T> : LayoutBase<T> where T : SceneNode
 {
     public int Gap { get; set; }
 
