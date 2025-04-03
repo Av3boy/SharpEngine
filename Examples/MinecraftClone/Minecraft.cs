@@ -13,6 +13,7 @@ using System.Numerics;
 using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Windowing;
 using SharpEngine.Core.Entities.UI.Layouts;
+using SharpEngine.Core.Entities.Properties;
 
 namespace Minecraft;
 
@@ -25,8 +26,8 @@ public class Minecraft : Game
 {
     private readonly Scene _scene;
 
-    private SceneNode _lightsNode;
-    private SceneNode _blocksNode;
+    private SceneNode<Transform> _lightsNode;
+    private SceneNode<Transform> _blocksNode;
 
     private Input _input;
     private readonly Inventory _inventory;
@@ -71,7 +72,7 @@ public class Minecraft : Game
             uiElem2.Transform.Scale = new Vector2(0.2f, 0.2f);
             //uiElem2.Transform.Position = new Vector2(30, 0);
 
-            //gridLayout.AddChild(_uiElem, uiElem2);
+            gridLayout.AddChild(_uiElem, uiElem2);
 
             _scene.UIElements.Add(gridLayout);
 
@@ -153,7 +154,7 @@ public class Minecraft : Game
     }
 
     private void UpdateUI()
-        => _uiElem.Transform.Rotation += 0.01f;
+        => _uiElem.Transform.Rotation.Angle += 0.01f;
 
     // TODO: Input system to let users change change key bindings?
     /// <inheritdoc />

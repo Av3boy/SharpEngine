@@ -1,4 +1,5 @@
-﻿using SharpEngine.Core.Scenes;
+﻿using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Entities.UI.Layouts;
 
-public abstract class LayoutBase<T> : SceneNode where T : SceneNode
+public abstract class LayoutBase<T> : EmptyNode<ITransform> where T : SceneNode<ITransform>, new()
 {
     public List<T> Items { get; set; } = [];
 
-    public override SceneNode AddChild(params SceneNode[] nodes)
+    public override SceneNode<ITransform> AddChild(params SceneNode<ITransform>[] nodes)
     {
         base.AddChild(nodes);
 
