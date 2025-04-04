@@ -89,7 +89,7 @@ namespace SharpEngine.Editor.Windows
             if (ImGui.Button("Empty"))
             {
                 var element = Scene.ActiveElement ?? Scene.Root;
-                element.AddChild(new SceneNode("Empty"));
+                element.AddChild(SceneNode.Empty);
             }
         }
     }

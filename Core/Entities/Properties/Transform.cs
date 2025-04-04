@@ -1,8 +1,5 @@
-﻿using Silk.NET.Maths;
-using SharpEngine.Core.Entities;
-using System.Numerics;
-
-using Vector3 = SharpEngine.Core.Numerics.Vector3;
+﻿using SharpEngine.Core.Numerics;
+using Matrix4x4 = System.Numerics.Matrix4x4;
 
 namespace SharpEngine.Core.Entities.Properties;
 
@@ -11,10 +8,6 @@ namespace SharpEngine.Core.Entities.Properties;
 /// </summary>
 public class Transform : ITransform<Vector3>
 {
-    public Transform()
-    {
-    }
-
     /// <summary>
     ///     Gets or sets the position of the game object.
     /// </summary>

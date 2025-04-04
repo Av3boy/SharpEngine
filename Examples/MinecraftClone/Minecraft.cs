@@ -26,8 +26,8 @@ public class Minecraft : Game
 {
     private readonly Scene _scene;
 
-    private SceneNode<Transform> _lightsNode;
-    private SceneNode<Transform> _blocksNode;
+    private SceneNode _lightsNode;
+    private SceneNode _blocksNode;
 
     private Input _input;
     private readonly Inventory _inventory;
@@ -64,12 +64,12 @@ public class Minecraft : Game
 
             // TODO: Fix UI renderer
             _uiElem = new UIElement("uiElement");
-            _uiElem.Transform.Scale = new Vector2(0.2f, 0.2f);
+            _uiElem.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.2f, 0.2f);
             //_uiElem.Transform.Position = new Vector2(-30, 0);
             _scene.UIElements.Add(_uiElem);
 
             var uiElem2 = new UIElement("uiElement");
-            uiElem2.Transform.Scale = new Vector2(0.2f, 0.2f);
+            uiElem2.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.2f, 0.2f);
             //uiElem2.Transform.Position = new Vector2(30, 0);
 
             gridLayout.AddChild(_uiElem, uiElem2);
@@ -250,7 +250,7 @@ public class Minecraft : Game
     private static Vector3 GetNewBlockPosition(Vector3 hitPosition, GameObject intersectingObject)
     {
         Vector3 normal = Ray.GetClosestFaceNormal(hitPosition, intersectingObject);
-        return intersectingObject.Transform.Position + (normal * intersectingObject.Transform.Scale);
+        return (System.Numerics.Vector3)intersectingObject.Transform.Position + (normal * (System.Numerics.Vector3)intersectingObject.Transform.Scale);
     }
 
     /// <inheritdoc />

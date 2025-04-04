@@ -9,7 +9,7 @@ namespace SharpEngine.Core.Entities.UI.Layouts;
 ///     Represents a grid layout.
 /// </summary>
 /// <typeparam name="T">The type of items that can be stored and retrieved within the grid.</typeparam>
-public class GridLayout<T> : LayoutBase<T> where T : SceneNode<ITransform<IVector>>
+public class GridLayout<T> : LayoutBase<T> where T : SceneNode, new()
 {
     /// <summary>Gets or sets the amount of rows in the grid.</summary>
     public uint Rows { get; set; } = 2;
@@ -47,7 +47,7 @@ public class GridLayout<T> : LayoutBase<T> where T : SceneNode<ITransform<IVecto
         if (Items.Count % Columns != 0)
             offset = offset + (Items.Count * 30);
 
-        item.Transform.Position.X = offset;
+        // item.Transform.Position.X = offset;
     }
 
     /// <summary>

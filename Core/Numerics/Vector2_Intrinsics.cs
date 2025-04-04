@@ -293,6 +293,13 @@ namespace SharpEngine.Core.Numerics
         {
             return !(left == right);
         }
+
+        public static explicit operator System.Numerics.Vector2(Vector2 value)
+            => new(value.X, value.Y);
+
+        public static explicit operator Vector2(System.Numerics.Vector2 value)
+            => new(value.X, value.Y);
+
         #endregion Public Static Operators
     }
 }

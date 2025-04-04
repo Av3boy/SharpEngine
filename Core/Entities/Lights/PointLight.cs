@@ -19,7 +19,7 @@ public class PointLight : Light
     public PointLight(Vector3 position, int index)
     {
         Transform.Scale = new(0.2f, 0.2f, 0.2f);
-        Transform.Position = position;
+        Transform.Position = (SharpEngine.Core.Numerics.Vector3)position;
         Constant = 1.0f;
         Linear = 0.09f;
         Quadratic = 0.032f;
@@ -53,7 +53,7 @@ public class PointLight : Light
     /// <inheritdoc />
     public override Task Render()
     {
-        Material.Shader.SetVector3($"pointLights[{_index}].position", Transform.Position);
+        Material.Shader.SetVector3($"pointLights[{_index}].position", (System.Numerics.Vector3)Transform.Position);
         Material.Shader.SetVector3($"pointLights[{_index}].ambient", Ambient);
         Material.Shader.SetVector3($"pointLights[{_index}].diffuse", Diffuse);
         Material.Shader.SetVector3($"pointLights[{_index}].specular", Specular);
@@ -61,8 +61,8 @@ public class PointLight : Light
         Material.Shader.SetFloat($"pointLights[{_index}].linear", Linear);
         Material.Shader.SetFloat($"pointLights[{_index}].quadratic", Quadratic);
 
-        var lampMatrix = Matrix4x4.CreateScale(Transform.Scale);
-        lampMatrix *= Matrix4x4.CreateTranslation(Transform.Position);
+        var lampMatrix = Matrix4x4.CreateScale((System.Numerics.Vector3)Transform.Scale);
+        lampMatrix *= Matrix4x4.CreateTranslation((System.Numerics.Vector3)Transform.Position);
 
         LampShader.Shader?.SetMatrix4(ShaderAttributes.Model, lampMatrix);
 

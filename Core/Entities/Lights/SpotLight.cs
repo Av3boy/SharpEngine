@@ -59,7 +59,7 @@ public class SpotLight : Light
     /// <inheritdoc />
     public override Task Render()
     {
-        Material.Shader.SetVector3("spotLight.position", Transform.Position);
+        Material.Shader.SetVector3("spotLight.position", (System.Numerics.Vector3)Transform.Position);
         Material.Shader.SetVector3("spotLight.direction", Direction);
         Material.Shader.SetVector3("spotLight.ambient", Ambient);
         Material.Shader.SetVector3("spotLight.diffuse", Diffuse);

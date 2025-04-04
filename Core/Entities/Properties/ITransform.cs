@@ -1,11 +1,12 @@
-﻿using System.Numerics;
+﻿using SharpEngine.Core.Numerics;
+using System.Numerics;
 
 namespace SharpEngine.Core.Entities.Properties;
 
-public interface ITransform<IVector>
+public interface ITransform<TVector> where TVector : IVector
 {
-    public abstract IVector Position { get; set; }
-    public abstract IVector Scale { get; set; }
-    public abstract Quaternion Rotation { get; set; }
-    public abstract Matrix4x4 ModelMatrix { get; }
+    public TVector Position { get; set; }
+    public TVector Scale { get; set; }
+    public Quaternion Rotation { get; set; }
+    public Matrix4x4 ModelMatrix { get; }
 }

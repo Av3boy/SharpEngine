@@ -6,22 +6,20 @@ using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Scenes;
 
-public class EmptyNode<TTransform> : SceneNode<TTransform> where TTransform : ITransform<IVector>, new()
+public class EmptyNode : SceneNode 
 {
     public EmptyNode(string name) : base(name) { }
 
-    public override TTransform Transform { get; set; } = new();
+    public Transform Transform { get; set; }
 
 }
 
 /// <summary>
 ///     Represents a node in the scene.
 /// </summary>
-public abstract class SceneNode<TTransform> where TTransform : ITransform<IVector>, new()
+public abstract class SceneNode
 {
-    public abstract TTransform Transform { get; set; }
-
-    public static SceneNode<TTransform> Empty => new EmptyNode<TTransform>("Empty Node");
+    public static SceneNode Empty => new EmptyNode("Empty Node");
 
     /// <summary>
     ///     Gets or sets the name of the node.
@@ -31,15 +29,15 @@ public abstract class SceneNode<TTransform> where TTransform : ITransform<IVecto
     /// <summary>
     ///     Gets or sets the children of the node.
     /// </summary>
-    public List<SceneNode<TTransform>> Children { get; set; } = [];
+    public List<SceneNode> Children { get; set; } = [];
 
     /// <summary>
-    ///     Initializes a new empty <see cref="SceneNode{TTransform}"/>.
+    ///     Initializes a new empty <see cref="SceneNode"/>.
     /// </summary>
     public SceneNode() { }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="SceneNode{TTransform}"/> with the specified <paramref name="name"/>.
+    ///     Initializes a new instance of the <see cref="SceneNode"/> with the specified <paramref name="name"/>.
     /// </summary>
     /// <param name="name">The name of the new empty node.</param>
     public SceneNode(string name)
@@ -52,9 +50,9 @@ public abstract class SceneNode<TTransform> where TTransform : ITransform<IVecto
     /// </summary>
     /// <param name="name">The name of the empty node to be added.</param>
     /// <returns>The created node.</returns>
-    public virtual SceneNode<TTransform> AddChild(string name)
+    public virtual SceneNode AddChild(string name)
     {
-        var node = new EmptyNode<TTransform>(name) as SceneNode<TTransform>;
+        var node = new EmptyNode(name) as SceneNode;
         Children.Add(node!);
 
         return node!;
@@ -65,7 +63,7 @@ public abstract class SceneNode<TTransform> where TTransform : ITransform<IVecto
    /// </summary>
    /// <param name="nodes">The nodes to be added.</param>
    /// <returns>The current node.</returns>
-    public virtual SceneNode<TTransform> AddChild(params SceneNode<TTransform>[] nodes)
+    public virtual SceneNode AddChild(params SceneNode[] nodes)
     {
         foreach (var node in nodes)
             Children.Add(node);
@@ -77,7 +75,7 @@ public abstract class SceneNode<TTransform> where TTransform : ITransform<IVecto
     ///     Removes a child node from this node.
     /// </summary>
     /// <param name="node">The node to be removed.</param>
-    public void RemoveChild(SceneNode<TTransform> node)
+    public void RemoveChild(SceneNode node)
     {
         Children.Remove(node);
     }

@@ -36,6 +36,6 @@ public class BoundingBox
     {
         var min = transform.Position - (transform.Scale / 2);
         var max = transform.Position + (transform.Scale / 2);
-        return new BoundingBox(min, max);
+        return new BoundingBox((Vector3)min, (Vector3)max);
     }
 }

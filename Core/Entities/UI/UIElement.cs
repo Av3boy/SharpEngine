@@ -12,8 +12,10 @@ namespace SharpEngine.Core.Entities.UI;
 /// <summary>
 ///     Represents a User Interface entity.
 /// </summary>
-public class UIElement : SceneNode<Transform2D>
+public class UIElement : SceneNode
 {
+    public UIElement() : this("UIElement") { }
+
     /// <summary>
     ///     Initializes a new instance of <see cref="UIElement"/>.
     /// </summary>
@@ -29,7 +31,7 @@ public class UIElement : SceneNode<Transform2D>
     private readonly UIShader _uiShader = new();
 
     /// <summary>Gets or sets the 2D space transformation of the UI element.</summary>
-    public override Transform2D Transform { get; set; } = new();
+    public Transform2D Transform { get; set; } = new();
 
     /// <summary>Gets or sets the mesh of the UI element.</summary>
     public new Mesh Mesh { get; set; }
@@ -75,9 +77,9 @@ public class UIElement : SceneNode<Transform2D>
     {
         Window.GL.BindVertexArray(_vertexArrayObject);
 
-        _uiShader.Shader.SetVector2("position", Transform.Position);
+        _uiShader.Shader.SetVector2("position", (System.Numerics.Vector2)Transform.Position);
         _uiShader.Shader.SetFloat("rotation", Transform.Rotation.Angle);
-        _uiShader.Shader.SetVector2("scale", Transform.Scale);
+        _uiShader.Shader.SetVector2("scale", (System.Numerics.Vector2)Transform.Scale);
 
         Window.GL.DrawElements<uint>(PrimitiveType.Triangles, (uint)Mesh.Indices.Length, DrawElementsType.UnsignedInt, []);
 

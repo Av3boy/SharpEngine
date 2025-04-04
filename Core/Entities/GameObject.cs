@@ -16,7 +16,7 @@ namespace SharpEngine.Core.Entities;
 /// <summary>
 ///     Represents a game object in the scene.
 /// </summary>
-public class GameObject : SceneNode<Transform>
+public class GameObject : SceneNode
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="GameObject"/>.
@@ -62,7 +62,7 @@ public class GameObject : SceneNode<Transform>
     /// <summary>
     ///    Gets or sets the transform of the game object.
     /// </summary>
-    public override Transform Transform
+    public Transform Transform
     {
         get => _transform;
         set
@@ -72,7 +72,7 @@ public class GameObject : SceneNode<Transform>
         }
     }
 
-    private Transform _transform;
+    private Transform _transform = new();
 
     /// <summary>
     ///     Gets the bounding box of the game object.

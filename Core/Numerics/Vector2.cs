@@ -453,6 +453,7 @@ namespace SharpEngine.Core.Numerics
         {
             return -value;
         }
+
         #endregion Public operator methods
     }
 }

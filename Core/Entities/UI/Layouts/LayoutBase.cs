@@ -1,4 +1,5 @@
 ﻿using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
 using System;
 using System.Collections.Generic;
@@ -8,14 +9,12 @@ using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Entities.UI.Layouts;
 
-public abstract class LayoutBase<T> : EmptyNode<ITransform> where T : SceneNode<ITransform>, new()
+public abstract class LayoutBase<T> : SceneNode where T : SceneNode, new()
 {
     public List<T> Items { get; set; } = [];
 
-    public override SceneNode<ITransform> AddChild(params SceneNode<ITransform>[] nodes)
+    public override LayoutBase<T> AddChild(params SceneNode[] nodes)
     {
-        base.AddChild(nodes);
-
         foreach (var node in nodes)
             AddItem((T)node);
 

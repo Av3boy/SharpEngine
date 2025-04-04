@@ -32,7 +32,7 @@ public static class PrimitiveFactory
     public static GameObject Create(PrimitiveType primitiveType, Vector3 position, string diffuseMapFile, string? specularMapFile = null, string? vertShaderFile = null, string? fragShaderFile = null)
         => new(diffuseMapFile, specularMapFile, vertShaderFile ?? _Resources.Default.VertexShader, fragShaderFile ?? _Resources.Default.FragmentShader)
         {
-            Transform = new Transform { Position = position },
+            Transform = new Transform { Position = (SharpEngine.Core.Numerics.Vector3)position },
             Mesh = primitiveType switch
             {
                 PrimitiveType.Cube => [Cube.Mesh],

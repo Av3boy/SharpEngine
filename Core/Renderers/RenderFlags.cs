@@ -22,5 +22,6 @@ public enum RenderFlags
     /// <summary>
     ///     Enables all renderers.
     /// </summary>
-    All = 3
+    All = 3,
+    Text = 4
 }

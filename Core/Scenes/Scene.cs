@@ -1,4 +1,5 @@
 ﻿using SharpEngine.Core.Entities;
+using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.UI;
 using System;
 using System.Collections.Generic;
@@ -41,7 +42,7 @@ public class Scene
     /// <summary>
     ///     Gets or sets the root node of the scene.
     /// </summary>
-    public SceneNode Root { get; set; } = new SceneNode("Root");
+    public SceneNode Root { get; set; } = new EmptyNode("Root");
 
     /// <summary>Gets or sets the nodes in the scene.</summary>
     private List<SceneNode> Nodes { get; set; } = [];
@@ -59,7 +60,7 @@ public class Scene
     /// <param name="name">The name of the new empty node.</param>
     public void AddNode(string name)
     {
-        var node = new SceneNode(name);
+        var node = new EmptyNode(name);
         Nodes.Add(node);
         Root.Children.Add(node);
     }
