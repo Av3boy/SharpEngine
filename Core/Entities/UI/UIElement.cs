@@ -13,7 +13,7 @@ namespace SharpEngine.Core.Entities.UI;
 /// <summary>
 ///     Represents a User Interface entity.
 /// </summary>
-public class UIElement : EmptyNode<Vector2>
+public class UIElement : EmptyNode<Transform2D, Vector2>
 {
     public UIElement() : this("UIElement") { }
 
@@ -30,11 +30,8 @@ public class UIElement : EmptyNode<Vector2>
 
     private readonly UIShader _uiShader = new();
 
-    /// <summary>Gets or sets the 2D space transformation of the UI element.</summary>
-    public Transform2D Transform { get; set; } = new();
-
     /// <summary>Gets or sets the mesh of the UI element.</summary>
-    public new Mesh Mesh { get; set; }
+    public Mesh Mesh { get; set; }
     //public override Transform2D Transform { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
     private uint _vertexArrayObject;

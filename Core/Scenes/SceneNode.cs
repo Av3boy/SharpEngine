@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Scenes;
 
-public class EmptyNode<TVector> : SceneNode where TVector : IVector
+public class EmptyNode<TTransform, TVector> : SceneNode where TTransform : ITransform<TVector>, new() where TVector : IVector, new()
 {
     public EmptyNode(string name) : base(name) { }
 
-    public ITransform<TVector> Transform { get; set; }
-
+    public virtual TTransform Transform { get; set; } = new();
 }
 
 /// <summary>
@@ -19,7 +18,7 @@ public class EmptyNode<TVector> : SceneNode where TVector : IVector
 /// </summary>
 public abstract class SceneNode
 {
-    public static SceneNode Empty => new EmptyNode<SharpEngine.Core.Numerics.Vector3>("Empty Node");
+    public static SceneNode Empty => new EmptyNode<Transform, Vector3>("Empty Node");
 
     /// <summary>
     ///     Gets or sets the name of the node.
@@ -46,16 +45,16 @@ public abstract class SceneNode
     }
 
     public virtual SceneNode AddChild(string name)
-        => AddChild<SharpEngine.Core.Numerics.Vector3>(name);
+        => AddChild<Transform, Vector3>(name);
 
     /// <summary>
     ///     Adds an empty child node to this node by the given <paramref name="name"/>.
     /// </summary>
     /// <param name="name">The name of the empty node to be added.</param>
     /// <returns>The created node.</returns>
-    public virtual SceneNode AddChild<TVector>(string name) where TVector : IVector
+    public virtual SceneNode AddChild<TTransform, TVector>(string name) where TTransform : ITransform<TVector>, new() where TVector : IVector, new()
     {
-        var node = new EmptyNode<TVector>(name) as SceneNode;
+        var node = new EmptyNode<TTransform, TVector>(name) as SceneNode;
         Children.Add(node!);
 
         return node!;

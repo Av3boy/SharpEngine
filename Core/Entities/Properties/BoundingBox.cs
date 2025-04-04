@@ -32,7 +32,7 @@ public class BoundingBox
     ///     Calculates the bounding box of the game object.
     /// </summary>
     /// <returns>The bounding box of the game object.</returns>
-    public static BoundingBox CalculateBoundingBox(Transform transform)
+    public static BoundingBox CalculateBoundingBox(ITransform<SharpEngine.Core.Numerics.Vector3> transform)
     {
         var min = transform.Position - (transform.Scale / 2);
         var max = transform.Position + (transform.Scale / 2);

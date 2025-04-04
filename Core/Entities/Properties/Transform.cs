@@ -8,6 +8,8 @@ namespace SharpEngine.Core.Entities.Properties;
 /// </summary>
 public class Transform : ITransform<Vector3>
 {
+    public Transform() { }
+
     /// <summary>
     ///     Gets or sets the position of the game object.
     /// </summary>
