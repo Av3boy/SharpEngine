@@ -1,5 +1,6 @@
 ﻿using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Properties.Meshes;
+using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
@@ -12,7 +13,7 @@ namespace SharpEngine.Core.Entities.UI;
 /// <summary>
 ///     Represents a User Interface entity.
 /// </summary>
-public class UIElement : SceneNode
+public class UIElement : EmptyNode<Vector2>
 {
     public UIElement() : this("UIElement") { }
 
@@ -20,9 +21,8 @@ public class UIElement : SceneNode
     ///     Initializes a new instance of <see cref="UIElement"/>.
     /// </summary>
     /// <param name="name">The name of the UI element.</param>
-    public UIElement(string name)
+    public UIElement(string name) : base(name)
     {
-        Name = name;
         Mesh = MeshService.Instance.LoadMesh(nameof(Primitives.Plane), Primitives.Plane.Mesh);
 
         Initialize();

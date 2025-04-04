@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Scenes;
 
-public class EmptyNode : SceneNode 
+public class EmptyNode<TVector> : SceneNode where TVector : IVector
 {
     public EmptyNode(string name) : base(name) { }
 
-    public Transform Transform { get; set; }
+    public ITransform<TVector> Transform { get; set; }
 
 }
 
@@ -19,7 +19,7 @@ public class EmptyNode : SceneNode
 /// </summary>
 public abstract class SceneNode
 {
-    public static SceneNode Empty => new EmptyNode("Empty Node");
+    public static SceneNode Empty => new EmptyNode<SharpEngine.Core.Numerics.Vector3>("Empty Node");
 
     /// <summary>
     ///     Gets or sets the name of the node.
@@ -45,24 +45,27 @@ public abstract class SceneNode
         Name = name;
     }
 
+    public virtual SceneNode AddChild(string name)
+        => AddChild<SharpEngine.Core.Numerics.Vector3>(name);
+
     /// <summary>
     ///     Adds an empty child node to this node by the given <paramref name="name"/>.
     /// </summary>
     /// <param name="name">The name of the empty node to be added.</param>
     /// <returns>The created node.</returns>
-    public virtual SceneNode AddChild(string name)
+    public virtual SceneNode AddChild<TVector>(string name) where TVector : IVector
     {
-        var node = new EmptyNode(name) as SceneNode;
+        var node = new EmptyNode<TVector>(name) as SceneNode;
         Children.Add(node!);
 
         return node!;
     }
 
-   /// <summary>
-   ///     Adds a child node to this node.
-   /// </summary>
-   /// <param name="nodes">The nodes to be added.</param>
-   /// <returns>The current node.</returns>
+    /// <summary>
+    ///     Adds a child node to this node.
+    /// </summary>
+    /// <param name="nodes">The nodes to be added.</param>
+    /// <returns>The current node.</returns>
     public virtual SceneNode AddChild(params SceneNode[] nodes)
     {
         foreach (var node in nodes)

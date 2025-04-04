@@ -1,6 +1,7 @@
 using SharpEngine.Core.Attributes;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Properties.Meshes;
+using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Textures;
@@ -16,12 +17,12 @@ namespace SharpEngine.Core.Entities;
 /// <summary>
 ///     Represents a game object in the scene.
 /// </summary>
-public class GameObject : SceneNode
+public class GameObject : EmptyNode<Vector3>
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="GameObject"/>.
     /// </summary>
-    public GameObject()
+    public GameObject() : base(string.Empty)
     {
         // TODO: Using lightning shader here will most likely break stuff, it needs to be refactored out.
         var shader = ShaderService.Instance.LoadShader(_Resources.Default.VertexShader, _Resources.Default.FragmentShader, "lighting");
@@ -38,7 +39,7 @@ public class GameObject : SceneNode
     /// <param name="specularMapFile">The file path of the specular map texture.</param>
     /// <param name="vertShaderFile">The file path of the vertex shader.</param>
     /// <param name="fragShaderFile">The file path of the fragment shader.</param>
-    public GameObject(string? diffuseMapFile = null, string? specularMapFile = null, string? vertShaderFile = null, string? fragShaderFile = null)
+    public GameObject(string? diffuseMapFile = null, string? specularMapFile = null, string? vertShaderFile = null, string? fragShaderFile = null) : base(string.Empty)
     {
         var shader = ShaderService.Instance.LoadShader(vertShaderFile ?? _Resources.Default.VertexShader, fragShaderFile ?? _Resources.Default.FragmentShader, "lighting");
         var diffuse = TextureService.Instance.LoadTexture(diffuseMapFile ?? _Resources.Default.DebugTexture);

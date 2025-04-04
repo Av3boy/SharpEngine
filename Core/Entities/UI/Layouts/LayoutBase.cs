@@ -9,27 +9,27 @@ using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Entities.UI.Layouts;
 
-public abstract class LayoutBase<T> : SceneNode where T : SceneNode, new()
+public abstract class LayoutBase<TItem> : SceneNode where TItem : SceneNode, new()
 {
-    public List<T> Items { get; set; } = [];
+    public List<TItem> Items { get; set; } = [];
 
-    public override LayoutBase<T> AddChild(params SceneNode[] nodes)
+    public override LayoutBase<TItem> AddChild(params SceneNode[] nodes)
     {
         foreach (var node in nodes)
-            AddItem((T)node);
+            AddItem((TItem)node);
 
         return this;
     }
 
-    public virtual void AddItem(T item)
+    public virtual void AddItem(TItem item)
     {
         Items.Add(item);
     }
 
-    public virtual bool RemoveItem(T item)
+    public virtual bool RemoveItem(TItem item)
     {
         return Items.Remove(item);
     }
 
-    public abstract T[][] GetValues();
+    public abstract TItem[][] GetValues();
 }

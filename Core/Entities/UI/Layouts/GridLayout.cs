@@ -8,8 +8,8 @@ namespace SharpEngine.Core.Entities.UI.Layouts;
 /// <summary>
 ///     Represents a grid layout.
 /// </summary>
-/// <typeparam name="T">The type of items that can be stored and retrieved within the grid.</typeparam>
-public class GridLayout<T> : LayoutBase<T> where T : SceneNode, new()
+/// <typeparam name="TItem">The type of items that can be stored and retrieved within the grid.</typeparam>
+public class GridLayout<TItem> : LayoutBase<TItem> where TItem : SceneNode, new()
 {
     /// <summary>Gets or sets the amount of rows in the grid.</summary>
     public uint Rows { get; set; } = 2;
@@ -23,7 +23,7 @@ public class GridLayout<T> : LayoutBase<T> where T : SceneNode, new()
     /// <param name="row">The row where the items should be retrieved.</param>
     /// <param name="column">The column where the item should be retrieved.</param>
     /// <returns>The item at [<paramref name="row"/>, <paramref name="column"/>].</returns>
-    public T this[uint row, uint column]
+    public TItem this[uint row, uint column]
     {
         get
         {
@@ -38,7 +38,7 @@ public class GridLayout<T> : LayoutBase<T> where T : SceneNode, new()
     }
 
     /// <inheritdoc />
-    public override void AddItem(T item)
+    public override void AddItem(TItem item)
     {
         base.AddItem(item);
 
@@ -70,12 +70,12 @@ public class GridLayout<T> : LayoutBase<T> where T : SceneNode, new()
     }
 
     /// <inheritdoc />
-    public override T[][] GetValues()
+    public override TItem[][] GetValues()
     {
-        var values = new T[Rows][];
+        var values = new TItem[Rows][];
         for (uint i = 0; i < Rows; i++)
         {
-            values[i] = new T[Columns];
+            values[i] = new TItem[Columns];
             for (uint j = 0; j < Columns; j++)
             {
                 var item = this[i, j];

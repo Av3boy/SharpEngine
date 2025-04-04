@@ -42,7 +42,7 @@ public class Scene
     /// <summary>
     ///     Gets or sets the root node of the scene.
     /// </summary>
-    public SceneNode Root { get; set; } = new EmptyNode("Root");
+    public SceneNode Root { get; set; } = new EmptyNode<SharpEngine.Core.Numerics.Vector3>("Root");
 
     /// <summary>Gets or sets the nodes in the scene.</summary>
     private List<SceneNode> Nodes { get; set; } = [];
@@ -60,7 +60,7 @@ public class Scene
     /// <param name="name">The name of the new empty node.</param>
     public void AddNode(string name)
     {
-        var node = new EmptyNode(name);
+        var node = new EmptyNode<SharpEngine.Core.Numerics.Vector3>(name);
         Nodes.Add(node);
         Root.Children.Add(node);
     }
