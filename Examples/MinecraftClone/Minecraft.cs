@@ -14,6 +14,7 @@ using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Windowing;
 using SharpEngine.Core.Entities.UI.Layouts;
 using SharpEngine.Core.Entities.Properties;
+using ImGuiNET;
 
 namespace Minecraft;
 
@@ -34,7 +35,7 @@ public class Minecraft : Game
 
     private UIElement _uiElem;
 
-    public Window Window { get; set; }
+    public Window? Window { get; set; }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Minecraft"/>.
@@ -45,6 +46,7 @@ public class Minecraft : Game
         CoreSettings = settings;
 
         _inventory = new Inventory();
+
     }
 
     /// <inheritdoc />
@@ -65,7 +67,8 @@ public class Minecraft : Game
             // TODO: Fix UI renderer
             _uiElem = new UIElement("uiElement");
             _uiElem.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.5f, 0.5f);
-            _uiElem.Transform.Position = new SharpEngine.Core.Numerics.Vector2(0.5f, 0);
+            _uiElem.Transform.Position = new SharpEngine.Core.Numerics.Vector2(2000, 0);
+            _uiElem.Transform.Rotation.Angle = 90;
             _scene.UIElements.Add(_uiElem);
 
             //var uiElem2 = new UIElement("uiElement");
@@ -84,6 +87,24 @@ public class Minecraft : Game
         {
             Console.WriteLine(ex);
         }
+    }
+
+    public void OnAfterRender(double frameTime)
+    {
+        var x = _uiElem.Transform.Position.X;
+        var y = _uiElem.Transform.Position.Y;
+
+        ImGui.Begin("Debug");
+        ImGui.Text($"FPS: {frameTime }");
+        ImGui.Text($"Camera position: {Camera.Position}");
+        ImGui.Text($"UI Element position: {_uiElem.Transform.Position}");
+        
+        ImGui.SliderFloat("X", ref x, -1000, 1000);
+        ImGui.SliderFloat("Y", ref y, -1000, 1000);
+
+        ImGui.End();
+
+        _uiElem.Transform.Position = new SharpEngine.Core.Numerics.Vector2(x, y);
     }
 
     private void InitializeWorld()

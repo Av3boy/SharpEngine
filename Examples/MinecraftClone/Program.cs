@@ -25,6 +25,7 @@ public static class Program
         window.OnHandleKeyboard += game.HandleKeyboard;
         window.OnButtonMouseDown += game.HandleMouseDown;
         window.HandleMouseWheel += game.HandleMouseWheel;
+        window.OnAfterRender += game.OnAfterRender;
 
         // TODO: This needs to be streamlined. 
         game.Window = window;

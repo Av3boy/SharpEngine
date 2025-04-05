@@ -21,12 +21,13 @@ public class Transform2D : ITransform<Vector2>
     /// <summary>
     ///     Gets or sets the rotation of the game object.
     /// </summary>
-    public Quaternion Rotation { get; set; } = new();
+    public Quaternion Rotation { get; set; } = new() { Angle = 0 };
 
     /// <summary>
     ///     Gets the transformation of the game object as a model matrix.
     /// </summary>
     public Matrix4x4 ModelMatrix => Matrix4x4.CreateScale(new Vector3(Scale.X, Scale.Y, 0)) *
                                     Matrix4x4.CreateRotationZ(Rotation.Angle) *
-                                    Matrix4x4.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
+                                    //Matrix4x4.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
+                                    Matrix4x4.CreateTranslation(new Vector3(0, 0, 0));
 }

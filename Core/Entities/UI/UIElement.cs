@@ -82,7 +82,7 @@ public class UIElement : EmptyNode<Transform2D, Vector2>
         const float screenWidth = 1280;
         const float screenHeight = 720;
 
-        var orthoMatrix = Matrix4x4.CreateOrthographicOffCenter(0, screenWidth, screenHeight, 0, -1, 1);
+        var orthoMatrix = Matrix4x4.CreateOrthographicOffCenter(-1, 1, -1, 1, -1, 1);
 
 
         _uiShader.Shader.SetVector2("screenSize", new System.Numerics.Vector2(screenWidth, screenHeight));
