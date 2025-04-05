@@ -22,14 +22,29 @@ out vec2 TexCoords;
 
 void main()
 {
-    float reciprScaleOnscreen = 0.001f;
+    float reciprScaleOnscreen = 0.005f;
+
+    // Calculate the aspect ratio
+    float aspectRatio = screenSize.x / screenSize.y;
+
+    // Create the rotation matrix for the z-axis
+    mat4 rotationMatrix = mat4(
+        cos(rotation), -sin(rotation), 0.0, 0.0,
+        sin(rotation),  cos(rotation), 0.0, 0.0,
+        0.0,            0.0,           1.0, 0.0,
+        0.0,            0.0,           0.0, 1.0
+    );
 
     // Calculate the model-view-projection matrix using the orthographic projection matrix
-    //mat4 mvp = projection * view * model;
-    vec4 mvp = model * vec4(1.0) * orthoMatrix;
+    mat4 mvp = orthoMatrix * rotationMatrix * model;
 
-    // Apply the MVP matrix to the vertex position with scaling
-    gl_Position = mvp * vec4(aPos.x + (position.x * reciprScaleOnscreen), aPos.y + (position.y * reciprScaleOnscreen), aPos.z, 1);
+    // Apply the MVP matrix to the vertex position with scaling and aspect ratio
+    gl_Position = mvp * vec4(
+        (aPos.x + (position.x * reciprScaleOnscreen)) * aspectRatio,
+        aPos.y + (position.y * reciprScaleOnscreen),
+        aPos.z,
+        1
+    );
 
     // Pass through other attributes
     Normal = mat3(model) * aNormal; // Transform the normal

@@ -66,9 +66,6 @@ public class Minecraft : Game
 
             // TODO: Fix UI renderer
             _uiElem = new UIElement("uiElement");
-            _uiElem.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.5f, 0.5f);
-            _uiElem.Transform.Position = new SharpEngine.Core.Numerics.Vector2(2000, 0);
-            _uiElem.Transform.Rotation.Angle = 90;
             _scene.UIElements.Add(_uiElem);
 
             //var uiElem2 = new UIElement("uiElement");
@@ -94,17 +91,32 @@ public class Minecraft : Game
         var x = _uiElem.Transform.Position.X;
         var y = _uiElem.Transform.Position.Y;
 
+        var sx = _uiElem.Transform.Scale.X;
+        var sy = _uiElem.Transform.Scale.Y;
+
+        var rotation = _uiElem.Transform.Rotation.Angle;
+
         ImGui.Begin("Debug");
         ImGui.Text($"FPS: {frameTime }");
         ImGui.Text($"Camera position: {Camera.Position}");
         ImGui.Text($"UI Element position: {_uiElem.Transform.Position}");
-        
-        ImGui.SliderFloat("X", ref x, -1000, 1000);
-        ImGui.SliderFloat("Y", ref y, -1000, 1000);
+
+        ImGui.SliderFloat("X", ref x, -2000, 2000);
+        ImGui.SliderFloat("Y", ref y, -2000, 2000);
+
+        ImGui.Text($"UI Element scale: {_uiElem.Transform.Scale}");
+
+        ImGui.SliderFloat("sX", ref sx, 0, 1);
+        ImGui.SliderFloat("sY", ref sy, 0, 1);
+
+        ImGui.Text($"UI Element scale: {_uiElem.Transform.Scale}");
+        ImGui.SliderFloat("rotation", ref rotation, 0, 360);
 
         ImGui.End();
 
         _uiElem.Transform.Position = new SharpEngine.Core.Numerics.Vector2(x, y);
+        _uiElem.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(sx, sy);
+        _uiElem.Transform.Rotation.Angle = rotation;
     }
 
     private void InitializeWorld()

@@ -87,7 +87,7 @@ public class UIElement : EmptyNode<Transform2D, Vector2>
 
         _uiShader.Shader.SetVector2("screenSize", new System.Numerics.Vector2(screenWidth, screenHeight));
         _uiShader.Shader.SetVector2("position", (System.Numerics.Vector2)Transform.Position);
-        _uiShader.Shader.SetFloat("rotation", Transform.Rotation.Angle);
+        _uiShader.Shader.SetFloat("rotation", Math.DegreesToRadians(Transform.Rotation.Angle));
         _uiShader.Shader.SetVector2("scale", (System.Numerics.Vector2)Transform.Scale);
         _uiShader.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
         _uiShader.Shader.SetMatrix4("orthoMatrix", orthoMatrix); // Pass the orthographic matrix to the shader
