@@ -1,14 +1,18 @@
-﻿using SharpEngine.Core.Entities.UI;
+﻿using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
+using Silk.NET.Input;
 using Silk.NET.OpenGL;
 
 using System;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
+using static Silk.NET.Core.Native.WinString;
 
 namespace SharpEngine.Core.Renderers;
 
@@ -42,15 +46,13 @@ public class UIRenderer : RendererBase
             Window.GL.Enable(EnableCap.DepthTest);
             Window.GL.DepthFunc(DepthFunction.Less);
 
+            // Disable face culling to render both sides of the quad
+            Window.GL.Disable(EnableCap.CullFace);
+
+            // _camera.SetShaderUniforms(_uiShader.Shader!);
             _uiShader.Shader.Use();
 
-            var objects = _scene.GetObjectsOfType<UIElement>(); // TODO: This is really unoptimized, need to figure out a better solution.
-            foreach (var item in objects)
-            {
-                item.Bind();
-            }
-
-            var uiElementRenderTasks = _scene.IterateAsync<UIElement>(_scene.UIElements, elem => elem.Render());
+            var uiElementRenderTasks = _scene.IterateAsync<UIElement>(_scene.UIElements, elem => elem.Render(_camera));
 
             return Task.WhenAll(uiElementRenderTasks);
         }

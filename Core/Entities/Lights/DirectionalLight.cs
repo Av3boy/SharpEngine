@@ -1,4 +1,5 @@
 ﻿using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Shaders;
 
@@ -29,7 +30,7 @@ public class DirectionalLight : Light
     }
 
     /// <inheritdoc />
-    public override Task Render()
+    public override Task Render(CameraView camera)
     {
         Material.Shader.SetVector3("dirLight.direction", Direction);
         Material.Shader.SetVector3("dirLight.ambient", Ambient);

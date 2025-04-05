@@ -16,7 +16,7 @@ namespace SharpEngine.Core.Numerics
     /// <summary>
     /// A structure encapsulating three single precision floating point values and provides hardware accelerated methods.
     /// </summary>
-    public partial struct Vector3 : IVector, IEquatable<Vector3>, IFormattable
+    public partial struct Vector3 : IEquatable<Vector3>, IFormattable
     {
         #region Public Static Properties
         /// <summary>

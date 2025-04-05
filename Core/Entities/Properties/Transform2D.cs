@@ -11,7 +11,7 @@ public class Transform2D : ITransform<Vector2>
     /// <summary>
     ///     Gets or sets the position of the game object.
     /// </summary>
-    public Vector2 Position { get; set; }
+    public Vector2 Position { get; set; } = new(0, 0);
 
     /// <summary>
     ///     Gets or sets the scale of the game object.
@@ -27,6 +27,6 @@ public class Transform2D : ITransform<Vector2>
     ///     Gets the transformation of the game object as a model matrix.
     /// </summary>
     public Matrix4x4 ModelMatrix => Matrix4x4.CreateScale(new Vector3(Scale.X, Scale.Y, 0)) *
-                                        Matrix4x4.CreateRotationZ(Rotation.Angle) *
-                                        Matrix4x4.CreateTranslation(new Vector3(Position.X * 0.01f, Position.Y * 0.01f, 0));
+                                    Matrix4x4.CreateRotationZ(Rotation.Angle) *
+                                    Matrix4x4.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
 }

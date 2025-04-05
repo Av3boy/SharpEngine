@@ -64,17 +64,19 @@ public class Minecraft : Game
 
             // TODO: Fix UI renderer
             _uiElem = new UIElement("uiElement");
-            _uiElem.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.2f, 0.2f);
-            //_uiElem.Transform.Position = new Vector2(-30, 0);
+            _uiElem.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.5f, 0.5f);
+            _uiElem.Transform.Position = new SharpEngine.Core.Numerics.Vector2(0.5f, 0);
             _scene.UIElements.Add(_uiElem);
 
-            var uiElem2 = new UIElement("uiElement");
-            uiElem2.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.2f, 0.2f);
+            //var uiElem2 = new UIElement("uiElement");
+            //uiElem2.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.2f, 0.2f);
             //uiElem2.Transform.Position = new Vector2(30, 0);
 
-            gridLayout.AddChild(_uiElem, uiElem2);
+            // gridLayout.AddChild(_uiElem, uiElem2);
+            _scene.UIElements.Add(_uiElem);
+            // _scene.UIElements.Add(uiElem2);
 
-            _scene.UIElements.Add(gridLayout);
+            //_scene.UIElements.Add(gridLayout);
 
             InitializeWorld();
         }

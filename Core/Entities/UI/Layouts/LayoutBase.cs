@@ -15,6 +15,8 @@ public abstract class LayoutBase<TItem> : SceneNode where TItem : SceneNode, new
 
     public override LayoutBase<TItem> AddChild(params SceneNode[] nodes)
     {
+        base.AddChild(nodes);
+
         foreach (var node in nodes)
             AddItem((TItem)node);
 

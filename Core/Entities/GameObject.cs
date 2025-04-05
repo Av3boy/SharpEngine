@@ -1,6 +1,7 @@
 using SharpEngine.Core.Attributes;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Properties.Meshes;
+using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
@@ -82,7 +83,7 @@ public class GameObject : EmptyNode<Transform, Vector3>
     public BoundingBox BoundingBox { get; set; }
 
     /// <inheritdoc />
-    public override Task Render()
+    public override Task Render(CameraView camera)
     {
         Material.DiffuseMap.Use(TextureUnit.Texture0);
         Material.Shader.SetInt("material.diffuse", Material.diffuseUnit);
@@ -101,7 +102,7 @@ public class GameObject : EmptyNode<Transform, Vector3>
             Material.Shader.SetFloat("material.shininess", 0);
         }
 
-            Material.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
+        Material.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
         Window.GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
 
         return Task.CompletedTask;

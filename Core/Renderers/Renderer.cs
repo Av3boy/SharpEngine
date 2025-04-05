@@ -49,7 +49,7 @@ public class Renderer : RendererBase
     /// <inheritdoc />
     public override Task Render()
     {
-        //return Task.CompletedTask;
+        return Task.CompletedTask;
         try
         {
             Window.GL.Enable(EnableCap.DepthTest);
@@ -82,7 +82,7 @@ public class Renderer : RendererBase
             return Task.CompletedTask;
 
         // TODO: Skip blocks that are behind others relative to the camera
-        return gameObject.Render();
+        return gameObject.Render(_camera);
     }
 
     private static bool IsInViewFrustum(BoundingBox boundingBox, CameraView camera)

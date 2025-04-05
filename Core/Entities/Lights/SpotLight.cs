@@ -1,4 +1,5 @@
-﻿using SharpEngine.Core.Extensions;
+﻿using SharpEngine.Core.Entities.Views;
+using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Shaders;
 
 using System.Numerics;
@@ -57,7 +58,7 @@ public class SpotLight : Light
     public float Quadratic { get; set; }
 
     /// <inheritdoc />
-    public override Task Render()
+    public override Task Render(CameraView camera)
     {
         Material.Shader.SetVector3("spotLight.position", (System.Numerics.Vector3)Transform.Position);
         Material.Shader.SetVector3("spotLight.direction", Direction);

@@ -12,20 +12,22 @@ namespace SharpEngine.Core.Numerics
     // Some methods declared here are not strictly intrinsic, but delegate to an intrinsic method. For example, only one overload of CopyTo()
     // is actually recognized by the JIT, but both are here for simplicity.
 
-    public partial struct Vector3
+    public partial struct Vector3 : IVector
     {
         /// <summary>
         /// The X component of the vector.
         /// </summary>
-        public Single X;
+        public Single X { get; set; }
+        
         /// <summary>
         /// The Y component of the vector.
         /// </summary>
-        public Single Y;
+        public Single Y { get; set; }
+        
         /// <summary>
         /// The Z component of the vector.
         /// </summary>
-        public Single Z;
+        public Single Z { get; set; }
 
         #region Constructors
         /// <summary>
