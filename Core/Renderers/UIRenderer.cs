@@ -1,18 +1,13 @@
-﻿using SharpEngine.Core.Entities.Properties;
-using SharpEngine.Core.Entities.UI;
+﻿using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
-using Silk.NET.Input;
 using Silk.NET.OpenGL;
 
 using System;
-using System.Linq;
-using System.Numerics;
 using System.Threading.Tasks;
-using static Silk.NET.Core.Native.WinString;
 
 namespace SharpEngine.Core.Renderers;
 
@@ -24,6 +19,7 @@ public class UIRenderer : RendererBase
     private readonly Scene _scene;
     private readonly UIShader _uiShader;
     private readonly CameraView _camera;
+    private readonly Window _window;
 
     /// <inheritdoc />
     public override RenderFlags RenderFlag => RenderFlags.UIRenderer;
@@ -31,11 +27,12 @@ public class UIRenderer : RendererBase
     /// <summary>
     ///     Initializes a new instance of <see cref="UIRenderer"/>.
     /// </summary>
-    public UIRenderer(CameraView camera, ISettings settings, Scene scene) : base(settings)
+    public UIRenderer(CameraView camera, Window window, ISettings settings, Scene scene) : base(settings)
     {
         _scene = scene;
         _uiShader = new UIShader();
         _camera = camera;
+        _window = window;
     }
 
     /// <inheritdoc />
@@ -52,7 +49,7 @@ public class UIRenderer : RendererBase
             // _camera.SetShaderUniforms(_uiShader.Shader!);
             _uiShader.Shader.Use();
 
-            var uiElementRenderTasks = _scene.IterateAsync<UIElement>(_scene.UIElements, elem => elem.Render(_camera));
+            var uiElementRenderTasks = _scene.IterateAsync<UIElement>(_scene.UIElements, elem => elem.Render(_camera, _window));
 
             return Task.WhenAll(uiElementRenderTasks);
         }

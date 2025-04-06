@@ -30,7 +30,7 @@ public class DirectionalLight : Light
     }
 
     /// <inheritdoc />
-    public override Task Render(CameraView camera)
+    public override Task Render(CameraView camera, Windowing.Window window)
     {
         Material.Shader.SetVector3("dirLight.direction", Direction);
         Material.Shader.SetVector3("dirLight.ambient", Ambient);

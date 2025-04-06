@@ -84,7 +84,7 @@ public class Window : SilkWindow
         Scene = scene;
         Settings = settings;
         Camera = camera;
-        Initialize();
+        InitializeWindow();
     }
 
     /// <summary>
@@ -98,16 +98,16 @@ public class Window : SilkWindow
         Settings = settings;
         Camera = new(Vector3.One, settings);
 
-        Initialize();
+        InitializeWindow();
     }
 
     private bool _windowInitialized;
 
-    private void Initialize()
+    private void InitializeWindow()
     {
         CurrentWindow = CreateWindow(Settings.WindowOptions);
-        CurrentWindow.Update += OnUpdateFrame;
-        CurrentWindow.Render += RenderFrame;
+        CurrentWindow.Update += deltaTime => OnUpdateFrame(new Frame(deltaTime));
+        CurrentWindow.Render += deltaTime => RenderFrame(new Frame(deltaTime));
         CurrentWindow.Resize += OnResize;
         CurrentWindow.Load += OnLoad;
         CurrentWindow.Closing += OnClosing;
@@ -162,7 +162,7 @@ public class Window : SilkWindow
             {
                 // Make sure the renderer has the correct constructor parameters!
                 // TODO: The static reference to the context will not work when multiple windows are implemented, since the context will be different.
-                var requiredArguments = new object[] { Camera, Settings, Scene };
+                var requiredArguments = new object[] { Camera, this, Settings, Scene };
                 var renderer = (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
 
                 _renderers = _renderers.Append(renderer);
@@ -186,8 +186,8 @@ public class Window : SilkWindow
     /// <summary>
     ///    Renders the current view and all specified renderers.
     /// </summary>
-    /// <param name="deltaTime">The time since the last frame.</param>
-    protected void RenderFrame(double deltaTime)
+    /// <param name="frame">Contains information about the previous frame.</param>
+    protected void RenderFrame(Frame frame)
     {
         while (!_initialized)
         {
@@ -196,9 +196,9 @@ public class Window : SilkWindow
 
         try
         {
-            PreRender(deltaTime);
+            PreRender(frame);
 
-            _imGuiController?.Update((float)deltaTime);
+            _imGuiController?.Update((float)frame.FrameTime);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -215,7 +215,7 @@ public class Window : SilkWindow
             // TODO: This call causes flickering in the new framework. Investigate why.
             // _window.SwapBuffers();
 
-            AfterRender(deltaTime);
+            AfterRender(frame);
 
             _imGuiController?.Render();
         }
@@ -243,7 +243,7 @@ public class Window : SilkWindow
     }
 
     /// <inheritdoc />
-    protected void OnUpdateFrame(double deltaTime)
+    protected void OnUpdateFrame(Frame frame)
     {
         while (!_initialized)
         {
@@ -255,7 +255,7 @@ public class Window : SilkWindow
         //     return;
 
         if (Settings.PrintFrameRate)
-            Console.WriteLine($"FPS: {1f / deltaTime}");
+            Console.WriteLine($"FPS: {frame.FrameRate}");
 
         // TODO: Handle multiple mice?
         var mouse = Input?.Mice[0];
@@ -271,11 +271,11 @@ public class Window : SilkWindow
             if (keyboard.IsKeyPressed(Key.Escape))
                 CurrentWindow.Close();
 
-            OnHandleKeyboard?.Invoke(keyboard, deltaTime);
+            OnHandleKeyboard?.Invoke(keyboard, frame.FrameTime);
         }
 
         if (Input is not null)
-            OnUpdate?.Invoke(deltaTime, Input);
+            OnUpdate?.Invoke(frame.FrameTime, Input);
     }
 
     // TODO: #21 Input system

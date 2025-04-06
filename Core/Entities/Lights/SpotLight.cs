@@ -58,7 +58,7 @@ public class SpotLight : Light
     public float Quadratic { get; set; }
 
     /// <inheritdoc />
-    public override Task Render(CameraView camera)
+    public override Task Render(CameraView camera, Windowing.Window window)
     {
         Material.Shader.SetVector3("spotLight.position", (System.Numerics.Vector3)Transform.Position);
         Material.Shader.SetVector3("spotLight.direction", Direction);

@@ -52,7 +52,7 @@ public class PointLight : Light
     public float Quadratic { get; set; }
 
     /// <inheritdoc />
-    public override Task Render(CameraView camera)
+    public override Task Render(CameraView camera, Windowing.Window window)
     {
         Material.Shader.SetVector3($"pointLights[{_index}].position", (System.Numerics.Vector3)Transform.Position);
         Material.Shader.SetVector3($"pointLights[{_index}].ambient", Ambient);

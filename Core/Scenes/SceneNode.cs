@@ -1,7 +1,7 @@
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Numerics;
-
+using SharpEngine.Core.Windowing;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -105,5 +105,5 @@ public abstract class SceneNode
     ///     Renders the current object to the screen.
     /// </summary>
     /// <returns>A <see cref="Task"/> representing an asynchronous operation.</returns>
-    public virtual Task Render(CameraView camera) => Task.CompletedTask;
+    public virtual Task Render(CameraView camera, Window window) => Task.CompletedTask;
 }

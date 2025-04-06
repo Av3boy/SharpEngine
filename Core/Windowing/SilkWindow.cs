@@ -304,13 +304,13 @@ public abstract class SilkWindow : IWindow
     ///     Handles operations needed to be executed after the renderers are finished.
     /// </summary>
     /// <param name="deltaTime">Time since the last frame.</param>
-    protected virtual void AfterRender(double deltaTime) => OnAfterRender?.Invoke(deltaTime);
+    protected virtual void AfterRender(Frame frame) => OnAfterRender?.Invoke(frame.FrameTime);
 
     /// <summary>
     ///     Handles operations needed to be executed before the renderers are executed.
     /// </summary>
     /// <param name="deltaTime">Time since the last frame.</param>
-    protected virtual void PreRender(double deltaTime) { }
+    protected virtual void PreRender(Frame frame) { }
 
     // TODO: Scene unsaved changes warning.
     /// <summary>

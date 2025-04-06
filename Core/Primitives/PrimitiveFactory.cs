@@ -33,7 +33,7 @@ public static class PrimitiveFactory
         => new(diffuseMapFile, specularMapFile, vertShaderFile ?? _Resources.Default.VertexShader, fragShaderFile ?? _Resources.Default.FragmentShader)
         {
             Transform = new Transform { Position = (SharpEngine.Core.Numerics.Vector3)position },
-            Mesh = primitiveType switch
+            Meshes = primitiveType switch
             {
                 PrimitiveType.Cube => [Cube.Mesh],
                 PrimitiveType.Plane => [Plane.Mesh],

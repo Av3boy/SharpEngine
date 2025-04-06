@@ -98,7 +98,7 @@ public class EditorWindow : Window
     private bool showUnsavedChangesDialog = true;
 
     /// <inheritdoc />
-    protected override void AfterRender(double frame)
+    protected override void AfterRender(Frame frame)
     {
         base.AfterRender(frame);
 

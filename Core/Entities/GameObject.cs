@@ -2,6 +2,7 @@ using SharpEngine.Core.Attributes;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.Views;
+using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
@@ -18,7 +19,7 @@ namespace SharpEngine.Core.Entities;
 /// <summary>
 ///     Represents a game object in the scene.
 /// </summary>
-public class GameObject : EmptyNode<Transform, Vector3>
+public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="GameObject"/>.
@@ -53,8 +54,9 @@ public class GameObject : EmptyNode<Transform, Vector3>
     /// <summary>
     ///     Gets or sets the mesh of the game object.
     /// </summary>
-    public List<Mesh> Mesh { get; set; } = [];
+    public List<Mesh> Meshes { get; set; } = [];
 
+    // TODO: Each mesh should have its own material.
     /// <summary>
     ///     Gets or sets the material of the game object.
     /// </summary>
@@ -83,7 +85,40 @@ public class GameObject : EmptyNode<Transform, Vector3>
     public BoundingBox BoundingBox { get; set; }
 
     /// <inheritdoc />
-    public override Task Render(CameraView camera)
+    public uint VAO { get; set; }
+
+    /// <inheritdoc />
+    public void Initialize()
+    {
+        VAO = Window.GL.GenVertexArray();
+        Bind();
+
+        foreach (var mesh in Meshes)
+            InitializeBuffers(mesh);
+
+        Material.Shader.Use();
+    }
+
+    /// <inheritdoc />
+    public void Bind()
+    {
+        Window.GL.BindVertexArray(VAO);
+    }
+
+    /// <inheritdoc />
+    public void InitializeBuffers(Mesh mesh)
+    {
+        var vertexBufferObject = Window.GL.GenBuffer();
+        Window.GL.BindBuffer(GLEnum.ArrayBuffer, vertexBufferObject);
+        Window.GL.BufferData<float>(GLEnum.ArrayBuffer, mesh.GetVertices(), GLEnum.StaticDraw);
+
+        var elementBufferObject = Window.GL.GenBuffer();
+        Window.GL.BindBuffer(GLEnum.ElementArrayBuffer, elementBufferObject);
+        Window.GL.BufferData<uint>(GLEnum.ElementArrayBuffer, mesh.Indices, GLEnum.StaticDraw);
+    }
+
+    /// <inheritdoc />
+    public override Task Render(CameraView camera, Window window)
     {
         Material.DiffuseMap.Use(TextureUnit.Texture0);
         Material.Shader.SetInt("material.diffuse", Material.diffuseUnit);
@@ -103,7 +138,11 @@ public class GameObject : EmptyNode<Transform, Vector3>
         }
 
         Material.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
+
         Window.GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
+
+        // foreach (var mesh in Meshes)
+        //     Window.GL.DrawElements<uint>(PrimitiveType.Triangles, (uint)mesh.Indices.Length, DrawElementsType.UnsignedInt, []);
 
         return Task.CompletedTask;
     }
