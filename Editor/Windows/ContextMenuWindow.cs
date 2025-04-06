@@ -66,7 +66,7 @@ namespace SharpEngine.Editor.Windows
         {
             if (ImGui.Button("Delete"))
             {
-                Scene.Root.RemoveChild(IntersectedObject);
+                Scene.Root.RemoveChild(IntersectedObject!);
                 IntersectedObject = null;
             }
         }

@@ -47,6 +47,9 @@ namespace SharpEngine.Editor.Windows
         /// <param name="project">The new project.</param>
         public void SetProject(Project project) => Project = project;
 
+        /// <summary>
+        ///     Makes the ImGui window visible.
+        /// </summary>
         public void Open() => _isVisible = true;
 
         /// <summary>

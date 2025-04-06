@@ -32,6 +32,7 @@ public class Material
     /// </summary>
     public Texture SpecularMap { get; set; }
 
+    /// <summary>Gets whether the material uses a specular map.</summary>
     public bool UseSpecularMap => SpecularMap.Handle != DiffuseMap.Handle;
 
     /// <summary>

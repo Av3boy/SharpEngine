@@ -28,6 +28,9 @@ public class Mesh
     [Inspector(DisplayInInspector = false)]
     public float[] TextureCoordinates { get; set; } = [];
 
+    /// <summary>
+    ///     Gets or sets the indicies of the mesh.
+    /// </summary>
     [Inspector(DisplayInInspector = false)]
     public uint[] Indices { get; set; } = [];
 }

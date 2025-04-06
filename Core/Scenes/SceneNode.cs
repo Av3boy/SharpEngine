@@ -1,16 +1,28 @@
-﻿using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Numerics;
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Scenes;
 
+/// <summary>
+///     Represents a empty node in a scene.
+/// </summary>
+/// <typeparam name="TTransform">Specifies the type used for transformations.</typeparam>
+/// <typeparam name="TVector">Defines vector used by the transform.</typeparam>
 public class EmptyNode<TTransform, TVector> : SceneNode where TTransform : ITransform<TVector>, new() where TVector : IVector, new()
 {
+    /// <summary>
+    ///     Initializes a new instance of <see cref="EmptyNode{TTransform, TVector}"/>.
+    /// </summary>
+    /// <param name="name"></param>
     public EmptyNode(string name) : base(name) { }
 
+    /// <summary>
+    ///     Gets or sets the transform of the node.
+    /// </summary>
     public virtual TTransform Transform { get; set; } = new();
 }
 
@@ -19,6 +31,7 @@ public class EmptyNode<TTransform, TVector> : SceneNode where TTransform : ITran
 /// </summary>
 public abstract class SceneNode
 {
+    /// <summary>Gets a new empty node.</summary>
     public static SceneNode Empty => new EmptyNode<Transform, Vector3>("Empty Node");
 
     /// <summary>
@@ -45,6 +58,11 @@ public abstract class SceneNode
         Name = name;
     }
 
+    /// <summary>
+    ///     Adds an empty child node to this node by the given <paramref name="name"/>.
+    /// </summary>
+    /// <param name="name">The name of the empty node to be added.</param>
+    /// <returns>The created node.</returns>
     public virtual SceneNode AddChild(string name)
         => AddChild<Transform, Vector3>(name);
 

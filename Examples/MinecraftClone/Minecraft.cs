@@ -15,6 +15,8 @@ using SharpEngine.Core.Windowing;
 using SharpEngine.Core.Entities.UI.Layouts;
 using SharpEngine.Core.Entities.Properties;
 using ImGuiNET;
+using SharpEngine.Core.Entities.Properties.Meshes;
+using System.Linq;
 
 namespace Minecraft;
 
@@ -35,6 +37,9 @@ public class Minecraft : Game
 
     private UIElement _uiElem;
 
+    /// <summary>
+    ///     Gets the main window.
+    /// </summary>
     public Window? Window { get; set; }
 
     /// <summary>
@@ -66,14 +71,14 @@ public class Minecraft : Game
 
             // TODO: Fix UI renderer
             _uiElem = new UIElement("uiElement");
-            _scene.UIElements.Add(_uiElem);
+            //_scene.UIElements.Add(_uiElem);
 
             //var uiElem2 = new UIElement("uiElement");
             //uiElem2.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.2f, 0.2f);
             //uiElem2.Transform.Position = new Vector2(30, 0);
 
             // gridLayout.AddChild(_uiElem, uiElem2);
-            _scene.UIElements.Add(_uiElem);
+            // _scene.UIElements.Add(_uiElem);
             // _scene.UIElements.Add(uiElem2);
 
             //_scene.UIElements.Add(gridLayout);
@@ -86,7 +91,11 @@ public class Minecraft : Game
         }
     }
 
-    public void OnAfterRender(double frameTime)
+    /// <summary>
+    ///     Handles rendering after the frame is drawn.
+    /// </summary>
+    /// <param name="frame">Information about the frame.</param>
+    public void OnAfterRender(Frame frame)
     {
         var x = _uiElem.Transform.Position.X;
         var y = _uiElem.Transform.Position.Y;
@@ -97,7 +106,7 @@ public class Minecraft : Game
         var rotation = _uiElem.Transform.Rotation.Angle;
 
         ImGui.Begin("Debug");
-        ImGui.Text($"FPS: {frameTime }");
+        ImGui.Text($"FPS: {frame.FrameRate}");
         ImGui.Text($"Camera position: {Camera.Position}");
         ImGui.Text($"UI Element position: {_uiElem.Transform.Position}");
 
@@ -123,6 +132,10 @@ public class Minecraft : Game
     {
         InitializeLights();
         InitializeChunks();
+
+        // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
+        // var go = new GameObject();
+        // go.Meshes.Add(torus.First());
     }
 
     private void InitializeLights()

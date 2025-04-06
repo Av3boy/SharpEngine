@@ -6,15 +6,10 @@ layout (location = 2) in vec2 aTexCoords;
 
 uniform vec2 position;
 uniform float rotation;
-uniform vec2 scale;
 uniform vec2 screenSize;
-uniform mat4 clipSpace;
 uniform mat4 orthoMatrix;
 
-uniform mat4 view;
-uniform mat4 projection;
 uniform mat4 model;
-uniform vec3 viewPos;
 
 out vec3 Normal;
 out vec3 FragPos;

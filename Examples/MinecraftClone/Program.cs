@@ -1,5 +1,6 @@
 ﻿using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
+using SharpEngine.Core.Windowing;
 
 namespace Minecraft;
 
@@ -25,7 +26,7 @@ public static class Program
         window.OnHandleKeyboard += game.HandleKeyboard;
         window.OnButtonMouseDown += game.HandleMouseDown;
         window.HandleMouseWheel += game.HandleMouseWheel;
-        window.OnAfterRender += game.OnAfterRender;
+        window.OnAfterRender += deltaTime => game.OnAfterRender(new Frame(deltaTime));
 
         // TODO: This needs to be streamlined. 
         game.Window = window;

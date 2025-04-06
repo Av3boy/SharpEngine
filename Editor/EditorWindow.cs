@@ -95,32 +95,41 @@ public class EditorWindow : Window
         }
     }
 
+    private bool showUnsavedChangesDialog = true;
+
     /// <inheritdoc />
-    protected override void AfterRender(double deltaTime)
+    protected override void AfterRender(double frame)
     {
-        base.AfterRender(deltaTime);
+        base.AfterRender(frame);
 
         EnableDocking();
         RenderMenuBar();
 
-        bool visible = true;
-        ImGui.Begin("Unsaved changes", ref visible, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoMove);
+        ImGui.Begin("Unsaved changes", ref showUnsavedChangesDialog, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoMove);
         ImGui.Text("There are unsaved changes in the project. Are you sure you want to exist without saving?");
         
-        if (ImGui.Button("Save"))
+        bool cancelled = false;
+        if (ImGui.Button("Cancel"))
+            cancelled = true;
+
+        if (!cancelled && ImGui.Button("Save & close"))
         {
-            // Save the scene and exit
+            Save();
+            CurrentWindow.Close();
         }
 
-        if (ImGui.Button("Exit without saving"))
-        {
-            // TODO: shut down the application
-        }
+        if (!cancelled && ImGui.Button("Exit without saving"))
+            CurrentWindow.Close();
 
         ImGui.End();
 
         foreach (var window in _windows)
             window.RenderWindow();
+    }
+
+    private void Save()
+    {
+        // TODO: Save all changes.
     }
 
     private static void EnableDocking()
@@ -189,29 +198,31 @@ public class EditorWindow : Window
         }
     }
 
-    private static void RenderFileMenu()
+    private void RenderFileMenu()
     {
         if (ImGui.BeginMenu("File"))
         {
             if (ImGui.MenuItem("New"))
             {
-                // Handle New action
+                // TODO: Handle New action
             }
+
             if (ImGui.MenuItem("Open"))
             {
-                // Handle Open action
+                // TODO: Handle Open action
             }
+
             if (ImGui.MenuItem("Save"))
-            {
-                // Handle Save action
-            }
+                Save();
+
             if (ImGui.MenuItem("Exit"))
             {
-                // Handle Exit action
+                // TODO: Handle Exit action
             }
+
             if (ImGui.MenuItem("Publish"))
             {
-                // Handle Publish action
+                // TODO: Handle Publish action
             }
 
             ImGui.EndMenu();
@@ -241,6 +252,7 @@ public class EditorWindow : Window
 
         if (button == Settings.SecondaryButton)
         {
+            // TODO: Make this work.
             if (ImGui.IsItemClicked((ImGuiMouseButton)button))
             {
                 // Clicked on an ImGui component

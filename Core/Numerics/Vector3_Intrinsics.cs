@@ -322,9 +322,17 @@ namespace SharpEngine.Core.Numerics
                     left.Z != right.Z);
         }
 
+        /// <summary>
+        ///     Converts the SharpEngine representation to a System.Numerics representation.
+        /// </summary>
+        /// <param name="value">The value to convert</param>
         public static explicit operator System.Numerics.Vector3(Vector3 value)
             => new(value.X, value.Y, value.Z);
 
+        /// <summary>
+        ///     Converts the System.Numerics representation to a SharpEngine representation.
+        /// </summary>
+        /// <param name="value">The value to convert</param>
         public static explicit operator Vector3(System.Numerics.Vector3 value)
             => new(value.X, value.Y, value.Z);
 

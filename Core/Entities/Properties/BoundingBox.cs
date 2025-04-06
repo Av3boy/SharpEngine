@@ -28,6 +28,7 @@ public class BoundingBox
         Max = max;
     }
 
+    // TODO: This should be calculated by the mesh.
     /// <summary>
     ///     Calculates the bounding box of the game object.
     /// </summary>

@@ -295,9 +295,17 @@ namespace SharpEngine.Core.Numerics
             return !(left == right);
         }
 
+        /// <summary>
+        ///     Converts the SharpEngine representation to a System.Numerics representation.
+        /// </summary>
+        /// <param name="value">The value to convert</param>
         public static explicit operator System.Numerics.Vector2(Vector2 value)
             => new(value.X, value.Y);
 
+        /// <summary>
+        ///     Converts the System.Numerics representation to a SharpEngine representation.
+        /// </summary>
+        /// <param name="value">The value to convert</param>
         public static explicit operator Vector2(System.Numerics.Vector2 value)
             => new(value.X, value.Y);
 

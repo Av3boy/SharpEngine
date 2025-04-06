@@ -22,7 +22,10 @@ public interface ISettings
     /// <summary>Gets or sets which renderer should be enabled for the current window.</summary>
     public RenderFlags RendererFlags { get; set; }
 
+    /// <summary>Gets or sets the primary mouse button.</summary>
     public MouseButton PrimaryButton { get; set; }
+
+    /// <summary>Gets or sets the secondary mouse button.</summary>
     public MouseButton SecondaryButton { get; set; }
 }
 

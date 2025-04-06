@@ -8,6 +8,9 @@ namespace SharpEngine.Core.Entities.Properties;
 /// </summary>
 public class Transform : ITransform<Vector3>
 {
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Transform" /> class.
+    /// </summary>
     public Transform() { }
 
     /// <summary>

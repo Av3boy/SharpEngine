@@ -268,6 +268,11 @@ public class Shader
         TrySetUniform(name, data, (uniform, d) => Window.GL.UniformMatrix4(uniform, transpose, d.ToSpan()));
     }
 
+    /// <summary>
+    ///     Set a uniform Vector2 on this shader.
+    /// </summary>
+    /// <param name="name">The name of the uniform.</param>
+    /// <param name="data">The data to set.</param>
     public void SetVector2(string name, Vector2 data)
     {
         Window.GL.UseProgram(Handle);
