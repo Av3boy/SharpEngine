@@ -14,14 +14,12 @@ public enum RenderFlags
     /// <summary>All the vertices will for the mesh will be rendered.</summary>
     Renderer3D = 1,
 
-    /// <summary>
-    ///    The front face of the mesh will be rendered.
-    /// </summary>
+    /// <summary>The front face of the mesh will be rendered.</summary>
     UIRenderer = 2,
 
-    /// <summary>
-    ///     Enables all renderers.
-    /// </summary>
-    All = 3,
-    Text = 4
+    /// <summary>Text components will be rendered.</summary>
+    Text = 3,
+
+    /// <summary>Enables all renderers.</summary>
+    All = 4,
 }

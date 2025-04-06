@@ -1,4 +1,4 @@
-﻿using Silk.NET.Core;
+using Silk.NET.Core;
 using Silk.NET.Core.Contexts;
 using Silk.NET.Input;
 using Silk.NET.Maths;
@@ -22,10 +22,14 @@ namespace SharpEngine.Core.Windowing;
 public abstract class SilkWindow : IWindow
 {
     /// <inheritdoc />
-    public virtual IWindowHost? Parent { get; }
+    public virtual IWindowHost? Parent => CurrentWindow.Parent;
 
     /// <inheritdoc />
-    public IMonitor? Monitor { get; set; }
+    public IMonitor? Monitor
+    {
+        get => CurrentWindow.Monitor;
+        set => CurrentWindow.Monitor = value;
+    }
 
     /// <inheritdoc />
     public bool IsClosing
@@ -69,7 +73,11 @@ public abstract class SilkWindow : IWindow
     }
 
     /// <inheritdoc />
-    public WindowState WindowState { get; set; }
+    public WindowState WindowState
+    {
+        get => CurrentWindow.WindowState;
+        set => CurrentWindow.WindowState = value;
+    }
 
     /// <inheritdoc />
     public WindowBorder WindowBorder
@@ -107,25 +115,49 @@ public abstract class SilkWindow : IWindow
     public bool IsInitialized => CurrentWindow.IsInitialized;
 
     /// <inheritdoc />
-    public bool ShouldSwapAutomatically { get; set; }
+    public bool ShouldSwapAutomatically
+    {
+        get => CurrentWindow.ShouldSwapAutomatically;
+        set => CurrentWindow.ShouldSwapAutomatically = value;
+    }
 
     /// <inheritdoc />
-    public bool IsEventDriven { get; set; }
-    
-    /// <inheritdoc />
-    public bool IsContextControlDisabled { get; set; }
+    public bool IsEventDriven
+    {
+        get => CurrentWindow.ShouldSwapAutomatically;
+        set => CurrentWindow.ShouldSwapAutomatically = value;
+    }
 
     /// <inheritdoc />
-    public double FramesPerSecond { get; set; }
-    
-    /// <inheritdoc />
-    public double UpdatesPerSecond { get; set; }
+    public bool IsContextControlDisabled
+    {
+        get => CurrentWindow.ShouldSwapAutomatically;
+        set => CurrentWindow.ShouldSwapAutomatically = value;
+    }
 
     /// <inheritdoc />
-    public GraphicsAPI API { get; }
+    public double FramesPerSecond
+    {
+        get => CurrentWindow.FramesPerSecond;
+        set => CurrentWindow.FramesPerSecond = value;
+    }
 
     /// <inheritdoc />
-    public bool VSync { get; set; }
+    public double UpdatesPerSecond
+    {
+        get => CurrentWindow.UpdatesPerSecond;
+        set => CurrentWindow.UpdatesPerSecond = value;
+    }
+
+    /// <inheritdoc />
+    public GraphicsAPI API => CurrentWindow.API;
+
+    /// <inheritdoc />
+    public bool VSync
+    {
+        get => CurrentWindow.ShouldSwapAutomatically;
+        set => CurrentWindow.ShouldSwapAutomatically = value;
+    }
 
     /// <inheritdoc />
     public VideoMode VideoMode => CurrentWindow.VideoMode;
@@ -183,7 +215,7 @@ public abstract class SilkWindow : IWindow
     public event Action<double>? Render;
 
     /// <summary>Raised after the scene has been rendered.</summary>
-    public event Action<double>? OnAfterRender;
+    public event Action<Frame>? OnAfterRender;
 
     /// <summary>An event executed when the window has loaded.</summary>
     public event Action? OnLoaded;
@@ -249,16 +281,16 @@ public abstract class SilkWindow : IWindow
     public virtual void Initialize() => CurrentWindow.Initialize();
 
     /// <inheritdoc />
-    public virtual object Invoke(Delegate d, params object[] args) => new();
+    public virtual object Invoke(Delegate d, params object[] args) => CurrentWindow.Invoke(d, args);
 
     /// <inheritdoc />
-    public virtual Vector2D<int> PointToClient(Vector2D<int> point) => throw new NotImplementedException();
+    public virtual Vector2D<int> PointToClient(Vector2D<int> point) => CurrentWindow.PointToClient(point);
 
     /// <inheritdoc />
-    public virtual Vector2D<int> PointToFramebuffer(Vector2D<int> point) => throw new NotImplementedException();
+    public virtual Vector2D<int> PointToFramebuffer(Vector2D<int> point) => CurrentWindow.PointToFramebuffer(point);
 
     /// <inheritdoc />
-    public virtual Vector2D<int> PointToScreen(Vector2D<int> point) => throw new NotImplementedException();
+    public virtual Vector2D<int> PointToScreen(Vector2D<int> point) => CurrentWindow.PointToScreen(point);
 
     /// <inheritdoc />
     public virtual void Reset() => CurrentWindow.Reset();
@@ -303,16 +335,15 @@ public abstract class SilkWindow : IWindow
     /// <summary>
     ///     Handles operations needed to be executed after the renderers are finished.
     /// </summary>
-    /// <param name="deltaTime">Time since the last frame.</param>
-    protected virtual void AfterRender(Frame frame) => OnAfterRender?.Invoke(frame.FrameTime);
+    /// <param name="frame">Contains information about the previous frame.</param>
+    protected virtual void AfterRender(Frame frame) => OnAfterRender?.Invoke(frame);
 
     /// <summary>
     ///     Handles operations needed to be executed before the renderers are executed.
     /// </summary>
-    /// <param name="deltaTime">Time since the last frame.</param>
+    /// <param name="frame">Contains information about the previous frame.</param>
     protected virtual void PreRender(Frame frame) { }
 
-    // TODO: Scene unsaved changes warning.
     /// <summary>
     ///     Handles closing the application.
     /// </summary>

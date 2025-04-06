@@ -35,6 +35,7 @@ public class Renderer : RendererBase
     ///     Initializes a new instance of <see cref="Renderer"/>.
     /// </summary>
     /// <param name="camera">The game the renderer is being used for.</param>
+    /// <param name="window">The window executing the renderer.</param>
     /// <param name="settings">The settings for the renderer.</param>
     /// <param name="scene">The game scene to be rendered.</param>
     public Renderer(CameraView camera, Window window, ISettings settings, Scene scene) : base(settings)
