@@ -18,8 +18,8 @@ public enum RenderFlags
     UIRenderer = 2,
 
     /// <summary>Text components will be rendered.</summary>
-    Text = 3,
+    Text = 4,
 
     /// <summary>Enables all renderers.</summary>
-    All = 4,
+    All = 7,
 }
