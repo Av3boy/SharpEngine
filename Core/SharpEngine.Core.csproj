@@ -17,6 +17,7 @@
     
     <Configurations>Debug;Release;LauncherNonWindows</Configurations>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup>
