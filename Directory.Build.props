@@ -2,10 +2,8 @@
   
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Authors>Antti Veikkolainen</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Av3boy/SharpEngine</RepositoryUrl>
@@ -13,6 +11,10 @@
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <GenerateNuGetPackages>true</GenerateNuGetPackages>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'!='Release'">
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

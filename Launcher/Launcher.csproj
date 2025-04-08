@@ -46,6 +46,20 @@
         <Configurations>Debug;Release;LauncherNonWindows</Configurations>
       
         <PackageIcon>icon.png</PackageIcon>
+      
+        <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+      
+        <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
+      
+        <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+      
+        <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+      
+        <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
+      
+        <GenerateTestArtifacts>True</GenerateTestArtifacts>
+      
+        <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     </PropertyGroup>
 
     <ItemGroup>

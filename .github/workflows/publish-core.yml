@@ -44,22 +44,43 @@ jobs:
         sed -i "s|<Version>.*</Version>|<Version>$version</Version>|" "$csproj_file"
       shell: bash
 
-    #- name: Build Project
-    #  run: dotnet build Core/SharpEngine.Core.csproj --configuration Release
+    - name: Build Solution
+      run: dotnet build SharpEngine.sln --configuration Release
 
-    #- name: Pack NuGet Package
-    #  run: dotnet pack Core/SharpEngine.Core.csproj --configuration Release --no-build -o ./nupkgs
+    - name: Zip Editor Publish Contents
+      run: |
+        cd Editor
+        dotnet publish SharpEngine.Editor.csproj --configuration Release --output ./bin/publish
+        zip -r ../Editor.zip ./bin/publish
+      shell: bash
 
-    #- name: Push Package to NuGet
-    #  run: dotnet nuget push ./nupkgs/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLISH_NUGET_PACKAGE }}
+    - name: Zip Launcher Publish Contents
+      run: |
+        cd Launcher
+        dotnet publish Launcher.csproj --configuration Release --output ./bin/publish
+        zip -r ../Launcher.zip ./bin/publish
+      shell: bash
 
-    # - name: Publish package in github
-    #   run: echo "Publishing package"
+    - name: Pack NuGet Package
+      run: dotnet pack Core/SharpEngine.Core.csproj --configuration Release --no-build -o ./nupkgs
 
-    # Tagging already handled by github-tag-action
-    # - name: Create Git Tag for New Version
-    #   if: env.RUN_TAG_STEP == 'true'
-    #   run: ...
+    # - name: Push Package to NuGet
+    #   run: dotnet nuget push ./nupkgs/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLISH_NUGET_PACKAGE }}
 
-    # - name: Publish Launcher and Editor zip
-    #   run: echo "Publishing Launcher and Editor zip"
+    - name: Create Draft Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.new_version }}
+        name: Release ${{ steps.version.outputs.new_version }}
+        body_path: ./release_notes.md
+        draft: true
+        discussion_category_name: General
+        files: |
+          Editor.zip
+          Launcher.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Publish package in github
+      run: dotnet nuget push ./nupkgs/*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }}
