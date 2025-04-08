@@ -1,8 +1,10 @@
-﻿using SharpEngine.Core.Entities;
+using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
+using SharpEngine.Core.Windowing;
+
 using Silk.NET.OpenGL;
 
 using System;
@@ -17,6 +19,8 @@ public class UIRenderer : RendererBase
 {
     private readonly Scene _scene;
     private readonly UIShader _uiShader;
+    private readonly CameraView _camera;
+    private readonly Window _window;
 
     /// <inheritdoc />
     public override RenderFlags RenderFlag => RenderFlags.UIRenderer;
@@ -24,53 +28,32 @@ public class UIRenderer : RendererBase
     /// <summary>
     ///     Initializes a new instance of <see cref="UIRenderer"/>.
     /// </summary>
-    public UIRenderer(CameraView _, ISettings settings, Scene scene) : base(settings)
+    public UIRenderer(CameraView camera, Window window, ISettings settings, Scene scene) : base(settings)
     {
         _scene = scene;
         _uiShader = new UIShader();
-    }
-
-    /// <inheritdoc />
-    public override void Initialize()
-    {
-        if (_uiShader.Shader is null)
-        {
-            Console.WriteLine("The UI shader is null. This is broken mostly when the exe is started outside the solution. This needs to be fixed later.");
-            return;
-        }   
-        
-        _uiShader.Shader.Use();
-
-        _scene.UIElements.Add(new UIElement("uiElement"));
-
-        _scene.Iterate(_scene.UIElements, elem => elem.Initialize());
-
-        InitializeVertexArrays();
-    }
-
-    private void InitializeVertexArrays()
-    {
-        _uiShader.SetAttributes();
+        _camera = camera;
+        _window = window;
     }
 
     /// <inheritdoc />
     public override Task Render()
     {
-        return Task.CompletedTask;
+        if (_uiShader.Shader is null)
+            return Task.CompletedTask;
 
         try
         {
-            Window.GL.Disable(EnableCap.DepthTest);
+            Window.GL.Enable(EnableCap.DepthTest);
             Window.GL.DepthFunc(DepthFunction.Less);
 
-            foreach (var item in _scene.UIElements)
-            {
-                item.Bind();
-            }
+            // Disable face culling to render both sides of the quad
+            Window.GL.Disable(EnableCap.CullFace);
 
-            _uiShader.Shader.Use();
+            // _camera.SetShaderUniforms(_uiShader.Shader!);
+            _uiShader.Shader?.Use();
 
-            var uiElementRenderTasks = _scene.IterateAsync<UIElement>(_scene.UIElements, elem => elem.Render());
+            var uiElementRenderTasks = _scene.IterateAsync<UIElement>(_scene.UIElements, elem => elem.Render(_camera, _window));
 
             return Task.WhenAll(uiElementRenderTasks);
         }

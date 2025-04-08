@@ -1,11 +1,15 @@
-using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Extensions;
+using SharpEngine.Core.Windowing;
 using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Shaders;
 
 internal class LampShader : ShaderBase
 {
+    /// <summary>
+    ///     Initializes a new instance of <see cref="LampShader" />.
+    /// </summary>
     public LampShader()
     {
         Shader = ShaderService.Instance.LoadShader(PathExtensions.GetAssemblyPath("Shaders/shader.vert"), PathExtensions.GetAssemblyPath("Shaders/shader.frag"), "lamp");

@@ -1,7 +1,11 @@
 ﻿using Launcher.Services;
+using Launcher.UI.Components;
 using Microsoft.AspNetCore.Components;
+using SharpEngine.Shared.Dto;
+using System.Diagnostics;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+
+using FilterMode = SharpEngine.Shared.Enums.FilterMode;
 
 namespace Launcher.UI
 {
@@ -17,12 +21,26 @@ namespace Launcher.UI
         private bool _showConfirmDelete;
         private bool _showCreateProjectDialog;
 
-        private List<Project> Projects { get; set; } = [];
+        private ContextMenu? _contextMenu;
+
+        private List<Project> Projects
+        {
+            get => _allProjects;
+            set
+            {
+                _allProjects = value;
+                _filteredProjects = value;
+            }
+        }
+
+        private List<Project> _allProjects = [];
+        private List<Project> _filteredProjects = [];
+
         private Project _selectedProject = new();
         private const string _projectsFile = "projects.json";
         private static readonly string[] _sharpProjectFilePickerExtension = [".sharpproject"];
 
-#if DEBUG
+#if !DEBUG
         private readonly string _projectsFilePath = Path.Join(Path.GetTempPath(), _projectsFile);
 #else
         private readonly string _projectsFilePath = Path.Join(AppContext.BaseDirectory, _projectsFile);
@@ -35,13 +53,31 @@ namespace Launcher.UI
             // TODO: Get current launcher version
             // TODO: Check if GitHub has a new version released.
 
+#if DEBUG
+            if (TestData.TestData.SimulateLoading)
+            {
+                _notificationService.Show("Simulating loading projects.");
+                await Task.Delay(10000);
+            }
+
+            if (TestData.TestData.LoadTestData)
+            {
+                _notificationService.Show("Using test data.");
+                Projects = [.. TestData.TestData.Projects];
+                return;
+            }
+#endif
+
             var projects = _editorService.LoadProjects(_projectsFilePath);
-            
+
             if (projects is not null)
                 Projects.AddRange(projects);
             else
                 _notificationService.Show($"Unable to load project file.", false, projects);
         }
+
+        private void SearchProjects(string searchValue)
+            => _filteredProjects = [.. Projects.Where(p => p.Name!.Contains(searchValue, StringComparison.OrdinalIgnoreCase))];
 
         private void OnCreateProjectClicked()
             => _showCreateProjectDialog = true;
@@ -112,6 +148,27 @@ namespace Launcher.UI
             Projects.Add(project);
             string json = JsonSerializer.Serialize(Projects);
             File.WriteAllText(_projectsFilePath, json);
+        }
+
+        private static void OpenInExplorer(string projectPath)
+            => Process.Start("explorer.exe", projectPath);
+
+        private void RemoveFromList(Project project)
+        {
+            var foundProject = Projects.Find(p => p.Id == project.Id);
+            if (foundProject is null)
+            {
+                _notificationService.Show($"Unable to remove project '{project.Name}', project not found.", false, project);
+                return;
+            }
+
+            Projects.Remove(foundProject);
+        }
+
+        private void OnFiltersChanged(Dictionary<string, FilterMode> filters)
+        {
+            _filteredProjects = [.. Projects.FilterBy(filters)];
+            StateHasChanged();
         }
     }
 }

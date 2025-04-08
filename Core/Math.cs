@@ -27,7 +27,7 @@ public static class Math
     /// <summary>
     ///     Converts a value in <paramref name="degrees"/> to radians.
     /// </summary>
-    /// <param name="degrees">The degress to be converted</param>
+    /// <param name="degrees">The degrees to be converted.</param>
     /// <returns>The given <paramref name="degrees"/> in radians.</returns>
     public static double DegreesToRadians(double degrees)
         => System.Math.PI / 180 * degrees;
@@ -40,7 +40,7 @@ public static class Math
     ///    Converts a value in <paramref name="radians"/> to degrees.
     /// </summary>
     /// <param name="radians">The radians to convert.</param>
-    /// <returns>The given <paramref name="radians"/> as degress.</returns>
+    /// <returns>The given <paramref name="radians"/> as degrees.</returns>
     public static float RadiansToDegrees(float radians)
         => radians * (180 / MathF.PI);
 }

@@ -1,3 +1,4 @@
+using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using System;
 using System.Threading.Tasks;

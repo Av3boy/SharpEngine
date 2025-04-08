@@ -15,7 +15,7 @@ public class ShaderService
     public static ShaderService Instance { get; } = new ShaderService();
 
     // TODO: Cache data is never set
-    private readonly Dictionary<string, Shader> _shaderCache = new();
+    private readonly Dictionary<string, Shader> _shaderCache = [];
 
     /// <summary>
     ///    Gets or sets whether there are shaders to load.
@@ -34,7 +34,7 @@ public class ShaderService
     public List<Shader> GetAll()
     {
         HasShadersToLoad = false;
-        return new(_shaderCache.Values);
+        return [.. _shaderCache.Values];
     }
 
     /// <summary>

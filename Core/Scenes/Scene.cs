@@ -1,5 +1,6 @@
 ﻿using SharpEngine.Core.Entities;
-
+using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Entities.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,13 +42,13 @@ public class Scene
     /// <summary>
     ///     Gets or sets the root node of the scene.
     /// </summary>
-    public SceneNode Root { get; set; } = new SceneNode("Root");
+    public SceneNode Root { get; set; } = new EmptyNode<Transform, SharpEngine.Core.Numerics.Vector3>("Root");
 
     /// <summary>Gets or sets the nodes in the scene.</summary>
     private List<SceneNode> Nodes { get; set; } = [];
 
     /// <summary>Gets or sets the UI elements in the scene.</summary>
-    public List<UIElement> UIElements { get; private set; } = [];
+    public List<SceneNode> UIElements { get; private set; } = [];
 
     /// <summary>Gets or sets the active element in the scene.</summary>
     /// <remarks>Editor only.</remarks>
@@ -59,7 +60,7 @@ public class Scene
     /// <param name="name">The name of the new empty node.</param>
     public void AddNode(string name)
     {
-        var node = new SceneNode(name);
+        var node = new EmptyNode<Transform, SharpEngine.Core.Numerics.Vector3>(name);
         Nodes.Add(node);
         Root.Children.Add(node);
     }
@@ -104,26 +105,27 @@ public class Scene
     }
 
     /// <summary>
-    ///     Gets all game objects in the scene.
+    ///     Gets all the objects in the scene of type <typeparamref name="T"/>.
     /// </summary>
+    /// <typeparam name="T">The type of the objects to be retrieved.</typeparam>
     /// <returns>All the game objects in the current scene.</returns>
-    public List<GameObject> GetAllGameObjects()
+    public List<T> GetObjectsOfType<T>(SceneNode? root = null)
     {
         // TODO: Can we make this async?
-        var gameObjects = new List<GameObject>();
-        static void FindGameObjects(SceneNode node, List<GameObject> gameObjects)
+        var result = new List<T>();
+        static void FindsObjects(SceneNode node, List<T> result)
         {
-            if (node is GameObject gameObject)
-                gameObjects.Add(gameObject);
+            if (node is T obj)
+                result.Add(obj);
 
             foreach (var child in node.Children)
-                FindGameObjects(child, gameObjects);
+                FindsObjects(child, result);
         }
 
-        foreach (var node in Root.Children)
-            FindGameObjects(node, gameObjects);
+        foreach (var node in root?.Children ?? Root.Children)
+            FindsObjects(node, result);
 
-        return gameObjects;
+        return result;
     }
 
     /// <summary>

@@ -1,8 +1,6 @@
 ﻿using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
-
-using Silk.NET.Maths;
-using Silk.NET.Windowing;
+using SharpEngine.Core.Windowing;
 
 namespace Minimal;
 
@@ -19,7 +17,7 @@ public static class Program
         var game = new Minimal(new DefaultSettings());
         var scene = new Scene();
 
-        using var window = new SharpEngine.Core.Window(game.Camera, scene, game.Camera.Settings);
+        using var window = new Window(game.Camera, scene, game.Camera.Settings);
         window.Run();
     }
 }

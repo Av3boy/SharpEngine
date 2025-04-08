@@ -1,11 +1,11 @@
-using System;
-using System.IO;
-using System.Collections.Generic;
-
-using System.Text.RegularExpressions;
-using System.Numerics;
-
+using SharpEngine.Core.Windowing;
 using Silk.NET.OpenGL;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Numerics;
+using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SharpEngine.Core.Shaders;
 
@@ -41,6 +41,12 @@ public class Shader
         //   The vertex shader won't be too important here, but they'll be more important later.
         // The fragment shader is responsible for then converting the vertices to "fragments", which represent all the data OpenGL needs to draw a pixel.
         //   The fragment shader is what we'll be using the most here.
+
+        if (!vertPath.EndsWith(".vert"))
+            Console.WriteLine("Vertex shaders should have the file extension '.vert' for easier manageability.");
+
+        if (!fragPath.EndsWith(".frag"))
+            Console.WriteLine("Fragment shaders should have the file extension '.frag' for easier manageability.");
 
         // Load and compile shader
         if (!LoadShader(ShaderType.VertexShader, vertPath, out uint vertexShader))
@@ -81,7 +87,6 @@ public class Shader
         // The shader is now ready to go, but first, we're going to cache all the shader uniform locations.
         // Querying this from the shader is very slow, so we do it once on initialization and reuse those values
         // later.
-
         GetUniformLocations();
     }
 
@@ -212,6 +217,18 @@ public class Shader
     //     2. Get a handle to the location of the uniform with GL.GetUniformLocation.
     //     3. Use the appropriate GL.Uniform* function to set the uniform.
 
+    private bool TrySetUniform<T>(string name, T data, Action<int, T> setter)
+    {
+        if (!_uniformLocations.TryGetValue(name, out int uniform))
+        {
+            Console.WriteLine($"Uniform '{name}' not found in shader program.");
+            return false;
+        }
+
+        setter(uniform, data);
+        return true;
+    }
+
     /// <summary>
     ///     Set a uniform int on this shader.
     /// </summary>
@@ -220,7 +237,7 @@ public class Shader
     public void SetInt(string name, int data)
     {
         Window.GL.UseProgram(Handle);
-        Window.GL.Uniform1(_uniformLocations[name], data);
+        TrySetUniform(name, data, Window.GL.Uniform1);
     }
 
     /// <summary>
@@ -231,7 +248,7 @@ public class Shader
     public void SetFloat(string name, float data)
     {
         Window.GL.UseProgram(Handle);
-        Window.GL.Uniform1(_uniformLocations[name], data);
+        TrySetUniform(name, data, Window.GL.Uniform1);
     }
 
     /// <summary>
@@ -248,7 +265,18 @@ public class Shader
     public void SetMatrix4(string name, Matrix4x4 data, bool transpose = true)
     {
         Window.GL.UseProgram(Handle);
-        Window.GL.UniformMatrix4(_uniformLocations[name], transpose, data.ToSpan());
+        TrySetUniform(name, data, (uniform, d) => Window.GL.UniformMatrix4(uniform, transpose, d.ToSpan()));
+    }
+
+    /// <summary>
+    ///     Set a uniform Vector2 on this shader.
+    /// </summary>
+    /// <param name="name">The name of the uniform.</param>
+    /// <param name="data">The data to set.</param>
+    public void SetVector2(string name, Vector2 data)
+    {
+        Window.GL.UseProgram(Handle);
+        TrySetUniform(name, data, Window.GL.Uniform2);
     }
 
     /// <summary>
@@ -259,6 +287,17 @@ public class Shader
     public void SetVector3(string name, Vector3 data)
     {
         Window.GL.UseProgram(Handle);
-        Window.GL.Uniform3(_uniformLocations[name], data);
+        TrySetUniform(name, data, Window.GL.Uniform3);
+    }
+
+    /// <summary>
+    ///     Set a uniform Vector3 on this shader.
+    /// </summary>
+    /// <param name="name">The name of the uniform.</param>
+    /// <param name="data">The data to set.</param>
+    public void SetVector4(string name, Vector4 data)
+    {
+        Window.GL.UseProgram(Handle);
+        TrySetUniform(name, data, Window.GL.Uniform4);
     }
 }

@@ -7,7 +7,7 @@ namespace SharpEngine.Core.Entities.Properties.Meshes;
 /// </summary>
 public class Mesh
 {
-    /// <summary>Gets or sets a indetifying name for the mesh.</summary>
+    /// <summary>Gets or sets a identifying name for the mesh.</summary>
     public string Name { get; set; } = "New Mesh";
 
     /// <summary>
@@ -27,4 +27,10 @@ public class Mesh
     /// </summary>
     [Inspector(DisplayInInspector = false)]
     public float[] TextureCoordinates { get; set; } = [];
+
+    /// <summary>
+    ///     Gets or sets the indicies of the mesh.
+    /// </summary>
+    [Inspector(DisplayInInspector = false)]
+    public uint[] Indices { get; set; } = [];
 }

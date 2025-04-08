@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System;
 
 using Silk.NET.OpenGL;
+using SharpEngine.Core.Windowing;
 
 namespace SharpEngine.Core.Textures;
 

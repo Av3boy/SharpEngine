@@ -1,9 +1,9 @@
 using ImGuiNET;
-using Launcher.UI;
 using SharpEngine.Core;
 using SharpEngine.Core.Audio;
 using SharpEngine.Core.Scenes;
-using SharpEngine.Shared;
+using SharpEngine.Shared.Extensions;
+using System.Text;
 
 namespace SharpEngine.Editor.Windows
 {
@@ -32,16 +32,24 @@ namespace SharpEngine.Editor.Windows
             if (ImGui.Button("Play"))
                 StartGame();
 
+            const uint size = 256;
+            var buffer = new byte[size];
+            
+            ImGui.InputText("Audio path", buffer, size);
             if (ImGui.Button("Test audio"))
-                PlayTestAudio();
+                PlayTestAudio(Encoding.Default.GetString(buffer));
         }
 
-        private void PlayTestAudio()
+        private void PlayTestAudio(string filePath)
         {
+            if (!File.Exists(filePath))
+            {
+                Debug.LogInformation($"Audio file '{filePath}' does not exist.");
+                return;
+            }
+
             try
             {
-                string filePath = ""; // TODO: Replace with absolute path to .wav file.
-
                 var audioPlayer = new WavPlayer();
                 audioPlayer.AudioProperties.IsLooping = false;
 

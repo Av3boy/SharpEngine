@@ -1,8 +1,8 @@
 using ImGuiNET;
-using Launcher.UI;
 
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Scenes;
+using SharpEngine.Shared.Dto;
 
 namespace SharpEngine.Editor.Windows
 {
@@ -17,6 +17,15 @@ namespace SharpEngine.Editor.Windows
         /// <summary>Gets or sets the currently active scene.</summary>
         public Scene Scene { get; private set; }
 
+        /// <summary>Gets the name of the window.</summary>
+        public abstract string Name { get; }
+
+        /// <inheritdoc />
+        public virtual ImGuiWindowFlags ImGuiWindowFlags => ImGuiWindowFlags.None;
+
+        private readonly Dictionary<string, bool> _previousDockingStates = [];
+        private bool _isVisible = true;
+
         /// <summary>
         ///     Initializes a new instance of <see cref="ImGuiWindowBase"/>.
         /// </summary>
@@ -25,14 +34,6 @@ namespace SharpEngine.Editor.Windows
             Scene = new Scene();
             Project = new Project();
         }
-
-        private readonly Dictionary<string, bool> _previousDockingStates = [];
-
-        /// <summary>Gets the name of the window.</summary>
-        public abstract string Name { get; }
-
-        /// <inheritdoc />
-        public virtual ImGuiWindowFlags ImGuiWindowFlags => ImGuiWindowFlags.None;
 
         /// <summary>
         ///     Sets the current scene.
@@ -47,6 +48,11 @@ namespace SharpEngine.Editor.Windows
         public void SetProject(Project project) => Project = project;
 
         /// <summary>
+        ///     Makes the ImGui window visible.
+        /// </summary>
+        public void Open() => _isVisible = true;
+
+        /// <summary>
         ///     Executes operations required before rendering the ImGui window.
         /// </summary>
         public virtual void PreRender() { }
@@ -56,9 +62,12 @@ namespace SharpEngine.Editor.Windows
         /// </summary>
         public void RenderWindow()
         {
+            if (!_isVisible)
+                return;
+
             PreRender();
 
-            ImGui.Begin(Name, ImGuiWindowFlags);
+            ImGui.Begin(Name, ref _isVisible, ImGuiWindowFlags);
 
             Render();
 
@@ -92,7 +101,7 @@ namespace SharpEngine.Editor.Windows
                 var thread = new Thread(() =>
                 {
 
-                    var window = new Core.Window(new(), new DefaultViewSettings());
+                    var window = new Core.Windowing.Window(new(), new DefaultViewSettings());
 
                     window.Closing += () => _previousDockingStates[Name] = false;
                     window.OnAfterRender += deltaTime =>

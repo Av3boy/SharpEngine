@@ -1,5 +1,4 @@
 ﻿using ImGuiNET;
-using Launcher.UI;
 
 using SharpEngine.Core;
 using SharpEngine.Core.Entities.Views.Settings;
@@ -13,6 +12,8 @@ using Silk.NET.Input;
 
 using System.Numerics;
 using System.Reflection;
+using SharpEngine.Core.Windowing;
+using SharpEngine.Shared.Dto;
 
 namespace SharpEngine.Editor;
 
@@ -94,11 +95,45 @@ public class EditorWindow : Window
         }
     }
 
-    /// <inheritdoc />
-    protected override void AfterRender(double deltaTime)
-    {
-        base.AfterRender(deltaTime);
+    private bool showUnsavedChangesDialog = true;
 
+    /// <inheritdoc />
+    protected override void AfterRender(Frame frame)
+    {
+        base.AfterRender(frame);
+
+        EnableDocking();
+        RenderMenuBar();
+
+        ImGui.Begin("Unsaved changes", ref showUnsavedChangesDialog, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoMove);
+        ImGui.Text("There are unsaved changes in the project. Are you sure you want to exist without saving?");
+        
+        bool cancelled = false;
+        if (ImGui.Button("Cancel"))
+            cancelled = true;
+
+        if (!cancelled && ImGui.Button("Save & close"))
+        {
+            Save();
+            CurrentWindow.Close();
+        }
+
+        if (!cancelled && ImGui.Button("Exit without saving"))
+            CurrentWindow.Close();
+
+        ImGui.End();
+
+        foreach (var window in _windows)
+            window.RenderWindow();
+    }
+
+    private void Save()
+    {
+        // TODO: Save all changes.
+    }
+
+    private static void EnableDocking()
+    {
         // Enable docking
         ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.DockingEnable;
 
@@ -123,9 +158,75 @@ public class EditorWindow : Window
         ImGui.DockSpace(dockSpaceId, Vector2.Zero, ImGuiDockNodeFlags.PassthruCentralNode);
 
         ImGui.End();
+    }
 
-        foreach (var window in _windows)
-            window.RenderWindow();
+    private void RenderMenuBar()
+    {
+        // Add a main menu bar
+        if (ImGui.BeginMainMenuBar())
+        {
+            RenderFileMenu();
+
+            if (ImGui.BeginMenu("Edit"))
+            {
+                if (ImGui.MenuItem("Settings"))
+                {
+                    // Handle New action
+
+                    // TODO: Select preferred editor
+                    // Required fields:
+                    // radio button, each defined editor (store as json)
+                    // textbox,Path to executable
+                    // textbox, cli argument to open a file
+                }
+
+                ImGui.EndMenu();
+            }
+
+            if (ImGui.BeginMenu("Windows"))
+            {
+                foreach (var window in _windows)
+                {
+                    if (ImGui.MenuItem(window.Name))
+                        window.Open();
+                }
+
+                ImGui.EndMenu();
+            }
+
+            ImGui.EndMainMenuBar();
+        }
+    }
+
+    private void RenderFileMenu()
+    {
+        if (ImGui.BeginMenu("File"))
+        {
+            if (ImGui.MenuItem("New"))
+            {
+                // TODO: Handle New action
+            }
+
+            if (ImGui.MenuItem("Open"))
+            {
+                // TODO: Handle Open action
+            }
+
+            if (ImGui.MenuItem("Save"))
+                Save();
+
+            if (ImGui.MenuItem("Exit"))
+            {
+                // TODO: Handle Exit action
+            }
+
+            if (ImGui.MenuItem("Publish"))
+            {
+                // TODO: Handle Publish action
+            }
+
+            ImGui.EndMenu();
+        }
     }
 
     /// <inheritdoc />
@@ -135,13 +236,15 @@ public class EditorWindow : Window
 
         if (button == Settings.PrimaryButton)
         {
-            if (ImGui.IsAnyItemHovered())
+            // TODO: This probably isn't doable using ImGui. Figure out a new way or wait until UI is written using the Core 2D renderer.
+            if (ImGui.IsItemClicked((ImGuiMouseButton)button))
             {
-                // TODO: Right-clicked on an ImGui component
+                // Clicked on an ImGui component
+                uint hoveredItemId = ImGui.GetID("");
+                Debug.LogInformation($"Clicked on ImGui component with ID: {hoveredItemId}");
             }
             else
             {
-                // TODO: Right-clicked outside of ImGui components
                 Camera.IsInView(Scene, out GameObject? intersectingObject, out Vector3 hitPosition);
                 _contextMenuWindow?.ShowContextMenu(intersectingObject);
             }
@@ -149,9 +252,12 @@ public class EditorWindow : Window
 
         if (button == Settings.SecondaryButton)
         {
-            if (ImGui.IsAnyItemHovered())
+            // TODO: Make this work.
+            if (ImGui.IsItemClicked((ImGuiMouseButton)button))
             {
-                // TODO: Left-clicked on an ImGui component
+                // Clicked on an ImGui component
+                uint hoveredItemId = ImGui.GetID("");
+                Debug.LogInformation($"Clicked on ImGui component with ID: {hoveredItemId}");
             }
             else
             {

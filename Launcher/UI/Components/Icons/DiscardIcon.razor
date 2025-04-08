@@ -1,0 +1,10 @@
+﻿<span @onclick="@DiscardClicked">
+    <Icon IconType="SvgIcon.Discard" />
+</span>
+
+@code {
+
+    /// <summary>Gets or sets the event executed when the discard icon is clicked.</summary>
+    [Parameter]
+    public EventCallback DiscardClicked { get; set; }
+}

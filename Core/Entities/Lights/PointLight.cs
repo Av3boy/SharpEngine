@@ -1,5 +1,7 @@
-﻿using SharpEngine.Core.Extensions;
+using SharpEngine.Core.Entities.Views;
+using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Shaders;
+using SharpEngine.Core.Windowing;
 using System.Numerics;
 using System.Threading.Tasks;
 
@@ -18,7 +20,7 @@ public class PointLight : Light
     public PointLight(Vector3 position, int index)
     {
         Transform.Scale = new(0.2f, 0.2f, 0.2f);
-        Transform.Position = position;
+        Transform.Position = (SharpEngine.Core.Numerics.Vector3)position;
         Constant = 1.0f;
         Linear = 0.09f;
         Quadratic = 0.032f;
@@ -50,9 +52,9 @@ public class PointLight : Light
     public float Quadratic { get; set; }
 
     /// <inheritdoc />
-    public override Task Render()
+    public override Task Render(CameraView camera, Window window)
     {
-        Material.Shader.SetVector3($"pointLights[{_index}].position", Transform.Position);
+        Material.Shader.SetVector3($"pointLights[{_index}].position", (Vector3)Transform.Position);
         Material.Shader.SetVector3($"pointLights[{_index}].ambient", Ambient);
         Material.Shader.SetVector3($"pointLights[{_index}].diffuse", Diffuse);
         Material.Shader.SetVector3($"pointLights[{_index}].specular", Specular);
@@ -60,8 +62,8 @@ public class PointLight : Light
         Material.Shader.SetFloat($"pointLights[{_index}].linear", Linear);
         Material.Shader.SetFloat($"pointLights[{_index}].quadratic", Quadratic);
 
-        var lampMatrix = Matrix4x4.CreateScale(Transform.Scale);
-        lampMatrix *= Matrix4x4.CreateTranslation(Transform.Position);
+        var lampMatrix = Matrix4x4.CreateScale((Vector3)Transform.Scale);
+        lampMatrix *= Matrix4x4.CreateTranslation((Vector3)Transform.Position);
 
         LampShader.Shader?.SetMatrix4(ShaderAttributes.Model, lampMatrix);
 

@@ -10,6 +10,13 @@ using Silk.NET.Input;
 
 using System;
 using System.Numerics;
+using SharpEngine.Core.Entities.UI;
+using SharpEngine.Core.Windowing;
+using SharpEngine.Core.Entities.UI.Layouts;
+using SharpEngine.Core.Entities.Properties;
+using ImGuiNET;
+using SharpEngine.Core.Entities.Properties.Meshes;
+using System.Linq;
 
 namespace Minecraft;
 
@@ -28,7 +35,12 @@ public class Minecraft : Game
     private Input _input;
     private readonly Inventory _inventory;
 
-    private UIElement uiElem;
+    private UIElement _uiElem;
+
+    /// <summary>
+    ///     Gets the main window.
+    /// </summary>
+    public Window? Window { get; set; }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Minecraft"/>.
@@ -39,6 +51,7 @@ public class Minecraft : Game
         CoreSettings = settings;
 
         _inventory = new Inventory();
+
     }
 
     /// <inheritdoc />
@@ -54,9 +67,21 @@ public class Minecraft : Game
             _lightsNode = _scene.Root.AddChild("lights");
             _blocksNode = _scene.Root.AddChild("blocks");
 
+            var gridLayout = new GridLayout<UIElement>();
+
             // TODO: Fix UI renderer
-            uiElem = new UIElement("uiElement");
-            _scene.UIElements.Add(uiElem);
+            _uiElem = new UIElement("uiElement");
+            _scene.UIElements.Add(_uiElem);
+
+            //var uiElem2 = new UIElement("uiElement");
+            //uiElem2.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.2f, 0.2f);
+            //uiElem2.Transform.Position = new Vector2(30, 0);
+
+            // gridLayout.AddChild(_uiElem, uiElem2);
+            // _scene.UIElements.Add(_uiElem);
+            // _scene.UIElements.Add(uiElem2);
+
+            //_scene.UIElements.Add(gridLayout);
 
             InitializeWorld();
         }
@@ -66,10 +91,64 @@ public class Minecraft : Game
         }
     }
 
+    /// <summary>
+    ///     Handles rendering after the frame is drawn.
+    /// </summary>
+    /// <param name="frame">Information about the frame.</param>
+    public void OnAfterRender(Frame frame)
+    {
+        var x = _uiElem.Transform.Position.X;
+        var y = _uiElem.Transform.Position.Y;
+
+        var sx = _uiElem.Transform.Scale.X;
+        var sy = _uiElem.Transform.Scale.Y;
+
+        var rotation = _uiElem.Transform.Rotation.Angle;
+
+        var height = _uiElem.Height;
+        var width = _uiElem.Width;
+
+        ImGui.Begin("Debug");
+        ImGui.Text($"FPS: {frame.FrameRate}");
+        ImGui.Text($"Camera position: {Camera.Position}");
+        ImGui.Text($"UI Element position: {_uiElem.Transform.Position}");
+
+        ImGui.SliderFloat("X", ref x, -2000, 2000);
+        ImGui.SliderFloat("Y", ref y, -2000, 2000);
+
+        ImGui.Text($"UI Element scale: {_uiElem.Transform.Scale}");
+
+        ImGui.SliderFloat("sX", ref sx, 0, 1);
+        ImGui.SliderFloat("sY", ref sy, 0, 1);
+
+        ImGui.Text($"UI Element scale: {_uiElem.Transform.Scale}");
+        ImGui.SliderFloat("rotation", ref rotation, 0, 360);
+
+        ImGui.Text($"UI Element width: {_uiElem.Width}");
+        ImGui.SliderFloat("width", ref width, 0, 100);
+
+        ImGui.Text($"UI Element height: {_uiElem.Height}");
+        ImGui.SliderFloat("height", ref height, 0, 100);
+
+        ImGui.End();
+
+        _uiElem.Transform.Position = new SharpEngine.Core.Numerics.Vector2(x, y);
+        _uiElem.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(sx, sy);
+        _uiElem.Transform.Rotation.Angle = rotation;
+
+        _uiElem.Height = height;
+        _uiElem.Width = width;
+    }
+
     private void InitializeWorld()
     {
         InitializeLights();
         InitializeChunks();
+
+        // TODO: Does not work yet.
+        // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
+        // var go = new GameObject();
+        // go.Meshes.Add(torus.First());
     }
 
     private void InitializeLights()
@@ -89,11 +168,6 @@ public class Minecraft : Game
             Diffuse = new Vector3(1.0f, 1.0f, 1.0f),
             Specular = new Vector3(1.0f, 1.0f, 1.0f),
         });
-
-        // var _lightingShader = ShaderService.Instance.LoadShader("Shaders/shader.vert", "Shaders/lighting.frag", "lighting");
-        // _lightingShader.SetInt("numDirLights", 1);
-        // _lightingShader.SetInt("numPointLights", 4);
-        // _lightingShader.SetInt("numSpotLights", 1);
     }
 
     private void InitializeChunks()
@@ -136,12 +210,12 @@ public class Minecraft : Game
     /// <inheritdoc />
     public override void Update(double deltaTime, IInputContext input)
     {
-        UpdateUI();
+        //UpdateUI();
         _input.HandleKeyboard(input.Keyboards[0], (float)deltaTime);
     }
 
     private void UpdateUI()
-        => uiElem.Transform.Rotation += 0.01f;
+        => _uiElem.Transform.Rotation.Angle += 0.01f;
 
     // TODO: Input system to let users change change key bindings?
     /// <inheritdoc />
@@ -237,7 +311,7 @@ public class Minecraft : Game
     private static Vector3 GetNewBlockPosition(Vector3 hitPosition, GameObject intersectingObject)
     {
         Vector3 normal = Ray.GetClosestFaceNormal(hitPosition, intersectingObject);
-        return intersectingObject.Transform.Position + (normal * intersectingObject.Transform.Scale);
+        return (System.Numerics.Vector3)intersectingObject.Transform.Position + (normal * (System.Numerics.Vector3)intersectingObject.Transform.Scale);
     }
 
     /// <inheritdoc />

@@ -10,7 +10,7 @@
     <EditForm Model="@_newProject" OnValidSubmit="@OnCreateProjectSubmitClickedAsync" >
         <DataAnnotationsValidator/>
 
-        <div class="form-group" style="margin-bottom: 8px;">
+        <div class="form-group field-name-container">
             <label for="project-name">Project Name</label>
             <input class="form-control" id="project-name" placeholder="Enter project name" @bind-value="_newProject.Name">
             <ValidationMessage For="@(() => _newProject.Name)" />
@@ -18,7 +18,7 @@
 
         <div class="form-group">
             <label for="project-path">Path</label>
-            <div style="display: flex; align-items: center;gap: 8px;">
+            <div class="field-path-container">
                 <input class="form-control" id="project-path" placeholder="Enter project path" @bind-value="_newProject.Path">
                 <button type="button" class="btn btn-primary" @onclick="HandleFileSelection">Browse...</button>
             </div>

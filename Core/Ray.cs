@@ -43,7 +43,7 @@ public class Ray
         const float maxDistance = 100.0f; // Maximum distance to check for intersections
         const float stepSize = 0.1f; // Step size for ray marching
 
-        var sceneNodes = scene.GetAllGameObjects();
+        var sceneNodes = scene.GetObjectsOfType<GameObject>();
         
         if (allowedTypes.Length != 0)
             sceneNodes = [.. sceneNodes.Where(go => allowedTypes.Any(type => type.IsInstanceOfType(go)))];

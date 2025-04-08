@@ -100,5 +100,11 @@ p, h1, h4, a, td, tr, div, .prevent-select {
 
 .page {
     height: 100%;
-    display: flow-root;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 50px auto;
+}
+
+p {
+    margin: 0;
 }

@@ -1,5 +1,4 @@
 using ImGuiNET;
-using Launcher.UI;
 
 namespace SharpEngine.Editor.Windows
 {
@@ -33,6 +32,9 @@ namespace SharpEngine.Editor.Windows
             foreach (var file in files)
                 if (ImGui.Selectable(Path.GetFileName(file)))
                 {
+                    // TODO: Open the file in the IDE
+                    // Process.Start(Settings.PreferredIDE.Name + Settings.PreferredIDE.CLIArguments + file);
+
                     // Scene.ActiveElement = file; // Set the file as the active element
                 }
         }

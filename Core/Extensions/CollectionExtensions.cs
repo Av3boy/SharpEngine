@@ -13,7 +13,7 @@ public static class CollectionExtensions
     /// </summary>
     /// <typeparam name="T">The type of the item.</typeparam>
     /// <param name="item">The item which is being checked if it's in the collection.</param>
-    /// <param name="items">The collection where the item's existance is being checked.</param>
+    /// <param name="items">The collection where the item's existence is being checked.</param>
     /// <returns><see langword="true"/> if the item is in the collection; otherwise, <see langword="false"/>.</returns>
     public static bool IsAnyOf<T>(this T item, params T[] items)
         => items.Contains(item);

@@ -1,12 +1,18 @@
-﻿using System.Numerics;
+﻿using SharpEngine.Core.Numerics;
+using Matrix4x4 = System.Numerics.Matrix4x4;
 
 namespace SharpEngine.Core.Entities.Properties;
 
 /// <summary>
 ///     Represents a game object transformation in 3D space.
 /// </summary>
-public class Transform
+public class Transform : ITransform<Vector3>
 {
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Transform" /> class.
+    /// </summary>
+    public Transform() { }
+
     /// <summary>
     ///     Gets or sets the position of the game object.
     /// </summary>
@@ -25,7 +31,7 @@ public class Transform
     /// <summary>
     ///     Gets the transformation of the game object as a model matrix.
     /// </summary>
-    public Matrix4x4 ModelMatrix => Matrix4x4.CreateScale(Scale) *
+    public Matrix4x4 ModelMatrix => Matrix4x4.CreateScale(new System.Numerics.Vector3(Scale.X, Scale.Y, Scale.Z)) *
                                   Matrix4x4.CreateFromAxisAngle(Rotation.Axis, Math.DegreesToRadians(Rotation.Angle)) *
-                                  Matrix4x4.CreateTranslation(Position);
+                                  Matrix4x4.CreateTranslation(new System.Numerics.Vector3(Position.X, Position.Y, Position.Z));
 }

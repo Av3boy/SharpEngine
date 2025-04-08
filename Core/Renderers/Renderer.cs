@@ -4,7 +4,7 @@ using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
-
+using SharpEngine.Core.Windowing;
 using Silk.NET.OpenGL;
 
 using System;
@@ -23,6 +23,7 @@ public class Renderer : RendererBase
 
     private readonly CameraView _camera;
     private readonly Scene _scene;
+    private readonly Window _window;
 
     // Read only once, load into OpenGL buffer once.
     // TODO: Multiple meshes
@@ -34,12 +35,14 @@ public class Renderer : RendererBase
     ///     Initializes a new instance of <see cref="Renderer"/>.
     /// </summary>
     /// <param name="camera">The game the renderer is being used for.</param>
+    /// <param name="window">The window executing the renderer.</param>
     /// <param name="settings">The settings for the renderer.</param>
     /// <param name="scene">The game scene to be rendered.</param>
-    public Renderer(CameraView camera, ISettings settings, Scene scene) : base(settings)
+    public Renderer(CameraView camera, Window window, ISettings settings, Scene scene) : base(settings)
     {
         _camera = camera;
         _scene = scene;
+        _window = window;
 
         // TODO: These should be refactored out. The minimum build shouldn't need to use these.
         _lightingShader = new LightingShader();
@@ -49,6 +52,7 @@ public class Renderer : RendererBase
     /// <inheritdoc />
     public override Task Render()
     {
+        // return Task.CompletedTask;
         try
         {
             Window.GL.Enable(EnableCap.DepthTest);
@@ -81,7 +85,7 @@ public class Renderer : RendererBase
             return Task.CompletedTask;
 
         // TODO: Skip blocks that are behind others relative to the camera
-        return gameObject.Render();
+        return gameObject.Render(_camera, _window);
     }
 
     private static bool IsInViewFrustum(BoundingBox boundingBox, CameraView camera)

@@ -1,0 +1,351 @@
+using Silk.NET.Core;
+using Silk.NET.Core.Contexts;
+using Silk.NET.Input;
+using Silk.NET.Maths;
+using Silk.NET.Windowing;
+using MouseButton = Silk.NET.Input.MouseButton;
+
+using StbImageSharp;
+
+using System;
+using System.IO;
+using System.Numerics;
+
+namespace SharpEngine.Core.Windowing;
+
+/// <summary>
+///     Represents an abstraction for the <see cref="IWindow"/> interface.
+/// </summary>
+/// <remarks>
+///     For window initialization, see <see cref="Window"/>.
+/// </remarks>
+public abstract class SilkWindow : IWindow
+{
+    /// <inheritdoc />
+    public virtual IWindowHost? Parent => CurrentWindow.Parent;
+
+    /// <inheritdoc />
+    public IMonitor? Monitor
+    {
+        get => CurrentWindow.Monitor;
+        set => CurrentWindow.Monitor = value;
+    }
+
+    /// <inheritdoc />
+    public bool IsClosing
+    { 
+        get => CurrentWindow.IsClosing;
+        set => CurrentWindow.IsClosing = value;
+    }
+
+    /// <summary>Gets or sets the input context for the window.</summary>
+    public IInputContext? Input { get; protected set; }
+
+    /// <inheritdoc />
+    public virtual Rectangle<int> BorderSize => CurrentWindow.BorderSize;
+
+    /// <inheritdoc />
+    public bool IsVisible
+    {
+        get => CurrentWindow.IsVisible;
+        set => CurrentWindow.IsVisible = value;
+    }
+
+    /// <inheritdoc />
+    public Vector2D<int> Position
+    {
+        get => CurrentWindow.Position;
+        set => CurrentWindow.Position = value;
+    }
+
+    /// <inheritdoc />
+    public Vector2D<int> Size
+    {
+        get => CurrentWindow.Size;
+        set => CurrentWindow.Size = value;
+    }
+
+    /// <inheritdoc />
+    public string Title
+    {
+        get => CurrentWindow.Title;
+        set => CurrentWindow.Title = value;
+    }
+
+    /// <inheritdoc />
+    public WindowState WindowState
+    {
+        get => CurrentWindow.WindowState;
+        set => CurrentWindow.WindowState = value;
+    }
+
+    /// <inheritdoc />
+    public WindowBorder WindowBorder
+    {
+        get => CurrentWindow.WindowBorder;
+        set => CurrentWindow.WindowBorder = value;
+    }
+
+    /// <inheritdoc />
+    public bool TransparentFramebuffer => CurrentWindow.TransparentFramebuffer;
+
+    /// <inheritdoc />
+    public bool TopMost
+    {
+        get => CurrentWindow.TopMost;
+        set => CurrentWindow.TopMost = value;
+    }
+
+    /// <inheritdoc />
+    public IGLContext? SharedContext => CurrentWindow.SharedContext;
+
+    /// <inheritdoc />
+    public string? WindowClass => CurrentWindow.WindowClass;
+
+    /// <inheritdoc />
+    public nint Handle => CurrentWindow.Handle;
+
+    /// <inheritdoc />
+    public double Time => CurrentWindow.Time;
+
+    /// <inheritdoc />
+    public Vector2D<int> FramebufferSize => CurrentWindow.FramebufferSize;
+
+    /// <inheritdoc />
+    public bool IsInitialized => CurrentWindow.IsInitialized;
+
+    /// <inheritdoc />
+    public bool ShouldSwapAutomatically
+    {
+        get => CurrentWindow.ShouldSwapAutomatically;
+        set => CurrentWindow.ShouldSwapAutomatically = value;
+    }
+
+    /// <inheritdoc />
+    public bool IsEventDriven
+    {
+        get => CurrentWindow.ShouldSwapAutomatically;
+        set => CurrentWindow.ShouldSwapAutomatically = value;
+    }
+
+    /// <inheritdoc />
+    public bool IsContextControlDisabled
+    {
+        get => CurrentWindow.ShouldSwapAutomatically;
+        set => CurrentWindow.ShouldSwapAutomatically = value;
+    }
+
+    /// <inheritdoc />
+    public double FramesPerSecond
+    {
+        get => CurrentWindow.FramesPerSecond;
+        set => CurrentWindow.FramesPerSecond = value;
+    }
+
+    /// <inheritdoc />
+    public double UpdatesPerSecond
+    {
+        get => CurrentWindow.UpdatesPerSecond;
+        set => CurrentWindow.UpdatesPerSecond = value;
+    }
+
+    /// <inheritdoc />
+    public GraphicsAPI API => CurrentWindow.API;
+
+    /// <inheritdoc />
+    public bool VSync
+    {
+        get => CurrentWindow.ShouldSwapAutomatically;
+        set => CurrentWindow.ShouldSwapAutomatically = value;
+    }
+
+    /// <inheritdoc />
+    public VideoMode VideoMode => CurrentWindow.VideoMode;
+
+    /// <inheritdoc />
+    public int? PreferredDepthBufferBits => CurrentWindow.PreferredDepthBufferBits;
+
+    /// <inheritdoc />
+    public int? PreferredStencilBufferBits => CurrentWindow.PreferredStencilBufferBits;
+
+    /// <inheritdoc />
+    public Vector4D<int>? PreferredBitDepth => CurrentWindow.PreferredBitDepth;
+
+    /// <inheritdoc />
+    public int? Samples => CurrentWindow.Samples;
+
+    /// <inheritdoc />
+    public IGLContext? GLContext => CurrentWindow.GLContext;
+
+    /// <inheritdoc />
+    public IVkSurface? VkSurface => CurrentWindow.VkSurface;
+
+    /// <inheritdoc />
+    public INativeWindow? Native => CurrentWindow.Native;
+
+    /// <inheritdoc />
+
+    public event Action<Vector2D<int>>? Move;
+    
+    /// <inheritdoc />
+    public event Action<WindowState>? StateChanged;
+    
+    /// <inheritdoc />
+    public event Action<string[]>? FileDrop;
+    
+    /// <inheritdoc />
+    public event Action<Vector2D<int>>? Resize;
+    
+    /// <inheritdoc />
+    public event Action<Vector2D<int>>? FramebufferResize;
+    
+    /// <inheritdoc />
+    public event Action? Closing;
+    
+    /// <inheritdoc />
+    public event Action<bool>? FocusChanged;
+    
+    /// <inheritdoc />
+    public event Action? Load;
+    
+    /// <inheritdoc />
+    public event Action<double>? Update;
+    
+    /// <inheritdoc />
+    public event Action<double>? Render;
+
+    /// <summary>Raised after the scene has been rendered.</summary>
+    public event Action<Frame>? OnAfterRender;
+
+    /// <summary>An event executed when the window has loaded.</summary>
+    public event Action? OnLoaded;
+
+    /// <inheritdoc />
+    public virtual void Close() => CurrentWindow.Close();
+
+    /// <inheritdoc />
+    public virtual void ContinueEvents() => CurrentWindow.ContinueEvents();
+
+    private IWindow? _currentWindow;
+    
+    /// <summary>Gets or sets the current window.</summary>
+    public IWindow CurrentWindow
+    {
+        get => _currentWindow!;
+        set => _currentWindow = value;
+    }
+
+    /// <inheritdoc />
+    // [Obsolete("Use the 'Create<T>' implementation instead.")]
+    public IWindow CreateWindow(WindowOptions opts)
+    {
+        if (CurrentWindow is not null)
+            throw new InvalidOperationException("Window already created for this instance.");
+
+        CurrentWindow = Silk.NET.Windowing.Window.Create(opts);
+        return CurrentWindow;
+    }
+
+    // public static T Create<T>(WindowOptions opts) where T : SilkWindow, new()
+    // {
+    //     var instance = new T();
+    //     var window = instance.CreateWindow(opts);
+    // 
+    //     instance.CurrentWindow = window;
+    //     return instance;
+    // }
+
+    /// <inheritdoc />
+    protected virtual void Dispose(bool disposing) { }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <inheritdoc />
+    public virtual void DoEvents() => CurrentWindow.DoEvents();
+
+    /// <inheritdoc />
+    public virtual void DoRender() => CurrentWindow.DoRender();
+
+    /// <inheritdoc />
+    public virtual void DoUpdate() => CurrentWindow.DoUpdate();
+
+    /// <inheritdoc />
+    public virtual void Focus() => CurrentWindow.Focus();
+
+    /// <inheritdoc />
+    public virtual void Initialize() => CurrentWindow.Initialize();
+
+    /// <inheritdoc />
+    public virtual object Invoke(Delegate d, params object[] args) => CurrentWindow.Invoke(d, args);
+
+    /// <inheritdoc />
+    public virtual Vector2D<int> PointToClient(Vector2D<int> point) => CurrentWindow.PointToClient(point);
+
+    /// <inheritdoc />
+    public virtual Vector2D<int> PointToFramebuffer(Vector2D<int> point) => CurrentWindow.PointToFramebuffer(point);
+
+    /// <inheritdoc />
+    public virtual Vector2D<int> PointToScreen(Vector2D<int> point) => CurrentWindow.PointToScreen(point);
+
+    /// <inheritdoc />
+    public virtual void Reset() => CurrentWindow.Reset();
+
+    /// <summary>
+    ///     Starts the window.
+    /// </summary>
+    public void Run() => CurrentWindow.Run();
+
+    /// <inheritdoc />
+    public virtual void Run(Action onFrame) => onFrame();
+
+    /// <inheritdoc />
+    public virtual void SetWindowIcon(ReadOnlySpan<RawImage> icons) => CurrentWindow.SetWindowIcon(icons);
+
+    /// <summary>
+    ///     Sets the window icon.
+    /// </summary>
+    /// <param name="path">The file path to the image that will be used as the window icon.</param>
+    public void SetWindowIcon(string path)
+    {
+        using var stream = File.OpenRead(path);
+        var imageData = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
+
+        var rawImage = new RawImage(imageData.Width, imageData.Height, imageData.Data);
+        SetWindowIcon([rawImage]);
+    }
+
+    /// <inheritdoc cref="IMouse.Click"/>
+    public virtual void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) { }
+
+    /// <inheritdoc cref="IMouse.MouseDown"/>
+    protected virtual void OnMouseDown(IMouse mouse, MouseButton button) { }
+
+    /// <summary>Loads the resources needed to display any objects within the scene / editor.</summary>
+    /// <remarks>Called when the window is initialized.</remarks>
+    public virtual void OnLoad()
+    {
+        OnLoaded?.Invoke();
+    }
+
+    /// <summary>
+    ///     Handles operations needed to be executed after the renderers are finished.
+    /// </summary>
+    /// <param name="frame">Contains information about the previous frame.</param>
+    protected virtual void AfterRender(Frame frame) => OnAfterRender?.Invoke(frame);
+
+    /// <summary>
+    ///     Handles operations needed to be executed before the renderers are executed.
+    /// </summary>
+    /// <param name="frame">Contains information about the previous frame.</param>
+    protected virtual void PreRender(Frame frame) { }
+
+    /// <summary>
+    ///     Handles closing the application.
+    /// </summary>
+    public virtual void OnClosing() { }
+}

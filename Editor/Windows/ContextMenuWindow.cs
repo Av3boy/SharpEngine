@@ -1,5 +1,4 @@
 using ImGuiNET;
-using Launcher.UI;
 using SharpEngine.Core.Entities;
 using SharpEngine.Core.Primitives;
 using SharpEngine.Core.Scenes;
@@ -20,7 +19,11 @@ namespace SharpEngine.Editor.Windows
         public override string Name => "Context Menu";
 
         /// <inheritdoc />
-        public override ImGuiWindowFlags ImGuiWindowFlags => ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.AlwaysAutoResize;
+        public override ImGuiWindowFlags ImGuiWindowFlags => ImGuiWindowFlags.NoTitleBar | 
+                                                             ImGuiWindowFlags.NoResize | 
+                                                             ImGuiWindowFlags.NoMove | 
+                                                             ImGuiWindowFlags.AlwaysAutoResize | 
+                                                             ImGuiWindowFlags.NoDocking;
 
         /// <summary>
         ///     Shows the context menu.
@@ -63,7 +66,7 @@ namespace SharpEngine.Editor.Windows
         {
             if (ImGui.Button("Delete"))
             {
-                Scene.Root.RemoveChild(IntersectedObject);
+                Scene.Root.RemoveChild(IntersectedObject!);
                 IntersectedObject = null;
             }
         }
@@ -81,6 +84,12 @@ namespace SharpEngine.Editor.Windows
                     Scene.ActiveElement = cube;
                     Scene.Root.AddChild(cube);
                 }
+            }
+
+            if (ImGui.Button("Empty"))
+            {
+                var element = Scene.ActiveElement ?? Scene.Root;
+                element.AddChild(SceneNode.Empty);
             }
         }
     }
