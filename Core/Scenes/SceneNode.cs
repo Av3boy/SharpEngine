@@ -2,6 +2,7 @@ using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Windowing;
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

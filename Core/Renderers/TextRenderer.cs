@@ -1,7 +1,8 @@
-﻿using SharpEngine.Core.Entities.Views;
+using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Windowing;
+
 using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Renderers;

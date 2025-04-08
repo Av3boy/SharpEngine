@@ -1,9 +1,10 @@
-﻿using SharpEngine.Core.Entities.UI;
+using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
+
 using Silk.NET.OpenGL;
 
 using System;
@@ -38,6 +39,9 @@ public class UIRenderer : RendererBase
     /// <inheritdoc />
     public override Task Render()
     {
+        if (_uiShader.Shader is null)
+            return Task.CompletedTask;
+
         try
         {
             Window.GL.Enable(EnableCap.DepthTest);
@@ -47,7 +51,7 @@ public class UIRenderer : RendererBase
             Window.GL.Disable(EnableCap.CullFace);
 
             // _camera.SetShaderUniforms(_uiShader.Shader!);
-            _uiShader.Shader.Use();
+            _uiShader.Shader?.Use();
 
             var uiElementRenderTasks = _scene.IterateAsync<UIElement>(_scene.UIElements, elem => elem.Render(_camera, _window));
 

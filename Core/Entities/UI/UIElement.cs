@@ -37,6 +37,12 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
 
     private readonly UIShader _uiShader = new();
 
+    /// <summary>Gets or sets the width of the ui element.</summary>
+    public float Width { get; set; } = 10;
+
+    /// <summary>Gets or sets the height of the ui element.</summary>
+    public float Height { get; set; } = 10;
+
     /// <summary>Gets or sets the mesh of the UI element.</summary>
     public Mesh Mesh { get; set; }
 
@@ -89,6 +95,8 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
         const float screenWidth = 1280;
         const float screenHeight = 720;
 
+        _uiShader.Shader.SetFloat("width", Width);
+        _uiShader.Shader.SetFloat("height", Height);
         _uiShader.Shader.SetVector2("screenSize", new System.Numerics.Vector2(screenWidth, screenHeight));
         _uiShader.Shader.SetVector2("position", (System.Numerics.Vector2)Transform.Position);
         _uiShader.Shader.SetFloat("rotation", Math.DegreesToRadians(Transform.Rotation.Angle));

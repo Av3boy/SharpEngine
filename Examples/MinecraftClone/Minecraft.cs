@@ -71,7 +71,7 @@ public class Minecraft : Game
 
             // TODO: Fix UI renderer
             _uiElem = new UIElement("uiElement");
-            //_scene.UIElements.Add(_uiElem);
+            _scene.UIElements.Add(_uiElem);
 
             //var uiElem2 = new UIElement("uiElement");
             //uiElem2.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.2f, 0.2f);
@@ -105,6 +105,9 @@ public class Minecraft : Game
 
         var rotation = _uiElem.Transform.Rotation.Angle;
 
+        var height = _uiElem.Height;
+        var width = _uiElem.Width;
+
         ImGui.Begin("Debug");
         ImGui.Text($"FPS: {frame.FrameRate}");
         ImGui.Text($"Camera position: {Camera.Position}");
@@ -121,11 +124,20 @@ public class Minecraft : Game
         ImGui.Text($"UI Element scale: {_uiElem.Transform.Scale}");
         ImGui.SliderFloat("rotation", ref rotation, 0, 360);
 
+        ImGui.Text($"UI Element width: {_uiElem.Width}");
+        ImGui.SliderFloat("width", ref width, 0, 100);
+
+        ImGui.Text($"UI Element height: {_uiElem.Height}");
+        ImGui.SliderFloat("height", ref height, 0, 100);
+
         ImGui.End();
 
         _uiElem.Transform.Position = new SharpEngine.Core.Numerics.Vector2(x, y);
         _uiElem.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(sx, sy);
         _uiElem.Transform.Rotation.Angle = rotation;
+
+        _uiElem.Height = height;
+        _uiElem.Width = width;
     }
 
     private void InitializeWorld()
