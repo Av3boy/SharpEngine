@@ -38,10 +38,10 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
     private readonly UIShader _uiShader = new();
 
     /// <summary>Gets or sets the width of the ui element.</summary>
-    public float Width { get; set; }
+    public float Width { get; set; } = 10;
 
     /// <summary>Gets or sets the height of the ui element.</summary>
-    public float Height { get; set; }
+    public float Height { get; set; } = 10;
 
     /// <summary>Gets or sets the mesh of the UI element.</summary>
     public Mesh Mesh { get; set; }
