@@ -71,7 +71,7 @@ public class Minecraft : Game
 
             // TODO: Fix UI renderer
             _uiElem = new UIElement("uiElement");
-            //_scene.UIElements.Add(_uiElem);
+            _scene.UIElements.Add(_uiElem);
 
             //var uiElem2 = new UIElement("uiElement");
             //uiElem2.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.2f, 0.2f);

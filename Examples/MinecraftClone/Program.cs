@@ -19,14 +19,14 @@ public static class Program
         Scene scene = new Scene();
         Minecraft game = new Minecraft(scene, gameSettings);
 
-        using var window = new SharpEngine.Core.Windowing.Window(game.Camera, scene, game.Camera.Settings);
+        using var window = new Window(game.Camera, scene, game.Camera.Settings);
         window.OnLoaded += game.Initialize;
         window.OnHandleMouse += game.HandleMouse;
         window.OnUpdate += game.Update;
         window.OnHandleKeyboard += game.HandleKeyboard;
         window.OnButtonMouseDown += game.HandleMouseDown;
         window.HandleMouseWheel += game.HandleMouseWheel;
-        window.OnAfterRender += deltaTime => game.OnAfterRender(new Frame(deltaTime));
+        window.OnAfterRender += frame => game.OnAfterRender(frame);
 
         // TODO: This needs to be streamlined. 
         game.Window = window;
