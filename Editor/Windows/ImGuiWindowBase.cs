@@ -1,7 +1,8 @@
 using ImGuiNET;
 using Launcher.UI;
+
+using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Scenes;
-using Silk.NET.Windowing;
 
 namespace SharpEngine.Editor.Windows
 {
@@ -46,24 +47,25 @@ namespace SharpEngine.Editor.Windows
         public void SetProject(Project project) => Project = project;
 
         /// <summary>
+        ///     Executes operations required before rendering the ImGui window.
+        /// </summary>
+        public virtual void PreRender() { }
+
+        /// <summary>
         ///     Renders a new ImGui window to the main window.
         /// </summary>
         public void RenderWindow()
         {
+            PreRender();
+
             ImGui.Begin(Name, ImGuiWindowFlags);
 
             Render();
 
             // Check docking state
             bool isDocked = ImGui.IsWindowDocked();
-            if (_previousDockingStates.TryGetValue(Name, out bool wasDocked))
-            {
-                if (wasDocked && !isDocked)
-                {
-                    // Window was undocked
-                    OnWindowUndocked();
-                }
-            }
+            if (_previousDockingStates.TryGetValue(Name, out bool wasDocked) && wasDocked && !isDocked)
+                OnWindowUndocked();
 
             // Update previous docking state
             _previousDockingStates[Name] = isDocked;
@@ -77,25 +79,38 @@ namespace SharpEngine.Editor.Windows
         protected virtual void OnWindowUndocked()
         {
             Console.WriteLine($"Window {Name} was undocked.");
-            CreateSilkWindow();
+
+            // TODO: This method of doing this does not work (at least in .Net 8).
+            // See issue #44 for more information.
+            //CreateSilkWindow();
         }
 
         private void CreateSilkWindow()
         {
-            // TODO: Use the Core window.
-            var window = Window.Create(WindowOptions.Default with
+            try
             {
-                Title = Name
-            });
+                var thread = new Thread(() =>
+                {
 
-            window.Load += () =>
+                    var window = new Core.Window(new(), new DefaultViewSettings());
+
+                    window.Closing += () => _previousDockingStates[Name] = false;
+                    window.OnAfterRender += deltaTime =>
+                    {
+                        ImGui.Begin(Name, ImGuiWindowFlags);
+                        Render();
+                        ImGui.End();
+                    };
+
+                    window.Run();
+                });
+
+                thread.Start();
+            }
+            catch (Exception ex)
             {
-                // TODO: Initialize the ImGui context like we do in the Core window.
-            };
-
-            window.Render += delta => Render();
-
-            window.Run();
+                Console.WriteLine($"Failed to create window: {ex.Message}");
+            }
         }
 
         /// <summary>

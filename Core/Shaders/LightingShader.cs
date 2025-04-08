@@ -1,6 +1,7 @@
-﻿using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Extensions;
 using Silk.NET.OpenGL;
+using System;
 
 namespace SharpEngine.Core.Shaders;
 
@@ -22,17 +23,26 @@ internal class LightingShader : ShaderBase
         if (!base.SetAttributes())
             return false;
 
-        var positionLocation = (uint)Shader!.GetAttribLocation(ShaderAttributes.Pos);
-        Window.GL.EnableVertexAttribArray(positionLocation);
-        Window.GL.VertexAttribPointer(positionLocation, VertexData.VerticesSize, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
+        if (!Shader!.TryGetAttribLocation(ShaderAttributes.Pos, out int positionLocation))
+            return false;
 
-        var normalLocation = (uint)Shader.GetAttribLocation(ShaderAttributes.Normal);
-        Window.GL.EnableVertexAttribArray(normalLocation);
-        Window.GL.VertexAttribPointer(normalLocation, VertexData.NormalsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.NormalsOffset);
-
-        var texCoordLocation = (uint)Shader.GetAttribLocation(ShaderAttributes.TexCoords);
-        Window.GL.EnableVertexAttribArray(texCoordLocation);
-        Window.GL.VertexAttribPointer(texCoordLocation, VertexData.TexCoordsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.TexCoordsOffset);
+        var positionLocationUint = (uint)positionLocation;
+        Window.GL.EnableVertexAttribArray(positionLocationUint);
+        Window.GL.VertexAttribPointer(positionLocationUint, VertexData.VerticesSize, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
+        
+        if (!Shader!.TryGetAttribLocation(ShaderAttributes.Normal, out int normalLocation))
+            return false;
+        
+        var normalLocationUint = (uint)normalLocation;
+        Window.GL.EnableVertexAttribArray(normalLocationUint);
+        Window.GL.VertexAttribPointer(normalLocationUint, VertexData.NormalsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.NormalsOffset);
+        
+        if (!Shader!.TryGetAttribLocation(ShaderAttributes.TexCoords, out int texCoordLocation))
+            return false;
+        
+        var texCoordLocationUint = (uint)texCoordLocation;
+        Window.GL.EnableVertexAttribArray(texCoordLocationUint);
+        Window.GL.VertexAttribPointer(texCoordLocationUint, VertexData.TexCoordsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.TexCoordsOffset);
 
         return true;
     }

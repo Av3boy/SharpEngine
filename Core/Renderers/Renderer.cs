@@ -41,6 +41,7 @@ public class Renderer : RendererBase
         _camera = camera;
         _scene = scene;
 
+        // TODO: These should be refactored out. The minimum build shouldn't need to use these.
         _lightingShader = new LightingShader();
         _lampShader = new LampShader();
     }

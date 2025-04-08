@@ -1,20 +1,24 @@
-﻿using SharpEngine.Core.Enums;
-using Silk.NET.Core;
+﻿using Silk.NET.Core;
 using Silk.NET.Core.Contexts;
 using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
+using MouseButton = Silk.NET.Input.MouseButton;
+
 using StbImageSharp;
+
 using System;
 using System.IO;
 using System.Numerics;
-using MouseButton = Silk.NET.Input.MouseButton;
 
 namespace SharpEngine.Core;
 
 /// <summary>
-///     Represents a class abstraction for the <see cref="IWindow"/> interface.
+///     Represents an abstraction for the <see cref="IWindow"/> interface.
 /// </summary>
+/// <remarks>
+///     For window initialization, see <see cref="Window"/>.
+/// </remarks>
 public abstract class SilkWindow : IWindow
 {
     /// <inheritdoc />
@@ -154,6 +158,9 @@ public abstract class SilkWindow : IWindow
     /// <inheritdoc />
     public event Action<double>? Render;
 
+    /// <summary>Raised after the scene has been rendered.</summary>
+    public event Action<double>? OnAfterRender;
+
     /// <summary>An event executed when the window has loaded.</summary>
     public event Action? OnLoaded;
 
@@ -173,11 +180,24 @@ public abstract class SilkWindow : IWindow
     }
 
     /// <inheritdoc />
+    // [Obsolete("Use the 'Create<T>' implementation instead.")]
     public IWindow CreateWindow(WindowOptions opts)
     {
+        if (CurrentWindow is not null)
+            throw new InvalidOperationException("Window already created for this instance.");
+
         CurrentWindow = Silk.NET.Windowing.Window.Create(opts);
         return CurrentWindow;
     }
+
+    // public static T Create<T>(WindowOptions opts) where T : SilkWindow, new()
+    // {
+    //     var instance = new T();
+    //     var winndow = instance.CreateWindow(opts);
+    // 
+    //     instance.CurrentWindow = winndow;
+    //     return instance;
+    // }
 
     /// <inheritdoc />
     protected virtual void Dispose(bool disposing) { }
@@ -260,7 +280,7 @@ public abstract class SilkWindow : IWindow
     ///     Handles operations needed to be executed after the renderers are finished.
     /// </summary>
     /// <param name="deltaTime">Time since the last frame.</param>
-    protected virtual void AfterRender(double deltaTime) { }
+    protected virtual void AfterRender(double deltaTime) => OnAfterRender?.Invoke(deltaTime);
 
     /// <summary>
     ///     Handles operations needed to be executed before the renderers are executed.

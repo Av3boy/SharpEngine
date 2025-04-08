@@ -1,12 +1,15 @@
 ﻿using ImGuiNET;
 using Launcher.UI;
-using Silk.NET.Input;
 
 using SharpEngine.Core;
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Primitives;
 using SharpEngine.Core.Scenes;
+using SharpEngine.Core.Entities;
+
 using SharpEngine.Editor.Windows;
+
+using Silk.NET.Input;
 
 using System.Numerics;
 using System.Reflection;
@@ -40,48 +43,55 @@ public class EditorWindow : Window
     {
         base.OnLoad();
 
-        // Test only: remove later.
-        var cube = PrimitiveFactory.Create(PrimitiveType.Cube, new Vector3(3, 1, 1));
-        cube.Name = "test";
-
-        Scene.Root.Children.Add(cube);
-
-        // Get all types that inherit from ImGuiWindowBase
-        var windowTypes = Assembly.GetExecutingAssembly()
-            .GetTypes()
-            .Where(t => t.IsSubclassOf(typeof(ImGuiWindowBase)) && !t.IsAbstract)
-            .ToArray();
-
-        // Initialize all ImGuiWindowBase implementations
-        for (int i = 0; i < windowTypes.Length; i++)
+        try
         {
-            try
-            {
-                var type = windowTypes[i];
-                var window = Activator.CreateInstance(type) ?? 
-                    throw new InvalidOperationException($"Error initializing window: {type}");
+            // Test only: remove later.
+            var cube = PrimitiveFactory.Create(PrimitiveType.Cube, new Vector3(3, 1, 1));
+            cube.Name = "test";
 
-                var windowBase = (ImGuiWindowBase)window;
-                windowBase.SetScene(Scene);
-                windowBase.SetProject(_project);
+            Scene.Root.Children.Add(cube);
 
-                _windows.Add(windowBase);
-            }
-            catch (Exception e)
+            // Get all types that inherit from ImGuiWindowBase
+            var windowTypes = Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .Where(t => t.IsSubclassOf(typeof(ImGuiWindowBase)) && !t.IsAbstract)
+                .ToArray();
+
+            // Initialize all ImGuiWindowBase implementations
+            for (int i = 0; i < windowTypes.Length; i++)
             {
-                Debug.LogInformation(e.Message, e);
+                try
+                {
+                    var type = windowTypes[i];
+                    var window = Activator.CreateInstance(type) ?? 
+                        throw new InvalidOperationException($"Error initializing window: {type}");
+
+                    var windowBase = (ImGuiWindowBase)window;
+                    windowBase.SetScene(Scene);
+                    windowBase.SetProject(_project);
+
+                    _windows.Add(windowBase);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogInformation(e.Message, e);
+                }
             }
+
+            _contextMenuWindow = (ContextMenuWindow?)_windows.FirstOrDefault(w => w.GetType() == typeof(ContextMenuWindow));
+            if (_contextMenuWindow is null)
+                Debug.LogInformation("ContextMenuWindow not found.");
+
+            _actionsMenuWindow = (ActionsMenuWindow?)_windows.FirstOrDefault(w => w.GetType() == typeof(ActionsMenuWindow));
+            if (_actionsMenuWindow is null)
+                Debug.LogInformation("ActionsMenuWindow not found.");
+            else
+                _actionsMenuWindow.OnSceneLoaded += SetScene;
         }
-
-        _contextMenuWindow = (ContextMenuWindow?)_windows.FirstOrDefault(w => w.GetType() == typeof(ContextMenuWindow));
-        if (_contextMenuWindow is null)
-            Debug.LogInformation("ContextMenuWindow not found.");
-
-        _actionsMenuWindow = (ActionsMenuWindow?)_windows.FirstOrDefault(w => w.GetType() == typeof(ActionsMenuWindow));
-        if (_actionsMenuWindow is null)
-            Debug.LogInformation("ActionsMenuWindow not found.");
-        else
-            _actionsMenuWindow.OnSceneLoaded += SetScene;
+        catch (Exception e)
+        {
+            Debug.LogInformation(e.Message, e);
+        }
     }
 
     /// <inheritdoc />
@@ -123,7 +133,31 @@ public class EditorWindow : Window
     {
         base.OnMouseClick(mouse, button, vector);
 
-        if (button == MouseButton.Right)
-            _contextMenuWindow?.ShowContextMenu();
+        if (button == Settings.PrimaryButton)
+        {
+            if (ImGui.IsAnyItemHovered())
+            {
+                // TODO: Right-clicked on an ImGui component
+            }
+            else
+            {
+                // TODO: Right-clicked outside of ImGui components
+                Camera.IsInView(Scene, out GameObject? intersectingObject, out Vector3 hitPosition);
+                _contextMenuWindow?.ShowContextMenu(intersectingObject);
+            }
+        }
+
+        if (button == Settings.SecondaryButton)
+        {
+            if (ImGui.IsAnyItemHovered())
+            {
+                // TODO: Left-clicked on an ImGui component
+            }
+            else
+            {
+                Camera.IsInView(Scene, out GameObject? intersectingObject, out Vector3 hitPosition);
+                Scene.ActiveElement = intersectingObject;
+            }
+        }
     }
 }

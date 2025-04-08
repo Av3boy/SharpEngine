@@ -1,4 +1,5 @@
 ﻿using SharpEngine.Core.Renderers;
+using Silk.NET.Input;
 using Silk.NET.Windowing;
 
 namespace SharpEngine.Core.Interfaces;
@@ -20,6 +21,9 @@ public interface ISettings
 
     /// <summary>Gets or sets which renderer should be enabled for the current window.</summary>
     public RenderFlags RendererFlags { get; set; }
+
+    public MouseButton PrimaryButton { get; set; }
+    public MouseButton SecondaryButton { get; set; }
 }
 
 /// <inheritdoc cref="ISettings" />
@@ -33,4 +37,10 @@ public class DefaultSettings : ISettings
 
     /// <inheritdoc/>
     public RenderFlags RendererFlags { get; set; } = RenderFlags.All;
+
+    /// <inheritdoc/>
+    public MouseButton PrimaryButton { get; set; } = MouseButton.Left;
+
+    /// <inheritdoc/>
+    public MouseButton SecondaryButton { get; set; } = MouseButton.Right;
 }

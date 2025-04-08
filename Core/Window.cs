@@ -1,4 +1,4 @@
-﻿using SharpEngine.Core.Entities.Properties.Meshes;
+using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Enums;
@@ -7,23 +7,20 @@ using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Renderers;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
-using Silk.NET.Core;
-using Silk.NET.GLFW;
+using Shader = SharpEngine.Core.Shaders.Shader;
+
 using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
-using StbImageSharp;
+using MouseButton = Silk.NET.Input.MouseButton;
+
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using MouseButton = Silk.NET.Input.MouseButton;
-using Shader = SharpEngine.Core.Shaders.Shader;
 
 namespace SharpEngine.Core;
 
@@ -32,12 +29,13 @@ namespace SharpEngine.Core;
 /// </summary>
 public class Window : SilkWindow
 {
-    private readonly ISettings _settings;
-    private readonly CameraView _camera;
-
     private bool _initialized;
     private IEnumerable<RendererBase> _renderers = [];
     private ImGuiController? _imGuiController;
+
+    public readonly CameraView Camera;
+
+    public IViewSettings Settings;
 
     /// <summary>The event executed when mouse events are executed.</summary>
     public event Action<IMouse>? OnHandleMouse;
@@ -69,6 +67,7 @@ public class Window : SilkWindow
     /// <returns>The OpenGL context for this window.</returns>
     public static GL GetGL() => GL;
     private static void SetGL(GL gl) => GL = gl;
+    public Window() { }
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
@@ -79,10 +78,9 @@ public class Window : SilkWindow
     public Window(CameraView camera, Scene scene, IViewSettings settings)
     {
         Scene = scene;
-        _settings = settings;
-        _camera = camera;
-
-        Initialize(settings.WindowOptions);
+        Settings = settings;
+        Camera = camera;
+        Initialize();
     }
 
     /// <summary>
@@ -93,15 +91,18 @@ public class Window : SilkWindow
     public Window(Scene scene, IViewSettings settings)
     {
         Scene = scene;
-        _settings = settings;
-        _camera = new(Vector3.One, new DefaultViewSettings());
+        Settings = settings;
+        Camera = new(Vector3.One, settings);
 
-        Initialize(settings.WindowOptions);
+        Initialize();
     }
 
-    private void Initialize(WindowOptions options)
+    private bool _windowInitialized;
+
+    // public void Initialize<T>() where T : SilkWindow, new()
+    private void Initialize()
     {
-        CurrentWindow = CreateWindow(options);
+        CurrentWindow = CreateWindow(Settings.WindowOptions);
         CurrentWindow.Update += OnUpdateFrame;
         CurrentWindow.Render += RenderFrame;
         CurrentWindow.Resize += OnResize;
@@ -112,6 +113,9 @@ public class Window : SilkWindow
     /// <inheritdoc />
     public override void Run(Action onFrame)
     {
+        if (!_windowInitialized)
+            throw new Exception("Window not been initialized for this instance. Try calling 'window.Initialize()' first.");
+
         try
         {
             base.Run(onFrame);
@@ -155,7 +159,7 @@ public class Window : SilkWindow
             {
                 // Make sure the renderer has the correct constructor parameters!
                 // TODO: The static reference to the context will not work when multiple windows are implemented, since the context will be different.
-                var requiredArguments = new object[] { _camera, _settings, Scene };
+                var requiredArguments = new object[] { Camera, Settings, Scene };
                 var renderer = (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
 
                 _renderers = _renderers.Append(renderer);
@@ -195,11 +199,11 @@ public class Window : SilkWindow
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            ToggleWireFrame(_settings.UseWireFrame);
+            ToggleWireFrame(Settings.UseWireFrame);
 
             UseShaders();
 
-            var renderTasks = _renderers.Where(renderer => _settings.RendererFlags.HasFlag(renderer.RenderFlag))
+            var renderTasks = _renderers.Where(renderer => Settings.RendererFlags.HasFlag(renderer.RenderFlag))
                                         .Select(renderer => renderer.Render())
                                         .ToList();
 
@@ -247,14 +251,14 @@ public class Window : SilkWindow
         // if (!_window.IsFocused)
         //     return;
 
-        if (_settings.PrintFrameRate)
+        if (Settings.PrintFrameRate)
             Console.WriteLine($"FPS: {1f / deltaTime}");
 
         // TODO: Handle multiple mice?
         var mouse = Input?.Mice[0];
         if (mouse is not null)
         {
-            _camera.UpdateMousePosition(mouse.Position);
+            Camera.UpdateMousePosition(mouse.Position);
             OnHandleMouse?.Invoke(mouse);
         }
 
@@ -309,14 +313,14 @@ public class Window : SilkWindow
         };
 
         HandleMouseWheel?.Invoke(direction, sw);
-        _camera.Fov -= sw.Y;
+        Camera.Fov -= sw.Y;
     }
 
     /// <inheritdoc />
     protected void OnResize(Vector2D<int> size)
     {
         GL.Viewport(size);
-        _camera.AspectRatio = size.X / size.Y;
+        Camera.AspectRatio = size.X / size.Y;
     }
 
     /// <inheritdoc />

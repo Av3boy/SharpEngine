@@ -1,5 +1,6 @@
 ﻿using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Renderers;
+using Silk.NET.Input;
 
 namespace SharpEngine.Editor;
 
@@ -22,4 +23,10 @@ public class EditorSettings : IViewSettings
 
     /// <inheritdoc />
     public float MouseSensitivity { get; set; }
+
+    /// <inheritdoc />
+    public MouseButton PrimaryButton { get; set; } = MouseButton.Left;
+
+    /// <inheritdoc />
+    public MouseButton SecondaryButton { get; set; } = MouseButton.Right;
 }
