@@ -14,9 +14,10 @@ permissions:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     env:
       RUN_TAG_STEP: true
+      ACTIONS_STEP_DEBUG: true
 
     steps:
     - name: Checkout Repository
@@ -27,14 +28,18 @@ jobs:
       with:
         dotnet-version: '8.x'
 
+    - name: Restore Workloads
+      run: dotnet workload restore
+
     - name: Generate new semantic version
       id: version
-      uses: mathieudutour/github-tag-action@v6.1
+      uses: mathieudutour/github-tag-action@v6.2
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         release_branches: main
         pre_release_branches: ".*"
         dry_run: true
+      continue-on-error: true
 
     - name: Patch version in .csproj
       run: |
@@ -46,6 +51,9 @@ jobs:
 
     - name: Build Solution
       run: dotnet build SharpEngine.sln --configuration Release
+
+    - name: Pack NuGet Package
+      run: dotnet pack Core/SharpEngine.Core.csproj --configuration Release --no-build -o ./nupkgs
 
     - name: Zip Editor Publish Contents
       run: |
@@ -60,9 +68,6 @@ jobs:
         dotnet publish Launcher.csproj --configuration Release --output ./bin/publish
         zip -r ../Launcher.zip ./bin/publish
       shell: bash
-
-    - name: Pack NuGet Package
-      run: dotnet pack Core/SharpEngine.Core.csproj --configuration Release --no-build -o ./nupkgs
 
     # - name: Push Package to NuGet
     #   run: dotnet nuget push ./nupkgs/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLISH_NUGET_PACKAGE }}
@@ -82,5 +87,5 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Publish package in github
-      run: dotnet nuget push ./nupkgs/*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }}
+    # - name: Publish package in github
+    #   run: dotnet nuget push ./nupkgs/*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }}
