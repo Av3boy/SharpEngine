@@ -149,6 +149,9 @@ public class Minecraft : Game
         // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
         // var go = new GameObject();
         // go.Meshes.Add(torus.First());
+
+        // go.Initialize();
+        // _scene.Root.AddChild(go);
     }
 
     private void InitializeLights()

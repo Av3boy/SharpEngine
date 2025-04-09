@@ -1,6 +1,5 @@
 ﻿using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Properties;
-using SharpEngine.Core.Extensions;
 
 using System;
 using System.Numerics;
@@ -30,9 +29,10 @@ public static class PrimitiveFactory
     /// <returns>A new game object.</returns>
     /// <exception cref="InvalidOperationException">Thrown when the specified primitive type does not exist.</exception>
     public static GameObject Create(PrimitiveType primitiveType, Vector3 position, string diffuseMapFile, string? specularMapFile = null, string? vertShaderFile = null, string? fragShaderFile = null)
-        => new(diffuseMapFile, specularMapFile, vertShaderFile ?? _Resources.Default.VertexShader, fragShaderFile ?? _Resources.Default.FragmentShader)
+    {
+        var primitive = new GameObject(diffuseMapFile, specularMapFile, vertShaderFile ?? _Resources.Default.VertexShader, fragShaderFile ?? _Resources.Default.FragmentShader)
         {
-            Transform = new Transform { Position = (SharpEngine.Core.Numerics.Vector3)position },
+            Transform = new Transform { Position = (Numerics.Vector3)position },
             Meshes = primitiveType switch
             {
                 PrimitiveType.Cube => [Cube.Mesh],
@@ -40,5 +40,9 @@ public static class PrimitiveFactory
                 _ => throw new InvalidOperationException($"A primitive of type {primitiveType} does not exist.")
             }
         };
+
+        primitive.Initialize();
+        return primitive;
+    }
 
 }

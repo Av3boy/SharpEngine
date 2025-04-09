@@ -104,10 +104,18 @@ public class MeshService
                     textureCoordinates.AddRange(GetData(parts));
                     break;
                 case ObjMeshData.FACE: // OBJ faces are defined as a list of vertex indices
-                    foreach (var part in parts.Skip(1))
+                    var faceVertices = parts.Skip(1).ToArray();
+                    for (int i = 1; i < faceVertices.Length - 1; i++)
                     {
-                        var indicesParts = part.Split('/');
-                        indices.Add(uint.Parse(indicesParts[0]) - 1); // OBJ indices are 1-based
+                        // Triangle 1: Vertex 1, Vertex i, Vertex i+1
+                        var indicesParts1 = faceVertices[0].Split('/');
+                        var indicesParts2 = faceVertices[i].Split('/');
+                        var indicesParts3 = faceVertices[i + 1].Split('/');
+
+                        // OBJ indices are 1-based so we need to subtract 1 to convert to 0-based
+                        indices.Add(uint.Parse(indicesParts1[0]) - 1);
+                        indices.Add(uint.Parse(indicesParts2[0]) - 1);
+                        indices.Add(uint.Parse(indicesParts3[0]) - 1);
                     }
                     break;
                 case ObjMeshData.OBJECT:
