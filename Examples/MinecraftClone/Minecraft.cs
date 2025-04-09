@@ -1,22 +1,22 @@
+using ImGuiNET;
+using Minecraft.Block;
+using ObjLoader.Loader.Loaders;
 using SharpEngine.Core;
+using SharpEngine.Core.Entities;
+using SharpEngine.Core.Entities.Lights;
+using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Entities.Properties.Meshes;
+using SharpEngine.Core.Entities.UI;
+using SharpEngine.Core.Entities.UI.Layouts;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
-using SharpEngine.Core.Entities;
-using SharpEngine.Core.Entities.Lights;
-
-using Minecraft.Block;
-using Silk.NET.Input;
-
-using System;
-using System.Numerics;
-using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Windowing;
-using SharpEngine.Core.Entities.UI.Layouts;
-using SharpEngine.Core.Entities.Properties;
-using ImGuiNET;
-using SharpEngine.Core.Entities.Properties.Meshes;
+using Silk.NET.Input;
+using System;
+using System.IO;
 using System.Linq;
+using System.Numerics;
 
 namespace Minecraft;
 
@@ -147,11 +147,27 @@ public class Minecraft : Game
 
         // TODO: Does not work yet.
         // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
-        // var go = new GameObject();
+
+        // This should be simplified to something like this:
+        // new ObjLoaderFactory().Load();
+
+        var objLoaderFactory = new ObjLoaderFactory();
+        var objLoader = objLoaderFactory.Create();
+
+        // TODO: There is a bug that an exception is thrown if no mtl file is not found. This should be just a warning.
+        var fileStream = new FileStream("Untitled2.obj", FileMode.Open);
+        var result = objLoader.Load(fileStream);
+        // var mesh = new Mesh()
+        // {
+        //     Vertices = result.Vertices.ToArray(),
+        // };
+
+        var go = new GameObject();
         // go.Meshes.Add(torus.First());
 
-        // go.Initialize();
-        // _scene.Root.AddChild(go);
+        go.Initialize();
+        _scene.Root.AddChild(go);
+
     }
 
     private void InitializeLights()
