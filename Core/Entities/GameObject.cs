@@ -120,7 +120,7 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     /// <inheritdoc />
     public override Task Render(CameraView camera, Window window)
     {
-        Bind();
+        // Bind();
 
         Material.DiffuseMap.Use(TextureUnit.Texture0);
         Material.Shader.SetInt("material.diffuse", Material.diffuseUnit);
@@ -141,10 +141,9 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
 
         Material.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
 
-        // Window.GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
-
         foreach (var mesh in Meshes)
-            Window.GL.DrawElements<uint>(PrimitiveType.Triangles, (uint)mesh.Indices.Length, DrawElementsType.UnsignedInt, []);
+            Window.GL.DrawArrays(PrimitiveType.Triangles, 0, (uint)mesh.Vertices.Length);
+            // Window.GL.DrawElements<uint>(PrimitiveType.Triangles, (uint)mesh.Indices.Length, DrawElementsType.UnsignedInt, []);
 
         return Task.CompletedTask;
     }
