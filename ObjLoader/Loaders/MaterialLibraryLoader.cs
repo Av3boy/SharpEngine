@@ -49,6 +49,7 @@ namespace ObjLoader.Loader.Loaders
 
         private void AddParseAction(string key, Action<string> action) => _parseActionDictionary.Add(key.ToLowerInvariant(), action);
 
+        /// <inheritdoc />
         protected override void ParseLine(string keyword, string data)
         {
             var parseAction = GetKeywordAction(keyword);
@@ -75,7 +76,7 @@ namespace ObjLoader.Loader.Loaders
             _materialLibrary.Push(CurrentMaterial);
         }
 
-        private Vector3 ParseVec3(string data)
+        private static Vector3 ParseVec3(string data)
         {
             string[] parts = data.Split(' ');
 

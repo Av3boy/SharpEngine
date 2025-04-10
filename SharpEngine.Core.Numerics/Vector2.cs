@@ -2,15 +2,13 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // https://github.com/microsoft/referencesource/blob/master/System.Numerics/System/Numerics/Vector2.cs
 
-using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
-
-using Vector = System.Numerics.Vector;
-using Matrix4x4 = System.Numerics.Matrix4x4;
 using Matrix3x2 = System.Numerics.Matrix3x2;
+using Matrix4x4 = System.Numerics.Matrix4x4;
 using Quaternion = System.Numerics.Quaternion;
+using Vector = System.Numerics.Vector;
 
 namespace SharpEngine.Core.Numerics
 {
@@ -20,35 +18,29 @@ namespace SharpEngine.Core.Numerics
     public partial struct Vector2 : IEquatable<Vector2>, IFormattable
     {
         #region Public Static Properties
-        /// <summary>
-        /// Returns the vector (0,0).
-        /// </summary>
+        
+        /// <summary>Returns the vector (0,0).</summary>
         public static Vector2 Zero => new();
-        /// <summary>
-        /// Returns the vector (1,1).
-        /// </summary>
-        public static Vector2 One => new Vector2(1.0f, 1.0f);
-        /// <summary>
-        /// Returns the vector (1,0).
-        /// </summary>
-        public static Vector2 UnitX { get { return new Vector2(1.0f, 0.0f); } }
-        /// <summary>
-        /// Returns the vector (0,1).
-        /// </summary>
-        public static Vector2 UnitY { get { return new Vector2(0.0f, 1.0f); } }
+        
+        /// <summary>Returns the vector (1,1).</summary>
+        public static Vector2 One => new(1.0f, 1.0f);
+        
+        /// <summary>Returns the vector (1,0).</summary>
+        public static Vector2 UnitX => new(1.0f, 0.0f);
+        
+        /// <summary> Returns the vector (0,1).</summary>
+        public static Vector2 UnitY => new(0.0f, 1.0f);
+        
         #endregion Public Static Properties
 
         #region Public instance methods
+
         /// <summary>
-        /// Returns the hash code for this instance.
+        ///     Returns the hash code for this instance.
         /// </summary>
         /// <returns>The hash code.</returns>
-        public override int GetHashCode()
-        {
-            int hash = this.X.GetHashCode();
-            hash = HashCodeHelper.CombineHashCodes(hash, this.Y.GetHashCode());
-            return hash;
-        }
+        public override readonly int GetHashCode()
+            => HashCodeHelper.CombineHashCodes(X.GetHashCode(), Y.GetHashCode());
 
         /// <summary>
         /// Returns a boolean indicating whether the given Object is equal to this Vector2 instance.
@@ -58,56 +50,51 @@ namespace SharpEngine.Core.Numerics
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool Equals(object? obj)
         {
-            if (obj is not Vector2)
+            if (obj is not Vector2 vec2)
                 return false;
-            return Equals((Vector2)obj);
+
+            return Equals(vec2);
         }
 
         /// <summary>
-        /// Returns a String representing this Vector2 instance.
+        ///     Returns a String representing this Vector2 instance.
         /// </summary>
         /// <returns>The string representation.</returns>
-        public override string ToString()
-        {
-            return ToString("G", CultureInfo.CurrentCulture);
-        }
+        public override readonly string ToString() => ToString("G", CultureInfo.CurrentCulture);
 
         /// <summary>
-        /// Returns a String representing this Vector2 instance, using the specified format to format individual elements.
+        ///     Returns a String representing this Vector2 instance, using the specified format to format individual elements.
         /// </summary>
         /// <param name="format">The format of individual elements.</param>
         /// <returns>The string representation.</returns>
-        public string ToString(string format)
-        {
-            return ToString(format, CultureInfo.CurrentCulture);
-        }
+        public readonly string ToString(string format) => ToString(format, CultureInfo.CurrentCulture);
 
         /// <summary>
-        /// Returns a String representing this Vector2 instance, using the specified format to format individual elements 
-        /// and the given IFormatProvider.
+        ///     Returns a String representing this Vector2 instance, using the specified format to format individual elements 
+        ///     and the given IFormatProvider.
         /// </summary>
         /// <param name="format">The format of individual elements.</param>
         /// <param name="formatProvider">The format provider to use when formatting elements.</param>
         /// <returns>The string representation.</returns>
-        public string ToString(string? format, IFormatProvider? formatProvider)
+        public readonly string ToString(string? format, IFormatProvider? formatProvider)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             string separator = NumberFormatInfo.GetInstance(formatProvider).NumberGroupSeparator;
             sb.Append('<');
-            sb.Append(this.X.ToString(format, formatProvider));
+            sb.Append(X.ToString(format, formatProvider));
             sb.Append(separator);
             sb.Append(' ');
-            sb.Append(this.Y.ToString(format, formatProvider));
+            sb.Append(Y.ToString(format, formatProvider));
             sb.Append('>');
             return sb.ToString();
         }
 
         /// <summary>
-        /// Returns the length of the vector.
+        ///     Returns the length of the vector.
         /// </summary>
         /// <returns>The vector's length.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public float Length()
+        public readonly float Length()
         {
             if (Vector.IsHardwareAccelerated)
             {
@@ -116,26 +103,23 @@ namespace SharpEngine.Core.Numerics
             }
             else
             {
-                float ls = X * X + Y * Y;
+                float ls = (X * X) + (Y * Y);
                 return MathF.Sqrt(ls);
             }
         }
 
         /// <summary>
-        /// Returns the length of the vector squared. This operation is cheaper than Length().
+        ///     Returns the length of the vector squared. This operation is cheaper than Length().
         /// </summary>
         /// <returns>The vector's length squared.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public float LengthSquared()
+        public readonly float LengthSquared()
         {
             if (Vector.IsHardwareAccelerated)
-            {
                 return Vector2.Dot(this, this);
-            }
+
             else
-            {
-                return X * X + Y * Y;
-            }
+                return (X * X) + (Y * Y);
         }
         #endregion Public Instance Methods
 
@@ -151,7 +135,7 @@ namespace SharpEngine.Core.Numerics
         {
             if (Vector.IsHardwareAccelerated)
             {
-                Vector2 difference = value1 - value2;
+                var difference = value1 - value2;
                 float ls = Vector2.Dot(difference, difference);
                 return (float)System.MathF.Sqrt(ls);
             }
@@ -160,7 +144,7 @@ namespace SharpEngine.Core.Numerics
                 float dx = value1.X - value2.X;
                 float dy = value1.Y - value2.Y;
 
-                float ls = dx * dx + dy * dy;
+                float ls = (dx * dx) + (dy * dy);
 
                 return MathF.Sqrt(ls);
             }
@@ -177,7 +161,7 @@ namespace SharpEngine.Core.Numerics
         {
             if (Vector.IsHardwareAccelerated)
             {
-                Vector2 difference = value1 - value2;
+                var difference = value1 - value2;
                 return Vector2.Dot(difference, difference);
             }
             else
@@ -185,7 +169,7 @@ namespace SharpEngine.Core.Numerics
                 float dx = value1.X - value2.X;
                 float dy = value1.Y - value2.Y;
 
-                return dx * dx + dy * dy;
+                return (dx * dx) + (dy * dy);
             }
         }
 
@@ -204,7 +188,7 @@ namespace SharpEngine.Core.Numerics
             }
             else
             {
-                float ls = value.X * value.X + value.Y * value.Y;
+                float ls = (value.X * value.X) + (value.Y * value.Y);
                 float invNorm = 1.0f / MathF.Sqrt(ls);
 
                 return new Vector2(
@@ -229,11 +213,11 @@ namespace SharpEngine.Core.Numerics
             }
             else
             {
-                float dot = vector.X * normal.X + vector.Y * normal.Y;
+                float dot = (vector.X * normal.X) + (vector.Y * normal.Y);
 
                 return new Vector2(
-                    vector.X - 2.0f * dot * normal.X,
-                    vector.Y - 2.0f * dot * normal.Y);
+                    vector.X - (2.0f * dot * normal.X),
+                    vector.Y - (2.0f * dot * normal.Y));
             }
         }
 
@@ -270,8 +254,8 @@ namespace SharpEngine.Core.Numerics
         public static Vector2 Lerp(Vector2 value1, Vector2 value2, float amount)
         {
             return new Vector2(
-                value1.X + (value2.X - value1.X) * amount,
-                value1.Y + (value2.Y - value1.Y) * amount);
+                value1.X + ((value2.X - value1.X) * amount),
+                value1.Y + ((value2.Y - value1.Y) * amount));
         }
 
         /// <summary>
@@ -284,8 +268,8 @@ namespace SharpEngine.Core.Numerics
         public static Vector2 Transform(Vector2 position, Matrix3x2 matrix)
         {
             return new Vector2(
-                position.X * matrix.M11 + position.Y * matrix.M21 + matrix.M31,
-                position.X * matrix.M12 + position.Y * matrix.M22 + matrix.M32);
+                (position.X * matrix.M11) + (position.Y * matrix.M21) + matrix.M31,
+                (position.X * matrix.M12) + (position.Y * matrix.M22) + matrix.M32);
         }
 
         /// <summary>
@@ -298,8 +282,8 @@ namespace SharpEngine.Core.Numerics
         public static Vector2 Transform(Vector2 position, Matrix4x4 matrix)
         {
             return new Vector2(
-                position.X * matrix.M11 + position.Y * matrix.M21 + matrix.M41,
-                position.X * matrix.M12 + position.Y * matrix.M22 + matrix.M42);
+                (position.X * matrix.M11) + (position.Y * matrix.M21) + matrix.M41,
+                (position.X * matrix.M12) + (position.Y * matrix.M22) + matrix.M42);
         }
 
         /// <summary>
@@ -312,8 +296,8 @@ namespace SharpEngine.Core.Numerics
         public static Vector2 TransformNormal(Vector2 normal, Matrix3x2 matrix)
         {
             return new Vector2(
-                normal.X * matrix.M11 + normal.Y * matrix.M21,
-                normal.X * matrix.M12 + normal.Y * matrix.M22);
+                (normal.X * matrix.M11) + (normal.Y * matrix.M21),
+                (normal.X * matrix.M12) + (normal.Y * matrix.M22));
         }
 
         /// <summary>
@@ -326,8 +310,8 @@ namespace SharpEngine.Core.Numerics
         public static Vector2 TransformNormal(Vector2 normal, Matrix4x4 matrix)
         {
             return new Vector2(
-                normal.X * matrix.M11 + normal.Y * matrix.M21,
-                normal.X * matrix.M12 + normal.Y * matrix.M22);
+                (normal.X * matrix.M11) + (normal.Y * matrix.M21),
+                (normal.X * matrix.M12) + (normal.Y * matrix.M22));
         }
 
         /// <summary>
@@ -350,8 +334,8 @@ namespace SharpEngine.Core.Numerics
             float zz2 = rotation.Z * z2;
 
             return new Vector2(
-                value.X * (1.0f - yy2 - zz2) + value.Y * (xy2 - wz2),
-                value.X * (xy2 + wz2) + value.Y * (1.0f - xx2 - zz2));
+                (value.X * (1.0f - yy2 - zz2)) + (value.Y * (xy2 - wz2)),
+                (value.X * (xy2 + wz2)) + (value.Y * (1.0f - xx2 - zz2)));
         }
         #endregion Public Static Methods
 
@@ -360,99 +344,75 @@ namespace SharpEngine.Core.Numerics
         // implemented over JIT intrinsics
 
         /// <summary>
-        /// Adds two vectors together.
+        ///     Adds two vectors together.
         /// </summary>
         /// <param name="left">The first source vector.</param>
         /// <param name="right">The second source vector.</param>
         /// <returns>The summed vector.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 Add(Vector2 left, Vector2 right)
-        {
-            return left + right;
-        }
+        public static Vector2 Add(Vector2 left, Vector2 right) => left + right;
 
         /// <summary>
-        /// Subtracts the second vector from the first.
+        ///     Subtracts the second vector from the first.
         /// </summary>
         /// <param name="left">The first source vector.</param>
         /// <param name="right">The second source vector.</param>
         /// <returns>The difference vector.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 Subtract(Vector2 left, Vector2 right)
-        {
-            return left - right;
-        }
+        public static Vector2 Subtract(Vector2 left, Vector2 right) => left - right;
 
         /// <summary>
-        /// Multiplies two vectors together.
+        ///     Multiplies two vectors together.
         /// </summary>
         /// <param name="left">The first source vector.</param>
         /// <param name="right">The second source vector.</param>
         /// <returns>The product vector.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 Multiply(Vector2 left, Vector2 right)
-        {
-            return left * right;
-        }
+        public static Vector2 Multiply(Vector2 left, Vector2 right) => left * right;
 
         /// <summary>
-        /// Multiplies a vector by the given scalar.
+        ///     Multiplies a vector by the given scalar.
         /// </summary>
         /// <param name="left">The source vector.</param>
         /// <param name="right">The scalar value.</param>
         /// <returns>The scaled vector.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 Multiply(Vector2 left, Single right)
-        {
-            return left * right;
-        }
+        public static Vector2 Multiply(Vector2 left, float right) => left * right;
 
         /// <summary>
-        /// Multiplies a vector by the given scalar.
+        ///     Multiplies a vector by the given scalar.
         /// </summary>
         /// <param name="left">The scalar value.</param>
         /// <param name="right">The source vector.</param>
         /// <returns>The scaled vector.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 Multiply(Single left, Vector2 right)
-        {
-            return left * right;
-        }
+        public static Vector2 Multiply(float left, Vector2 right) => left * right;
 
         /// <summary>
-        /// Divides the first vector by the second.
+        ///     Divides the first vector by the second.
         /// </summary>
         /// <param name="left">The first source vector.</param>
         /// <param name="right">The second source vector.</param>
         /// <returns>The vector resulting from the division.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 Divide(Vector2 left, Vector2 right)
-        {
-            return left / right;
-        }
+        public static Vector2 Divide(Vector2 left, Vector2 right) => left / right;
 
         /// <summary>
-        /// Divides the vector by the given scalar.
+        ///     Divides the vector by the given scalar.
         /// </summary>
         /// <param name="left">The source vector.</param>
         /// <param name="divisor">The scalar value.</param>
         /// <returns>The result of the division.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 Divide(Vector2 left, Single divisor)
-        {
-            return left / divisor;
-        }
+        public static Vector2 Divide(Vector2 left, float divisor) => left / divisor;
 
         /// <summary>
-        /// Negates a given vector.
+        ///     Negates a given vector.
         /// </summary>
         /// <param name="value">The source vector.</param>
         /// <returns>The negated vector.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 Negate(Vector2 value)
-        {
-            return -value;
-        }
+        public static Vector2 Negate(Vector2 value) => -value;
 
         #endregion Public operator methods
     }

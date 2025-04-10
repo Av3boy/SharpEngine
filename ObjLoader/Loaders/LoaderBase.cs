@@ -20,7 +20,10 @@ namespace ObjLoader.Loader.Loaders
         {
             var currentLine = _lineStreamReader.ReadLine();
 
-            if (string.IsNullOrWhiteSpace(currentLine) || currentLine[0] == '#')
+            if (string.IsNullOrWhiteSpace(currentLine))
+                return;
+
+            if (currentLine[0] == '#')
                 return;
 
             var fields = currentLine.Trim().Split(null, 2);

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SharpEngine.Core.Numerics;
+﻿namespace SharpEngine.Core.Numerics;
 
 /// <summary>
 ///     An abstraction of the different vector types.
@@ -8,8 +6,8 @@ namespace SharpEngine.Core.Numerics;
 public interface IVector
 {
     /// <inheritdoc cref="System.Numerics.Vector3.X" />
-    public Single X { get; set; }
+    float X { get; set; }
 
     /// <inheritdoc cref="System.Numerics.Vector3.Y" />
-    public Single Y { get; set; }
+    float Y { get; set; }
 }

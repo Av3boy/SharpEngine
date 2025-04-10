@@ -155,6 +155,7 @@ public class Minecraft : Game
         var objLoader = objLoaderFactory.Create();
 
         // TODO: There is a bug that an exception is thrown if no mtl file is not found. This should be just a warning.
+        // TODO: This should be able to load from an absolute and a relative path.
         var fileStream = new FileStream("Untitled2.obj", FileMode.Open);
         var result = objLoader.Load(fileStream);
         // var mesh = new Mesh()

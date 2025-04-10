@@ -1,25 +1,25 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using ObjLoader.Loader.Data.DataStore;
+﻿using ObjLoader.Loader.Data.DataStore;
 using ObjLoader.Loader.TypeParsers.Interfaces;
+using System.Collections.Generic;
+using System.IO;
 
 namespace ObjLoader.Loader.Loaders
 {
     public class ObjLoader : LoaderBase, IObjLoader
     {
         private readonly IDataStore _dataStore;
-        private readonly List<ITypeParser> _typeParsers = new List<ITypeParser>();
+        private readonly List<ITypeParser> _typeParsers = [];
 
-        private readonly List<string> _unrecognizedLines = new List<string>();
+        private readonly List<string> _unrecognizedLines = [];
 
         public ObjLoader(
-            IDataStore dataStore, 
-            IFaceParser faceParser, 
+            IDataStore dataStore,
+            IFaceParser faceParser,
             IGroupParser groupParser,
-            INormalParser normalParser, 
-            ITextureParser textureParser, 
+            INormalParser normalParser,
+            ITextureParser textureParser,
             IVertexParser vertexParser,
-            IMaterialLibraryParser materialLibraryParser, 
+            IMaterialLibraryParser materialLibraryParser,
             IUseMaterialParser useMaterialParser)
         {
             _dataStore = dataStore;
@@ -59,20 +59,14 @@ namespace ObjLoader.Loader.Loaders
         {
             StartLoad(lineStream);
 
-            return CreateResult();
-        }
-
-        private LoadResult CreateResult()
-        {
-            var result = new LoadResult
-                             {
-                                 Vertices = _dataStore.Vertices,
-                                 Textures = _dataStore.Textures,
-                                 Normals = _dataStore.Normals,
-                                 Groups = _dataStore.Groups,
-                                 Materials = _dataStore.Materials
-                             };
-            return result;
+            return new()
+            {
+                Vertices = _dataStore.Vertices,
+                Textures = _dataStore.Textures,
+                Normals = _dataStore.Normals,
+                Groups = _dataStore.Groups,
+                Materials = _dataStore.Materials
+            };
         }
     }
 }
