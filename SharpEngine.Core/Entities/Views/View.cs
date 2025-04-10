@@ -1,4 +1,5 @@
-﻿using SharpEngine.Core.Entities.Views.Settings;
+﻿using SharpEngine.Core.Components.Properties;
+using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using System;

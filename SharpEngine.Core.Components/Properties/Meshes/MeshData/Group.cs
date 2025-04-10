@@ -1,4 +1,5 @@
 ﻿using SharpEngine.Core.Components.Obsolete.ObjLoader.DataStore;
+using SharpEngine.Core.Components.Properties;
 
 namespace ObjLoader.Loader.Data.Elements
 {

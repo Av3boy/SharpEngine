@@ -1,6 +1,7 @@
 ﻿using SharpEngine.Core.Entities.Properties.Meshes;
-using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Windowing;
+using SharpEngine.Core._Resources;
+
 using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Shaders;
@@ -12,7 +13,7 @@ internal class UIShader : ShaderBase
     /// </summary>
     public UIShader()
     {
-        Shader = new Shader(PathExtensions.GetAssemblyPath("Shaders\\uiShader.vert"), PathExtensions.GetAssemblyPath("Shaders\\uiShader.frag"), "ui");
+        Shader = new Shader(Default.VertexShader, Default.FragmentShader, nameof(UIShader)).Initialize();
     }
 
     /// <inheritdoc />

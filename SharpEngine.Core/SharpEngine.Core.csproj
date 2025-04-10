@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>Everything needed to build games using a purely C# game engine.</Description>
@@ -35,21 +35,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Shaders\lighting.frag" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Shaders\Light\DirectionalLight.glsl" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Shaders\Light\PointLight.glsl" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Shaders\Light\SpotLight.glsl" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Shaders\Material.glsl" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Shaders\shader.frag" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Shaders\shader.vert" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Shaders\uiShader.frag" CopyToOutputDirectory="Always" />
-    <None Update="Shaders\uiShader.vert" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="Textures\DefaultTextures\debug.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="_Resources\icon.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Update="_Resources\Shaders\lighting.frag" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\Light\DirectionalLight.glsl" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\Light\PointLight.glsl" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\Light\SpotLight.glsl" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\Material.glsl" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\shader.frag" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\shader.vert" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\uiShader.frag" CopyToOutputDirectory="Always" />
+    <None Update="_Resources\Shaders\uiShader.vert" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Textures\debug.jpg" CopyToOutputDirectory="Always" />
+    <None Update="_Resources\icon.png" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

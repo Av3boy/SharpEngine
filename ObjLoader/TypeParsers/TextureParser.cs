@@ -23,7 +23,7 @@ namespace ObjLoader.Loader.TypeParsers
             float x = parts[0].ParseInvariantFloat();
             float y = parts[1].ParseInvariantFloat();
 
-            var texture = new Texture(x, y);
+            var texture = new TextureCoordinate(x, y);
             _textureDataStore.AddTexture(texture);
         }
     }

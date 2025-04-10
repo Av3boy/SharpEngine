@@ -1,3 +1,4 @@
+using SharpEngine.Core._Resources;
 using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Windowing;
@@ -12,7 +13,7 @@ internal class LightingShader : ShaderBase
     /// </summary>
     public LightingShader()
     {
-        Shader = ShaderService.Instance.LoadShader(PathExtensions.GetAssemblyPath("Shaders/shader.vert"), PathExtensions.GetAssemblyPath("Shaders/lighting.frag"), "lighting");
+        Shader = ShaderService.Instance.LoadShader(Default.VertexShader, Default.FragmentShader, "lighting").Initialize();
 
         Vao = Window.GL.GenVertexArray();
         Window.GL.BindVertexArray(Vao);

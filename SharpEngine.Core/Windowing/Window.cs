@@ -6,7 +6,6 @@ using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Renderers;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
-using Shader = SharpEngine.Core.Shaders.Shader;
 
 using Silk.NET.Input;
 using Silk.NET.Maths;
@@ -20,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Shader = SharpEngine.Core.Shaders.Shader;
 
 namespace SharpEngine.Core.Windowing;
 

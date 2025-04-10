@@ -1,93 +1,59 @@
-using SharpEngine.Core.Windowing;
+﻿using SharpEngine.Core.Windowing;
 using Silk.NET.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 using System.Text.RegularExpressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SharpEngine.Core.Shaders;
 
-/// <summary>
-///     Represents a shader program.
-/// </summary>
-public class Shader
+public static class ShaderExtensions
 {
-    /// <summary>Gets the handle to the shader program.</summary>
-    public readonly uint Handle;
-
-    /// <summary>Gets or sets the identifying name of the shader.</summary>
-    public string Name { get; set; }
-
-    private Dictionary<string, int> _uniformLocations = [];
-
-    /// <summary>
-    ///    Initializes a new instance of <see cref="Shader"/>.
-    /// </summary>
-    /// <remarks>
-    ///     Shaders are written in GLSL, which is a language very similar to C in its semantics.
-    ///     The GLSL source is compiled *at runtime*, so it can optimize itself for the graphics card it's currently being used on.
-    /// </remarks>
-    /// <param name="vertPath">The vertex shader full path.</param>
-    /// <param name="fragPath">The fragment shader full path.</param>
-    /// <param name="name">The identifier name of the shader.</param>
-    public Shader(string vertPath, string fragPath, string name)
+    public static Shader Initialize(this Shader shader)
     {
-        Name = name;
-
-        // There are several different types of shaders, but the only two you need for basic rendering are the vertex and fragment shaders.
-        // The vertex shader is responsible for moving around vertices, and uploading that data to the fragment shader.
-        //   The vertex shader won't be too important here, but they'll be more important later.
-        // The fragment shader is responsible for then converting the vertices to "fragments", which represent all the data OpenGL needs to draw a pixel.
-        //   The fragment shader is what we'll be using the most here.
-
-        if (!vertPath.EndsWith(".vert"))
-            Console.WriteLine("Vertex shaders should have the file extension '.vert' for easier manageability.");
-
-        if (!fragPath.EndsWith(".frag"))
-            Console.WriteLine("Fragment shaders should have the file extension '.frag' for easier manageability.");
-
         // Load and compile shader
-        if (!LoadShader(ShaderType.VertexShader, vertPath, out uint vertexShader))
+        if (!LoadShader(ShaderType.VertexShader, shader.VertPath, out uint vertexShader))
         {
             Console.WriteLine("Unable to load vertex shader.");
-            return;
+            return shader;
         }
 
-        if (!LoadShader(ShaderType.FragmentShader, fragPath, out uint fragmentShader))
+        if (!LoadShader(ShaderType.FragmentShader, shader.FragPath, out uint fragmentShader))
         {
             Console.WriteLine("Unable to load fragment shader.");
-            return;
+            return shader;
         }
 
         // These two shaders must then be merged into a shader program, which can then be used by OpenGL.
         // To do this, create a program...
 
-        Handle = Window.GL.CreateProgram();
+        shader.Handle = Window.GL.CreateProgram();
 
         // Attach both shaders...
-        Window.GL.AttachShader(Handle, vertexShader);
-        Window.GL.AttachShader(Handle, fragmentShader);
+        Window.GL.AttachShader(shader.Handle, vertexShader);
+        Window.GL.AttachShader(shader.Handle, fragmentShader);
 
         // And then link them together.
-        if (!LinkProgram(Handle))
+        if (!LinkProgram(shader.Handle))
         {
             Console.WriteLine("Unable to link shader program.");
-            return;
+            return shader;
         }
 
         // When the shader program is linked, it no longer needs the individual shaders attached to it; the compiled code is copied into the shader program.
         // Detach them, and then delete them.
-        Window.GL.DetachShader(Handle, vertexShader);
-        Window.GL.DetachShader(Handle, fragmentShader);
+        Window.GL.DetachShader(shader.Handle, vertexShader);
+        Window.GL.DetachShader(shader.Handle, fragmentShader);
         Window.GL.DeleteShader(fragmentShader);
         Window.GL.DeleteShader(vertexShader);
 
         // The shader is now ready to go, but first, we're going to cache all the shader uniform locations.
         // Querying this from the shader is very slow, so we do it once on initialization and reuse those values
         // later.
-        GetUniformLocations();
+        SetUniformLocations(shader);
+
+        return shader;
     }
 
     private static bool LoadShader(ShaderType shaderType, string shaderPath, out uint shader)
@@ -116,26 +82,29 @@ public class Shader
         return true;
     }
 
-    private void GetUniformLocations()
+    public static Shader SetUniformLocations(this Shader shader)
     {
         // First, we have to get the number of active uniforms in the shader.
-        Window.GL.GetProgram(Handle, GLEnum.ActiveUniforms, out var numberOfUniforms);
+        Window.GL.GetProgram(shader.Handle, GLEnum.ActiveUniforms, out var numberOfUniforms);
 
         // Next, allocate the dictionary to hold the locations.
-        _uniformLocations = [];
+        Dictionary<string, int> uniformLocations = [];
 
         // Loop over all the uniforms,
         for (uint i = 0; i < numberOfUniforms; i++)
         {
             // get the name of this uniform,
-            var key = Window.GL.GetActiveUniform(Handle, i, out _, out _);
+            var key = Window.GL.GetActiveUniform(shader.Handle, i, out _, out _);
 
             // get the location,
-            var location = Window.GL.GetUniformLocation(Handle, key);
+            var location = Window.GL.GetUniformLocation(shader.Handle, key);
 
             // and then add it to the dictionary.
-            _uniformLocations.Add(key, location);
+            uniformLocations.Add(key, location);
         }
+
+        shader.InitializeUniforms(uniformLocations);
+        return shader;
     }
 
     private static string ProcessIncludes(string shaderCode, string directory)
@@ -187,8 +156,8 @@ public class Shader
     /// <summary>
     ///     Enables the shader program.
     /// </summary>
-    public void Use()
-        => Window.GL.UseProgram(Handle);
+    public static void Use(this Shader shader)
+        => Window.GL.UseProgram(shader.Handle);
 
     /// <summary>
     ///     Checks if the shader attribute exists within the current shader.
@@ -196,9 +165,9 @@ public class Shader
     /// <param name="attribName">The name of the attribute that's being looked for.</param>
     /// <param name="location">Outputs the location of the attribute in the shader if found; otherwise -1.</param>
     /// <returns>If the attribute exists, <see langword="true"/>; otherwise, <see langword="false"/>. </returns>
-    public bool TryGetAttribLocation(string attribName, out int location)
+    public static bool TryGetAttribLocation(this Shader shader, string attribName, out int location)
     {
-        location = Window.GL.GetAttribLocation(Handle, attribName);
+        location = Window.GL.GetAttribLocation(shader.Handle, attribName);
         if (location == ShaderAttributes.AttributeLocationNotFound)
         {
             Console.WriteLine($"Attribute '{attribName}' not found in shader program.");
@@ -217,9 +186,10 @@ public class Shader
     //     2. Get a handle to the location of the uniform with GL.GetUniformLocation.
     //     3. Use the appropriate GL.Uniform* function to set the uniform.
 
-    private bool TrySetUniform<T>(string name, T data, Action<int, T> setter)
+    private static bool TrySetUniform<T>(this Shader shader, string name, T data, Action<int, T> setter)
     {
-        if (!_uniformLocations.TryGetValue(name, out int uniform))
+        var uniforms = shader.GetUniformLocations();
+        if (!uniforms.TryGetValue(name, out int uniform))
         {
             Console.WriteLine($"Uniform '{name}' not found in shader program.");
             return false;
@@ -234,10 +204,10 @@ public class Shader
     /// </summary>
     /// <param name="name">The name of the uniform.</param>
     /// <param name="data">The data to set.</param>
-    public void SetInt(string name, int data)
+    public static void SetInt(this Shader shader, string name, int data)
     {
-        Window.GL.UseProgram(Handle);
-        TrySetUniform(name, data, Window.GL.Uniform1);
+        Window.GL.UseProgram(shader.Handle);
+        shader.TrySetUniform(name, data, Window.GL.Uniform1);
     }
 
     /// <summary>
@@ -245,10 +215,10 @@ public class Shader
     /// </summary>
     /// <param name="name">The name of the uniform.</param>
     /// <param name="data">The data to set.</param>
-    public void SetFloat(string name, float data)
+    public static void SetFloat(this Shader shader, string name, float data)
     {
-        Window.GL.UseProgram(Handle);
-        TrySetUniform(name, data, Window.GL.Uniform1);
+        Window.GL.UseProgram(shader.Handle);
+        shader.TrySetUniform(name, data, Window.GL.Uniform1);
     }
 
     /// <summary>
@@ -262,10 +232,10 @@ public class Shader
     ///   The matrix is transposed before being sent to the shader unless <paramref name="transpose"/> is set to <see langword="false"/>.
     ///   </para>
     /// </remarks>
-    public void SetMatrix4(string name, Matrix4x4 data, bool transpose = true)
+    public static void SetMatrix4(this Shader shader, string name, Matrix4x4 data, bool transpose = true)
     {
-        Window.GL.UseProgram(Handle);
-        TrySetUniform(name, data, (uniform, d) => Window.GL.UniformMatrix4(uniform, transpose, d.ToSpan()));
+        Window.GL.UseProgram(shader.Handle);
+        shader.TrySetUniform(name, data, (uniform, d) => Window.GL.UniformMatrix4(uniform, transpose, d.ToSpan()));
     }
 
     /// <summary>
@@ -273,10 +243,10 @@ public class Shader
     /// </summary>
     /// <param name="name">The name of the uniform.</param>
     /// <param name="data">The data to set.</param>
-    public void SetVector2(string name, Vector2 data)
+    public static void SetVector2(this Shader shader, string name, Vector2 data)
     {
-        Window.GL.UseProgram(Handle);
-        TrySetUniform(name, data, Window.GL.Uniform2);
+        Window.GL.UseProgram(shader.Handle);
+        shader.TrySetUniform(name, data, Window.GL.Uniform2);
     }
 
     /// <summary>
@@ -284,10 +254,10 @@ public class Shader
     /// </summary>
     /// <param name="name">The name of the uniform.</param>
     /// <param name="data">The data to set.</param>
-    public void SetVector3(string name, Vector3 data)
+    public static void SetVector3(this Shader shader, string name, Vector3 data)
     {
-        Window.GL.UseProgram(Handle);
-        TrySetUniform(name, data, Window.GL.Uniform3);
+        Window.GL.UseProgram(shader.Handle);
+        shader.TrySetUniform(name, data, Window.GL.Uniform3);
     }
 
     /// <summary>
@@ -295,9 +265,9 @@ public class Shader
     /// </summary>
     /// <param name="name">The name of the uniform.</param>
     /// <param name="data">The data to set.</param>
-    public void SetVector4(string name, Vector4 data)
+    public static void SetVector4(this Shader shader, string name, Vector4 data)
     {
-        Window.GL.UseProgram(Handle);
-        TrySetUniform(name, data, Window.GL.Uniform4);
+        Window.GL.UseProgram(shader.Handle);
+        shader.TrySetUniform(name, data, Window.GL.Uniform4);
     }
 }

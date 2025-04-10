@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpEngine.Core.Components.Properties;
+using System;
 
 namespace SharpEngine.Core.Shaders;
 

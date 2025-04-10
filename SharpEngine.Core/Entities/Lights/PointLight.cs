@@ -1,3 +1,4 @@
+using SharpEngine.Core._Resources;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Shaders;
@@ -20,14 +21,14 @@ public class PointLight : Light
     public PointLight(Vector3 position, int index)
     {
         Transform.Scale = new(0.2f, 0.2f, 0.2f);
-        Transform.Position = (SharpEngine.Core.Numerics.Vector3)position;
+        Transform.Position = (Numerics.Vector3)position;
         Constant = 1.0f;
         Linear = 0.09f;
         Quadratic = 0.032f;
 
         _index = index;
 
-        Material.Shader = ShaderService.Instance.LoadShader(PathExtensions.GetAssemblyPath("Shaders/shader.vert"), PathExtensions.GetAssemblyPath("Shaders/lighting.frag"), "lighting");
+        Material.Shader = ShaderService.Instance.LoadShader(Default.VertexShader, Default.FragmentShader, "lighting");
         LampShader = new LampShader();
 
     }

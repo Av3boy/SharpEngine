@@ -51,14 +51,14 @@ namespace ObjLoader.Test.TypeParsers
 
         class TextureDataStoreMock : ITextureDataStore
         {
-            public Texture ParsedTexture { get; private set; }
+            public TextureCoordinate ParsedTexture { get; private set; }
 
-            public Texture GetTexture(int i)
+            public TextureCoordinate GetTexture(int i)
             {
                 throw new System.NotImplementedException();
             }
 
-            public void AddTexture(Texture texture)
+            public void AddTexture(TextureCoordinate texture)
             {
                 ParsedTexture = texture;
             }

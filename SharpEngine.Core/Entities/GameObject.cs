@@ -1,4 +1,5 @@
 using SharpEngine.Core.Attributes;
+using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.Views;
@@ -123,12 +124,12 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
         // Bind();
 
         Material.DiffuseMap.Use(TextureUnit.Texture0);
-        Material.Shader.SetInt("material.diffuse", Material.diffuseUnit);
+        Material.Shader.SetInt("material.diffuse", Material.DIFFUSE_UNIT);
 
         if (Material.UseSpecularMap)
         {
             Material.SpecularMap.Use(TextureUnit.Texture1);
-            Material.Shader.SetInt("material.specular", Material.specularUnit);
+            Material.Shader.SetInt("material.specular", Material.SPECULAR_UNIT);
             Material.Shader.SetVector3("material.specular", Material.Specular);
             Material.Shader.SetFloat("material.shininess", Material.Shininess);
         }

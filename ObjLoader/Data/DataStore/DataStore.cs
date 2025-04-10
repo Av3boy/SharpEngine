@@ -2,8 +2,8 @@
 using ObjLoader.Loader.Data.Elements;
 
 using SharpEngine.Core.Components.Obsolete.ObjLoader.DataStore;
+using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData.VertexData;
-
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,12 +18,12 @@ namespace ObjLoader.Loader.Data.DataStore
         private readonly List<Material> _materials = [];
 
         private readonly List<Vertex> _vertices = [];
-        private readonly List<Texture> _textures = [];
+        private readonly List<TextureCoordinate> _textures = [];
         private readonly List<Normal> _normals = [];
 
         public IList<Vertex> Vertices => _vertices;
 
-        public IList<Texture> Textures => _textures;
+        public IList<TextureCoordinate> Textures => _textures;
 
         public IList<Normal> Normals => _normals;
 
@@ -52,7 +52,7 @@ namespace ObjLoader.Loader.Data.DataStore
 
         public void AddVertex(Vertex vertex) => _vertices.Add(vertex);
 
-        public void AddTexture(Texture texture) => _textures.Add(texture);
+        public void AddTexture(TextureCoordinate texture) => _textures.Add(texture);
 
         public void AddNormal(Normal normal) => _normals.Add(normal);
 

@@ -4,6 +4,6 @@ namespace SharpEngine.Core.Components.Obsolete.ObjLoader.DataStore
 {
     public interface ITextureDataStore
     {
-        void AddTexture(Texture texture);
+        void AddTexture(TextureCoordinate texture);
     }
 }

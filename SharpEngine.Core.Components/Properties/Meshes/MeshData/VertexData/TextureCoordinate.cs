@@ -1,8 +1,8 @@
 namespace SharpEngine.Core.Components.Properties.Meshes.MeshData.VertexData
 {
-    public struct Texture
+    public struct TextureCoordinate
     {
-        public Texture(float x, float y) : this()
+        public TextureCoordinate(float x, float y) : this()
         {
             X = x;
             Y = y;

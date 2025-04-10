@@ -82,7 +82,7 @@ public class ShaderService
         }
 
         // Create a new shader instance and add it to the cache
-        var shader = new Shader(vertPath, fragPath, name);
+        var shader = new Shader(vertPath, fragPath, name).Initialize();
         _shaderCache[name] = shader;
 
         HasShadersToLoad = true;
