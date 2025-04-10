@@ -148,16 +148,12 @@ public class Minecraft : Game
         // TODO: Does not work yet.
         // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
 
-        // This should be simplified to something like this:
+        // TODO: This should be simplified to something like this:
         // new ObjLoaderFactory().Load();
 
-        var objLoaderFactory = new ObjLoaderFactory();
+        var objLoaderFactory = new ObjLoaderFactory(@"C:\Users\antti\Documents\Untitled2.obj");
         var objLoader = objLoaderFactory.Create();
-
-        // TODO: There is a bug that an exception is thrown if no mtl file is not found. This should be just a warning.
-        // TODO: This should be able to load from an absolute and a relative path.
-        var fileStream = new FileStream("Untitled2.obj", FileMode.Open);
-        var result = objLoader.Load(fileStream);
+        var result = objLoader.Load();
         // var mesh = new Mesh()
         // {
         //     Vertices = result.Vertices.ToArray(),

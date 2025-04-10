@@ -11,8 +11,15 @@ namespace ObjLoader.Loader.Loaders
 
     public class ObjLoaderFactory : IObjLoaderFactory
     {
+        private string _path;
+
+        public ObjLoaderFactory(string path)
+        {
+            _path = path;
+        }
+
         public IObjLoader Create()
-            => Create(new MaterialStreamProvider());
+            => Create(new MaterialStreamProvider(_path));
 
         public IObjLoader Create(IMaterialStreamProvider materialStreamProvider)
         {
@@ -29,7 +36,7 @@ namespace ObjLoader.Loader.Loaders
             var materialLibraryParser = new MaterialLibraryParser(materialLibraryLoaderFacade);
             var useMaterialParser = new UseMaterialParser(dataStore);
 
-            return new ObjLoader(dataStore, faceParser, groupParser, normalParser, textureParser, vertexParser, materialLibraryParser, useMaterialParser);
+            return new ObjLoader(_path, dataStore, faceParser, groupParser, normalParser, textureParser, vertexParser, materialLibraryParser, useMaterialParser);
         }
     }
 }

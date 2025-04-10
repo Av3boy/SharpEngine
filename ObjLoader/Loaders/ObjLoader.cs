@@ -7,12 +7,13 @@ namespace ObjLoader.Loader.Loaders
 {
     public class ObjLoader : LoaderBase, IObjLoader
     {
+        private string _path;
         private readonly IDataStore _dataStore;
         private readonly List<ITypeParser> _typeParsers = [];
-
         private readonly List<string> _unrecognizedLines = [];
 
         public ObjLoader(
+            string path,
             IDataStore dataStore,
             IFaceParser faceParser,
             IGroupParser groupParser,
@@ -22,6 +23,8 @@ namespace ObjLoader.Loader.Loaders
             IMaterialLibraryParser materialLibraryParser,
             IUseMaterialParser useMaterialParser)
         {
+            _path = path;
+
             _dataStore = dataStore;
             SetupTypeParsers(
                 vertexParser,
@@ -55,9 +58,10 @@ namespace ObjLoader.Loader.Loaders
             _unrecognizedLines.Add(keyword + " " + data);
         }
 
-        public LoadResult Load(Stream lineStream)
+        public LoadResult Load()
         {
-            StartLoad(lineStream);
+            var fileStream = new FileStream(_path, FileMode.Open, FileAccess.Read);
+            StartLoad(fileStream);
 
             return new()
             {
