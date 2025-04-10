@@ -13,7 +13,7 @@ internal class UIShader : ShaderBase
     /// </summary>
     public UIShader()
     {
-        Shader = new Shader(Default.VertexShader, Default.FragmentShader, nameof(UIShader)).Initialize();
+        Shader = new Shader(Default.UIVertexShader, Default.UIFragmentShader, nameof(UIShader)).Initialize();
     }
 
     /// <inheritdoc />
