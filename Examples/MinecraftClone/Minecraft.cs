@@ -149,9 +149,7 @@ public class Minecraft : Game
         // TODO: This should be simplified to something like this:
         // new ObjLoaderFactory().Load();
 
-        var objLoaderFactory = new ObjLoaderFactory(@"C:\Users\antti\Documents\Untitled2.obj");
-        var objLoader = objLoaderFactory.Create();
-        var result = objLoader.Load();
+        var result = ObjLoaderFactory.Load(@"C:\Users\antti\Documents\Untitled2.obj");
         // var mesh = new Mesh()
         // {
         //     Vertices = result.Vertices.ToArray(),

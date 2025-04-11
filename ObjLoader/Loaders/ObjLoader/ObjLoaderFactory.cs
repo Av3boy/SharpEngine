@@ -1,19 +1,13 @@
+using ObjLoader.Loader.Loaders;
 using ObjLoader.Loader.TypeParsers;
 using ObjLoader.Loaders.MaterialLoader;
 
 namespace ObjLoader.Loaders.ObjLoader
 {
-    public class ObjLoaderFactory
+    public static class ObjLoaderFactory
     {
-        private readonly string _path;
-
-        public ObjLoaderFactory(string path)
-        {
-            _path = path;
-        }
-
         /// <inheritdoc />
-        public ObjLoader Create()
+        public static LoadResult Load(string path)
         {
             var dataStore = new DataStore();
             
@@ -23,11 +17,12 @@ namespace ObjLoader.Loaders.ObjLoader
             var textureParser = new TextureParser(dataStore);
             var vertexParser = new VertexParser(dataStore);
 
-            var materialLibraryLoader = new MaterialLibraryLoader(_path, dataStore);
+            var materialLibraryLoader = new MaterialLibraryLoader(path, dataStore);
             var materialLibraryParser = new MaterialLibraryParser(materialLibraryLoader);
             var useMaterialParser = new UseMaterialParser(dataStore);
 
-            return new ObjLoader(_path, dataStore, faceParser, groupParser, normalParser, textureParser, vertexParser, materialLibraryParser, useMaterialParser);
+            var loader = new ObjLoader(path, dataStore, faceParser, groupParser, normalParser, textureParser, vertexParser, materialLibraryParser, useMaterialParser);
+            return loader.Load();
         }
     }
 }
