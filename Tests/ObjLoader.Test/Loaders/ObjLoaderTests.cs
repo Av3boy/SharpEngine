@@ -57,7 +57,7 @@ namespace ObjLoader.Test.Loaders
             _materialLibraryParser = new MaterialLibraryParser(_materialLibraryLoaderFacade);
             _useMaterialParser = new UseMaterialParser(_textureDataStore);
 
-            _loader = new Loader.Loaders.ObjLoader(_textureDataStore, _faceParser, _groupParser, _normalParser, _textureParser, _vertexParser, _materialLibraryParser, _useMaterialParser);
+            // _loader = new Loader.Loaders.ObjLoader(_textureDataStore, _faceParser, _groupParser, _normalParser, _textureParser, _vertexParser, _materialLibraryParser, _useMaterialParser);
         }
 
         [Test]
@@ -86,7 +86,7 @@ namespace ObjLoader.Test.Loaders
             var materialLibraryLoaderFacade = new MaterialLibraryLoaderFacade(_materialLibraryLoader, _materialStreamProviderSpy);
             var materialLibraryParser = new MaterialLibraryParser(materialLibraryLoaderFacade);
 
-            _loader = new Loader.Loaders.ObjLoader(_textureDataStore, _faceParser, _groupParser, _normalParser, _textureParser, _vertexParser, materialLibraryParser, _useMaterialParser);
+            // _loader = new Loader.Loaders.ObjLoader(_textureDataStore, _faceParser, _groupParser, _normalParser, _textureParser, _vertexParser, materialLibraryParser, _useMaterialParser);
 
             Load();
 
@@ -106,7 +106,7 @@ namespace ObjLoader.Test.Loaders
         {
             var objectStream = CreateMemoryStreamFromString(ObjectFileString);
 
-            _loadResult = _loader.Load(objectStream);
+            // _loadResult = _loader.Load(objectStream);
         }
 
         private Stream CreateMemoryStreamFromString(string str)

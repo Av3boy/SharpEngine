@@ -1,25 +1,14 @@
-﻿using System.Collections.Generic;
-
-namespace ObjLoader.Loader.Data.Elements
+﻿namespace ObjLoader.Loader.Data.Elements
 {
     public class Face
     {
-        private readonly List<FaceVertex> _vertices = new List<FaceVertex>();
+        private readonly List<FaceVertex> _vertices = [];
 
-        public void AddVertex(FaceVertex vertex)
-        {
-            _vertices.Add(vertex);
-        }
+        public void AddVertex(FaceVertex vertex) => _vertices.Add(vertex);
 
-        public FaceVertex this[int i]
-        {
-            get { return _vertices[i]; }
-        }
+        public FaceVertex this[int i] => _vertices[i];
 
-        public int Count
-        {
-            get { return _vertices.Count; }
-        }
+        public int Count => _vertices.Count;
     }
 
     public struct FaceVertex
