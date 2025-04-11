@@ -7,9 +7,9 @@ using SharpEngine.Core.Components.Properties.Meshes.MeshData.VertexData;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ObjLoader.Loader.Data.DataStore
+namespace ObjLoader.Data
 {
-    public class DataStore : IDataStore, IGroupDataStore, IFaceGroup, IElementGroup
+    public class DataStore : IGroupDataStore, IFaceGroup, IElementGroup
     {
         private Group _currentGroup;
 

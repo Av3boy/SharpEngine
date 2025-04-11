@@ -1,9 +1,9 @@
 ﻿using ObjLoader.Loader.Loaders;
-using ObjLoader.Loader.TypeParsers.Interfaces;
+using ObjLoader.TypeParsers;
 
 namespace ObjLoader.Loader.TypeParsers
 {
-    public class MaterialLibraryParser : TypeParserBase, IMaterialLibraryParser
+    public class MaterialLibraryParser : TypeParserBase, ITypeParser
     {
         private readonly IMaterialLibraryLoaderFacade _libraryLoaderFacade;
 

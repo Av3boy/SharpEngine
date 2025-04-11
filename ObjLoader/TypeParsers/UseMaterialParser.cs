@@ -1,9 +1,9 @@
-﻿using ObjLoader.Loader.Data.DataStore;
-using ObjLoader.Loader.TypeParsers.Interfaces;
+﻿using ObjLoader.Data;
+using ObjLoader.TypeParsers;
 
 namespace ObjLoader.Loader.TypeParsers
 {
-    public class UseMaterialParser : TypeParserBase, IUseMaterialParser
+    public class UseMaterialParser : TypeParserBase, ITypeParser
     {
         private readonly IElementGroup _elementGroup;
 

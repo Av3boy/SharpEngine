@@ -1,4 +1,4 @@
-﻿namespace ObjLoader.Loader.TypeParsers.Interfaces
+﻿namespace ObjLoader.TypeParsers
 {
     public interface ITypeParser
     {

@@ -1,12 +1,12 @@
 ﻿using ObjLoader.Loader.Common;
 using ObjLoader.Loader.Data.Elements;
-using ObjLoader.Loader.TypeParsers.Interfaces;
+using ObjLoader.TypeParsers;
 using SharpEngine.Core.Components.Obsolete.ObjLoader.DataStore;
 using System;
 
 namespace ObjLoader.Loader.TypeParsers
 {
-    public class FaceParser : TypeParserBase, IFaceParser
+    public class FaceParser : TypeParserBase, ITypeParser
     {
         private readonly IFaceGroup _faceGroup;
 

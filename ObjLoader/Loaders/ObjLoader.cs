@@ -1,5 +1,6 @@
-﻿using ObjLoader.Loader.Data.DataStore;
-using ObjLoader.Loader.TypeParsers.Interfaces;
+﻿using ObjLoader.Data;
+using ObjLoader.TypeParsers;
+
 using System.Collections.Generic;
 using System.IO;
 
@@ -8,20 +9,20 @@ namespace ObjLoader.Loader.Loaders
     public class ObjLoader : LoaderBase, IObjLoader
     {
         private string _path;
-        private readonly IDataStore _dataStore;
+        private readonly DataStore _dataStore;
         private readonly List<ITypeParser> _typeParsers = [];
         private readonly List<string> _unrecognizedLines = [];
 
         public ObjLoader(
             string path,
-            IDataStore dataStore,
-            IFaceParser faceParser,
-            IGroupParser groupParser,
-            INormalParser normalParser,
-            ITextureParser textureParser,
-            IVertexParser vertexParser,
-            IMaterialLibraryParser materialLibraryParser,
-            IUseMaterialParser useMaterialParser)
+            DataStore dataStore,
+            ITypeParser faceParser,
+            ITypeParser groupParser,
+            ITypeParser normalParser,
+            ITypeParser textureParser,
+            ITypeParser vertexParser,
+            ITypeParser materialLibraryParser,
+            ITypeParser useMaterialParser)
         {
             _path = path;
 

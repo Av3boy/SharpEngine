@@ -1,5 +1,5 @@
 using System.IO;
-using ObjLoader.Loader.Data.DataStore;
+using ObjLoader.Data;
 using ObjLoader.Loader.TypeParsers;
 
 namespace ObjLoader.Loader.Loaders

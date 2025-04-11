@@ -1,5 +1,5 @@
-﻿using ObjLoader.Loader.Common;
-using ObjLoader.Loader.Data.DataStore;
+﻿using ObjLoader.Data;
+using ObjLoader.Loader.Common;
 using SharpEngine.Core.Components.Obsolete.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties;
 

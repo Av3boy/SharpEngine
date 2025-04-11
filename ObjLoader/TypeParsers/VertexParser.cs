@@ -1,12 +1,12 @@
+using ObjLoader.Data;
 using ObjLoader.Loader.Common;
-using ObjLoader.Loader.Data.DataStore;
-using ObjLoader.Loader.TypeParsers.Interfaces;
+using ObjLoader.TypeParsers;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData.VertexData;
 using System;
 
 namespace ObjLoader.Loader.TypeParsers
 {
-    public class VertexParser : TypeParserBase, IVertexParser
+    public class VertexParser : TypeParserBase, ITypeParser
     {
         private readonly DataStore _dataStore;
 

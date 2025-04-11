@@ -1,4 +1,4 @@
-namespace ObjLoader.Loader.Data.DataStore
+namespace ObjLoader.Data
 {
     public interface IElementGroup
     {

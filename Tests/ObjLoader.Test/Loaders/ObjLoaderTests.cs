@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Text;
+using System.Linq;
 using NUnit.Framework;
-using ObjLoader.Loader.Data.DataStore;
 using ObjLoader.Loader.Loaders;
 using ObjLoader.Loader.TypeParsers;
-using System.Linq;
+using ObjLoader.Data;
 using FluentAssertions;
 
 namespace ObjLoader.Test.Loaders
