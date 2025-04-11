@@ -1,10 +1,9 @@
-using System.IO;
 using ObjLoader.Data;
 using ObjLoader.Loader.TypeParsers;
 
 namespace ObjLoader.Loader.Loaders
 {
-    public class ObjLoaderFactory : IObjLoaderFactory
+    public class ObjLoaderFactory
     {
         private readonly string _path;
 
@@ -14,7 +13,7 @@ namespace ObjLoader.Loader.Loaders
         }
 
         /// <inheritdoc />
-        public IObjLoader Create()
+        public ObjLoader Create()
         {
             var dataStore = new DataStore();
             
@@ -25,8 +24,7 @@ namespace ObjLoader.Loader.Loaders
             var vertexParser = new VertexParser(dataStore);
 
             var materialLibraryLoader = new MaterialLibraryLoader(_path, dataStore);
-            var materialLibraryLoaderFacade = new MaterialLibraryLoaderFacade(materialLibraryLoader);
-            var materialLibraryParser = new MaterialLibraryParser(materialLibraryLoaderFacade);
+            var materialLibraryParser = new MaterialLibraryParser(materialLibraryLoader);
             var useMaterialParser = new UseMaterialParser(dataStore);
 
             return new ObjLoader(_path, dataStore, faceParser, groupParser, normalParser, textureParser, vertexParser, materialLibraryParser, useMaterialParser);

@@ -6,9 +6,9 @@ using System.IO;
 
 namespace ObjLoader.Loader.Loaders
 {
-    public class ObjLoader : LoaderBase, IObjLoader
+    public class ObjLoader : LoaderBase
     {
-        private string _path;
+        private readonly string _path;
         private readonly DataStore _dataStore;
         private readonly List<ITypeParser> _typeParsers = [];
         private readonly List<string> _unrecognizedLines = [];
@@ -45,6 +45,7 @@ namespace ObjLoader.Loader.Loaders
             }
         }
 
+        /// <inheritdoc />
         protected override void ParseLine(string keyword, string data)
         {
             foreach (var typeParser in _typeParsers)

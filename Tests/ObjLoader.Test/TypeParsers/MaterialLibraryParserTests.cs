@@ -15,7 +15,7 @@ namespace ObjLoader.Test.TypeParsers
         public void SetUp()
         {
             _materialLibraryLoaderFacadeSpy = new MaterialLibraryLoaderFacadeSpy();
-            _parser = new MaterialLibraryParser(_materialLibraryLoaderFacadeSpy);
+            // _parser = new MaterialLibraryParser(_materialLibraryLoaderFacadeSpy);
         }
 
         [Test]

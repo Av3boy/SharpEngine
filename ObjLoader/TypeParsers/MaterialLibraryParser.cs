@@ -7,9 +7,9 @@ namespace ObjLoader.Loader.TypeParsers
     {
         private readonly IMaterialLibraryLoaderFacade _libraryLoaderFacade;
 
-        public MaterialLibraryParser(IMaterialLibraryLoaderFacade libraryLoaderFacade)
+        public MaterialLibraryParser(MaterialLibraryLoader loader)
         {
-            _libraryLoaderFacade = libraryLoaderFacade;
+            _libraryLoaderFacade = new MaterialLibraryLoaderFacade(loader);
         }
 
         /// <inheritdoc />
