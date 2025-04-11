@@ -52,8 +52,8 @@ namespace ObjLoader.Test.Loaders
             _materialStreamProviderSpy = new MaterialStreamProviderSpy();
             _materialStreamProviderSpy.StreamToReturn = CreateMemoryStreamFromString(MaterialLibraryString);
 
-            _materialLibraryLoader = new MaterialLibraryLoader(_textureDataStore);
-            _materialLibraryLoaderFacade = new MaterialLibraryLoaderFacade(_materialLibraryLoader, _materialStreamProviderSpy);
+            _materialLibraryLoader = new MaterialLibraryLoader("", _textureDataStore);
+            _materialLibraryLoaderFacade = new MaterialLibraryLoaderFacade(_materialLibraryLoader);
             _materialLibraryParser = new MaterialLibraryParser(_materialLibraryLoaderFacade);
             _useMaterialParser = new UseMaterialParser(_textureDataStore);
 
@@ -83,7 +83,7 @@ namespace ObjLoader.Test.Loaders
         public void Loads_object_correctly_when_material_is_not_found()
         {
             _materialStreamProviderSpy.StreamToReturn = null;
-            var materialLibraryLoaderFacade = new MaterialLibraryLoaderFacade(_materialLibraryLoader, _materialStreamProviderSpy);
+            var materialLibraryLoaderFacade = new MaterialLibraryLoaderFacade(_materialLibraryLoader);
             var materialLibraryParser = new MaterialLibraryParser(materialLibraryLoaderFacade);
 
             // _loader = new Loader.Loaders.ObjLoader(_textureDataStore, _faceParser, _groupParser, _normalParser, _textureParser, _vertexParser, materialLibraryParser, _useMaterialParser);
@@ -181,5 +181,9 @@ map_d lenna_alpha.tga
 map_bump lenna_bump.tga
 disp lenna_disp.tga
 decal lenna_stencil.tga";
+    }
+
+    internal interface IMaterialStreamProvider
+    {
     }
 }

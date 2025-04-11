@@ -1,6 +1,5 @@
 ﻿using ObjLoader.Data;
 using ObjLoader.Loader.Common;
-using SharpEngine.Core.Components.Obsolete.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties;
 
 using System;
@@ -10,14 +9,16 @@ using System.Numerics;
 
 namespace ObjLoader.Loader.Loaders
 {
-    public class MaterialLibraryLoader : LoaderBase, IMaterialLibraryLoader
+    public class MaterialLibraryLoader : LoaderBase
     {
+        private string _objPath;
         private readonly DataStore _dataStore;
         private readonly Dictionary<string, Action<string>> _parseActionDictionary = [];
         private readonly List<string> _unrecognizedLines = [];
 
-        public MaterialLibraryLoader(DataStore dataStore)
-        {
+        public MaterialLibraryLoader(string objPath, DataStore dataStore)
+        {         
+            _objPath = objPath;
             _dataStore = dataStore;
 
             AddParseAction("newmtl", PushMaterial);
@@ -90,5 +91,13 @@ namespace ObjLoader.Loader.Loaders
         }
 
         public void Load(Stream lineStream) => StartLoad(lineStream);
+
+        /// <inheritdoc />
+        public Stream Open(string materialFilePath)
+        {
+            var dir = Path.GetDirectoryName(_objPath);
+            var path = Path.Combine(dir, materialFilePath);
+            return File.Open(path, FileMode.Open, FileAccess.Read);
+        }
     }
 }
