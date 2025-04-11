@@ -12,6 +12,8 @@
     <!-- Required, atleast for now since another NuGet package with the SharpEngine.Core name already exists. -->
     <PackageId>$(AssemblyName).NET</PackageId>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   
   <ItemGroup>
@@ -46,6 +48,13 @@
     <None Update="_Resources\Shaders\uiShader.vert" CopyToOutputDirectory="PreserveNewest" />
     <None Update="_Resources\Textures\debug.jpg" CopyToOutputDirectory="Always" />
     <None Update="_Resources\icon.png" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
