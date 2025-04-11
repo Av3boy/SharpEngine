@@ -1,21 +1,23 @@
 using ObjLoader.Loader.Common;
+using ObjLoader.Loader.Data.DataStore;
 using ObjLoader.Loader.TypeParsers.Interfaces;
-using SharpEngine.Core.Components.Obsolete.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData.VertexData;
 
 namespace ObjLoader.Loader.TypeParsers
 {
     public class NormalParser : TypeParserBase, INormalParser
     {
-        private readonly INormalDataStore _normalDataStore;
+        private readonly DataStore _dataStore;
 
-        public NormalParser(INormalDataStore normalDataStore)
+        public NormalParser(DataStore dataStore)
         {
-            _normalDataStore = normalDataStore;
+            _dataStore = dataStore;
         }
 
+        /// <inheritdoc />
         protected override string Keyword => "vn";
 
+        /// <inheritdoc />
         public override void Parse(string line)
         {
             string[] parts = line.Split(' ');
@@ -25,7 +27,7 @@ namespace ObjLoader.Loader.TypeParsers
             float z = parts[2].ParseInvariantFloat();
 
             var normal = new Normal(x, y, z);
-            _normalDataStore.AddNormal(normal);
+            _dataStore.Normals.Add(normal);
         }
     }
 }

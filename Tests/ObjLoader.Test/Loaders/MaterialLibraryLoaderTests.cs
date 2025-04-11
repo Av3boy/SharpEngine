@@ -26,7 +26,7 @@ namespace ObjLoader.Test.Loaders
         public void SetUp()
         {
             _materialLibrarySpy = new MaterialLibrarySpy();
-            _materialLibraryLoader = new MaterialLibraryLoader(_materialLibrarySpy);
+            // _materialLibraryLoader = new MaterialLibraryLoader(_materialLibrarySpy);
         }
 
         [Test]

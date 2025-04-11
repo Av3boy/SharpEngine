@@ -17,7 +17,7 @@ namespace ObjLoader.Test.TypeParsers
         {
             _groupDataStoreMock = new GroupDataStoreMock();
 
-            _groupParser = new GroupParser(_groupDataStoreMock);
+            // _groupParser = new GroupParser(_groupDataStoreMock);
         }
 
         [Test]

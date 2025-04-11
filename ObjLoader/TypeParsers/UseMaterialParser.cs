@@ -11,9 +11,11 @@ namespace ObjLoader.Loader.TypeParsers
         {
             _elementGroup = elementGroup;
         }
-
+        
+        /// <inheritdoc />
         protected override string Keyword => "usemtl";
-
+        
+        /// <inheritdoc />
         public override void Parse(string line) => _elementGroup.SetMaterial(line);
     }
 }

@@ -15,11 +15,13 @@ namespace ObjLoader.Loader.TypeParsers
             _faceGroup = faceGroup;
         }
 
+        /// <inheritdoc />
         protected override string Keyword => "f";
 
+        /// <inheritdoc />
         public override void Parse(string line)
         {
-            string[] vertices = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] vertices = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
             var face = new Face();
 
@@ -32,9 +34,9 @@ namespace ObjLoader.Loader.TypeParsers
             _faceGroup.AddFace(face);
         }
 
-        private FaceVertex ParseFaceVertex(string vertexString)
+        private static FaceVertex ParseFaceVertex(string vertexString)
         {
-            string[] fields = vertexString.Split(new[] { '/' }, StringSplitOptions.None);
+            string[] fields = vertexString.Split('/', StringSplitOptions.None);
 
             int vertexIndex = fields[0].ParseInvariantInt();
             var faceVertex = new FaceVertex(vertexIndex, 0, 0);

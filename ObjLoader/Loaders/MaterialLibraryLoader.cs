@@ -1,8 +1,8 @@
 ﻿using ObjLoader.Loader.Common;
-using ObjLoader.Loader.Data;
+using ObjLoader.Loader.Data.DataStore;
 using SharpEngine.Core.Components.Obsolete.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties;
-using SharpEngine.Core.Entities.Properties;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,13 +12,13 @@ namespace ObjLoader.Loader.Loaders
 {
     public class MaterialLibraryLoader : LoaderBase, IMaterialLibraryLoader
     {
-        private readonly IMaterialLibrary _materialLibrary;
+        private readonly DataStore _dataStore;
         private readonly Dictionary<string, Action<string>> _parseActionDictionary = [];
         private readonly List<string> _unrecognizedLines = [];
 
-        public MaterialLibraryLoader(IMaterialLibrary materialLibrary)
+        public MaterialLibraryLoader(DataStore dataStore)
         {
-            _materialLibrary = materialLibrary;
+            _dataStore = dataStore;
 
             AddParseAction("newmtl", PushMaterial);
             AddParseAction("Ka", d => CurrentMaterial.AmbientColor = ParseVec3(d));
@@ -75,7 +75,7 @@ namespace ObjLoader.Loader.Loaders
         private void PushMaterial(string materialName)
         {
             CurrentMaterial = new Material(materialName);
-            _materialLibrary.Push(CurrentMaterial);
+            _dataStore.Materials.Add(CurrentMaterial);
         }
 
         private static Vector3 ParseVec3(string data)

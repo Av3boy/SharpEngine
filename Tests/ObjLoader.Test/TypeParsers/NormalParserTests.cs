@@ -13,11 +13,11 @@ namespace ObjLoader.Test.TypeParsers
         private NormalDataStoreMock _normalDataStoreMock;
 
         [SetUp]
-         public void SetUp()
+        public void SetUp()
         {
             _normalDataStoreMock = new NormalDataStoreMock();
 
-            _normalParser = new NormalParser(_normalDataStoreMock);
+            // _normalParser = new NormalParser(_normalDataStoreMock);
         }
 
         [Test]

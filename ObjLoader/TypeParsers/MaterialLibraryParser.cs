@@ -12,8 +12,10 @@ namespace ObjLoader.Loader.TypeParsers
             _libraryLoaderFacade = libraryLoaderFacade;
         }
 
+        /// <inheritdoc />
         protected override string Keyword => "mtllib";
 
+        /// <inheritdoc />
         public override void Parse(string line) => _libraryLoaderFacade.Load(line);
     }
 }

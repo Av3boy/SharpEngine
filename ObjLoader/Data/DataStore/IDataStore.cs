@@ -7,10 +7,10 @@ namespace ObjLoader.Loader.Data.DataStore
 {
     public interface IDataStore 
     {
-        IList<Vertex> Vertices { get; }
-        IList<TextureCoordinate> Textures { get; }
-        IList<Normal> Normals { get; }
-        IList<Material> Materials { get; }
-        IList<Group> Groups { get; }
+        List<Vertex> Vertices { get; }
+        List<TextureCoordinate> Textures { get; }
+        List<Normal> Normals { get; }
+        List<Material> Materials { get; }
+        List<Group> Groups { get; }
     }
 }

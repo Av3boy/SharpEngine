@@ -9,32 +9,30 @@ using System.Linq;
 
 namespace ObjLoader.Loader.Data.DataStore
 {
-    public class DataStore : IDataStore, IGroupDataStore, IVertexDataStore, ITextureDataStore, INormalDataStore,
-                             IFaceGroup, IMaterialLibrary, IElementGroup
+    public class DataStore : IDataStore, IGroupDataStore, IFaceGroup, IElementGroup
     {
         private Group _currentGroup;
 
         private readonly List<Group> _groups = [];
         private readonly List<Material> _materials = [];
 
-        private readonly List<Vertex> _vertices = [];
-        private readonly List<TextureCoordinate> _textures = [];
-        private readonly List<Normal> _normals = [];
+        public List<Vertex> Vertices { get; } = [];
 
-        public IList<Vertex> Vertices => _vertices;
+        public List<TextureCoordinate> Textures { get; } = [];
 
-        public IList<TextureCoordinate> Textures => _textures;
+        public List<Normal> Normals { get; } = [];
 
-        public IList<Normal> Normals => _normals;
+        public List<Material> Materials { get; } = [];
 
-        public IList<Material> Materials => _materials;
+        public List<Group> Groups { get; } = [];
 
-        public IList<Group> Groups => _groups;
+        public DataStore()
+        {
+            PushGroup("default");
+        }
 
         public void AddFace(Face face)
         {
-            PushGroupIfNeeded();
-
             _currentGroup.AddFace(face);
         }
 
@@ -44,24 +42,9 @@ namespace ObjLoader.Loader.Data.DataStore
             _groups.Add(_currentGroup);
         }
 
-        private void PushGroupIfNeeded()
-        {
-            if (_currentGroup == null)
-                PushGroup("default");
-        }
-
-        public void AddVertex(Vertex vertex) => _vertices.Add(vertex);
-
-        public void AddTexture(TextureCoordinate texture) => _textures.Add(texture);
-
-        public void AddNormal(Normal normal) => _normals.Add(normal);
-
-        public void Push(Material material) => _materials.Add(material);
-
         public void SetMaterial(string materialName)
         {
             var material = _materials.SingleOrDefault(x => x.Name.EqualsOrdinalIgnoreCase(materialName));
-            PushGroupIfNeeded();
             _currentGroup.Material = material;
         }
     }

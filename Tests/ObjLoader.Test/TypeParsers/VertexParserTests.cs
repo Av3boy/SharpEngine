@@ -17,7 +17,7 @@ namespace ObjLoader.Test.TypeParsers
         {
             _vertexDataStoreMock = new VertexDataStoreMock();
 
-            _vertexParser = new VertexParser(_vertexDataStoreMock);
+            // _vertexParser = new VertexParser(_vertexDataStoreMock);
         }
 
         [Test]

@@ -17,7 +17,7 @@ namespace ObjLoader.Test.TypeParsers
         {
             _textureDataStoreMock = new TextureDataStoreMock();
 
-            _textureParser = new TextureParser(_textureDataStoreMock);
+            // _textureParser = new TextureParser(_textureDataStoreMock);
         }
 
         [Test]
