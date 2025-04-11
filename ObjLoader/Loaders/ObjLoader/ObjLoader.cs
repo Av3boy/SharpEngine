@@ -13,34 +13,18 @@ namespace ObjLoader.Loaders.ObjLoader
         private readonly List<ITypeParser> _typeParsers = [];
         private readonly List<string> _unrecognizedLines = [];
 
-        public ObjLoader(
-            string path,
-            DataStore dataStore,
-            ITypeParser faceParser,
-            ITypeParser groupParser,
-            ITypeParser normalParser,
-            ITypeParser textureParser,
-            ITypeParser vertexParser,
-            ITypeParser materialLibraryParser,
-            ITypeParser useMaterialParser)
+        public ObjLoader(string path, DataStore dataStore)
         {
             _path = path;
-
             _dataStore = dataStore;
-            SetupTypeParsers(
-                vertexParser,
-                faceParser,
-                normalParser,
-                textureParser,
-                groupParser,
-                materialLibraryParser,
-                useMaterialParser);
         }
 
-        private void SetupTypeParsers(params ITypeParser[] parsers)
+        public ObjLoader SetupTypeParsers(params ITypeParser[] parsers)
         {
             foreach (var parser in parsers)
                 _typeParsers.Add(parser);
+
+            return this;
         }
 
         /// <inheritdoc />

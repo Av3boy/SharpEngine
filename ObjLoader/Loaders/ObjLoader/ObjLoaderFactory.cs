@@ -21,7 +21,7 @@ namespace ObjLoader.Loaders.ObjLoader
             var materialLibraryParser = new MaterialLibraryParser(materialLibraryLoader);
             var useMaterialParser = new UseMaterialParser(dataStore);
 
-            var loader = new ObjLoader(path, dataStore, faceParser, groupParser, normalParser, textureParser, vertexParser, materialLibraryParser, useMaterialParser);
+            var loader = new ObjLoader(path, dataStore).SetupTypeParsers(faceParser, groupParser, normalParser, textureParser, vertexParser, materialLibraryParser, useMaterialParser);
             return loader.Load();
         }
     }
