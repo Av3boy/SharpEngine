@@ -1,6 +1,6 @@
 ﻿using ObjLoader.Loader.Common;
 using ObjLoader.TypeParsers;
-using SharpEngine.Core.Components.Properties.Meshes.MeshData.VertexData;
+using SharpEngine.Core.Components.Properties.Meshes.MeshData;
 
 namespace ObjLoader.Loader.TypeParsers
 {

@@ -6,6 +6,7 @@ using ObjLoader.Loader.Loaders;
 using ObjLoader.Loader.TypeParsers;
 using FluentAssertions;
 using ObjLoader.Loaders.MaterialLoader;
+using SharpEngine.Core.Entities.Properties.Meshes;
 
 namespace ObjLoader.Test.Loaders
 {
@@ -26,7 +27,7 @@ namespace ObjLoader.Test.Loaders
 
         private ObjLoader.Loaders.ObjLoader.ObjLoader _loader;
 
-        private LoadResult _loadResult;
+        private Mesh _loadResult;
         private DataStore _textureDataStore;
         private FaceParser _faceParser;
         private GroupParser _groupParser;

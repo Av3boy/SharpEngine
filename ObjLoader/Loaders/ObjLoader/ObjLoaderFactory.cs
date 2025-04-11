@@ -1,13 +1,13 @@
-using ObjLoader.Loader.Loaders;
 using ObjLoader.Loader.TypeParsers;
 using ObjLoader.Loaders.MaterialLoader;
+using SharpEngine.Core.Entities.Properties.Meshes;
 
 namespace ObjLoader.Loaders.ObjLoader
 {
     public static class ObjLoaderFactory
     {
         /// <inheritdoc />
-        public static LoadResult Load(string path)
+        public static Mesh Load(string path)
         {
             var dataStore = new DataStore();
             

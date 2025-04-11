@@ -1,4 +1,4 @@
-namespace SharpEngine.Core.Components.Properties.Meshes.MeshData.VertexData
+namespace SharpEngine.Core.Components.Properties.Meshes.MeshData
 {
     public struct Vertex
     {

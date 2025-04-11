@@ -3,7 +3,7 @@
 /// <summary>
 ///     Represents the data of a vertex.
 /// </summary>
-public struct VertexData
+public class VertexData
 {
     /// <summary>The stride or length of the vertex data object.</summary>
     public const int Stride = 8 * sizeof(float);
@@ -25,9 +25,4 @@ public struct VertexData
 
     /// <summary>The byte offset to the texture coordinates in the vertex data object.</summary>
     public const int TexCoordsOffset = (VerticesSize + NormalsSize) * sizeof(float);
-
-    /// <summary>
-    ///     Initializes a new instance of <see cref="VertexData"/>.
-    /// </summary>
-    public VertexData() { }
 }
