@@ -67,7 +67,7 @@ namespace ObjLoader.Test.Loaders
             Load();
 
             _loadResult.Vertices.Should().HaveCount(8);
-            _loadResult.Textures.Should().HaveCount(14);
+            _loadResult.TextureCoordinates2.Should().HaveCount(14);
             _loadResult.Normals.Should().HaveCount(8);
             _loadResult.Materials.Should().HaveCount(1);
 
@@ -92,7 +92,7 @@ namespace ObjLoader.Test.Loaders
             Load();
 
             _loadResult.Vertices.Should().HaveCount(8);
-            _loadResult.Textures.Should().HaveCount(14);
+            _loadResult.TextureCoordinates2.Should().HaveCount(14);
             _loadResult.Normals.Should().HaveCount(8);
             _loadResult.Materials.Should().HaveCount(0);
 

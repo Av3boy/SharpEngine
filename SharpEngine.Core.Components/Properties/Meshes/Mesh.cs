@@ -33,7 +33,7 @@ public class Mesh
     [Inspector(DisplayInInspector = false)]
     public float[] TextureCoordinates { get; set; } = [];
 
-    public List<TextureCoordinate> Textures { get; set; } = [];
+    public List<TextureCoordinate> TextureCoordinates2 { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the indicies of the mesh.
@@ -42,5 +42,5 @@ public class Mesh
     public uint[] Indices { get; set; } = [];
 
     public List<Group> Groups { get; set; } = [];
-    public List<Material> Materials { get; set; } = [];
+    public List<Material> Materials { get; set; }= [];
 }

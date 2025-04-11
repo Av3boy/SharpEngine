@@ -48,7 +48,7 @@ namespace ObjLoader.Loaders.ObjLoader
             return new()
             {
                 Vertices2 = _dataStore.Vertices,
-                Textures = _dataStore.Textures,
+                TextureCoordinates2 = _dataStore.Textures,
                 Normals2 = _dataStore.Normals,
                 Groups = _dataStore.Groups,
                 Materials = _dataStore.Materials

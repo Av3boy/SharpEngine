@@ -15,6 +15,7 @@ using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Windowing;
+using System.Linq;
 
 namespace Minecraft;
 
@@ -146,17 +147,13 @@ public class Minecraft : Game
         // TODO: Does not work yet.
         // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
 
-        // TODO: This should be simplified to something like this:
-        // new ObjLoaderFactory().Load();
-
         var result = ObjLoaderFactory.Load(@"C:\Users\antti\Documents\Untitled2.obj");
-        // var mesh = new Mesh()
-        // {
-        //     Vertices = result.Vertices.ToArray(),
-        // };
+        result.Vertices = [.. result.Vertices2.SelectMany(i => new[] { i.X, i.Y, i.Z })];
+        result.Normals = [.. result.Normals2.SelectMany(i => new[] { i.X, i.Y, i.Z })];
+        result.TextureCoordinates = [.. result.TextureCoordinates2.SelectMany(i => new [] { i.X, i.Y }) ];
 
         var go = new GameObject();
-        // go.Meshes.Add(torus.First());
+        go.Meshes.Add(result);
 
         go.Initialize();
         _scene.Root.AddChild(go);

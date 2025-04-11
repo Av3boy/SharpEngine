@@ -20,7 +20,7 @@ namespace ObjLoader.Loader.TypeParsers
         /// <inheritdoc />
         public override void Parse(string line)
         {
-            string[] parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
             float x = parts[0].ParseInvariantFloat();
             float y = parts[1].ParseInvariantFloat();
