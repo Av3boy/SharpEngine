@@ -1,5 +1,4 @@
-﻿using ObjLoader.Data;
-using ObjLoader.TypeParsers;
+﻿using ObjLoader.TypeParsers;
 
 namespace ObjLoader.Loader.TypeParsers
 {

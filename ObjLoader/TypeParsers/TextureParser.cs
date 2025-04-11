@@ -1,5 +1,4 @@
-﻿using ObjLoader.Data;
-using ObjLoader.Loader.Common;
+﻿using ObjLoader.Loader.Common;
 using ObjLoader.TypeParsers;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData.VertexData;
 

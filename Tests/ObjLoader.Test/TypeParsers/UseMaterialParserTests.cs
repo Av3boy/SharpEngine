@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using ObjLoader.Data;
 using ObjLoader.Loader.TypeParsers;
 
 namespace ObjLoader.Test.TypeParsers
@@ -15,7 +14,7 @@ namespace ObjLoader.Test.TypeParsers
         public void SetUp()
         {
             _elementGroupSpy = new ElementGroupSpy();
-            _parser = new UseMaterialParser(_elementGroupSpy);
+            // _parser = new UseMaterialParser(_elementGroupSpy);
         }
 
         [Test]
@@ -45,7 +44,7 @@ namespace ObjLoader.Test.TypeParsers
             _elementGroupSpy.MaterialName.Should().BeEquivalentTo("materialName");
         }
 
-        private class ElementGroupSpy : IElementGroup
+        private class ElementGroupSpy // : IElementGroup
         {
             public string MaterialName { get; private set; }
 

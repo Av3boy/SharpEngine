@@ -1,21 +1,20 @@
-﻿using ObjLoader.Data;
-using ObjLoader.TypeParsers;
+﻿using ObjLoader.TypeParsers;
 
 namespace ObjLoader.Loader.TypeParsers
 {
     public class UseMaterialParser : TypeParserBase, ITypeParser
     {
-        private readonly IElementGroup _elementGroup;
+        private readonly DataStore _dataStore;
 
-        public UseMaterialParser(IElementGroup elementGroup)
+        public UseMaterialParser(DataStore dataStore)
         {
-            _elementGroup = elementGroup;
+            _dataStore = dataStore;
         }
         
         /// <inheritdoc />
         protected override string Keyword => "usemtl";
         
         /// <inheritdoc />
-        public override void Parse(string line) => _elementGroup.SetMaterial(line);
+        public override void Parse(string line) => _dataStore.SetMaterial(line);
     }
 }

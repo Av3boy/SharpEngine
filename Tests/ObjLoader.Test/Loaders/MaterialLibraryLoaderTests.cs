@@ -5,10 +5,10 @@ using NUnit.Framework;
 using ObjLoader.Loader.Data;
 using System.Linq;
 using FluentAssertions;
-using ObjLoader.Loader.Loaders;
 using SharpEngine.Core.Components.Obsolete.ObjLoader.DataStore;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Components.Properties;
+using ObjLoader.Loaders.MaterialLoader;
 
 namespace ObjLoader.Test.Loaders
 {

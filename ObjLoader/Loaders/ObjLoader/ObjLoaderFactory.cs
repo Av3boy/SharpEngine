@@ -1,7 +1,7 @@
-using ObjLoader.Data;
 using ObjLoader.Loader.TypeParsers;
+using ObjLoader.Loaders.MaterialLoader;
 
-namespace ObjLoader.Loader.Loaders
+namespace ObjLoader.Loaders.ObjLoader
 {
     public class ObjLoaderFactory
     {

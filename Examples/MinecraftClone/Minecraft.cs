@@ -1,22 +1,20 @@
 using ImGuiNET;
 using Minecraft.Block;
-using ObjLoader.Loader.Loaders;
+using ObjLoader.Loaders.ObjLoader;
+using Silk.NET.Input;
+
+using System;
+using System.Numerics;
+
 using SharpEngine.Core;
 using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Lights;
-using SharpEngine.Core.Entities.Properties;
-using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Entities.UI.Layouts;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Windowing;
-using Silk.NET.Input;
-using System;
-using System.IO;
-using System.Linq;
-using System.Numerics;
 
 namespace Minecraft;
 

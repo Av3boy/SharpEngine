@@ -1,5 +1,5 @@
-﻿using ObjLoader.Data;
-using ObjLoader.Loader.Common;
+﻿using ObjLoader.Loader.Common;
+using ObjLoader.Loader.Loaders;
 using SharpEngine.Core.Components.Properties;
 
 using System;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 
-namespace ObjLoader.Loader.Loaders
+namespace ObjLoader.Loaders.MaterialLoader
 {
     public class MaterialLibraryLoader : LoaderBase
     {

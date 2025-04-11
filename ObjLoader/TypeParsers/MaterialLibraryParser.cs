@@ -1,4 +1,5 @@
 ﻿using ObjLoader.Loader.Loaders;
+using ObjLoader.Loaders.MaterialLoader;
 using ObjLoader.TypeParsers;
 
 namespace ObjLoader.Loader.TypeParsers

@@ -1,10 +1,10 @@
-﻿using ObjLoader.Data;
+﻿using ObjLoader.Loader.Loaders;
 using ObjLoader.TypeParsers;
 
 using System.Collections.Generic;
 using System.IO;
 
-namespace ObjLoader.Loader.Loaders
+namespace ObjLoader.Loaders.ObjLoader
 {
     public class ObjLoader : LoaderBase
     {
@@ -40,22 +40,18 @@ namespace ObjLoader.Loader.Loaders
         private void SetupTypeParsers(params ITypeParser[] parsers)
         {
             foreach (var parser in parsers)
-            {
                 _typeParsers.Add(parser);
-            }
         }
 
         /// <inheritdoc />
         protected override void ParseLine(string keyword, string data)
         {
             foreach (var typeParser in _typeParsers)
-            {
                 if (typeParser.CanParse(keyword))
                 {
                     typeParser.Parse(data);
                     return;
                 }
-            }
 
             _unrecognizedLines.Add(keyword + " " + data);
         }

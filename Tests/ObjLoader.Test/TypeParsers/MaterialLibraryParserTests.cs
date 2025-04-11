@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using ObjLoader.Loader.Loaders;
 using ObjLoader.Loader.TypeParsers;
+using ObjLoader.Loaders.MaterialLoader;
 
 namespace ObjLoader.Test.TypeParsers
 {

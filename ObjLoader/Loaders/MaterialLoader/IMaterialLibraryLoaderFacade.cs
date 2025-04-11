@@ -1,4 +1,4 @@
-namespace ObjLoader.Loader.Loaders
+namespace ObjLoader.Loaders.MaterialLoader
 {
     public interface IMaterialLibraryLoaderFacade
     {

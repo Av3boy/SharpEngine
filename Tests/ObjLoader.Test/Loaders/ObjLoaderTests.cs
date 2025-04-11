@@ -4,8 +4,8 @@ using System.Linq;
 using NUnit.Framework;
 using ObjLoader.Loader.Loaders;
 using ObjLoader.Loader.TypeParsers;
-using ObjLoader.Data;
 using FluentAssertions;
+using ObjLoader.Loaders.MaterialLoader;
 
 namespace ObjLoader.Test.Loaders
 {
@@ -24,7 +24,7 @@ namespace ObjLoader.Test.Loaders
             }
         }
 
-        private Loader.Loaders.ObjLoader _loader;
+        private ObjLoader.Loaders.ObjLoader.ObjLoader _loader;
 
         private LoadResult _loadResult;
         private DataStore _textureDataStore;
