@@ -148,15 +148,16 @@ public class Minecraft : Game
         // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
 
         var result = ObjLoaderFactory.Load(@"C:\Users\antti\Documents\Untitled2.obj");
+
         result.Vertices = [.. result.Vertices2.SelectMany(i => new[] { i.X, i.Y, i.Z })];
         result.Normals = [.. result.Normals2.SelectMany(i => new[] { i.X, i.Y, i.Z })];
         result.TextureCoordinates = [.. result.TextureCoordinates2.SelectMany(i => new [] { i.X, i.Y }) ];
 
-        var go = new GameObject();
-        go.Meshes.Add(result);
-
-        go.Initialize();
-        _scene.Root.AddChild(go);
+        // var go = new GameObject();
+        // go.Meshes.Add(result);
+        // 
+        // go.Initialize();
+        // _scene.Root.AddChild(go);
 
     }
 

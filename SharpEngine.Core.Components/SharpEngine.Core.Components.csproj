@@ -8,6 +8,7 @@
 
   <PropertyGroup>
     <GeneratePackageOnBuild>$(GenerateNuGetPackages)</GeneratePackageOnBuild>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
