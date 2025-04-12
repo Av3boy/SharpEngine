@@ -31,11 +31,7 @@ public partial class Shader
         _gl.AttachShader(Handle, fragmentShader);
 
         // And then link them together.
-        if (!LinkProgram(Handle))
-        {
-            Console.WriteLine("Unable to link shader program.");
-            return this;
-        }
+        bool shaderLinked = LinkProgram(Handle);
 
         // When the shader program is linked, it no longer needs the individual shaders attached to it; the compiled code is copied into the shader program.
         // Detach them, and then delete them.
@@ -43,6 +39,12 @@ public partial class Shader
         _gl.DetachShader(Handle, fragmentShader);
         _gl.DeleteShader(fragmentShader);
         _gl.DeleteShader(vertexShader);
+
+        if (!shaderLinked)
+        {
+            Console.WriteLine("Unable to link shader program.");
+            return this;
+        }
 
         // The shader is now ready to go, but first, we're going to cache all the shader uniform locations.
         // Querying this from the shader is very slow, so we do it once on initialization and reuse those values
@@ -83,7 +85,6 @@ public partial class Shader
         // First, we have to get the number of active uniforms in the shader.
         _gl.GetProgram(Handle, GLEnum.ActiveUniforms, out var numberOfUniforms);
 
-        // Next, allocate the dictionary to hold the locations.
         Dictionary<string, int> uniformLocations = [];
 
         // Loop over all the uniforms,
@@ -99,7 +100,7 @@ public partial class Shader
             uniformLocations.Add(key, location);
         }
 
-        InitializeUniforms(uniformLocations);
+        _uniformLocations = uniformLocations;
         return this;
     }
 
@@ -184,16 +185,19 @@ public partial class Shader
 
     private bool TrySetUniform<T>(string name, T data, Action<int, T> setter)
     {
-        var uniforms = GetUniformLocations();
-        if (!uniforms.TryGetValue(name, out int uniform))
+        //int location = _gl.GetUniformLocation(Handle, name);
+        if (!_uniformLocations.TryGetValue(name, out int location))
+        //if (location == -1)
         {
             Console.WriteLine($"Uniform '{name}' not found in shader program.");
             return false;
         }
 
-        setter(uniform, data);
+        setter(location, data);
         return true;
     }
+
+    // TODO: The _gl.UseProgram should be not be called here. Rather the renderer should call it once before rendering.
 
     /// <summary>
     ///     Set a uniform int on this shader.
@@ -228,10 +232,11 @@ public partial class Shader
     ///   The matrix is transposed before being sent to the shader unless <paramref name="transpose"/> is set to <see langword="false"/>.
     ///   </para>
     /// </remarks>
-    public void SetMatrix4(string name, Matrix4x4 data, bool transpose = true)
+    public unsafe void SetMatrix4(string name, Matrix4x4 data, bool transpose = true)
     {
         _gl.UseProgram(Handle);
-        TrySetUniform(name, data, (uniform, d) => _gl.UniformMatrix4(uniform, transpose, d.ToSpan()));
+        // TrySetUniform(name, data, (uniform, d) => _gl.UniformMatrix4(uniform, transpose, d.ToSpan()));
+        TrySetUniform(name, data, (uniform, d) => _gl.UniformMatrix4(uniform, 1, transpose, (float*) &d));
     }
 
     /// <summary>

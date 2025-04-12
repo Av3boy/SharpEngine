@@ -1,21 +1,24 @@
+using SharpEngine.Core.Extensions;
 using Silk.NET.Input;
+using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
 using System;
 using System.Linq;
 using System.Numerics;
-using Silk.NET.Maths;
+using Shader = SharpEngine.Core.Shaders.Shader;
 
 namespace Tutorial
 {
     class Program
     {
+        #region fields
         private static IWindow window;
         private static GL Gl;
         private static IKeyboard primaryKeyboard;
 
         private static Texture Texture;
-        private static Shader Shader;
+        private static SharpEngine.Core.Shaders.Shader Shader;
         private static Model Model;
 
         //Setup the camera's location, directions, and movement speed
@@ -29,6 +32,7 @@ namespace Tutorial
 
         //Used to track change in mouse movement to allow for moving of the Camera
         private static Vector2 LastMousePosition;
+        #endregion
 
         private static void Main(string[] args)
         {
@@ -65,7 +69,10 @@ namespace Tutorial
 
             Gl = GL.GetApi(window);
 
-            Shader = new Shader(Gl, "shader.vert", "shader.frag");
+            Gl.GetInteger(GLEnum.ContextFlags, out int contextFlags);
+            Console.WriteLine($"OpenGL Context Flags: {contextFlags}");
+
+            Shader = new Shader(Gl, PathExtensions.GetAssemblyPath("shader.vert"), PathExtensions.GetAssemblyPath("shader.frag"), "test").Initialize();
             Texture = new Texture(Gl, "silk.png");
             Model = new Model(Gl, "cube.model");
         }
@@ -103,7 +110,8 @@ namespace Tutorial
 
             Texture.Bind();
             Shader.Use();
-            Shader.SetUniform("uTexture0", 0);
+            //Shader.SetUniform("uTexture0", 0);
+            Shader.SetInt("uTexture0", 0);
 
             //Use elapsed time to convert to radians to allow our cube to rotate over time
             var difference = (float) (window.Time * 100);
@@ -120,10 +128,11 @@ namespace Tutorial
                 mesh.Bind();
                 Shader.Use();
                 Texture.Bind();
-                Shader.SetUniform("uTexture0", 0);
-                Shader.SetUniform("uModel", model);
-                Shader.SetUniform("uView", view);
-                Shader.SetUniform("uProjection", projection);
+
+                Shader.SetInt("uTexture0", 0);
+                Shader.SetMatrix4("uModel", model, false);
+                Shader.SetMatrix4("uView", view, false);
+                Shader.SetMatrix4("uProjection", projection, false);
 
                 Gl.DrawArrays(PrimitiveType.Triangles, 0, (uint)mesh.Vertices.Length);
             }

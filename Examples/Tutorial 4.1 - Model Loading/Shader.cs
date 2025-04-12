@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.IO;
 using System.Numerics;
 using Silk.NET.OpenGL;
@@ -7,7 +7,7 @@ namespace Tutorial
 {
     public class Shader : IDisposable
     {
-        private uint _handle;
+        public uint _handle;
         private GL _gl;
 
         public Shader(GL gl, string vertexPath, string fragmentPath)
@@ -88,3 +88,4 @@ namespace Tutorial
         }
     }
 }
+*/

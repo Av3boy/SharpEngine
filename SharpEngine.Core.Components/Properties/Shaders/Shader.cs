@@ -50,11 +50,6 @@ public partial class Shader : IDisposable
         FragPath = fragPath;
     }
 
-    public void InitializeUniforms(Dictionary<string, int> uniforms)
-        => _uniformLocations = uniforms;
-
-    public Dictionary<string, int> GetUniformLocations() => _uniformLocations;
-
     public void Dispose()
     {
         _gl.DeleteProgram(Handle);
