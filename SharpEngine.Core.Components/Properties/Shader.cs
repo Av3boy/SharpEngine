@@ -1,9 +1,11 @@
+using Silk.NET.OpenGL;
+
 namespace SharpEngine.Core.Shaders;
 
 /// <summary>
 ///     Represents a shader program.
 /// </summary>
-public class Shader
+public class Shader : IDisposable
 {
     /// <summary>Gets the handle to the shader program.</summary>
     public uint Handle;
@@ -15,6 +17,8 @@ public class Shader
 
     private Dictionary<string, int> _uniformLocations = [];
 
+    private readonly GL _gl;
+
     /// <summary>
     ///    Initializes a new instance of <see cref="Shader"/>.
     /// </summary>
@@ -25,9 +29,10 @@ public class Shader
     /// <param name="vertPath">The vertex shader full path.</param>
     /// <param name="fragPath">The fragment shader full path.</param>
     /// <param name="name">The identifier name of the shader.</param>
-    public Shader(string vertPath, string fragPath, string name)
+    public Shader(GL gl, string vertPath, string fragPath, string name)
     {
         Name = name;
+        _gl = gl;
 
         // There are several different types of shaders, but the only two you need for basic rendering are the vertex and fragment shaders.
         // The vertex shader is responsible for moving around vertices, and uploading that data to the fragment shader.
@@ -49,4 +54,9 @@ public class Shader
         => _uniformLocations = uniforms;
 
     public Dictionary<string, int> GetUniformLocations() => _uniformLocations;
+
+    public void Dispose()
+    {
+        _gl.DeleteProgram(Handle);
+    }
 }

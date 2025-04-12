@@ -10,7 +10,7 @@ namespace SharpEngine.Core.Entities.Properties.Meshes;
 /// <summary>
 ///     Represents a game object mesh.
 /// </summary>
-public class Mesh
+public class Mesh : IDisposable
 {
     /// <summary>Gets or sets a identifying name for the mesh.</summary>
     public string Name { get; set; } = "New Mesh";
@@ -70,9 +70,9 @@ public class Mesh
 
     public unsafe void SetupMesh()
     {
-        // EBO = new BufferObject<uint>(GL, Indices, BufferTargetARB.ElementArrayBuffer);
-        // VBO = new BufferObject<float>(GL, Vertices, BufferTargetARB.ArrayBuffer);
-        // VAO = new VertexArrayObject<float, uint>(GL, VBO, EBO);
+        EBO = new BufferObject<uint>(GL, Indices, BufferTargetARB.ElementArrayBuffer);
+        VBO = new BufferObject<float>(GL, Vertices, BufferTargetARB.ArrayBuffer);
+        VAO = new VertexArrayObject<float, uint>(GL, VBO, EBO);
         VAO.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 5, 0);
         VAO.VertexAttributePointer(1, 2, VertexAttribPointerType.Float, 5, 3);
     }

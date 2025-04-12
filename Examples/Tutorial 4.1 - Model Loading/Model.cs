@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using AssimpMesh = Silk.NET.Assimp.Mesh;
+using Mesh = SharpEngine.Core.Entities.Properties.Meshes.Mesh;
 
 namespace Tutorial
 {
@@ -131,7 +132,7 @@ namespace Tutorial
                 textures.AddRange(heightMaps);
 
             // return a mesh object created from the extracted mesh data
-            var result = new Mesh(_gl, BuildVertices(vertices), BuildIndices(indices), textures);
+            var result = new Mesh(_gl, BuildVertices(vertices), BuildIndices(indices)); //, textures);
             return result;
         }
 
