@@ -5,7 +5,7 @@ namespace SharpEngine.Core.Shaders;
 /// <summary>
 ///     Represents a shader program.
 /// </summary>
-public class Shader : IDisposable
+public partial class Shader : IDisposable
 {
     /// <summary>Gets the handle to the shader program.</summary>
     public uint Handle;

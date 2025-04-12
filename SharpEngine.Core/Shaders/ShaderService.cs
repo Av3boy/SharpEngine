@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using SharpEngine.Core.Windowing;
 
 namespace SharpEngine.Core.Shaders;
 
@@ -82,7 +83,7 @@ public class ShaderService
         }
 
         // Create a new shader instance and add it to the cache
-        var shader = new Shader(vertPath, fragPath, name).Initialize();
+        var shader = new Shader(Window.GL, vertPath, fragPath, name).Initialize();
         _shaderCache[name] = shader;
 
         HasShadersToLoad = true;
