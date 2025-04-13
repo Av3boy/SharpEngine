@@ -1,5 +1,7 @@
 ﻿using Silk.NET.Assimp;
 using Silk.NET.OpenGL;
+using StbImageSharp;
+using System.IO;
 
 namespace SharpEngine.Core.Components.Properties.Textures;
 
@@ -25,6 +27,33 @@ public partial class Texture : IDisposable
 
         Path = path;
         Type = type;
+
+        Initialize();
+    }
+
+    public void Initialize()
+    {
+        // Bind the handle
+        Use();
+
+        // OpenGL has its texture origin in the lower left corner instead of the top left corner,
+        // so we tell StbImageSharp to flip the image when loading.
+        StbImage.stbi_set_flip_vertically_on_load(1);
+
+        // Here we open a stream to the file and pass it to StbImageSharp to load.
+        using (Stream stream = System.IO.File.OpenRead(Path))
+        {
+            var image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
+
+            // Generate a texture
+            _gl.TexImage2D<byte>(TextureTarget.Texture2D, 0, InternalFormat.Rgba, (uint)image.Width, (uint)image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data.AsSpan());
+        }
+
+        // Set texture parameters
+        SetParameters();
+
+        // Generate mipmaps
+        _gl.GenerateMipmap(GLEnum.Texture2D);
     }
 
     public void SetParameters()

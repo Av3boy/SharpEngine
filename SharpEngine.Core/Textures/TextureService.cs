@@ -45,28 +45,7 @@ public class TextureService
         // Generate handle
         // TODO: Determine the type of texture.
         var texture = new Texture(Window.GL, path, Silk.NET.Assimp.TextureType.Diffuse);
-
-        // Bind the handle
-        texture.Use();
-
-        // OpenGL has its texture origin in the lower left corner instead of the top left corner,
-        // so we tell StbImageSharp to flip the image when loading.
-        StbImage.stbi_set_flip_vertically_on_load(1);
-
-        // Here we open a stream to the file and pass it to StbImageSharp to load.
-        using (Stream stream = File.OpenRead(path))
-        {
-            var image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
-
-            // Generate a texture
-            Window.GL.TexImage2D<byte>(TextureTarget.Texture2D, 0, InternalFormat.Rgba, (uint)image.Width, (uint)image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data.AsSpan());
-        }
-
-        // Set texture parameters
-        texture.SetParameters();
-
-        // Generate mipmaps
-        Window.GL.GenerateMipmap(GLEnum.Texture2D);
+        texture.Initialize();
 
         // Add it to the cache
         _textureCache[path] = texture;
