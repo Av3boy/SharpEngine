@@ -1,21 +1,21 @@
 using ImGuiNET;
 using Minecraft.Block;
 using ObjLoader.Loaders.ObjLoader;
-using Silk.NET.Input;
-
-using System;
-using System.Numerics;
-
 using SharpEngine.Core;
 using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Lights;
+using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Entities.UI.Layouts;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Windowing;
+using Silk.NET.Input;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace Minecraft;
 
@@ -142,23 +142,59 @@ public class Minecraft : Game
     private void InitializeWorld()
     {
         InitializeLights();
-        InitializeChunks();
+        // InitializeChunks();
 
         // TODO: Does not work yet.
         // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
 
         var result = ObjLoaderFactory.Load(@"C:\Users\antti\Documents\Untitled2.obj");
 
-        result.Vertices = [.. result.Vertices2.SelectMany(i => new[] { i.X, i.Y, i.Z })];
-        result.Normals = [.. result.Normals2.SelectMany(i => new[] { i.X, i.Y, i.Z })];
-        result.TextureCoordinates = [.. result.TextureCoordinates2.SelectMany(i => new [] { i.X, i.Y }) ];
+        ResolveMeshData(result);
 
-        // var go = new GameObject();
-        // go.Meshes.Add(result);
-        // 
-        // go.Initialize();
-        // _scene.Root.AddChild(go);
+        var go = new GameObject();
+        go.Meshes.Add(result);
+        
+        go.Initialize();
+        _scene.Root.AddChild(go);
 
+    }
+
+    private void ResolveMeshData(Mesh mesh)
+    {
+        var resolvedVertices = new List<float>();
+        var resolvedNormals = new List<float>();
+        var resolvedTextureCoordinates = new List<float>();
+
+        foreach (var group in mesh.Groups)
+        {
+            foreach (var face in group.Faces)
+            {
+                foreach (var vertex in face._vertices)
+                {
+                    // Resolve vertex positions
+                    var position = mesh.Vertices2[vertex.VertexIndex];
+                    resolvedVertices.Add(position.X);
+                    resolvedVertices.Add(position.Y);
+                    resolvedVertices.Add(position.Z);
+
+                    // Resolve normals
+                    var normal = mesh.Normals2[vertex.NormalIndex];
+                    resolvedNormals.Add(normal.X);
+                    resolvedNormals.Add(normal.Y);
+                    resolvedNormals.Add(normal.Z);
+
+                    // Resolve texture coordinates
+                    var texCoord = mesh.TextureCoordinates2[vertex.TextureIndex];
+                    resolvedTextureCoordinates.Add(texCoord.X);
+                    resolvedTextureCoordinates.Add(texCoord.Y);
+                }
+            }
+        }
+
+        // Update the mesh with resolved data
+        mesh.Vertices = resolvedVertices.ToArray();
+        mesh.Normals = resolvedNormals.ToArray();
+        mesh.TextureCoordinates = resolvedTextureCoordinates.ToArray();
     }
 
     private void InitializeLights()

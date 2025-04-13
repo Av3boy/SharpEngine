@@ -9,12 +9,18 @@ using System.Numerics;
 
 namespace ObjLoader.Loaders.MaterialLoader
 {
+    // https://paulbourke.net/dataformats/mtl/
+
     public class MaterialLibraryLoader : LoaderBase
     {
         private string _objPath;
         private readonly DataStore _dataStore;
         private readonly Dictionary<string, Action<string>> _parseActionDictionary = [];
         private readonly List<string> _unrecognizedLines = [];
+
+        private Material CurrentMaterial { get; set; }
+
+        // TODO: See Model class. This support both materials and textures
 
         public MaterialLibraryLoader(string objPath, DataStore dataStore)
         {         
@@ -47,8 +53,6 @@ namespace ObjLoader.Loaders.MaterialLoader
 
             AddParseAction("decal", m => CurrentMaterial.StencilDecalMap = m);
         }
-
-        private Material CurrentMaterial { get; set; }
 
         private void AddParseAction(string key, Action<string> action) => _parseActionDictionary.Add(key.ToLowerInvariant(), action);
 

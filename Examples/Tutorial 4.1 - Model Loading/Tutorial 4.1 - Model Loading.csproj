@@ -7,10 +7,6 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.3" />
-  </ItemGroup>
-
     <ItemGroup>
       <!--
         <ProjectReference Include="..\..\..\..\src\Input\Silk.NET.Input\Silk.NET.Input.csproj" />
@@ -21,7 +17,6 @@
       <PackageReference Include="Silk.NET.Input" Version="$(SilkVersion)" />
       <PackageReference Include="Silk.NET.OpenGL" Version="$(SilkVersion)" />
       <PackageReference Include="Silk.NET.Windowing" Version="$(SilkVersion)" />
-      <PackageReference Include="Silk.NET.Assimp" Version="2.22.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -30,19 +25,16 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="cube.model">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
       <None Update="cube.obj">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="Shader.frag">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
       <None Update="Shader.vert">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
       <None Update="silk.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Untitled2.obj">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

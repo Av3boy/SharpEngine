@@ -1,6 +1,6 @@
 ﻿using SharpEngine.Core.Components.Properties;
+using SharpEngine.Core.Components.Properties.Textures;
 using SharpEngine.Core.Shaders;
-using SharpEngine.Core.Textures;
 using System.Numerics;
 
 namespace SharpEngine.Core.Components.Properties;

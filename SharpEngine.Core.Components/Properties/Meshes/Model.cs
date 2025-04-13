@@ -24,7 +24,7 @@ namespace Tutorial
 
         private readonly GL _gl;
         private Assimp _assimp;
-        private List<Texture> _texturesLoaded = new List<Texture>();
+        private List<Texture2> _texturesLoaded = new List<Texture2>();
         public string Directory { get; protected set; } = string.Empty;
         public List<Mesh> Meshes { get; protected set; } = new List<Mesh>();
         
@@ -61,16 +61,16 @@ namespace Tutorial
         private unsafe Mesh ProcessMesh(AssimpMesh* mesh, Scene* scene)
         {
             // data to fill
-            List<Vertex> vertices = new List<Vertex>();
+            List<Vertex2> vertices = new List<Vertex2>();
             List<uint> indices = new List<uint>();
-            List<Texture> textures = new List<Texture>();
+            List<Texture2> textures = new List<Texture2>();
 
             // walk through each of the mesh's vertices
             for (uint i = 0; i < mesh->MNumVertices; i++)
             {
-                Vertex vertex = new Vertex();
-                vertex.BoneIds = new int[Vertex.MAX_BONE_INFLUENCE];
-                vertex.Weights = new float[Vertex.MAX_BONE_INFLUENCE];
+                Vertex2 vertex = new Vertex2();
+                vertex.BoneIds = new int[Vertex2.MAX_BONE_INFLUENCE];
+                vertex.Weights = new float[Vertex2.MAX_BONE_INFLUENCE];
 
                 vertex.Position = mesh->MVertices[i];
 
@@ -136,10 +136,10 @@ namespace Tutorial
             return result;
         }
 
-        private unsafe List<Texture> LoadMaterialTextures(Material* mat, TextureType type, string typeName)
+        private unsafe List<Texture2> LoadMaterialTextures(Material* mat, TextureType type, string typeName)
         {
             var textureCount = _assimp.GetMaterialTextureCount(mat, type);
-            List<Texture> textures = new List<Texture>();
+            List<Texture2> textures = new List<Texture2>();
             for (uint i = 0; i < textureCount; i++)
             {
                 AssimpString path;
@@ -156,7 +156,7 @@ namespace Tutorial
                 }
                 if (!skip)
                 {
-                    var texture = new Texture(_gl, Directory, type);
+                    var texture = new Texture2(_gl, Directory, type);
                     texture.Path = path;
                     textures.Add(texture);
                     _texturesLoaded.Add(texture);
@@ -165,7 +165,7 @@ namespace Tutorial
             return textures;
         }
 
-        private float[] BuildVertices(List<Vertex> vertexCollection)
+        private float[] BuildVertices(List<Vertex2> vertexCollection)
         {
             var vertices = new List<float>();
 

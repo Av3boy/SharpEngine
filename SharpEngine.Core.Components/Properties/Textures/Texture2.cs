@@ -6,7 +6,7 @@ using System;
 
 namespace Tutorial
 {
-    public class Texture : IDisposable
+    public class Texture2 : IDisposable
     {
         private uint _handle;
         private GL _gl;
@@ -14,7 +14,7 @@ namespace Tutorial
         public string Path { get; set; }
         public TextureType Type { get; }
 
-        public unsafe Texture(GL gl, string path, TextureType type = TextureType.None)
+        public unsafe Texture2(GL gl, string path, TextureType type = TextureType.None)
         {
             _gl = gl;
             Path = path;
@@ -41,7 +41,7 @@ namespace Tutorial
             SetParameters();
         }
 
-        public unsafe Texture(GL gl, Span<byte> data, uint width, uint height)
+        public unsafe Texture2(GL gl, Span<byte> data, uint width, uint height)
         {
             _gl = gl;
 

@@ -5,7 +5,7 @@ using System.Numerics;
 
 namespace Tutorial
 {
-    public struct Vertex
+    public struct Vertex2
     {
         public Vector3 Position;
         public Vector3 Normal;

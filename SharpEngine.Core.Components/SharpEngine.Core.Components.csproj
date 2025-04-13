@@ -11,6 +11,13 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <!-- TODO: Get rid of these -->
+  <ItemGroup>
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.3" />
+    <PackageReference Include="Silk.NET.Assimp" Version="2.22.0" />
+
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\SharpEngine.Core.Numerics\SharpEngine.Core.Numerics.csproj" />
     <ProjectReference Include="..\SharpEngine.Shared\SharpEngine.Shared.csproj" />

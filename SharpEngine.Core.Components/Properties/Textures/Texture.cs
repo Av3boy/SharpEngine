@@ -1,12 +1,18 @@
-﻿namespace SharpEngine.Core.Textures;
+﻿using Silk.NET.Assimp;
+
+namespace SharpEngine.Core.Components.Properties.Textures;
 
 /// <summary>
 ///     Represents a texture program.
 /// </summary>
-public class Texture
+public partial class Texture
 {
     /// <summary>The OpenGL handle for the texture.</summary>
     public readonly uint Handle;
+
+    public string Path { get; set; }
+    
+    public TextureType Type { get; }
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Texture"/>.

@@ -1,5 +1,7 @@
 namespace SharpEngine.Core.Components.Properties.Meshes.MeshData
 {
+    // TODO: Use vertex2 instead of this one
+
     public struct Vertex
     {
         public Vertex(float x, float y, float z) : this()

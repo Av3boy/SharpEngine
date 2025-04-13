@@ -17,8 +17,8 @@ namespace Tutorial
         private static GL Gl;
         private static IKeyboard primaryKeyboard;
 
-        private static Texture Texture;
-        private static SharpEngine.Core.Shaders.Shader Shader;
+        private static Texture2 Texture;
+        private static Shader Shader;
         private static Model Model;
 
         //Setup the camera's location, directions, and movement speed
@@ -72,9 +72,9 @@ namespace Tutorial
             Gl.GetInteger(GLEnum.ContextFlags, out int contextFlags);
             Console.WriteLine($"OpenGL Context Flags: {contextFlags}");
 
-            Shader = new Shader(Gl, PathExtensions.GetAssemblyPath("shader.vert"), PathExtensions.GetAssemblyPath("shader.frag"), "test").Initialize();
-            Texture = new Texture(Gl, "silk.png");
-            Model = new Model(Gl, "cube.model");
+            Shader = new Shader(Gl, PathExtensions.GetAssemblyPath("shader.vert"), SharpEngine.Core._Resources.Default.LightShader, "test").Initialize();
+            Texture = new Texture2(Gl, "silk.png");
+            Model = new Model(Gl, "Untitled2.obj");
         }
 
         private static unsafe void OnUpdate(double deltaTime)
@@ -110,7 +110,6 @@ namespace Tutorial
 
             Texture.Bind();
             Shader.Use();
-            //Shader.SetUniform("uTexture0", 0);
             Shader.SetInt("uTexture0", 0);
 
             //Use elapsed time to convert to radians to allow our cube to rotate over time

@@ -2,7 +2,7 @@
 {
     public class Face
     {
-        private readonly List<FaceVertex> _vertices = [];
+        public readonly List<FaceVertex> _vertices = [];
 
         public void AddVertex(FaceVertex vertex) => _vertices.Add(vertex);
 
