@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using Shader = SharpEngine.Core.Shaders.Shader;
+using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
 
 namespace Tutorial
 {
@@ -18,7 +19,7 @@ namespace Tutorial
         private static GL Gl;
         private static IKeyboard primaryKeyboard;
 
-        private static Texture2 Texture;
+        private static Texture Texture;
         private static Shader Shader;
         private static Model Model;
 
@@ -74,7 +75,7 @@ namespace Tutorial
             Console.WriteLine($"OpenGL Context Flags: {contextFlags}");
 
             Shader = new Shader(Gl, PathExtensions.GetAssemblyPath("shader.vert"), SharpEngine.Core._Resources.Default.LightShader, "test").Initialize();
-            Texture = new Texture2(Gl, "silk.png");
+            Texture = new Texture(Gl, "silk.png", Silk.NET.Assimp.TextureType.Diffuse);
             Model = new Model(Gl, "Untitled2.obj");
         }
 
@@ -109,7 +110,7 @@ namespace Tutorial
             Gl.Enable(EnableCap.DepthTest);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            Texture.Bind();
+            Texture.Use();
             Shader.Use();
             Shader.SetInt("uTexture0", 0);
 
@@ -127,7 +128,7 @@ namespace Tutorial
             {
                 mesh.Bind();
                 Shader.Use();
-                Texture.Bind();
+                Texture.Use();
 
                 Shader.SetInt("uTexture0", 0);
                 Shader.SetMatrix4("uModel", model, false);

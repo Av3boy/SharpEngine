@@ -10,21 +10,21 @@ public partial class Texture : IDisposable
 {
     /// <summary>The OpenGL handle for the texture.</summary>
     public readonly uint Handle;
+    public readonly TextureType Type;
 
-    public string Path { get; set; }
-    
-    public TextureType Type { get; }
-
+    private readonly string Path;
     private readonly GL _gl;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Texture"/>.
     /// </summary>
-    /// <param name="glHandle">The handle to the texture.</param>
-    public Texture(uint glHandle, GL gl)
+    public Texture(GL gl, string path, TextureType type)
     {
-        Handle = glHandle;
         _gl = gl;
+        Handle = _gl.GenTexture();
+
+        Path = path;
+        Type = type;
     }
 
     public void SetParameters()

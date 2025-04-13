@@ -43,8 +43,8 @@ public class TextureService
             return cachedTexture;
 
         // Generate handle
-        uint handle = Window.GL.GenTexture();
-        var texture = new Texture(handle, Window.GL);
+        // TODO: Determine the type of texture.
+        var texture = new Texture(Window.GL, path, Silk.NET.Assimp.TextureType.Diffuse);
 
         // Bind the handle
         texture.Use();
