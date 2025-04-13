@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using SharpEngine.Core.Components.Properties.Meshes.MeshData;
 using Silk.NET.Assimp;
 using Silk.NET.OpenGL;
 using System.Numerics;
@@ -59,16 +60,16 @@ namespace Tutorial
         private unsafe Mesh ProcessMesh(AssimpMesh* mesh, Scene* scene)
         {
             // data to fill
-            List<Vertex2> vertices = new List<Vertex2>();
+            List<Vertex> vertices = new List<Vertex>();
             List<uint> indices = new List<uint>();
             List<Texture> textures = new List<Texture>();
 
             // walk through each of the mesh's vertices
             for (uint i = 0; i < mesh->MNumVertices; i++)
             {
-                Vertex2 vertex = new Vertex2();
-                vertex.BoneIds = new int[Vertex2.MAX_BONE_INFLUENCE];
-                vertex.Weights = new float[Vertex2.MAX_BONE_INFLUENCE];
+                Vertex vertex = new Vertex();
+                vertex.BoneIds = new int[Vertex.MAX_BONE_INFLUENCE];
+                vertex.Weights = new float[Vertex.MAX_BONE_INFLUENCE];
 
                 vertex.Position = mesh->MVertices[i];
 
@@ -163,7 +164,7 @@ namespace Tutorial
             return textures;
         }
 
-        private float[] BuildVertices(List<Vertex2> vertexCollection)
+        private float[] BuildVertices(List<Vertex> vertexCollection)
         {
             var vertices = new List<float>();
 

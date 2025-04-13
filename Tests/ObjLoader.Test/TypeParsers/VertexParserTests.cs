@@ -44,7 +44,7 @@ namespace ObjLoader.Test.TypeParsers
             const string vertexLine = "0.123 0.234 0.345";
             _vertexParser.Parse(vertexLine);
 
-            var parsedNormal = _vertexDataStoreMock.ParsedVertex;
+            var parsedNormal = _vertexDataStoreMock.ParsedVertex.Position;
             parsedNormal.X.Should().BeApproximately(0.123f, 0.000001f);
             parsedNormal.Y.Should().BeApproximately(0.234f, 0.000001f);
             parsedNormal.Z.Should().BeApproximately(0.345f, 0.000001f);

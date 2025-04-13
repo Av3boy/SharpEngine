@@ -173,9 +173,9 @@ public class Minecraft : Game
                 {
                     // Resolve vertex positions
                     var position = mesh.Vertices2[vertex.VertexIndex];
-                    resolvedVertices.Add(position.X);
-                    resolvedVertices.Add(position.Y);
-                    resolvedVertices.Add(position.Z);
+                    resolvedVertices.Add(position.Position.X);
+                    resolvedVertices.Add(position.Position.Y);
+                    resolvedVertices.Add(position.Position.Z);
 
                     // Resolve normals
                     var normal = mesh.Normals2[vertex.NormalIndex];

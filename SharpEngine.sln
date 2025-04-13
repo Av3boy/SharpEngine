@@ -41,7 +41,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpEngine.Core.Components
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpEngine.Core", "SharpEngine.Core\SharpEngine.Core.csproj", "{52043A27-E9FF-3216-A026-E241F706D49B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjLoader", "ObjLoader\ObjLoader.csproj", "{9D23A8B2-C143-B170-10B8-069D9FA119FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpEngine.Core.ObjLoader", "ObjLoader\SharpEngine.Core.ObjLoader.csproj", "{9D23A8B2-C143-B170-10B8-069D9FA119FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjLoader.Tests", "Tests\ObjLoader.Test\ObjLoader.Tests.csproj", "{1807AD4A-C310-4BD8-9542-07D3D3EAE617}"
 EndProject

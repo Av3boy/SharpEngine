@@ -13,6 +13,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\ObjLoader\ObjLoader.csproj" />
+    <ProjectReference Include="..\..\ObjLoader\SharpEngine.Core.ObjLoader.csproj" />
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@ using ObjLoader.Loader.Common;
 using ObjLoader.TypeParsers;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
 using System;
+using Tutorial;
 
 namespace ObjLoader.Loader.TypeParsers
 {
@@ -26,7 +27,10 @@ namespace ObjLoader.Loader.TypeParsers
             float y = parts[1].ParseInvariantFloat();
             float z = parts[2].ParseInvariantFloat();
 
-            var vertex = new Vertex(x, y, z);
+            var vertex = new Vertex()
+            {
+                Position = new System.Numerics.Vector3(x, y, z),
+            };
             _dataStore.Vertices.Add(vertex);
         }
     }
