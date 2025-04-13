@@ -5,7 +5,7 @@ using SharpEngine.Core.Components.Properties.Meshes.MeshData;
 using Silk.NET.OpenGL;
 using Tutorial;
 
-using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
+using Texture2 = SharpEngine.Core.Components.Properties.Textures.Texture;
 
 namespace SharpEngine.Core.Entities.Properties.Meshes;
 
@@ -48,16 +48,26 @@ public class Mesh : IDisposable
     public List<Group> Groups { get; set; } = [];
     public List<Material> Materials { get; set; } = [];
 
-    public IReadOnlyList<Texture> Textures { get; set; }
+    public IReadOnlyList<Texture2> Textures { get; set; }
+    public IReadOnlyList<Texture> Textures_Old { get; set; }
 
     // --------------------------------------------------
+
+    public Mesh(GL gl, float[] vertices, uint[] indices, List<Texture2> textures)
+    {
+        GL = gl;
+        Vertices = vertices;
+        Indices = indices;
+        Textures = textures;
+        SetupMesh();
+    }
 
     public Mesh(GL gl, float[] vertices, uint[] indices, List<Texture> textures)
     {
         GL = gl;
         Vertices = vertices;
         Indices = indices;
-        Textures = textures;
+        Textures_Old = textures;
         SetupMesh();
     }
 

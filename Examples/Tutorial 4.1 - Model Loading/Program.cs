@@ -23,7 +23,8 @@ namespace Tutorial
 
         private static Texture Texture;
         private static Shader Shader;
-        private static Model Model;
+        private static Model_Old Model;
+        // private static Model Model;
 
         //Setup the camera's location, directions, and movement speed
         private static Vector3 CameraPosition = new Vector3(0.0f, 0.0f, 3.0f);
@@ -79,8 +80,10 @@ namespace Tutorial
             Shader = new Shader(Gl, PathExtensions.GetAssemblyPath("shader.vert"), SharpEngine.Core._Resources.Default.LightShader, "test").Initialize();
             Texture = new Texture(Gl, "silk.png", Silk.NET.Assimp.TextureType.Diffuse);
 
-            var meshes = ObjLoaderFactory.Load(Gl, "Untitled2.obj");
-            Model = new Model(Gl, "Untitled2.obj", meshes);
+            // var meshes = ObjLoaderFactory.Load(Gl, "Untitled2.obj");
+            // Model = new Model(Gl, "Untitled2.obj", meshes);
+
+            Model = new Model_Old(Gl, "Untitled2.obj");
         }
 
         private static unsafe void OnUpdate(double deltaTime)
@@ -139,8 +142,8 @@ namespace Tutorial
                 Shader.SetMatrix4("uView", view, false);
                 Shader.SetMatrix4("uProjection", projection, false);
 
-                // Gl.DrawArrays(PrimitiveType.Triangles, 0, (uint)mesh.Vertices.Length);
-                Gl.DrawElements(PrimitiveType.Triangles, (uint)mesh.Indices.Length, DrawElementsType.UnsignedInt, null);
+                Gl.DrawArrays(PrimitiveType.Triangles, 0, (uint)mesh.Vertices.Length);
+                // Gl.DrawElements(PrimitiveType.Triangles, (uint)mesh.Indices.Length, DrawElementsType.UnsignedInt, null);
             }
         }
 
