@@ -1,12 +1,7 @@
-using StbImageSharp;
-
 using System.IO;
 using System.Collections.Generic;
-using System;
 
-using Silk.NET.OpenGL;
 using SharpEngine.Core.Windowing;
-using SharpEngine.Core.Components.Properties.Textures;
 using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
 
 namespace SharpEngine.Core.Textures;

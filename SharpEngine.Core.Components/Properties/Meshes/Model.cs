@@ -1,15 +1,12 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using SharpEngine.Core.Components.Properties.Textures;
 using Silk.NET.Assimp;
 using Silk.NET.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using AssimpMesh = Silk.NET.Assimp.Mesh;
 using Mesh = SharpEngine.Core.Entities.Properties.Meshes.Mesh;
+using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
 
 namespace Tutorial
 {
@@ -25,7 +22,7 @@ namespace Tutorial
 
         private readonly GL _gl;
         private Assimp _assimp;
-        private List<Texture2> _texturesLoaded = new List<Texture2>();
+        private List<Texture> _texturesLoaded = new List<Texture>();
         public string Directory { get; protected set; } = string.Empty;
         public List<Mesh> Meshes { get; protected set; } = new List<Mesh>();
         
@@ -64,7 +61,7 @@ namespace Tutorial
             // data to fill
             List<Vertex2> vertices = new List<Vertex2>();
             List<uint> indices = new List<uint>();
-            List<Texture2> textures = new List<Texture2>();
+            List<Texture> textures = new List<Texture>();
 
             // walk through each of the mesh's vertices
             for (uint i = 0; i < mesh->MNumVertices; i++)
@@ -133,14 +130,14 @@ namespace Tutorial
                 textures.AddRange(heightMaps);
 
             // return a mesh object created from the extracted mesh data
-            var result = new Mesh(_gl, BuildVertices(vertices), BuildIndices(indices)); //, textures);
+            var result = new Mesh(_gl, BuildVertices(vertices), BuildIndices(indices), textures);
             return result;
         }
 
-        private unsafe List<Texture2> LoadMaterialTextures(Material* mat, TextureType type, string typeName)
+        private unsafe List<Texture> LoadMaterialTextures(Material* mat, TextureType type, string typeName)
         {
             var textureCount = _assimp.GetMaterialTextureCount(mat, type);
-            List<Texture2> textures = new List<Texture2>();
+            List<Texture> textures = new List<Texture>();
             for (uint i = 0; i < textureCount; i++)
             {
                 AssimpString path;
@@ -155,10 +152,10 @@ namespace Tutorial
                         break;
                     }
                 }
+
                 if (!skip)
                 {
-                    var texture = new Texture2(_gl, Directory, type);
-                    texture.Path = path;
+                    var texture = new Texture(_gl, path, type);
                     textures.Add(texture);
                     _texturesLoaded.Add(texture);
                 }
@@ -183,9 +180,7 @@ namespace Tutorial
         }
 
         private uint[] BuildIndices(List<uint> indices)
-        {
-            return indices.ToArray();
-        }
+            => indices.ToArray();
 
         public void Dispose()
         {
