@@ -20,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\ObjLoader\SharpEngine.Core.ObjLoader.csproj" />
       <ProjectReference Include="..\..\SharpEngine.Core.Components\SharpEngine.Core.Components.csproj" />
       <ProjectReference Include="..\..\SharpEngine.Core\SharpEngine.Core.csproj" />
     </ItemGroup>

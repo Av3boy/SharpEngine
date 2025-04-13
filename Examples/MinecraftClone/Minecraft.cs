@@ -11,6 +11,7 @@ using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Windowing;
+using Silk.NET.Core.Native;
 using Silk.NET.Input;
 using System;
 using System.Collections.Generic;
@@ -147,12 +148,14 @@ public class Minecraft : Game
         // TODO: Does not work yet.
         // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
 
-        var result = ObjLoaderFactory.Load(@"C:\Users\antti\Documents\Untitled2.obj");
-
-        ResolveMeshData(result);
-
         var go = new GameObject();
-        go.Meshes.Add(result);
+        var meshes = ObjLoaderFactory.Load(Window.GL, @"C:\Users\antti\Documents\Untitled2.obj");
+
+        foreach (var mesh in meshes)
+        {
+            ResolveMeshData(mesh);
+            go.Meshes.Add(mesh);
+        }
         
         go.Initialize();
         _scene.Root.AddChild(go);

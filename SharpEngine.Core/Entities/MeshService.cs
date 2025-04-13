@@ -43,7 +43,7 @@ public class MeshService
     const string FbxExtension = ".fbx";
     const string ObjExtension = ".obj";
 
-    /// <summary>
+    /*/// <summary>
     ///     Loads a mesh based on the file extension of the provided path.
     /// </summary>
     /// <param name="identifier">Used to specify the unique identifier for the mesh being loaded.</param>
@@ -68,7 +68,7 @@ public class MeshService
 
         Mesh LoadMeshIntoBuffer()
         {
-            var mesh = LoadMesh(identifier, new Mesh
+            var mesh = LoadMesh(identifier, new Mesh()
             {
                 Vertices = [.. vertices],
                 Normals = [.. normals],
@@ -127,7 +127,7 @@ public class MeshService
 
         if (vertices.Count > 0)
             yield return LoadMeshIntoBuffer();
-    }
+    }*/
 
     // TODO: #3 Load fbx mesh from file
     private IEnumerable<Mesh> LoadFbx(string identifier, string meshFilePath)

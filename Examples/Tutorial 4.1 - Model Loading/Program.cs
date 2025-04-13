@@ -1,3 +1,4 @@
+using ObjLoader.Loaders.ObjLoader;
 using SharpEngine.Core.Components.Properties.Textures;
 using SharpEngine.Core.Extensions;
 using Silk.NET.Input;
@@ -5,6 +6,7 @@ using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
 using System;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using Shader = SharpEngine.Core.Shaders.Shader;
@@ -76,7 +78,9 @@ namespace Tutorial
 
             Shader = new Shader(Gl, PathExtensions.GetAssemblyPath("shader.vert"), SharpEngine.Core._Resources.Default.LightShader, "test").Initialize();
             Texture = new Texture(Gl, "silk.png", Silk.NET.Assimp.TextureType.Diffuse);
-            Model = new Model(Gl, "Untitled2.obj");
+
+            var meshes = ObjLoaderFactory.Load(Gl, "Untitled2.obj");
+            Model = new Model(Gl, "Untitled2.obj", meshes);
         }
 
         private static unsafe void OnUpdate(double deltaTime)
@@ -135,7 +139,8 @@ namespace Tutorial
                 Shader.SetMatrix4("uView", view, false);
                 Shader.SetMatrix4("uProjection", projection, false);
 
-                Gl.DrawArrays(PrimitiveType.Triangles, 0, (uint)mesh.Vertices.Length);
+                // Gl.DrawArrays(PrimitiveType.Triangles, 0, (uint)mesh.Vertices.Length);
+                Gl.DrawElements(PrimitiveType.Triangles, (uint)mesh.Indices.Length, DrawElementsType.UnsignedInt, null);
             }
         }
 

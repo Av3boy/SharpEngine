@@ -1,4 +1,5 @@
 ﻿using SharpEngine.Core.Entities.Properties.Meshes;
+using SharpEngine.Core.Windowing;
 
 namespace SharpEngine.Core.Primitives;
 
@@ -8,7 +9,7 @@ namespace SharpEngine.Core.Primitives;
 public static class Plane
 {
     /// <summary>The plane mesh.</summary>
-    public static Mesh Mesh { get; } = new()
+    public static Mesh Mesh { get; } = new(Window.GL)
     {
         Vertices =
         [

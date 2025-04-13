@@ -1,13 +1,16 @@
 using ObjLoader.Loader.TypeParsers;
 using ObjLoader.Loaders.MaterialLoader;
 using SharpEngine.Core.Entities.Properties.Meshes;
+using Silk.NET.OpenGL;
+using System.Collections.Generic;
+using Tutorial;
 
 namespace ObjLoader.Loaders.ObjLoader
 {
     public static class ObjLoaderFactory
     {
         /// <inheritdoc />
-        public static Mesh Load(string path)
+        public static List<Mesh> Load(GL gl, string path)
         {
             var dataStore = new DataStore();
             
@@ -22,7 +25,7 @@ namespace ObjLoader.Loaders.ObjLoader
             var useMaterialParser = new UseMaterialParser(dataStore);
 
             var loader = new ObjLoader(path, dataStore).SetupTypeParsers(faceParser, groupParser, normalParser, textureParser, vertexParser, materialLibraryParser, useMaterialParser);
-            return loader.Load();
+            return loader.Load(gl);
         }
     }
 }

@@ -39,10 +39,14 @@ public class Material
     /// </summary>
     public Texture DiffuseMap { get; set; }
 
+    public string DiffuseTextureMap { get; set; }
+
     /// <summary>
     ///   Gets or sets the specular map texture.
     /// </summary>
     public Texture SpecularMap { get; set; }
+
+    public string SpecularTextureMap { get; set; }
 
     /// <summary>Gets whether the material uses a specular map.</summary>
     public bool UseSpecularMap => SpecularMap.Handle != DiffuseMap.Handle;
@@ -75,9 +79,7 @@ public class Material
     public int IlluminationModel { get; set; }
 
     public string AmbientTextureMap { get; set; }
-    public string DiffuseTextureMap { get; set; }
 
-    public string SpecularTextureMap { get; set; }
     public string SpecularHighlightTextureMap { get; set; }
 
     public string BumpMap { get; set; }

@@ -1,4 +1,5 @@
 ﻿using SharpEngine.Core.Entities.Properties.Meshes;
+using SharpEngine.Core.Windowing;
 
 namespace SharpEngine.Core.Primitives;
 
@@ -8,7 +9,7 @@ namespace SharpEngine.Core.Primitives;
 public static class Cube
 {
     /// <summary>The cube mesh.</summary>
-    public static readonly Mesh Mesh = new()
+    public static readonly Mesh Mesh = new(Window.GL)
     {
         Vertices =
         [

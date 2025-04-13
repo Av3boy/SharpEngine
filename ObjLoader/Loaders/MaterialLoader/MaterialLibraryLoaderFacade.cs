@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+
 namespace ObjLoader.Loaders.MaterialLoader
 {
     public class MaterialLibraryLoaderFacade : IMaterialLibraryLoaderFacade
@@ -11,6 +14,12 @@ namespace ObjLoader.Loaders.MaterialLoader
 
         public void Load(string materialFileName)
         {
+            if (!File.Exists(materialFileName))
+            {
+                Console.WriteLine($"Material file '{materialFileName}' doesn't exist.");
+                return;
+            }    
+
             using var stream = _loader.Open(materialFileName);
 
             if (stream != null)

@@ -46,9 +46,9 @@ public class Mesh : IDisposable
     public uint[] Indices { get; set; } = [];
 
     public List<Group> Groups { get; set; } = [];
-    public List<Material> Materials { get; set; }= [];
+    public List<Material> Materials { get; set; } = [];
 
-    public IReadOnlyList<Texture> Textures { get; private set; }
+    public IReadOnlyList<Texture> Textures { get; set; }
 
     // --------------------------------------------------
 
@@ -61,16 +61,16 @@ public class Mesh : IDisposable
         SetupMesh();
     }
 
-    public Mesh()
+    public Mesh(GL gl)
     {
-
+        GL = gl;
+        SetupMesh();
     }
 
     public VertexArrayObject<float, uint> VAO { get; set; }
     public BufferObject<float> VBO { get; set; }
     public BufferObject<uint> EBO { get; set; }
     public GL GL { get; }
-
 
     public unsafe void SetupMesh()
     {
