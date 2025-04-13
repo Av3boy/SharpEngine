@@ -35,16 +35,19 @@ public class TextureService
         if (string.IsNullOrWhiteSpace(path))
             throw new FileNotFoundException("No texture file provided.");
 
+        if (!File.Exists(path))
+            throw new FileNotFoundException($"Texture file not found from path '{path}'.");
+
         // Check if the texture is already in the cache
         if (_textureCache.TryGetValue(path, out var cachedTexture))
             return cachedTexture;
 
         // Generate handle
         uint handle = Window.GL.GenTexture();
+        var texture = new Texture(handle, Window.GL);
 
         // Bind the handle
-        Window.GL.ActiveTexture(TextureUnit.Texture0);
-        Window.GL.BindTexture(TextureTarget.Texture2D, handle);
+        texture.Use();
 
         // OpenGL has its texture origin in the lower left corner instead of the top left corner,
         // so we tell StbImageSharp to flip the image when loading.
@@ -60,16 +63,12 @@ public class TextureService
         }
 
         // Set texture parameters
-        Window.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-        Window.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-        Window.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-        Window.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+        texture.SetParameters();
 
         // Generate mipmaps
         Window.GL.GenerateMipmap(GLEnum.Texture2D);
 
-        // Create a new texture instance and add it to the cache
-        var texture = new Texture(handle, Window.GL);
+        // Add it to the cache
         _textureCache[path] = texture;
 
         return texture;
