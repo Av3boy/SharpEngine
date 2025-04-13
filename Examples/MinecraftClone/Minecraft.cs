@@ -142,7 +142,7 @@ public class Minecraft : Game
     private void InitializeWorld()
     {
         InitializeLights();
-        // InitializeChunks();
+        InitializeChunks();
 
         // TODO: Does not work yet.
         // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");

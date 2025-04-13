@@ -25,6 +25,10 @@ public class Renderer : RendererBase
     private readonly Scene _scene;
     private readonly Window _window;
 
+    // TODO: Property for specific type of objects
+    // No heavy iteration reads for filtering,
+    // instead use a notification system from the scene that an item has been removed / added?
+
     // Read only once, load into OpenGL buffer once.
     // TODO: Multiple meshes
 
@@ -56,6 +60,11 @@ public class Renderer : RendererBase
         try
         {
             Window.GL.Enable(EnableCap.DepthTest);
+
+            // Enable image transparency.
+            // TODO: Needs testing.
+            Window.GL.Enable(EnableCap.Blend);
+            Window.GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             _camera.SetShaderUniforms(_lightingShader.Shader!);
             Window.GL.BindVertexArray(_lightingShader.Vao);

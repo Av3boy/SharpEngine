@@ -1,3 +1,4 @@
+using SharpEngine.Core.Components.Properties.Textures;
 using SharpEngine.Core.Extensions;
 using Silk.NET.Input;
 using Silk.NET.Maths;

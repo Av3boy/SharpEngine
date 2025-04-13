@@ -4,7 +4,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
 
-namespace Tutorial
+namespace SharpEngine.Core.Components.Properties.Textures
 {
     public class Texture2 : IDisposable
     {
@@ -29,12 +29,10 @@ namespace Tutorial
                 img.ProcessPixelRows(accessor =>
                 {
                     for (int y = 0; y < accessor.Height; y++)
-                    {
                         fixed (void* data = accessor.GetRowSpan(y))
                         {
                             gl.TexSubImage2D(TextureTarget.Texture2D, 0, 0, y, (uint) accessor.Width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
                         }
-                    }
                 });
             }
 

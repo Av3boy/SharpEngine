@@ -1,9 +1,8 @@
-﻿using SharpEngine.Core.Windowing;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 
-namespace SharpEngine.Core.Textures;
+namespace SharpEngine.Core.Components.Properties.Textures;
 
-public static class TextureExtensions
+public partial class Texture
 {
 
     // Multiple textures can be bound, if your shader needs more than just one.
@@ -14,9 +13,9 @@ public static class TextureExtensions
     ///     Activate the texture.
     /// </summary>
     /// <param name="unit">The bound texture location.</param>
-    public static void Use(this Texture texture, TextureUnit unit)
+    public void Use(TextureUnit unit)
     {
-        Window.GL.ActiveTexture(unit);
-        Window.GL.BindTexture(TextureTarget.Texture2D, texture.Handle);
+        _gl.ActiveTexture(unit);
+        _gl.BindTexture(TextureTarget.Texture2D, Handle);
     }
 }

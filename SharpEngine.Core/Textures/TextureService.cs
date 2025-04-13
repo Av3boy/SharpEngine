@@ -6,6 +6,8 @@ using System;
 
 using Silk.NET.OpenGL;
 using SharpEngine.Core.Windowing;
+using SharpEngine.Core.Components.Properties.Textures;
+using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
 
 namespace SharpEngine.Core.Textures;
 
@@ -67,7 +69,7 @@ public class TextureService
         Window.GL.GenerateMipmap(GLEnum.Texture2D);
 
         // Create a new texture instance and add it to the cache
-        var texture = new Texture(handle);
+        var texture = new Texture(handle, Window.GL);
         _textureCache[path] = texture;
 
         return texture;
