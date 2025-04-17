@@ -143,21 +143,18 @@ public class Minecraft : Game
     private void InitializeWorld()
     {
         InitializeLights();
-        InitializeChunks();
+        // InitializeChunks();
 
         // TODO: #2 Does not work yet.
         // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
 
-        var go = new GameObject();
         var model = ObjLoaderFactory.Load(Window.GL, @"C:\Users\antti\Documents\Untitled2.obj");
-
-        foreach (var mesh in model.Meshes)
+        var go = new GameObject()
         {
-            ResolveMeshData(mesh);
-            go.Meshes.Add(mesh);
-        }
-        
-        go.Initialize();
+            Meshes = model.Meshes
+        };
+
+        go.Initialize(true);
         _scene.Root.AddChild(go);
 
     }

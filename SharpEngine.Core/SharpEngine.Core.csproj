@@ -44,6 +44,9 @@
     <None Update="_Resources\Shaders\Material.glsl" CopyToOutputDirectory="PreserveNewest" />
     <None Update="_Resources\Shaders\shader.frag" CopyToOutputDirectory="PreserveNewest" />
     <None Update="_Resources\Shaders\shader.vert" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\shader2.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="_Resources\Shaders\uiShader.frag" CopyToOutputDirectory="Always" />
     <None Update="_Resources\Shaders\uiShader.vert" CopyToOutputDirectory="PreserveNewest" />
     <None Update="_Resources\Textures\debug.jpg" CopyToOutputDirectory="Always" />

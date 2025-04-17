@@ -77,7 +77,7 @@ namespace Tutorial
             Gl.GetInteger(GLEnum.ContextFlags, out int contextFlags);
             Console.WriteLine($"OpenGL Context Flags: {contextFlags}");
 
-            Shader = new Shader(Gl, PathExtensions.GetAssemblyPath("shader.vert"), Default.LightShader, "test").Initialize();
+            Shader = new Shader(Gl, PathExtensions.GetAssemblyPath("shader2.vert"), Default.LightShader, "test").Initialize();
             Texture = new Texture(Gl, "silk.png");
 
             Model_Old = ObjLoaderFactory.Load(Gl, "Untitled2.obj");

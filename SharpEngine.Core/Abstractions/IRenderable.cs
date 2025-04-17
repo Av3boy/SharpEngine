@@ -18,7 +18,7 @@ public interface IRenderable
     ///     Initializes the necessary buffers for the object.
     /// </summary>
     /// <param name="mesh">The mesh that should the buffers should be initialized with.</param>
-    public void InitializeBuffers(Mesh mesh);
+    public void InitializeBuffers(Mesh mesh, bool useMeshVertices);
 
     /// <summary>
     ///     Binds the VAO to the current context.

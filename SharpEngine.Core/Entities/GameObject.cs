@@ -89,13 +89,13 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     public uint VAO { get; set; }
 
     /// <inheritdoc />
-    public void Initialize()
+    public void Initialize(bool useMeshVertices = false)
     {
         VAO = Window.GL.GenVertexArray();
         Bind();
 
         foreach (var mesh in Meshes)
-            InitializeBuffers(mesh);
+            InitializeBuffers(mesh, useMeshVertices);
 
         Material.Shader.Use();
     }
@@ -107,15 +107,18 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     }
 
     /// <inheritdoc />
-    public void InitializeBuffers(Mesh mesh)
+    public void InitializeBuffers(Mesh mesh, bool useMeshVertices = false)
     {
-        var vertexBufferObject = Window.GL.GenBuffer();
-        Window.GL.BindBuffer(GLEnum.ArrayBuffer, vertexBufferObject);
-        Window.GL.BufferData<float>(GLEnum.ArrayBuffer, mesh.GetVertices(), GLEnum.StaticDraw);
+        if (useMeshVertices)
+        {
+            var vertexBufferObject = Window.GL.GenBuffer();
+            Window.GL.BindBuffer(GLEnum.ArrayBuffer, vertexBufferObject);
+            Window.GL.BufferData<float>(GLEnum.ArrayBuffer, useMeshVertices ? mesh.Vertices : mesh.GetVertices(), GLEnum.StaticDraw);
 
-        var elementBufferObject = Window.GL.GenBuffer();
-        Window.GL.BindBuffer(GLEnum.ElementArrayBuffer, elementBufferObject);
-        Window.GL.BufferData<uint>(GLEnum.ElementArrayBuffer, mesh.Indices, GLEnum.StaticDraw);
+            var elementBufferObject = Window.GL.GenBuffer();
+            Window.GL.BindBuffer(GLEnum.ElementArrayBuffer, elementBufferObject);
+            Window.GL.BufferData<uint>(GLEnum.ElementArrayBuffer, mesh.Indices, GLEnum.StaticDraw);
+        }
     }
 
     /// <inheritdoc />
@@ -143,8 +146,11 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
         Material.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
 
         foreach (var mesh in Meshes)
+        {
+            mesh.Bind();
             Window.GL.DrawArrays(PrimitiveType.Triangles, 0, (uint)mesh.Vertices.Length);
             // Window.GL.DrawElements<uint>(PrimitiveType.Triangles, (uint)mesh.Indices.Length, DrawElementsType.UnsignedInt, []);
+        }
 
         return Task.CompletedTask;
     }

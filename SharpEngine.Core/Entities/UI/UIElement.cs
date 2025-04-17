@@ -68,7 +68,7 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
     }
 
     /// <inheritdoc />
-    public void InitializeBuffers(Mesh mesh)
+    public void InitializeBuffers(Mesh mesh, bool useMeshVertices = false)
     {
         var vertexBufferObject = Window.GL.GenBuffer();
         Window.GL.BindBuffer(GLEnum.ArrayBuffer, vertexBufferObject);

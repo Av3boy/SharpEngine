@@ -29,7 +29,7 @@
       <None Update="cube.obj">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="Shader.vert">
+      <None Update="shader2.vert">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
       <None Update="silk.png">
