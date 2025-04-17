@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using SharpEngine.Core._Resources;
 using Shader = SharpEngine.Core.Shaders.Shader;
 using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
 
@@ -23,8 +24,7 @@ namespace Tutorial
 
         private static Texture Texture;
         private static Shader Shader;
-        private static Model_Old Model;
-        // private static Model Model;
+        private static Model_Old Model_Old;
 
         //Setup the camera's location, directions, and movement speed
         private static Vector3 CameraPosition = new Vector3(0.0f, 0.0f, 3.0f);
@@ -77,13 +77,10 @@ namespace Tutorial
             Gl.GetInteger(GLEnum.ContextFlags, out int contextFlags);
             Console.WriteLine($"OpenGL Context Flags: {contextFlags}");
 
-            Shader = new Shader(Gl, PathExtensions.GetAssemblyPath("shader.vert"), SharpEngine.Core._Resources.Default.LightShader, "test").Initialize();
-            Texture = new Texture(Gl, "silk.png", Silk.NET.Assimp.TextureType.Diffuse);
+            Shader = new Shader(Gl, PathExtensions.GetAssemblyPath("shader.vert"), Default.LightShader, "test").Initialize();
+            Texture = new Texture(Gl, "silk.png");
 
-            // var meshes = ObjLoaderFactory.Load(Gl, "Untitled2.obj");
-            // Model = new Model(Gl, "Untitled2.obj", meshes);
-
-            Model = new Model_Old(Gl, "Untitled2.obj");
+            Model_Old = ObjLoaderFactory.Load(Gl, "Untitled2.obj");
         }
 
         private static unsafe void OnUpdate(double deltaTime)
@@ -131,7 +128,7 @@ namespace Tutorial
             //Note that the apsect ratio calculation must be performed as a float, otherwise integer division will be performed (truncating the result).
             var projection = Matrix4x4.CreatePerspectiveFieldOfView(SharpEngine.Core.Math.DegreesToRadians(CameraZoom), (float)size.X / size.Y, 0.1f, 100.0f);
 
-            foreach (var mesh in Model.Meshes)
+            foreach (var mesh in Model_Old.Meshes)
             {
                 mesh.Bind();
                 Shader.Use();
@@ -143,7 +140,6 @@ namespace Tutorial
                 Shader.SetMatrix4("uProjection", projection, false);
 
                 Gl.DrawArrays(PrimitiveType.Triangles, 0, (uint)mesh.Vertices.Length);
-                // Gl.DrawElements(PrimitiveType.Triangles, (uint)mesh.Indices.Length, DrawElementsType.UnsignedInt, null);
             }
         }
 
@@ -186,7 +182,7 @@ namespace Tutorial
 
         private static void OnClose()
         {
-            Model.Dispose();
+            Model_Old.Dispose();
             Shader.Dispose();
             Texture.Dispose();
         }

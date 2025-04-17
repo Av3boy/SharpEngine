@@ -4,9 +4,6 @@
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
 using Silk.NET.Assimp;
 using Silk.NET.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using AssimpMesh = Silk.NET.Assimp.Mesh;
 using Mesh = SharpEngine.Core.Entities.Properties.Meshes.Mesh;
@@ -14,11 +11,12 @@ using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
 
 namespace Tutorial
 {
+    [Obsolete("This should be removed and the ObjLoader should be used instead.")]
     public class Model_Old : IDisposable
     {
         public Model_Old(GL gl, string path, bool gamma = false)
         {
-            var assimp = Silk.NET.Assimp.Assimp.GetApi();
+            var assimp = Assimp.GetApi();
             _assimp = assimp;
             _gl = gl;
             LoadModel(path);
@@ -175,6 +173,7 @@ namespace Tutorial
                 vertices.Add(vertex.Position.X);
                 vertices.Add(vertex.Position.Y);
                 vertices.Add(vertex.Position.Z);
+
                 vertices.Add(vertex.TexCoords.X);
                 vertices.Add(vertex.TexCoords.Y);
             }

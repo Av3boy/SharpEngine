@@ -18,7 +18,7 @@ public partial class Texture : IDisposable
     /// <summary>
     ///     Initializes a new instance of <see cref="Texture"/>.
     /// </summary>
-    public Texture(GL gl, string path, TextureType type)
+    public Texture(GL gl, string path, TextureType type = TextureType.Diffuse)
     {
         _gl = gl;
         Handle = _gl.GenTexture();

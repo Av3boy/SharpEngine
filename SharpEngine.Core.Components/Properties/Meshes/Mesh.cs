@@ -87,6 +87,9 @@ public class Mesh : IDisposable
         EBO = new BufferObject<uint>(GL, Indices, BufferTargetARB.ElementArrayBuffer);
         VBO = new BufferObject<float>(GL, Vertices, BufferTargetARB.ArrayBuffer);
         VAO = new VertexArrayObject<float, uint>(GL, VBO, EBO);
+
+        // TODO: This should use VertexData properties.
+        // TODO: This assumes we only use the vertex position and texture coordinates, it should also support normals.
         VAO.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 5, 0);
         VAO.VertexAttributePointer(1, 2, VertexAttribPointerType.Float, 5, 3);
     }

@@ -149,9 +149,9 @@ public class Minecraft : Game
         // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
 
         var go = new GameObject();
-        var meshes = ObjLoaderFactory.Load(Window.GL, @"C:\Users\antti\Documents\Untitled2.obj");
+        var model = ObjLoaderFactory.Load(Window.GL, @"C:\Users\antti\Documents\Untitled2.obj");
 
-        foreach (var mesh in meshes)
+        foreach (var mesh in model.Meshes)
         {
             ResolveMeshData(mesh);
             go.Meshes.Add(mesh);
