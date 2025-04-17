@@ -6,8 +6,8 @@ namespace Minecraft.Block;
 
 internal class Stone : BlockBase
 {
-    // TODO: Create record for textures files for less parameters
-    // TODO: Create const files for these file strings
+    // TODO: #91 Create record for textures files for less parameters
+    // TODO: #91 Create const files for these file strings
 
     /// <summary>
     ///     Initializes a new <see cref="Stone"/> block.

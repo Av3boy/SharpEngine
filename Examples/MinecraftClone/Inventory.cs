@@ -14,13 +14,13 @@ public class Inventory
     /// <summary>Gets or sets the selected slot.</summary>
     public ToolbarSlot SelectedSlot { get; set; } = new(1);
 
-    // TODO: After first version
+    // TODO: #90 After first version
     // public List<InventoryItem> Items { get; set; } = new();
 
     /// <summary>Gets or sets the toolbar slots.</summary>
     public ToolbarSlot[] Toolbar { get; set; } = new ToolbarSlot[10];
 
-    // TODO: Use later to optimize inventory logic
+    // TODO: #90 Use later to optimize inventory logic
     // private bool _toolbarSlotsAvailable;
 
     /// <summary>

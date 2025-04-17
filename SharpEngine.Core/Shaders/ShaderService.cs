@@ -15,7 +15,6 @@ public class ShaderService
     /// </summary>
     public static ShaderService Instance { get; } = new ShaderService();
 
-    // TODO: Cache data is never set
     private readonly Dictionary<string, Shader> _shaderCache = [];
 
     /// <summary>

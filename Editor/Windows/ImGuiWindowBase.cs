@@ -89,8 +89,7 @@ namespace SharpEngine.Editor.Windows
         {
             Console.WriteLine($"Window {Name} was undocked.");
 
-            // TODO: This method of doing this does not work (at least in .Net 8).
-            // See issue #44 for more information.
+            // TODO: #75 This method of doing this does not work (at least in .Net 8).
             //CreateSilkWindow();
         }
 

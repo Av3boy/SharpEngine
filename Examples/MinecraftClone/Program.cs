@@ -28,7 +28,7 @@ public static class Program
         window.HandleMouseWheel += game.HandleMouseWheel;
         window.OnAfterRender += frame => game.OnAfterRender(frame);
 
-        // TODO: This needs to be streamlined. 
+        // TODO: #85 This needs to be streamlined. 
         game.Window = window;
 
         window.Run();

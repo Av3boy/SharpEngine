@@ -69,7 +69,7 @@ public class Minecraft : Game
 
             var gridLayout = new GridLayout<UIElement>();
 
-            // TODO: Fix UI renderer
+            // TODO: #89 Fix UI renderer
             _uiElem = new UIElement("uiElement");
             _scene.UIElements.Add(_uiElem);
 
@@ -145,7 +145,7 @@ public class Minecraft : Game
         InitializeLights();
         InitializeChunks();
 
-        // TODO: Does not work yet.
+        // TODO: #2 Does not work yet.
         // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
 
         var go = new GameObject();
@@ -221,9 +221,9 @@ public class Minecraft : Game
 
     private void InitializeChunks()
     {
-        // TODO: Generate chunks when player moves
+        // TODO: #88 Generate chunks when player moves
 
-        // TODO: Generate chunks using 3d Perlin noise
+        // TODO: #87 Generate chunks using 3d Perlin noise
 
         const int chunkSize = 16;
         const int numChunks = 3;
@@ -266,7 +266,7 @@ public class Minecraft : Game
     private void UpdateUI()
         => _uiElem.Transform.Rotation.Angle += 0.01f;
 
-    // TODO: Input system to let users change change key bindings?
+    // TODO: #21 Input system to let users change change key bindings?
     /// <inheritdoc />
     public override void HandleKeyboard(IKeyboard input, double deltaTime)
     {
@@ -322,8 +322,8 @@ public class Minecraft : Game
             var destroyedBlockType = DestroyBlock();
             if (destroyedBlockType != BlockType.None)
             {
-                // TODO: The block should be added to the slot so that 0 is the last slot instead of 9.
-                // TODO: The first block destroyed doesn't seem to be added to the inventory.
+                // TODO: #86 The block should be added to the slot so that 0 is the last slot instead of 9.
+                // TODO: #86 The first block destroyed doesn't seem to be added to the inventory.
                 Console.WriteLine($"Block destroyed: {destroyedBlockType}.");
                 _inventory.AddToolbarItem(destroyedBlockType);
             }

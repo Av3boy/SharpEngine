@@ -129,7 +129,7 @@ public class EditorWindow : Window
 
     private void Save()
     {
-        // TODO: Save all changes.
+        // TODO: #84 Save all changes.
     }
 
     private static void EnableDocking()
@@ -173,7 +173,7 @@ public class EditorWindow : Window
                 {
                     // Handle New action
 
-                    // TODO: Select preferred editor
+                    // TODO: #76 Select preferred editor
                     // Required fields:
                     // radio button, each defined editor (store as json)
                     // textbox,Path to executable
@@ -204,12 +204,12 @@ public class EditorWindow : Window
         {
             if (ImGui.MenuItem("New"))
             {
-                // TODO: Handle New action
+                // TODO: #83 Handle New action
             }
 
             if (ImGui.MenuItem("Open"))
             {
-                // TODO: Handle Open action
+                // TODO: #82 Handle Open action
             }
 
             if (ImGui.MenuItem("Save"))
@@ -217,12 +217,12 @@ public class EditorWindow : Window
 
             if (ImGui.MenuItem("Exit"))
             {
-                // TODO: Handle Exit action
+                // TODO: #81 Handle Exit action
             }
 
             if (ImGui.MenuItem("Publish"))
             {
-                // TODO: Handle Publish action
+                // TODO: #80 Handle Publish action
             }
 
             ImGui.EndMenu();
@@ -236,7 +236,7 @@ public class EditorWindow : Window
 
         if (button == Settings.PrimaryButton)
         {
-            // TODO: This probably isn't doable using ImGui. Figure out a new way or wait until UI is written using the Core 2D renderer.
+            // TODO: #79 This probably isn't doable using ImGui. Figure out a new way or wait until UI is written using the Core 2D renderer.
             if (ImGui.IsItemClicked((ImGuiMouseButton)button))
             {
                 // Clicked on an ImGui component
@@ -252,7 +252,7 @@ public class EditorWindow : Window
 
         if (button == Settings.SecondaryButton)
         {
-            // TODO: Make this work.
+            // TODO: #79 Make this work.
             if (ImGui.IsItemClicked((ImGuiMouseButton)button))
             {
                 // Clicked on an ImGui component

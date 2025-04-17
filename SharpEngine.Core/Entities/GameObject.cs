@@ -27,7 +27,7 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     /// </summary>
     public GameObject() : base(string.Empty)
     {
-        // TODO: Using lightning shader here will most likely break stuff, it needs to be refactored out.
+        // TODO: #5 Using lightning shader here will most likely break stuff, it needs to be refactored out.
         var shader = ShaderService.Instance.LoadShader(_Resources.Default.VertexShader, _Resources.Default.FragmentShader, "lighting");
         var diffuse = TextureService.Instance.LoadTexture(_Resources.Default.DebugTexture);
         Material = new(shader, diffuse);
@@ -57,7 +57,7 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     /// </summary>
     public List<Mesh> Meshes { get; set; } = [];
 
-    // TODO: Each mesh should have its own material.
+    // TODO: #5 Each mesh should have its own material.
     /// <summary>
     ///     Gets or sets the material of the game object.
     /// </summary>

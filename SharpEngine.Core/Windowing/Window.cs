@@ -20,6 +20,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Shader = SharpEngine.Core.Shaders.Shader;
+using Silk.NET.GLFW;
 
 namespace SharpEngine.Core.Windowing;
 
@@ -65,7 +66,7 @@ public class Window : SilkWindow
     /// <summary>The OpenGL context.</summary>
     public static GL GL;
 
-    // TODO: Use this method.
+    // TODO: #93 Use this method.
     /// <summary>
     ///     Gets the current OpenGL context.
     /// </summary>
@@ -147,9 +148,6 @@ public class Window : SilkWindow
 
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-            // TODO: Set cursor shape
-            // CursorShape = CursorShape.Hand;
-
             // Load all meshes from the mesh cache
             MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
 
@@ -161,7 +159,7 @@ public class Window : SilkWindow
             foreach (var type in rendererTypes)
             {
                 // Make sure the renderer has the correct constructor parameters!
-                // TODO: The static reference to the context will not work when multiple windows are implemented, since the context will be different.
+                // TODO: #75 The static reference to the context will not work when multiple windows are implemented, since the context will be different.
                 var requiredArguments = new object[] { Camera, this, Settings, Scene };
                 var renderer = (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
 
@@ -212,9 +210,6 @@ public class Window : SilkWindow
 
             Task.WaitAll([.. renderTasks]);
 
-            // TODO: This call causes flickering in the new framework. Investigate why.
-            // _window.SwapBuffers();
-
             AfterRender(frame);
 
             _imGuiController?.Render();
@@ -250,14 +245,10 @@ public class Window : SilkWindow
             // Wait for the window to be initialized.
         }
 
-        // TODO: GLFW_ISFOCUSED
-        // if (!_window.IsFocused)
-        //     return;
-
         if (Settings.PrintFrameRate)
             Console.WriteLine($"FPS: {frame.FrameRate}");
 
-        // TODO: Handle multiple mice?
+        // TODO: #21 Handle multiple mice?
         var mouse = Input?.Mice[0];
         if (mouse is not null)
         {
@@ -295,6 +286,9 @@ public class Window : SilkWindow
             mouse.Scroll += OnMouseWheel;
             mouse.Click += OnMouseClick;
             mouse.MouseDown += OnMouseDown;
+
+            if (IsFocused)
+                mouse.Cursor.CursorMode = CursorMode.Raw;
         }
     }
 
@@ -338,7 +332,7 @@ public class Window : SilkWindow
     /// <param name="scene">The contents of the new scene.</param>
     protected void SetScene(Scene scene)
     {
-        // TODO: Do we need to clear anything from e.g. the GPU when we change change the scene?
+        // TODO: #92 Do we need to clear anything from e.g. the GPU when we change change the scene?
         Scene = scene;
     }
 }

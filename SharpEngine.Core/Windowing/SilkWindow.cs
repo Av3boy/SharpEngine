@@ -159,6 +159,8 @@ public abstract class SilkWindow : IWindow
         set => CurrentWindow.ShouldSwapAutomatically = value;
     }
 
+    public bool IsFocused { get; }
+
     /// <inheritdoc />
     public VideoMode VideoMode => CurrentWindow.VideoMode;
 

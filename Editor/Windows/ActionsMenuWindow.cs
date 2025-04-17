@@ -65,10 +65,10 @@ namespace SharpEngine.Editor.Windows
         {
             if (Project is null)
             {
-                // TODO: This should never be possible. If the Project is null when it's loaded we should make sure it's initialized. 
+                // TODO: #78 This should never be possible. If the Project is null when it's loaded we should make sure it's initialized. 
                 // Editor service probably needs to be made shared so that we can initialize the project / solution when the editor is opened.
 
-                // TODO: Do we want to save here automatically or prompt the user to save?
+                // TODO: #77 Save automatically
                 Debug.LogInformation("The project was null");
                 return;
             }

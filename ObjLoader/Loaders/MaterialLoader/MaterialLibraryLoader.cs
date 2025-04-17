@@ -20,7 +20,7 @@ namespace ObjLoader.Loaders.MaterialLoader
 
         private Material CurrentMaterial { get; set; }
 
-        // TODO: See Model class. This support both materials and textures
+        // TODO: #2 See Model class. This support both materials and textures
 
         public MaterialLibraryLoader(string objPath, DataStore dataStore)
         {         

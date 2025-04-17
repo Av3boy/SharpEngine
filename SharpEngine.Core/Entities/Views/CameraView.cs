@@ -134,7 +134,7 @@ public class CameraView : View
             lastPos = new Vector2(mousePosition.X, mousePosition.Y);
             firstMove = false;
         }
-        else // TODO: Split so that only the camera view will rotate
+        else // TODO: #48 Split so that only the camera view will rotate
         {
             var deltaX = mousePosition.X - lastPos.X;
             var deltaY = mousePosition.Y - lastPos.Y;

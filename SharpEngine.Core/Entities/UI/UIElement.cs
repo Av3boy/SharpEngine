@@ -29,7 +29,7 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
     /// <param name="name">The name of the UI element.</param>
     public UIElement(string name) : base(name)
     {
-        // TODO: Support custom meshes?
+        // TODO: #5 Support custom meshes?
         Mesh = MeshService.Instance.LoadMesh(nameof(Primitives.Plane), Primitives.Plane.Mesh);
 
         Initialize();
@@ -91,7 +91,7 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
 
         Bind();
 
-        // TODO: These should come from somewhere else.
+        // TODO: #75 These should come from somewhere else.
         const float screenWidth = 1280;
         const float screenHeight = 720;
 

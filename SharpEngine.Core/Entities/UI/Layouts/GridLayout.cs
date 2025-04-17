@@ -42,7 +42,7 @@ public class GridLayout<TItem> : LayoutBase<TItem> where TItem : SceneNode, new(
     {
         base.AddItem(item);
 
-        var offset = -100; // TODO: Fix this, this is just a temporary solution.
+        var offset = -100; // TODO: #26 Fix this, this is just a temporary solution.
 
         if (Items.Count % Columns != 0)
             offset = offset + (Items.Count * 30);

@@ -41,7 +41,6 @@ public static class Program
             var scene = !string.IsNullOrEmpty(sceneFile) ? Scene.LoadScene(sceneFile) : new Scene();
             var project = !string.IsNullOrEmpty(projectFile) ? Project.LoadProject(projectFile)
 #if DEBUG
-                // TODO: We should create an additional getter for the .sharpproject file.
                 : new Project() { Path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\Examples\Minimal"), Name = "Minimal" };
 #else
                 : new Project();

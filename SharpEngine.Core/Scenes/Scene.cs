@@ -111,7 +111,7 @@ public class Scene
     /// <returns>All the game objects in the current scene.</returns>
     public List<T> GetObjectsOfType<T>(SceneNode? root = null)
     {
-        // TODO: Can we make this async?
+        // TODO: #94 Can we make this async?
         var result = new List<T>();
         static void FindsObjects(SceneNode node, List<T> result)
         {

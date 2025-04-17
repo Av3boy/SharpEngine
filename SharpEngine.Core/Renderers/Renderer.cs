@@ -25,12 +25,12 @@ public class Renderer : RendererBase
     private readonly Scene _scene;
     private readonly Window _window;
 
-    // TODO: Property for specific type of objects
+    // TODO: #7 Property for specific type of objects
     // No heavy iteration reads for filtering,
     // instead use a notification system from the scene that an item has been removed / added?
 
     // Read only once, load into OpenGL buffer once.
-    // TODO: Multiple meshes
+    // TODO: #5 Multiple meshes
 
     /// <inheritdoc />
     public override RenderFlags RenderFlag => RenderFlags.Renderer3D;
@@ -48,7 +48,7 @@ public class Renderer : RendererBase
         _scene = scene;
         _window = window;
 
-        // TODO: These should be refactored out. The minimum build shouldn't need to use these.
+        // TODO: #5 These should be refactored out. The minimum build shouldn't need to use these.
         _lightingShader = new LightingShader();
         _lampShader = new LampShader();
     }
@@ -62,7 +62,7 @@ public class Renderer : RendererBase
             Window.GL.Enable(EnableCap.DepthTest);
 
             // Enable image transparency.
-            // TODO: Needs testing.
+            // TODO: #62 Needs testing.
             Window.GL.Enable(EnableCap.Blend);
             Window.GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
@@ -88,12 +88,12 @@ public class Renderer : RendererBase
         if (node is not GameObject gameObject)
             return Task.CompletedTask;
 
-        // TODO: Fix culling for blocks that are partially in view
+        // TODO: #7 Fix culling for blocks that are partially in view
         // Perform frustum culling
         if (!IsInViewFrustum(gameObject.BoundingBox, _camera))
             return Task.CompletedTask;
 
-        // TODO: Skip blocks that are behind others relative to the camera
+        // TODO: #7 Skip blocks that are behind others relative to the camera
         return gameObject.Render(_camera, _window);
     }
 
