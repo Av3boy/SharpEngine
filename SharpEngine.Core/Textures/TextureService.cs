@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using SharpEngine.Core.Windowing;
 using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
+using TextureType = Silk.NET.Assimp.TextureType;
 
 namespace SharpEngine.Core.Textures;
 
@@ -25,7 +26,7 @@ public class TextureService
     /// </summary>
     /// <param name="path">the full path to the texture.</param>
     /// <returns>The loaded texture program.</returns>
-    public Texture LoadTexture(string path)
+    public Texture LoadTexture(string path, TextureType textureType = TextureType.Diffuse)
     {
         if (string.IsNullOrWhiteSpace(path))
             throw new FileNotFoundException("No texture file provided.");
@@ -38,8 +39,7 @@ public class TextureService
             return cachedTexture;
 
         // Generate handle
-        // TODO: Determine the type of texture.
-        var texture = new Texture(Window.GL, path, Silk.NET.Assimp.TextureType.Diffuse);
+        var texture = new Texture(Window.GL, path, textureType);
         texture.Initialize();
 
         // Add it to the cache

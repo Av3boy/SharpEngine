@@ -28,12 +28,12 @@ public class BoundingBox
         Max = max;
     }
 
-    // TODO: This should be calculated by the mesh.
+    // TODO: #5 This should be calculated by the mesh.
     /// <summary>
     ///     Calculates the bounding box of the game object.
     /// </summary>
     /// <returns>The bounding box of the game object.</returns>
-    public static BoundingBox CalculateBoundingBox(ITransform<SharpEngine.Core.Numerics.Vector3> transform)
+    public static BoundingBox CalculateBoundingBox(ITransform<Numerics.Vector3> transform)
     {
         var min = transform.Position - (transform.Scale / 2);
         var max = transform.Position + (transform.Scale / 2);

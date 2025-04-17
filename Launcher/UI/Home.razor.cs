@@ -50,8 +50,8 @@ namespace Launcher.UI
         {
             await base.OnInitializedAsync();
 
-            // TODO: Get current launcher version
-            // TODO: Check if GitHub has a new version released.
+            // TODO: #96 Get current launcher version
+            // TODO: #96 Check if GitHub has a new version released.
 
 #if DEBUG
             if (TestData.TestData.SimulateLoading)
@@ -94,7 +94,7 @@ namespace Launcher.UI
             if (project is not null)
             {
                 Projects.Remove(project);
-                // TODO: Delete project files
+                // TODO: #26 Delete project files
             }
             else
                 _notificationService.Show($"Unable to delete project '{project?.Name}'.", false, _selectedProject, Projects);

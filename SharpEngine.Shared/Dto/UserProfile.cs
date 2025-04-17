@@ -26,7 +26,7 @@ public class UserProfile
 
     private void SetPassword(string pwd)
     {
-        // TODO: Figure out a good way to handle encryption
+        // TODO: #60 Figure out a good way to handle encryption
         _password = pwd;
     }
 }
