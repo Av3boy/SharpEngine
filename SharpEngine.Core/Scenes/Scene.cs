@@ -1,6 +1,7 @@
 ﻿using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.UI;
+using SharpEngine.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -182,7 +183,7 @@ public class Scene
     /// <returns>The scene from the given file. Loads an empty scene if unable to load the scene.</returns>
     public static Scene LoadScene(string sceneFile)
     {
-        Console.WriteLine(sceneFile);
+        Debug.Log.Debug(sceneFile);
 
         var loadedScene = JsonSerializer.Deserialize<Scene>(sceneFile);
 

@@ -2,6 +2,7 @@ using ImGuiNET;
 
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Scenes;
+using SharpEngine.Shared;
 using SharpEngine.Shared.Dto;
 
 namespace SharpEngine.Editor.Windows
@@ -87,7 +88,7 @@ namespace SharpEngine.Editor.Windows
         /// </summary>
         protected virtual void OnWindowUndocked()
         {
-            Console.WriteLine($"Window {Name} was undocked.");
+            Debug.Log.Information($"Window {Name} was undocked.");
 
             // TODO: #75 This method of doing this does not work (at least in .Net 8).
             //CreateSilkWindow();
@@ -117,7 +118,7 @@ namespace SharpEngine.Editor.Windows
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to create window: {ex.Message}");
+                Debug.Log.Information($"Failed to create window: {ex.Message}");
             }
         }
 

@@ -5,6 +5,7 @@ using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
+using SharpEngine.Shared;
 using Silk.NET.OpenGL;
 
 using System;
@@ -69,32 +70,35 @@ public class Renderer : RendererBase
             _camera.SetShaderUniforms(_lightingShader.Shader!);
             Window.GL.BindVertexArray(_lightingShader.Vao);
 
-            var gameObjectRenderTasks = _scene.IterateAsync(_scene.Root.Children, RenderGameObject);
-            var renderTask = Task.WhenAll(gameObjectRenderTasks);
+            _scene.Iterate(_scene.Root.Children, RenderGameObject);
+            //var gameObjectRenderTasks = _scene.Iterate(_scene.Root.Children, RenderGameObject);
+            //var renderTask = Task.WhenAll(gameObjectRenderTasks);
 
             Window.GL.BindVertexArray(_lampShader.Vao);
 
-            return renderTask;
+            return Task.CompletedTask;
+            //return renderTask;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            Debug.Log.Error(ex, "{Message}", ex.Message);
             return Task.FromException(ex);
         }
     }
 
-    private Task RenderGameObject(SceneNode node)
+    private void RenderGameObject(SceneNode node)
     {
         if (node is not GameObject gameObject)
-            return Task.CompletedTask;
+            return; // Task.CompletedTask;
 
         // TODO: #7 Fix culling for blocks that are partially in view
         // Perform frustum culling
         if (!IsInViewFrustum(gameObject.BoundingBox, _camera))
-            return Task.CompletedTask;
+            return; // Task.CompletedTask;
 
         // TODO: #7 Skip blocks that are behind others relative to the camera
-        return gameObject.Render(_camera, _window);
+        //return gameObject.Render(_camera, _window);
+        gameObject.Render(_camera, _window);
     }
 
     private static bool IsInViewFrustum(BoundingBox boundingBox, CameraView camera)

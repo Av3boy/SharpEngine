@@ -56,7 +56,7 @@ public class BlockBase : GameObject
         };
 
         Name = name;
-        Material = cube.Material;
-        Meshes = cube.Meshes;
+        // Material = cube.Material;
+        Model = cube.Model;
     }
 }

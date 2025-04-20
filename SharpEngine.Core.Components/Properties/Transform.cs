@@ -9,9 +9,13 @@ namespace SharpEngine.Core.Entities.Properties;
 public class Transform : ITransform<Vector3>
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="Transform" /> class.
+    ///     Initializes a new instance of <see cref="Transform" />.
     /// </summary>
     public Transform() { }
+    public Transform(Vector3 position) 
+    {
+        Position = position;
+    }
 
     /// <summary>
     ///     Gets or sets the position of the game object.

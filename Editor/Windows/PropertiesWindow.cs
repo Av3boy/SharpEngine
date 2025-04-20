@@ -1,5 +1,6 @@
 ﻿using ImGuiNET;
 using SharpEngine.Core.Attributes;
+using SharpEngine.Shared;
 using System.Numerics;
 using System.Reflection;
 
@@ -80,9 +81,9 @@ public class PropertiesWindow : ImGuiWindowBase
                 }
             }
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine(e);
+            Debug.Log.Error(ex, "{Message}", ex.Message);
         }
     }
 }

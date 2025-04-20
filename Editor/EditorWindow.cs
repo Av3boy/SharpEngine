@@ -14,6 +14,7 @@ using System.Numerics;
 using System.Reflection;
 using SharpEngine.Core.Windowing;
 using SharpEngine.Shared.Dto;
+using SharpEngine.Shared;
 
 namespace SharpEngine.Editor;
 
@@ -73,25 +74,25 @@ public class EditorWindow : Window
 
                     _windows.Add(windowBase);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Debug.LogInformation(e.Message, e);
+                    Debug.Log.Error(ex.Message);
                 }
             }
 
             _contextMenuWindow = (ContextMenuWindow?)_windows.FirstOrDefault(w => w.GetType() == typeof(ContextMenuWindow));
             if (_contextMenuWindow is null)
-                Debug.LogInformation("ContextMenuWindow not found.");
+                Debug.Log.Error("ContextMenuWindow not found.");
 
             _actionsMenuWindow = (ActionsMenuWindow?)_windows.FirstOrDefault(w => w.GetType() == typeof(ActionsMenuWindow));
             if (_actionsMenuWindow is null)
-                Debug.LogInformation("ActionsMenuWindow not found.");
+                Debug.Log.Error("ActionsMenuWindow not found.");
             else
                 _actionsMenuWindow.OnSceneLoaded += SetScene;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Debug.LogInformation(e.Message, e);
+            Debug.Log.Error(ex, ex.Message);
         }
     }
 
@@ -241,7 +242,7 @@ public class EditorWindow : Window
             {
                 // Clicked on an ImGui component
                 uint hoveredItemId = ImGui.GetID("");
-                Debug.LogInformation($"Clicked on ImGui component with ID: {hoveredItemId}");
+                Debug.Log.Information("Clicked on ImGui component with ID: {HoveredItemId}", hoveredItemId);
             }
             else
             {
@@ -257,7 +258,7 @@ public class EditorWindow : Window
             {
                 // Clicked on an ImGui component
                 uint hoveredItemId = ImGui.GetID("");
-                Debug.LogInformation($"Clicked on ImGui component with ID: {hoveredItemId}");
+                Debug.Log.Information("Clicked on ImGui component with ID: {HoveredItemId}", hoveredItemId);
             }
             else
             {

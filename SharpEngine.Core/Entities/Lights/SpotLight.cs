@@ -14,7 +14,7 @@ namespace SharpEngine.Core.Entities.Lights;
 public class SpotLight : Light
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="SpotLight"/> class.
+    ///     Initializes a new instance of <see cref="SpotLight"/>.
     /// </summary>
     public SpotLight()
     {
@@ -25,7 +25,7 @@ public class SpotLight : Light
         Linear = 0.09f;
         Quadratic = 0.032f;
 
-        Material.Shader = ShaderService.Instance.LoadShader(Default.VertexShader, Default.FragmentShader, "lighting");
+        Shader = ShaderService.Instance.LoadShader(Default.VertexShader, Default.FragmentShader, "lighting");
     }
 
     /// <summary>
@@ -58,19 +58,26 @@ public class SpotLight : Light
     /// </summary>
     public float Quadratic { get; set; }
 
-    /// <inheritdoc />
-    public override Task Render(CameraView camera, Window window)
+    protected override void SetShaderUniforms(CameraView camera)
     {
-        Material.Shader.SetVector3("spotLight.position", (Vector3)Transform.Position);
-        Material.Shader.SetVector3("spotLight.direction", Direction);
-        Material.Shader.SetVector3("spotLight.ambient", Ambient);
-        Material.Shader.SetVector3("spotLight.diffuse", Diffuse);
-        Material.Shader.SetVector3("spotLight.specular", Specular);
-        Material.Shader.SetFloat("spotLight.constant", Constant);
-        Material.Shader.SetFloat("spotLight.linear", Linear);
-        Material.Shader.SetFloat("spotLight.quadratic", Quadratic);
-        Material.Shader.SetFloat("spotLight.cutOff", CutOff);
-        Material.Shader.SetFloat("spotLight.outerCutOff", OuterCutOff);
+        Shader.SetVector3("spotLight.position", (Vector3)Transform.Position);
+        Shader.SetVector3("spotLight.direction", Direction);
+        Shader.SetVector3("spotLight.ambient", Ambient);
+        Shader.SetVector3("spotLight.diffuse", Diffuse);
+        Shader.SetVector3("spotLight.specular", Specular);
+        Shader.SetFloat("spotLight.constant", Constant);
+        Shader.SetFloat("spotLight.linear", Linear);
+        Shader.SetFloat("spotLight.quadratic", Quadratic);
+        Shader.SetFloat("spotLight.cutOff", CutOff);
+        Shader.SetFloat("spotLight.outerCutOff", OuterCutOff);
+
+        base.SetShaderUniforms(camera);
+    }
+
+    /// <inheritdoc />
+    public Task Render(CameraView camera, Window window)
+    {
+        SetShaderUniforms(camera);
 
         return Task.CompletedTask;
     }

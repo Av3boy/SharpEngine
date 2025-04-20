@@ -4,6 +4,7 @@ using ObjLoader.Loaders.ObjLoader;
 using SharpEngine.Core;
 using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Lights;
+using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Entities.UI.Layouts;
@@ -11,12 +12,14 @@ using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Windowing;
+using SharpEngine.Shared;
 using Silk.NET.Core.Native;
 using Silk.NET.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Tutorial;
 
 namespace Minecraft;
 
@@ -87,7 +90,7 @@ public class Minecraft : Game
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            Debug.Log.Information(ex.Message, "{Message}", ex.Message);
         }
     }
 
@@ -149,52 +152,15 @@ public class Minecraft : Game
         // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
 
         var model = ObjLoaderFactory.Load(Window.GL, @"C:\Users\antti\Documents\Untitled2.obj");
-        var go = new GameObject()
+        var go = new GameObject(model);
+        var go2 = new GameObject(model)
         {
-            Meshes = model.Meshes
+            Transform = new Transform(new SharpEngine.Core.Numerics.Vector3(0, 0, 30))
         };
 
-        go.Initialize(true);
         _scene.Root.AddChild(go);
+        _scene.Root.AddChild(go2);
 
-    }
-
-    private void ResolveMeshData(Mesh mesh)
-    {
-        var resolvedVertices = new List<float>();
-        var resolvedNormals = new List<float>();
-        var resolvedTextureCoordinates = new List<float>();
-
-        foreach (var group in mesh.Groups)
-        {
-            foreach (var face in group.Faces)
-            {
-                foreach (var vertex in face._vertices)
-                {
-                    // Resolve vertex positions
-                    var position = mesh.Vertices2[vertex.VertexIndex];
-                    resolvedVertices.Add(position.Position.X);
-                    resolvedVertices.Add(position.Position.Y);
-                    resolvedVertices.Add(position.Position.Z);
-
-                    // Resolve normals
-                    var normal = mesh.Normals2[vertex.NormalIndex];
-                    resolvedNormals.Add(normal.X);
-                    resolvedNormals.Add(normal.Y);
-                    resolvedNormals.Add(normal.Z);
-
-                    // Resolve texture coordinates
-                    var texCoord = mesh.TextureCoordinates2[vertex.TextureIndex];
-                    resolvedTextureCoordinates.Add(texCoord.X);
-                    resolvedTextureCoordinates.Add(texCoord.Y);
-                }
-            }
-        }
-
-        // Update the mesh with resolved data
-        mesh.Vertices = resolvedVertices.ToArray();
-        mesh.Normals = resolvedNormals.ToArray();
-        mesh.TextureCoordinates = resolvedTextureCoordinates.ToArray();
     }
 
     private void InitializeLights()
@@ -272,7 +238,7 @@ public class Minecraft : Game
             if (input.IsKeyPressed(Key.Number0 + i))
             {
                 _inventory.SetSelectedSlot(i);
-                Console.WriteLine($"Selected slot: {i} ({_inventory.SelectedSlot.Items.Type})");
+                Debug.Log.Information($"Selected slot: {i} ({_inventory.SelectedSlot.Items.Type})");
             }
         }
 
@@ -310,7 +276,7 @@ public class Minecraft : Game
             }
             else
             {
-                Console.WriteLine($"No more {_inventory.SelectedSlot.Items.Type}s.");
+                Debug.Log.Information($"No more {_inventory.SelectedSlot.Items.Type}s.");
             }
         }
 
@@ -321,7 +287,7 @@ public class Minecraft : Game
             {
                 // TODO: #86 The block should be added to the slot so that 0 is the last slot instead of 9.
                 // TODO: #86 The first block destroyed doesn't seem to be added to the inventory.
-                Console.WriteLine($"Block destroyed: {destroyedBlockType}.");
+                Debug.Log.Information($"Block destroyed: {destroyedBlockType}.");
                 _inventory.AddToolbarItem(destroyedBlockType);
             }
         }
@@ -350,7 +316,7 @@ public class Minecraft : Game
         var newBlock = BlockFactory.CreateBlock(_inventory.SelectedSlot.Items.Type, newBlockPosition, $"Dirt ({_blocksNode.Children.Count})");
         _blocksNode.AddChild(newBlock);
 
-        Console.WriteLine($"New block created: {newBlock.Transform.Position}, block in view location: {intersectingObject!.Transform.Position}");
+        Debug.Log.Information($"New block created: {newBlock.Transform.Position}, block in view location: {intersectingObject!.Transform.Position}");
 
     }
 
@@ -376,7 +342,7 @@ public class Minecraft : Game
             slotIndex = 0;
 
         _inventory.SetSelectedSlot(slotIndex);
-        Console.WriteLine($"Selected slot: {slotIndex}");
+        Debug.Log.Information($"Selected slot: {slotIndex}");
 
     }
 }

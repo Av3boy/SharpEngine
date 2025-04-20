@@ -28,7 +28,7 @@ public class PointLight : Light
 
         _index = index;
 
-        Material.Shader = ShaderService.Instance.LoadShader(Default.VertexShader, Default.FragmentShader, "lighting");
+        // Material.Shader = ShaderService.Instance.LoadShader(Default.VertexShader, Default.FragmentShader, "lighting");
         LampShader = new LampShader();
 
     }
@@ -52,21 +52,23 @@ public class PointLight : Light
     /// </summary>
     public float Quadratic { get; set; }
 
-    /// <inheritdoc />
-    public override Task Render(CameraView camera, Window window)
+    protected override void SetShaderUniforms(CameraView camera)
     {
-        Material.Shader.SetVector3($"pointLights[{_index}].position", (Vector3)Transform.Position);
-        Material.Shader.SetVector3($"pointLights[{_index}].ambient", Ambient);
-        Material.Shader.SetVector3($"pointLights[{_index}].diffuse", Diffuse);
-        Material.Shader.SetVector3($"pointLights[{_index}].specular", Specular);
-        Material.Shader.SetFloat($"pointLights[{_index}].constant", Constant);
-        Material.Shader.SetFloat($"pointLights[{_index}].linear", Linear);
-        Material.Shader.SetFloat($"pointLights[{_index}].quadratic", Quadratic);
+        Shader.SetVector3($"pointLights[{_index}].position", (Vector3)Transform.Position);
+        Shader.SetVector3($"pointLights[{_index}].ambient", Ambient);
+        Shader.SetVector3($"pointLights[{_index}].diffuse", Diffuse);
+        Shader.SetVector3($"pointLights[{_index}].specular", Specular);
+        Shader.SetFloat($"pointLights[{_index}].constant", Constant);
+        Shader.SetFloat($"pointLights[{_index}].linear", Linear);
+        Shader.SetFloat($"pointLights[{_index}].quadratic", Quadratic);
 
-        var lampMatrix = Matrix4x4.CreateScale((Vector3)Transform.Scale);
-        lampMatrix *= Matrix4x4.CreateTranslation((Vector3)Transform.Position);
+        base.SetShaderUniforms(camera);
+    }
 
-        LampShader.Shader?.SetMatrix4(ShaderAttributes.Model, lampMatrix);
+    /// <inheritdoc />
+    public Task Render(CameraView camera, Window window)
+    {
+        SetShaderUniforms(camera);
 
         return Task.CompletedTask;
     }

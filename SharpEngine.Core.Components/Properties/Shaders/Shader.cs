@@ -1,3 +1,4 @@
+using SharpEngine.Shared;
 using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Shaders;
@@ -41,17 +42,19 @@ public partial class Shader : IDisposable
         //   The fragment shader is what we'll be using the most here.
 
         if (!vertPath.EndsWith(".vert"))
-            Console.WriteLine("Vertex shaders should have the file extension '.vert' for easier manageability.");
+            Debug.Log.Warning("Vertex shaders should have the file extension '.vert' for easier manageability.");
 
         if (!fragPath.EndsWith(".frag"))
-            Console.WriteLine("Fragment shaders should have the file extension '.frag' for easier manageability.");
+            Debug.Log.Warning("Fragment shaders should have the file extension '.frag' for easier manageability.");
 
         VertPath = vertPath;
         FragPath = fragPath;
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
         _gl.DeleteProgram(Handle);
+        GC.SuppressFinalize(this);
     }
 }

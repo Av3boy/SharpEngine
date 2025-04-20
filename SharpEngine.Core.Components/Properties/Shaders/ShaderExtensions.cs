@@ -1,4 +1,5 @@
-﻿using Silk.NET.OpenGL;
+﻿using SharpEngine.Shared;
+using Silk.NET.OpenGL;
 using System.Numerics;
 using System.Text.RegularExpressions;
 
@@ -11,13 +12,13 @@ public partial class Shader
         // Load and compile shader
         if (!LoadShader(ShaderType.VertexShader, VertPath, out uint vertexShader))
         {
-            Console.WriteLine("Unable to load vertex shader.");
+            Debug.Log.Error("Unable to load vertex shader.");
             return this;
         }
 
         if (!LoadShader(ShaderType.FragmentShader, FragPath, out uint fragmentShader))
         {
-            Console.WriteLine("Unable to load fragment shader.");
+            Debug.Log.Error("Unable to load fragment shader.");
             return this;
         }
 
@@ -42,7 +43,7 @@ public partial class Shader
 
         if (!shaderLinked)
         {
-            Console.WriteLine("Unable to link shader program.");
+            Debug.Log.Information("Unable to link shader program.");
             return this;
         }
 
@@ -58,7 +59,7 @@ public partial class Shader
     {
         if (!File.Exists(shaderPath))
         {
-            Console.WriteLine($"Shader file not found: {shaderPath}");
+            Debug.Log.Information($"Shader file not found: {shaderPath}");
 
             shader = 0;
             return false;
@@ -73,7 +74,7 @@ public partial class Shader
 
         if (!CompileShader(shader))
         {
-            Console.WriteLine($"Unable to load {shaderType} shader from '{shaderPath}'.");
+            Debug.Log.Information($"Unable to load {shaderType} shader from '{shaderPath}'.");
             return false;
         }
 
@@ -126,7 +127,7 @@ public partial class Shader
         {
             // We can use `GL.GetShaderInfoLog(shader)` to get information about the error.
             var infoLog = _gl.GetShaderInfoLog(shader);
-            Console.WriteLine($"Error occurred whilst compiling Shader({shader}).\n\n{infoLog}");
+            Debug.Log.Information($"Error occurred whilst compiling Shader({shader}).\n\n{infoLog}");
 
             return false;
         }
@@ -142,7 +143,7 @@ public partial class Shader
         if (statusCode != (int)GLEnum.True)
         {
             string infoLog = _gl.GetProgramInfoLog(program);
-            Console.WriteLine($"Error occurred whilst linking Program({program}): {infoLog}");
+            Debug.Log.Information($"Error occurred whilst linking Program({program}): {infoLog}");
 
             return false;
         }
@@ -167,7 +168,7 @@ public partial class Shader
         location = _gl.GetAttribLocation(Handle, attribName);
         if (location == ShaderAttributes.AttributeLocationNotFound)
         {
-            Console.WriteLine($"Attribute '{attribName}' not found in shader program.");
+            Debug.Log.Information($"Attribute '{attribName}' not found in shader program.");
             return false;
         }
 
@@ -189,7 +190,7 @@ public partial class Shader
         if (!_uniformLocations.TryGetValue(name, out int location))
         //if (location == -1)
         {
-            Console.WriteLine($"Uniform '{name}' not found in shader program.");
+            Debug.Log.Information($"Uniform '{name}' not found in shader program.");
             return false;
         }
 

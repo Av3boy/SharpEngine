@@ -46,13 +46,13 @@ public static class Program
                 : new Project();
 #endif
             using var window = new EditorWindow(scene, project!, new DefaultViewSettings());
-            window.OnLoaded += () => Console.WriteLine("test");
+            window.OnLoaded += () => Debug.Log.Information("test");
 
             window.Run();
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Debug.LogInformation($"Failed to start the editor: {e.Message}", e, true);
+            Debug.Log.Information(ex, "Failed to start the editor: {Message}", ex.Message);
         }
     }
 }

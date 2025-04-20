@@ -1,4 +1,4 @@
-using System;
+using SharpEngine.Shared;
 using System.IO;
 
 namespace ObjLoader.Loaders.MaterialLoader
@@ -7,16 +7,21 @@ namespace ObjLoader.Loaders.MaterialLoader
     {
         private readonly MaterialLibraryLoader _loader;
 
+        /// <summary>
+        ///     Initializes a new instance of <see cref="MaterialLibraryLoaderFacade"/>.
+        /// </summary>
+        /// <param name="loader">Provides the functionality to load material libraries.</param>
         public MaterialLibraryLoaderFacade(MaterialLibraryLoader loader)
         {
             _loader = loader;
         }
 
+        /// <inheritdoc />
         public void Load(string materialFileName)
         {
             if (!File.Exists(materialFileName))
             {
-                Console.WriteLine($"Material file '{materialFileName}' doesn't exist.");
+                Debug.Log.Warning("Material file '{MaterialFileName}' doesn't exist.", materialFileName);
                 return;
             }    
 

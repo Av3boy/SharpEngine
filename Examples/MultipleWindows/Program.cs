@@ -4,6 +4,7 @@ using Silk.NET.Windowing;
 
 using System.Collections.Concurrent;
 using SharpEngine.Core.Entities.Views.Settings;
+using SharpEngine.Shared;
 
 // An example provided a lovely person in this thread:
 // https://github.com/dotnet/Silk.NET/issues/2436#issuecomment-2752966073
@@ -70,7 +71,7 @@ public static partial class Program
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
                 await Task.Delay(1000);
-                Console.WriteLine("Running loop on background thread...");
+                Debug.Log.Information("Running loop on background thread...");
             }
         });
 

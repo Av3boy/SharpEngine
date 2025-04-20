@@ -1,4 +1,5 @@
-﻿using Silk.NET.OpenAL;
+﻿using SharpEngine.Shared;
+using Silk.NET.OpenAL;
 
 using System;
 using System.Buffers.Binary;
@@ -40,7 +41,7 @@ public class WavPlayer : AudioPlayerBase
 
         if (!CheckHeader(file, ref index, WavConstants.RiffHeader))
         {
-            Console.WriteLine("Given file is not in RIFF format");
+            Debug.Log.Warning("Given file is not in RIFF format");
             return;
         }
 
@@ -48,7 +49,7 @@ public class WavPlayer : AudioPlayerBase
 
         if (!CheckHeader(file, ref index, WavConstants.WaveHeader))
         {
-            Console.WriteLine("Given file is not in WAVE format");
+            Debug.Log.Warning("Given file is not in WAVE format");
             return;
         }
 

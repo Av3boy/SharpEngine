@@ -1,5 +1,6 @@
 ﻿using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Windowing;
+using Tutorial;
 
 namespace SharpEngine.Core.Primitives;
 
@@ -8,6 +9,15 @@ namespace SharpEngine.Core.Primitives;
 /// </summary>
 public static class Cube
 {
+    public static Model_Old Model = new Model_Old(Window.GL, string.Empty);
+    // {
+    //     Vertices = Mesh.Vertices,
+    //     Normals = Mesh.Normals,
+    //     TextureCoordinates = Mesh.TextureCoordinates,
+    //     Indices = Mesh.Indices,
+    //     Textures = new List<Texture2> { _Resources.Default.DebugTexture }
+    // };
+
     /// <summary>The cube mesh.</summary>
     public static readonly Mesh Mesh = new(Window.GL)
     {

@@ -21,6 +21,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Shader = SharpEngine.Core.Shaders.Shader;
 using Silk.NET.GLFW;
+using SharpEngine.Shared;
 
 namespace SharpEngine.Core.Windowing;
 
@@ -118,7 +119,7 @@ public class Window : SilkWindow
     public override void Run(Action onFrame)
     {
         if (!_windowInitialized)
-            throw new Exception("Window not been initialized for this instance. Try calling 'window.Initialize()' first.");
+            throw new InvalidOperationException("Window not been initialized for this instance. Try calling 'window.Initialize()' first.");
 
         try
         {
@@ -127,7 +128,7 @@ public class Window : SilkWindow
         }
         catch (Exception ex)
         {
-            Debug.LogInformation("Error running window: " + ex.Message, ex);
+            Debug.Log.Error(ex, "Error running window: {Message}", ex.Message);
         }
     }
 
@@ -149,7 +150,7 @@ public class Window : SilkWindow
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
             // Load all meshes from the mesh cache
-            MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
+            // MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
 
             // Using reflection, find all renderers that implement the RendererBase.
             var rendererTypes = AppDomain.CurrentDomain.GetAssemblies()
@@ -175,7 +176,7 @@ public class Window : SilkWindow
         }
         catch (Exception ex)
         {
-            Debug.LogInformation("Error loading window: " + ex.Message, ex);
+            Debug.Log.Information(ex, "Error loading window: {Message}", ex.Message);
         }
 
         base.OnLoad();
@@ -216,7 +217,7 @@ public class Window : SilkWindow
         }
         catch (Exception ex)
         {
-            Debug.LogInformation(ex.Message);
+            Debug.Log.Information(ex.Message);
         }
     }
 
@@ -246,7 +247,7 @@ public class Window : SilkWindow
         }
 
         if (Settings.PrintFrameRate)
-            Console.WriteLine($"FPS: {frame.FrameRate}");
+            Debug.Log.Information($"FPS: {frame.FrameRate}");
 
         // TODO: #21 Handle multiple mice?
         var mouse = Input?.Mice[0];
@@ -274,7 +275,7 @@ public class Window : SilkWindow
     {
         if (Input is null)
         {
-            Debug.LogInformation("Input is null. No input events will be assigned.");
+            Debug.Log.Information("Input is null. No input events will be assigned.");
             return;
         }
 

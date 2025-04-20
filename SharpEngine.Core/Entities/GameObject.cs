@@ -1,19 +1,15 @@
 using SharpEngine.Core.Attributes;
-using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Entities.Properties;
-using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
-using SharpEngine.Core.Textures;
 using SharpEngine.Core.Windowing;
+using Shader = SharpEngine.Core.Shaders.Shader;
 
 using Silk.NET.OpenGL;
-
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Tutorial;
 
 namespace SharpEngine.Core.Entities;
 
@@ -27,12 +23,15 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     /// </summary>
     public GameObject() : base(string.Empty)
     {
-        // TODO: #5 Using lightning shader here will most likely break stuff, it needs to be refactored out.
-        var shader = ShaderService.Instance.LoadShader(_Resources.Default.VertexShader, _Resources.Default.FragmentShader, "lighting");
-        var diffuse = TextureService.Instance.LoadTexture(_Resources.Default.DebugTexture);
-        Material = new(shader, diffuse);
-        
         BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
+        Shader = ShaderService.Instance.LoadShader(_Resources.Default.VertexShader, _Resources.Default.FragmentShader, "lighting");
+    }
+
+    public GameObject(Model_Old model) : base(string.Empty)
+    {
+        Model = model;
+        BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
+        Shader = ShaderService.Instance.LoadShader(_Resources.Default.VertexShader, _Resources.Default.FragmentShader, "lighting");
     }
 
     /// <summary>
@@ -42,27 +41,18 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     /// <param name="specularMapFile">The file path of the specular map texture.</param>
     /// <param name="vertShaderFile">The file path of the vertex shader.</param>
     /// <param name="fragShaderFile">The file path of the fragment shader.</param>
-    public GameObject(string? diffuseMapFile = null, string? specularMapFile = null, string? vertShaderFile = null, string? fragShaderFile = null) : base(string.Empty)
+    public GameObject(Shader shader) : base(string.Empty)
     {
-        var shader = ShaderService.Instance.LoadShader(vertShaderFile ?? _Resources.Default.VertexShader, fragShaderFile ?? _Resources.Default.FragmentShader, "lighting");
-        var diffuse = TextureService.Instance.LoadTexture(diffuseMapFile ?? _Resources.Default.DebugTexture);
-        var specular = string.IsNullOrEmpty(specularMapFile) ? null : TextureService.Instance.LoadTexture(specularMapFile!);
-        Material = new Material(shader, diffuse, specular);
-
         BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
+        Shader = shader;
     }
+
+    public Shader Shader { get; set; }
 
     /// <summary>
     ///     Gets or sets the mesh of the game object.
     /// </summary>
-    public List<Mesh> Meshes { get; set; } = [];
-
-    // TODO: #5 Each mesh should have its own material.
-    /// <summary>
-    ///     Gets or sets the material of the game object.
-    /// </summary>
-    [Inspector(DisplayInInspector = false)]
-    public Material Material { get; set; }
+    public Model_Old Model { get; set; }
 
     /// <summary>
     ///    Gets or sets the transform of the game object.
@@ -85,73 +75,36 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     [Inspector(DisplayInInspector = false)]
     public BoundingBox BoundingBox { get; set; }
 
-    /// <inheritdoc />
-    public uint VAO { get; set; }
-
-    /// <inheritdoc />
-    public void Initialize(bool useMeshVertices = false)
+    protected virtual void SetShaderUniforms(CameraView camera)
     {
-        VAO = Window.GL.GenVertexArray();
-        Bind();
-
-        foreach (var mesh in Meshes)
-            InitializeBuffers(mesh, useMeshVertices);
-
-        Material.Shader.Use();
+        Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
+        Shader.SetMatrix4("uView", camera.GetViewMatrix(), false);
+        Shader.SetMatrix4("uProjection", camera.GetProjectionMatrix(), false);
     }
 
     /// <inheritdoc />
-    public void Bind()
+    public void Render(CameraView camera, Window window)
     {
-        Window.GL.BindVertexArray(VAO);
-    }
+        // TODO: This needs to removed later once fixed.
+        if (Model is null || Model.Meshes is null)
+            return;
 
-    /// <inheritdoc />
-    public void InitializeBuffers(Mesh mesh, bool useMeshVertices = false)
-    {
-        if (useMeshVertices)
-        {
-            var vertexBufferObject = Window.GL.GenBuffer();
-            Window.GL.BindBuffer(GLEnum.ArrayBuffer, vertexBufferObject);
-            Window.GL.BufferData<float>(GLEnum.ArrayBuffer, useMeshVertices ? mesh.Vertices : mesh.GetVertices(), GLEnum.StaticDraw);
-
-            var elementBufferObject = Window.GL.GenBuffer();
-            Window.GL.BindBuffer(GLEnum.ElementArrayBuffer, elementBufferObject);
-            Window.GL.BufferData<uint>(GLEnum.ElementArrayBuffer, mesh.Indices, GLEnum.StaticDraw);
-        }
-    }
-
-    /// <inheritdoc />
-    public override Task Render(CameraView camera, Window window)
-    {
-        // Bind();
-
-        Material.DiffuseMap.Use(TextureUnit.Texture0);
-        Material.Shader.SetInt("material.diffuse", Material.DIFFUSE_UNIT);
-
-        if (Material.UseSpecularMap)
-        {
-            Material.SpecularMap.Use(TextureUnit.Texture1);
-            Material.Shader.SetInt("material.specular", Material.SPECULAR_UNIT);
-            Material.Shader.SetVector3("material.specular", Material.Specular);
-            Material.Shader.SetFloat("material.shininess", Material.Shininess);
-        }
-        else
-        {
-            Material.Shader.SetInt("material.specular", 0);
-            Material.Shader.SetVector3("material.specular", new System.Numerics.Vector3(0));
-            Material.Shader.SetFloat("material.shininess", 0);
-        }
-
-        Material.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
-
-        foreach (var mesh in Meshes)
+        foreach (var mesh in Model.Meshes)
         {
             mesh.Bind();
+
+            foreach (var texture in mesh.Textures)
+                texture.Use();
+
+            Shader.Use();
+            SetShaderUniforms(camera);
+
+            foreach (var material in mesh.Materials)
+                material.SetUniformValues(Shader);
+
             Window.GL.DrawArrays(PrimitiveType.Triangles, 0, (uint)mesh.Vertices.Length);
-            // Window.GL.DrawElements<uint>(PrimitiveType.Triangles, (uint)mesh.Indices.Length, DrawElementsType.UnsignedInt, []);
         }
 
-        return Task.CompletedTask;
+        // return Task.CompletedTask;
     }
 }

@@ -1,7 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Collections.Generic;
+
 using SharpEngine.Core.Windowing;
+using SharpEngine.Shared;
 
 namespace SharpEngine.Core.Shaders;
 
@@ -71,13 +72,13 @@ public class ShaderService
 
         if (!File.Exists(vertPath))
         {
-            Console.WriteLine($"Vertex shader file not found: {vertPath}");
+            Debug.Log.Information("Vertex shader file not found: {VertPath}", vertPath);
             throw new FileNotFoundException($"Vertex shader file not found: {vertPath}");
         }
 
         if (!File.Exists(fragPath))
         {
-            Console.WriteLine($"Fragment shader file not found: {fragPath}");
+            Debug.Log.Information("Fragment shader file not found: {FragPath}", fragPath);
             throw new FileNotFoundException($"Fragment shader file not found: {fragPath}");
         }
 

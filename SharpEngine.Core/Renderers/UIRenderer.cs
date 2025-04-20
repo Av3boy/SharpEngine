@@ -4,7 +4,7 @@ using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
-
+using SharpEngine.Shared;
 using Silk.NET.OpenGL;
 
 using System;
@@ -59,7 +59,7 @@ public class UIRenderer : RendererBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            Debug.Log.Error(ex, "{Message}", ex.Message);
             return Task.FromException(ex);
         }
     }

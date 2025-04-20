@@ -27,16 +27,16 @@ public class DirectionalLight : Light
         Diffuse = new Vector3(0.4f, 0.4f, 0.4f);
         Specular = new Vector3(0.5f, 0.5f, 0.5f);
 
-        Material.Shader = ShaderService.Instance.LoadShader(Default.VertexShader, Default.FragmentShader, "lighting");
+        Shader = ShaderService.Instance.LoadShader(Default.VertexShader, Default.FragmentShader, "lighting");
     }
 
     /// <inheritdoc />
-    public override Task Render(CameraView camera, Window window)
+    public Task Render(CameraView camera, Window window)
     {
-        Material.Shader.SetVector3("dirLight.direction", Direction);
-        Material.Shader.SetVector3("dirLight.ambient", Ambient);
-        Material.Shader.SetVector3("dirLight.diffuse", Diffuse);
-        Material.Shader.SetVector3("dirLight.specular", Specular);
+        Shader.SetVector3("dirLight.direction", Direction);
+        Shader.SetVector3("dirLight.ambient", Ambient);
+        Shader.SetVector3("dirLight.diffuse", Diffuse);
+        Shader.SetVector3("dirLight.specular", Specular);
 
         return Task.CompletedTask;
     }

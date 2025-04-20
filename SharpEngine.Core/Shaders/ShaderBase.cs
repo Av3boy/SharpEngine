@@ -1,4 +1,5 @@
 ﻿using SharpEngine.Core.Components.Properties;
+using SharpEngine.Shared;
 using System;
 
 namespace SharpEngine.Core.Shaders;
@@ -24,7 +25,7 @@ public abstract class ShaderBase
     {
         if (Shader is null)
         {
-            Console.WriteLine("Unable to set shader attributes, shader not found.");
+            Debug.Log.Error("Unable to set shader attributes, shader not found.");
             return false;
         }
 
