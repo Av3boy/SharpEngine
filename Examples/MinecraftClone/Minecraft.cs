@@ -160,7 +160,6 @@ public class Minecraft : Game
 
         _scene.Root.AddChild(go);
         _scene.Root.AddChild(go2);
-
     }
 
     private void InitializeLights()

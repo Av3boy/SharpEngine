@@ -2,10 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
+using SharpEngine.Core.Entities.Properties.Meshes;
 using Silk.NET.Assimp;
 using Silk.NET.OpenGL;
 using System.Numerics;
-using static System.Formats.Asn1.AsnWriter;
 using AssimpMesh = Silk.NET.Assimp.Mesh;
 using Mesh = SharpEngine.Core.Entities.Properties.Meshes.Mesh;
 using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
@@ -26,10 +26,10 @@ namespace Tutorial
 
         public Model_Old(GL gl, Mesh mesh)
         {
-            _assimp = Assimp.GetApi();
-            _gl = gl;
+            // _assimp = Assimp.GetApi();
+            // _gl = gl;
 
-            var result = new Mesh(_gl, BuildVertices(mesh.Vertices2), BuildIndices(mesh.Indices.ToList()), new List<Texture>());
+            var result = new Mesh(gl, mesh.GetVertices(), mesh.Indices, new List<Texture>());
             Meshes.Add(result);
         }
 
@@ -189,6 +189,10 @@ namespace Tutorial
                 vertices.Add(vertex.Position.X);
                 vertices.Add(vertex.Position.Y);
                 vertices.Add(vertex.Position.Z);
+
+                vertices.Add(vertex.Normal.X);
+                vertices.Add(vertex.Normal.Y);
+                vertices.Add(vertex.Normal.Z);
 
                 vertices.Add(vertex.TexCoords.X);
                 vertices.Add(vertex.TexCoords.Y);

@@ -90,18 +90,17 @@ public class Mesh : IDisposable
 
         // TODO: This should use VertexData properties.
         // TODO: This assumes we only use the vertex position and texture coordinates, it should also support normals.
-        VAO.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 5, 0);
-        VAO.VertexAttributePointer(1, 2, VertexAttribPointerType.Float, 5, 3);
+        VAO.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 8, 0);
+        VAO.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, 8, 3);
+        VAO.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, 8, 6);
     }
 
     public void Bind()
-    {
-        VAO.Bind();
-    }
+        => VAO.Bind();
 
     public void Dispose()
     {
-        // Textures = null;
+        Textures = null;
         VAO.Dispose();
         VBO.Dispose();
         EBO.Dispose();

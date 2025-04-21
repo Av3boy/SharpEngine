@@ -23,7 +23,7 @@ public static class Cube
         };
 
         Mesh = MeshService.Instance.LoadMesh(nameof(Cube), mesh);
-        // Model = new(Window.GL, Mesh);
+        Model = new(Window.GL, Mesh);
 
         _loaded = true;
     }
