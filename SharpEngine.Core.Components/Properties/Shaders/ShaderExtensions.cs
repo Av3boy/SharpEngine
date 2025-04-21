@@ -186,15 +186,15 @@ public partial class Shader
 
     private bool TrySetUniform<T>(string name, T data, Action<int, T> setter)
     {
-        //int location = _gl.GetUniformLocation(Handle, name);
         if (!_uniformLocations.TryGetValue(name, out int location))
-        //if (location == -1)
         {
-            Debug.Log.Information($"Uniform '{name}' not found in shader program.");
+            Debug.Log.Information("Uniform '{Name}' not found in shader program.", name);
             return false;
         }
 
+        _gl.UseProgram(Handle);
         setter(location, data);
+        
         return true;
     }
 
@@ -207,7 +207,6 @@ public partial class Shader
     /// <param name="data">The data to set.</param>
     public void SetInt(string name, int data)
     {
-        _gl.UseProgram(Handle);
         TrySetUniform(name, data, _gl.Uniform1);
     }
 
@@ -218,7 +217,6 @@ public partial class Shader
     /// <param name="data">The data to set.</param>
     public void SetFloat(string name, float data)
     {
-        _gl.UseProgram(Handle);
         TrySetUniform(name, data, _gl.Uniform1);
     }
 
@@ -235,7 +233,6 @@ public partial class Shader
     /// </remarks>
     public unsafe void SetMatrix4(string name, Matrix4x4 data, bool transpose = true)
     {
-        _gl.UseProgram(Handle);
         // TrySetUniform(name, data, (uniform, d) => _gl.UniformMatrix4(uniform, transpose, d.ToSpan()));
         TrySetUniform(name, data, (uniform, d) => _gl.UniformMatrix4(uniform, 1, transpose, (float*) &d));
     }
@@ -247,7 +244,6 @@ public partial class Shader
     /// <param name="data">The data to set.</param>
     public void SetVector2(string name, Vector2 data)
     {
-        _gl.UseProgram(Handle);
         TrySetUniform(name, data, _gl.Uniform2);
     }
 
@@ -258,7 +254,6 @@ public partial class Shader
     /// <param name="data">The data to set.</param>
     public void SetVector3(string name, Vector3 data)
     {
-        _gl.UseProgram(Handle);
         TrySetUniform(name, data, _gl.Uniform3);
     }
 
@@ -269,7 +264,6 @@ public partial class Shader
     /// <param name="data">The data to set.</param>
     public void SetVector4(string name, Vector4 data)
     {
-        _gl.UseProgram(Handle);
         TrySetUniform(name, data, _gl.Uniform4);
     }
 }
