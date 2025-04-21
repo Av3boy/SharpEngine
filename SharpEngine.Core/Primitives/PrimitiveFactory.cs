@@ -35,18 +35,17 @@ public static class PrimitiveFactory
     {
         // var material = diffuseMapFile, specularMapFile, 
 
-        // Model_Old model = primitiveType switch
-        // {
-        //     PrimitiveType.Cube => [Cube.Mesh],
-        //     PrimitiveType.Plane => [Plane.Mesh],
-        //     _ => throw new InvalidOperationException($"A primitive of type {primitiveType} does not exist.")
-        // };
+        Model_Old model = primitiveType switch
+        {
+            PrimitiveType.Cube => Cube.Model,
+            // PrimitiveType.Plane => [Plane.Mesh],
+            _ => throw new InvalidOperationException($"A primitive of type {primitiveType} does not exist.")
+        };
 
         var shader = ShaderService.Instance.LoadShader(vertShaderFile ?? _Resources.Default.VertexShader, fragShaderFile ?? _Resources.Default.FragmentShader, "lighting");
-        return new GameObject(shader)
+        return new GameObject(shader, model)
         {
-            Transform = new Transform { Position = (Numerics.Vector3)position },
-
+            Transform = new Transform((Numerics.Vector3)position),
         };
     }
 

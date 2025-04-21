@@ -192,13 +192,12 @@ public partial class Shader
             return false;
         }
 
+        // TODO: #95 The _gl.UseProgram should be not be called here. Rather the renderer should call it once before rendering.
         _gl.UseProgram(Handle);
         setter(location, data);
         
         return true;
     }
-
-    // TODO: #95 The _gl.UseProgram should be not be called here. Rather the renderer should call it once before rendering.
 
     /// <summary>
     ///     Set a uniform int on this shader.

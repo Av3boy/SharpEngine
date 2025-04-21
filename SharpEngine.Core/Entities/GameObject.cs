@@ -10,6 +10,7 @@ using Shader = SharpEngine.Core.Shaders.Shader;
 
 using Silk.NET.OpenGL;
 using Tutorial;
+using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Entities;
 
@@ -41,8 +42,9 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     /// <param name="specularMapFile">The file path of the specular map texture.</param>
     /// <param name="vertShaderFile">The file path of the vertex shader.</param>
     /// <param name="fragShaderFile">The file path of the fragment shader.</param>
-    public GameObject(Shader shader) : base(string.Empty)
+    public GameObject(Shader shader, Model_Old model) : base(string.Empty)
     {
+        Model = model;
         BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
         Shader = shader;
     }
@@ -83,11 +85,11 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     }
 
     /// <inheritdoc />
-    public void Render(CameraView camera, Window window)
+    public Task Render(CameraView camera, Window window)
     {
         // TODO: This needs to removed later once fixed.
         if (Model is null || Model.Meshes is null)
-            return;
+            return Task.CompletedTask;
 
         foreach (var mesh in Model.Meshes)
         {
@@ -105,6 +107,6 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
             Window.GL.DrawArrays(PrimitiveType.Triangles, 0, (uint)mesh.Vertices.Length);
         }
 
-        // return Task.CompletedTask;
+        return Task.CompletedTask;
     }
 }

@@ -17,4 +17,8 @@ public static class ShaderAttributes
 
     /// <summary>Represents the model matrix attribute.</summary>
     public const string Model = "model";
+
+    public const string View = "uView";
+
+    public const string Projection = "uProjection";
 }
