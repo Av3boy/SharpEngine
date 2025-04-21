@@ -11,6 +11,8 @@
 
     <!-- Required, atleast for now since another NuGet package with the SharpEngine.Core name already exists. -->
     <PackageId>$(AssemblyName).NET</PackageId>
+    
+    <!-- TODO: This required by the AudioDevice class. -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <PackageReadmeFile>README.md</PackageReadmeFile>

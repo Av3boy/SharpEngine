@@ -14,12 +14,13 @@ namespace Tutorial
     [Obsolete("This should be removed and the ObjLoader should be used instead.")]
     public class Model_Old : IDisposable
     {
-        public Model_Old(GL gl, string path, bool gamma = false)
+        public Model_Old(GL gl, string path)
         {
-            var assimp = Assimp.GetApi();
-            _assimp = assimp;
+            _assimp = Assimp.GetApi();
             _gl = gl;
-            LoadModel(path);
+
+            if (!string.IsNullOrWhiteSpace(path))
+                LoadModel(path);
         }
 
         private readonly GL _gl;
