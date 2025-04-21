@@ -80,12 +80,14 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     protected virtual void SetShaderUniforms(CameraView camera)
     {
         Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
-        Shader.SetMatrix4("uView", camera.GetViewMatrix(), false);
-        Shader.SetMatrix4("uProjection", camera.GetProjectionMatrix(), false);
+
+        // TODO: One of these could be calculated once and "reloaded" if it changes.
+        Shader.SetMatrix4(ShaderAttributes.View, camera.GetViewMatrix(), true);
+        Shader.SetMatrix4(ShaderAttributes.Projection, camera.GetProjectionMatrix(), true);
     }
 
     /// <inheritdoc />
-    public Task Render(CameraView camera, Window window)
+    public override Task Render(CameraView camera, Window window)
     {
         // TODO: This needs to removed later once fixed.
         if (Model is null || Model.Meshes is null)

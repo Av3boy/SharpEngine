@@ -12,7 +12,7 @@ uniform float rotation;
 uniform vec2 screenSize;
 uniform mat4 orthoMatrix;
 
-uniform mat4 model;
+uniform mat4 uModel;
 
 out vec3 Normal;
 out vec3 FragPos;
@@ -41,7 +41,7 @@ void main()
     );
 
     // Calculate the model-view-projection matrix using the orthographic projection matrix
-    mat4 mvp = orthoMatrix * rotationMatrix * model;
+    mat4 mvp = orthoMatrix * rotationMatrix * uModel;
 
     // Apply the MVP matrix to the scaled vertex position with aspect ratio
     gl_Position = mvp * vec4(
@@ -52,7 +52,7 @@ void main()
     );
 
     // Pass through other attributes
-    Normal = mat3(model) * aNormal; // Transform the normal
-    FragPos = vec3(model * vec4(aPos, 1.0)); // Transform the fragment position
+    Normal = mat3(uModel) * aNormal; // Transform the normal
+    FragPos = vec3(uModel * vec4(aPos, 1.0)); // Transform the fragment position
     TexCoords = aTexCoords;
 }

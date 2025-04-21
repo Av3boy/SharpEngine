@@ -184,11 +184,11 @@ public partial class Shader
     //     2. Get a handle to the location of the uniform with GL.GetUniformLocation.
     //     3. Use the appropriate GL.Uniform* function to set the uniform.
 
-    private bool TrySetUniform<T>(string name, T data, Action<int, T> setter)
+    private bool TrySetUniform<T>(string uniformName, T data, Action<int, T> setter)
     {
-        if (!_uniformLocations.TryGetValue(name, out int location))
+        if (!_uniformLocations.TryGetValue(uniformName, out int location))
         {
-            Debug.Log.Information("Uniform '{Name}' not found in shader program.", name);
+            Debug.Log.Information("Uniform '{UniformName}' not found in shader '{ShaderName}'.", uniformName, Name);
             return false;
         }
 

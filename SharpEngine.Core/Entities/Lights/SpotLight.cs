@@ -75,10 +75,10 @@ public class SpotLight : Light
     }
 
     /// <inheritdoc />
-    public Task Render(CameraView camera, Window window)
+    public override Task Render(CameraView camera, Window window)
     {
         SetShaderUniforms(camera);
-
+    
         return Task.CompletedTask;
     }
 }

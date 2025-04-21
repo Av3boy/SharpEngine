@@ -188,7 +188,8 @@ public class Minecraft : Game
         // TODO: #87 Generate chunks using 3d Perlin noise
 
         const int chunkSize = 16;
-        const int numChunks = 3;
+        const int numChunks = 1;
+        // const int numChunks = 3;
 
         for (int i = 0; i < numChunks; i++)
         {

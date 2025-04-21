@@ -27,7 +27,7 @@ internal class LightingShader : ShaderBase
         if (!base.SetAttributes())
             return false;
 
-        if (!Shader!.TryGetAttribLocation(ShaderAttributes.Pos, out int positionLocation))
+        /*if (!Shader!.TryGetAttribLocation(ShaderAttributes.Pos, out int positionLocation))
             return false;
 
         var positionLocationUint = (uint)positionLocation;
@@ -47,7 +47,7 @@ internal class LightingShader : ShaderBase
         var texCoordLocationUint = (uint)texCoordLocation;
         Window.GL.EnableVertexAttribArray(texCoordLocationUint);
         Window.GL.VertexAttribPointer(texCoordLocationUint, VertexData.TexCoordsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.TexCoordsOffset);
-
+        */
         return true;
     }
 }

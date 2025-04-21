@@ -28,7 +28,6 @@ public class PointLight : Light
 
         _index = index;
 
-        // Material.Shader = ShaderService.Instance.LoadShader(Default.VertexShader, Default.FragmentShader, "lighting");
         LampShader = new LampShader();
 
     }

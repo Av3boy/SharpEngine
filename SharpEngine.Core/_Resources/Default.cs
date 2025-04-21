@@ -5,7 +5,7 @@ namespace SharpEngine.Core._Resources;
 /// <summary>
 ///     Contains default resources used by the engine.
 /// </summary>
-public struct Default
+public static class Default
 {
     /// <summary>Gets the path to the debug texture.</summary>
     public static string DebugTexture => PathExtensions.GetAssemblyPath("_Resources\\Textures\\debug.JPG");

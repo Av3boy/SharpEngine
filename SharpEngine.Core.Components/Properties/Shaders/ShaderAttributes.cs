@@ -16,7 +16,7 @@ public static class ShaderAttributes
     public const int AttributeLocationNotFound = -1;
 
     /// <summary>Represents the model matrix attribute.</summary>
-    public const string Model = "model";
+    public const string Model = "uModel";
 
     public const string View = "uView";
 
