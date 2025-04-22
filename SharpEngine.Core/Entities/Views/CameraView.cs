@@ -209,8 +209,8 @@ public class CameraView : View
     /// <param name="shader">The shader to set the uniforms on.</param>
     public override void SetShaderUniforms(Shader shader)
     {
-        shader.SetMatrix4("view", GetViewMatrix());
-        shader.SetMatrix4("projection", GetProjectionMatrix());
+        shader.SetMatrix4(ShaderAttributes.View, GetViewMatrix());
+        shader.SetMatrix4(ShaderAttributes.Projection, GetProjectionMatrix());
         shader.SetVector3("viewPos", Position);
     }
 }

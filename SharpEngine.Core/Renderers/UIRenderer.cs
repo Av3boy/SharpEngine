@@ -48,9 +48,6 @@ public class UIRenderer : RendererBase
             // Disable face culling to render both sides of the quad
             Window.GL.Disable(EnableCap.CullFace);
 
-            // _camera.SetShaderUniforms(_uiShader.Shader!);
-            // _uiShader.Shader?.Use();
-
             var uiElementRenderTasks = _scene.IterateAsync<UIElement>(_scene.UIElements, elem => elem.Render(_camera, _window));
 
             return Task.WhenAll(uiElementRenderTasks);

@@ -26,7 +26,7 @@ public static class Cube
             Indices = [.. Indices],
             Textures = [defaultTexture],
             // Materials = [MaterialService.Instance.LoadMaterial(Default.DebugMaterial)],
-            // Materials = [new(defaultTexture)]
+            Materials = [new(defaultTexture)]
         };
 
         Mesh = MeshService.Instance.LoadMesh(nameof(Cube), mesh);

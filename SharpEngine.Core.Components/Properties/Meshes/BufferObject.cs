@@ -31,6 +31,7 @@ namespace Tutorial
         public void Dispose()
         {
             _gl.DeleteBuffer(_handle);
+            GC.SuppressFinalize(this);
         }
     }
 }

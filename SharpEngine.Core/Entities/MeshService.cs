@@ -1,9 +1,4 @@
-﻿using SharpEngine.Core.Windowing;
-using Silk.NET.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace SharpEngine.Core.Entities.Properties.Meshes;
 
@@ -29,12 +24,6 @@ public class MeshService
     {
         if (Meshes.TryGetValue(identifier, out var cachedMesh))
             return cachedMesh;
-
-        // var meshData = mesh.GetVertices();
-        // 
-        // var vertexBufferObject = Window.GL.GenBuffer();
-        // Window.GL.BindBuffer(GLEnum.ArrayBuffer, vertexBufferObject);
-        // Window.GL.BufferData<float>(GLEnum.ArrayBuffer, (uint)meshData.Length * sizeof(float), meshData, GLEnum.StaticDraw);
 
         Meshes.Add(identifier, mesh);
         return mesh;

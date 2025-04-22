@@ -13,12 +13,10 @@ public class Material
     /// <summary>
     ///     Initializes a new instance of <see cref="Material"/>.
     /// </summary>
-    /// <param name="shader">The shader used to render the material.</param>
     /// <param name="diffuseMap">The diffuse map texture of the material.</param>
     /// <param name="specularMap">The specular map texture of the material. Defaults to the diffuse map if not provided.</param>
-    public Material(Shader shader, Texture diffuseMap, Texture? specularMap = null)
+    public Material(Texture diffuseMap, Texture? specularMap = null)
     {
-        Shader = shader;
         DiffuseMap = diffuseMap;
         SpecularMap = specularMap ?? diffuseMap;
 
@@ -52,9 +50,6 @@ public class Material
 
     /// <summary>Gets a value indicating whether the material uses a specular map.</summary>
     public bool UseSpecularMap => SpecularMap.Handle != DiffuseMap.Handle;
-
-    /// <summary>Gets or sets the shader used to render the material.</summary>
-    public Shader Shader { get; set; }
 
     /// <summary>The texture unit for the diffuse map.</summary>
     public const int DIFFUSE_UNIT = 0;

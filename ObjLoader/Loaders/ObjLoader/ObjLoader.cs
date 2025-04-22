@@ -48,8 +48,8 @@ namespace ObjLoader.Loaders.ObjLoader
             var fileStream = new FileStream(_path, FileMode.Open, FileAccess.Read);
             StartLoad(fileStream);
 
-            return new List<Mesh>()
-            {
+            return
+            [
                 new(gl)
                 {
                     Vertices2 = _dataStore.Vertices,
@@ -58,7 +58,7 @@ namespace ObjLoader.Loaders.ObjLoader
                     Groups = _dataStore.Groups,
                     Materials = _dataStore.Materials
                 }
-            };
+            ];
         }
     }
 }

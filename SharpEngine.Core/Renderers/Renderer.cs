@@ -72,13 +72,11 @@ public class Renderer : RendererBase
             _camera.SetShaderUniforms(_lightingShader.Shader!);
             Window.GL.BindVertexArray(_lightingShader.Vao);
 
-            // _scene.Iterate(_scene.Root.Children, RenderGameObject);
             var gameObjectRenderTasks = _scene.IterateAsync(_scene.Root.Children, RenderGameObject);
             var renderTask = Task.WhenAll(gameObjectRenderTasks);
 
             Window.GL.BindVertexArray(_lampShader.Vao);
 
-            // return Task.CompletedTask;
             return renderTask;
         }
         catch (Exception ex)
