@@ -26,10 +26,7 @@ namespace Tutorial
 
         public Model_Old(GL gl, Mesh mesh)
         {
-            // _assimp = Assimp.GetApi();
-            // _gl = gl;
-
-            var result = new Mesh(gl, mesh.GetVertices(), mesh.Indices, new List<Texture>());
+            var result = new Mesh(gl, mesh.GetVertices(), mesh.Indices, mesh.Textures.ToList());
             Meshes.Add(result);
         }
 
