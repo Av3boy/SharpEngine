@@ -1,4 +1,6 @@
+using SharpEngine.Core._Resources;
 using SharpEngine.Core.Entities.Properties.Meshes;
+using SharpEngine.Core.Textures;
 using SharpEngine.Core.Windowing;
 using Tutorial;
 
@@ -14,15 +16,17 @@ public static class Cube
         if (_loaded)
             return;
 
+        var defaultTexture = TextureService.Instance.LoadTexture(Default.DebugTexture);
+
         var mesh = new Mesh(Window.GL)
         {
             Vertices = [.. Vertices],
             Normals = [.. Normals],
             TextureCoordinates = [.. TextureCoordinates],
             Indices = [.. Indices],
-            Textures = [] //[defaultTexture],
-            //Materials = [MaterialService.Instance.LoadMaterial(Default.DebugMaterial)],
-            //Materials = [new(defaultTexture)]
+            Textures = [defaultTexture],
+            // Materials = [MaterialService.Instance.LoadMaterial(Default.DebugMaterial)],
+            // Materials = [new(defaultTexture)]
         };
 
         Mesh = MeshService.Instance.LoadMesh(nameof(Cube), mesh);
