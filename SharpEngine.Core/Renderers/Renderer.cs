@@ -57,7 +57,9 @@ public class Renderer : RendererBase
     /// <inheritdoc />
     public override Task Render()
     {
+        // TODO: Make toggling these shaders into a hotkey.
         // return Task.CompletedTask;
+
         try
         {
             Window.GL.Enable(EnableCap.DepthTest);

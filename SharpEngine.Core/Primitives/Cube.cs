@@ -20,6 +20,9 @@ public static class Cube
             Normals = [.. Normals],
             TextureCoordinates = [.. TextureCoordinates],
             Indices = [.. Indices],
+            Textures = [] //[defaultTexture],
+            //Materials = [MaterialService.Instance.LoadMaterial(Default.DebugMaterial)],
+            //Materials = [new(defaultTexture)]
         };
 
         Mesh = MeshService.Instance.LoadMesh(nameof(Cube), mesh);

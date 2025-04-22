@@ -86,9 +86,7 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
     /// </summary>
     public override Task Render(CameraView camera, Window window)
     {
-        if (_uiShader.Shader is null)
-            return Task.CompletedTask;
-
+        _uiShader.Shader.Use();
         Bind();
 
         // TODO: #75 These should come from somewhere else.

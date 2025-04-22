@@ -18,7 +18,6 @@ namespace SharpEngine.Core.Renderers;
 public class UIRenderer : RendererBase
 {
     private readonly Scene _scene;
-    private readonly UIShader _uiShader;
     private readonly CameraView _camera;
     private readonly Window _window;
 
@@ -31,7 +30,6 @@ public class UIRenderer : RendererBase
     public UIRenderer(CameraView camera, Window window, ISettings settings, Scene scene) : base(settings)
     {
         _scene = scene;
-        _uiShader = new UIShader();
         _camera = camera;
         _window = window;
     }
@@ -39,8 +37,8 @@ public class UIRenderer : RendererBase
     /// <inheritdoc />
     public override Task Render()
     {
-        if (_uiShader.Shader is null)
-            return Task.CompletedTask;
+        // TODO: Make toggling these shaders into a hotkey.
+        // return Task.CompletedTask;
 
         try
         {
@@ -51,7 +49,7 @@ public class UIRenderer : RendererBase
             Window.GL.Disable(EnableCap.CullFace);
 
             // _camera.SetShaderUniforms(_uiShader.Shader!);
-            _uiShader.Shader?.Use();
+            // _uiShader.Shader?.Use();
 
             var uiElementRenderTasks = _scene.IterateAsync<UIElement>(_scene.UIElements, elem => elem.Render(_camera, _window));
 
