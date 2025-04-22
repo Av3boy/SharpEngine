@@ -238,7 +238,7 @@ public class Minecraft : Game
             if (input.IsKeyPressed(Key.Number0 + i))
             {
                 _inventory.SetSelectedSlot(i);
-                Debug.Log.Information($"Selected slot: {i} ({_inventory.SelectedSlot.Items.Type})");
+                Debug.Log.Information("Selected slot: {I} ({Type})", i, _inventory.SelectedSlot.Items.Type);
             }
         }
 
@@ -259,9 +259,6 @@ public class Minecraft : Game
     }
 
     /// <inheritdoc />
-    public override void HandleMouse(IMouse mouse) { }
-
-    /// <inheritdoc />
     public override void HandleMouseDown(IMouse mouse, MouseButton button) 
     {
         if (button == MouseButton.Right)
@@ -276,7 +273,7 @@ public class Minecraft : Game
             }
             else
             {
-                Debug.Log.Information($"No more {_inventory.SelectedSlot.Items.Type}s.");
+                Debug.Log.Information("No more {Type}s.", _inventory.SelectedSlot.Items.Type);
             }
         }
 
@@ -287,7 +284,7 @@ public class Minecraft : Game
             {
                 // TODO: #86 The block should be added to the slot so that 0 is the last slot instead of 9.
                 // TODO: #86 The first block destroyed doesn't seem to be added to the inventory.
-                Debug.Log.Information($"Block destroyed: {destroyedBlockType}.");
+                Debug.Log.Information("Block destroyed: {DestroyedBlockType}.", destroyedBlockType);
                 _inventory.AddToolbarItem(destroyedBlockType);
             }
         }
@@ -316,8 +313,7 @@ public class Minecraft : Game
         var newBlock = BlockFactory.CreateBlock(_inventory.SelectedSlot.Items.Type, newBlockPosition, $"Dirt ({_blocksNode.Children.Count})");
         _blocksNode.AddChild(newBlock);
 
-        Debug.Log.Information($"New block created: {newBlock.Transform.Position}, block in view location: {intersectingObject!.Transform.Position}");
-
+        Debug.Log.Information("New block created: {Pos}, block in view location: {IntersectingPos}", newBlock.Transform.Position, intersectingObject!.Transform.Position);
     }
 
     private static Vector3 GetNewBlockPosition(Vector3 hitPosition, GameObject intersectingObject)
@@ -342,7 +338,7 @@ public class Minecraft : Game
             slotIndex = 0;
 
         _inventory.SetSelectedSlot(slotIndex);
-        Debug.Log.Information($"Selected slot: {slotIndex}");
+        Debug.Log.Information("Selected slot: {Index}", slotIndex);
 
     }
 }

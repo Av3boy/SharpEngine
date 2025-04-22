@@ -42,6 +42,7 @@ namespace ObjLoader
             _groups.Add(_currentGroup);
         }
 
+        /// <inheritdoc />
         public void SetMaterial(string materialName)
         {
             var material = _materials.SingleOrDefault(x => x.Name.EqualsOrdinalIgnoreCase(materialName));
