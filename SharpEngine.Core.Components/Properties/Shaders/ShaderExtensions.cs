@@ -204,20 +204,16 @@ public partial class Shader
     /// </summary>
     /// <param name="name">The name of the uniform.</param>
     /// <param name="data">The data to set.</param>
-    public void SetInt(string name, int data)
-    {
-        TrySetUniform(name, data, _gl.Uniform1);
-    }
+    public bool SetInt(string name, int data)
+        => TrySetUniform(name, data, _gl.Uniform1);
 
     /// <summary>
     ///     Set a uniform float on this shader.
     /// </summary>
     /// <param name="name">The name of the uniform.</param>
     /// <param name="data">The data to set.</param>
-    public void SetFloat(string name, float data)
-    {
-        TrySetUniform(name, data, _gl.Uniform1);
-    }
+    public bool SetFloat(string name, float data)
+        => TrySetUniform(name, data, _gl.Uniform1);
 
     /// <summary>
     ///     Set a uniform Matrix4 on this shader
@@ -230,39 +226,31 @@ public partial class Shader
     ///   The matrix is transposed before being sent to the shader unless <paramref name="transpose"/> is set to <see langword="false"/>.
     ///   </para>
     /// </remarks>
-    public unsafe void SetMatrix4(string name, Matrix4x4 data, bool transpose = true)
-    {
+    public unsafe bool SetMatrix4(string name, Matrix4x4 data, bool transpose = true)
+        => TrySetUniform(name, data, (uniform, d) => _gl.UniformMatrix4(uniform, 1, transpose, (float*) &d));
         // TrySetUniform(name, data, (uniform, d) => _gl.UniformMatrix4(uniform, transpose, d.ToSpan()));
-        TrySetUniform(name, data, (uniform, d) => _gl.UniformMatrix4(uniform, 1, transpose, (float*) &d));
-    }
 
     /// <summary>
     ///     Set a uniform Vector2 on this shader.
     /// </summary>
     /// <param name="name">The name of the uniform.</param>
     /// <param name="data">The data to set.</param>
-    public void SetVector2(string name, Vector2 data)
-    {
-        TrySetUniform(name, data, _gl.Uniform2);
-    }
+    public bool SetVector2(string name, Vector2 data)
+        => TrySetUniform(name, data, _gl.Uniform2);
 
     /// <summary>
     ///     Set a uniform Vector3 on this shader.
     /// </summary>
     /// <param name="name">The name of the uniform.</param>
     /// <param name="data">The data to set.</param>
-    public void SetVector3(string name, Vector3 data)
-    {
-        TrySetUniform(name, data, _gl.Uniform3);
-    }
+    public bool SetVector3(string name, Vector3 data)
+        => TrySetUniform(name, data, _gl.Uniform3);
 
     /// <summary>
     ///     Set a uniform Vector3 on this shader.
     /// </summary>
     /// <param name="name">The name of the uniform.</param>
     /// <param name="data">The data to set.</param>
-    public void SetVector4(string name, Vector4 data)
-    {
-        TrySetUniform(name, data, _gl.Uniform4);
-    }
+    public bool SetVector4(string name, Vector4 data)
+        => TrySetUniform(name, data, _gl.Uniform4);
 }

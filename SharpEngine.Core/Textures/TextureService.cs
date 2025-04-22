@@ -40,7 +40,6 @@ public class TextureService
 
         // Generate handle
         var texture = new Texture(Window.GL, path, textureType);
-        texture.Initialize();
 
         // Add it to the cache
         _textureCache[path] = texture;
