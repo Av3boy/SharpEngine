@@ -58,6 +58,6 @@ public partial class Texture
     public void Dispose()
     {
         _gl.DeleteTexture(Handle);
+        GC.SuppressFinalize(this);
     }
-
 }

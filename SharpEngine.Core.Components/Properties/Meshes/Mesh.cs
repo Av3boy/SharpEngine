@@ -104,5 +104,7 @@ public class Mesh : IDisposable
         VAO.Dispose();
         VBO.Dispose();
         EBO.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 }

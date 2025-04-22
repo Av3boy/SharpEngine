@@ -37,6 +37,8 @@ namespace Tutorial
             {
                 mesh.Dispose();
             }
+
+            GC.SuppressFinalize(this);
         }
 
         public Mesh ProcessMesh(Mesh mesh)

@@ -34,6 +34,7 @@ namespace Tutorial
         public void Dispose()
         {
             _gl.DeleteVertexArray(_handle);
+            GC.SuppressFinalize(this);
         }
     }
 }
