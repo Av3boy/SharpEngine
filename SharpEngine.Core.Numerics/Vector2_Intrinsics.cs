@@ -47,7 +47,7 @@ namespace SharpEngine.Core.Numerics
         /// </summary>
         /// <param name="array">The destination array.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CopyTo(float[] array) => CopyTo(array, 0);
+        public readonly void CopyTo(float[] array) => CopyTo(array, 0);
 
         /// <summary>
         ///     Copies the contents of the vector into the given array, starting from the given index.
@@ -60,14 +60,13 @@ namespace SharpEngine.Core.Numerics
         public readonly void CopyTo(float[] array, int index)
         {
             // Match the JIT's exception type here. For perf, a NullReference is thrown instead of an ArgumentNull.
-            if (array == null)
-                throw new NullReferenceException();
+            ArgumentNullException.ThrowIfNull(array);
 
             if (index < 0 || index >= array.Length)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
             if ((array.Length - index) < 2)
-                throw new ArgumentException(nameof(index));
+                throw new ArgumentException("The given index is outside the supported range.", nameof(index));
 
             array[index] = X;
             array[index + 1] = Y;
@@ -77,9 +76,10 @@ namespace SharpEngine.Core.Numerics
         ///     Returns a boolean indicating whether the given Vector2 is equal to this Vector2 instance.
         /// </summary>
         /// <param name="other">The Vector2 to compare this instance to.</param>
-        /// <returns>True if the other Vector2 is equal to this instance; False otherwise.</returns>
+        /// <returns>True if the other Vector2 is approximately equal to this instance; False otherwise.</returns>
         [JitIntrinsic]
-        public bool Equals(Vector2 other) => X == other.X && Y == other.Y;
+        public readonly bool Equals(Vector2 other) 
+            => MathF.Abs(X - other.X) < Float.Tolerance && MathF.Abs(Y - other.Y) < Float.Tolerance;
 
         #endregion Public Instance Methods
 
@@ -135,7 +135,8 @@ namespace SharpEngine.Core.Numerics
         /// <returns>The absolute value vector.</returns>        
         [JitIntrinsic]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 Abs(Vector2 value) => new(MathF.Abs(value.X), MathF.Abs(value.Y));
+        public static Vector2 Abs(Vector2 value)
+            => new(MathF.Abs(value.X), MathF.Abs(value.Y));
 
         /// <summary>
         ///     Returns a vector whose elements are the square root of each of the source vector's elements.
@@ -144,7 +145,8 @@ namespace SharpEngine.Core.Numerics
         /// <returns>The square root vector.</returns>
         [JitIntrinsic]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 SquareRoot(Vector2 value) => new((float)MathF.Sqrt(value.X), (float)MathF.Sqrt(value.Y));
+        public static Vector2 SquareRoot(Vector2 value)
+            => new(MathF.Sqrt(value.X), MathF.Sqrt(value.Y));
 
         #endregion Public Static Methods
 

@@ -320,7 +320,7 @@ public class Window : SilkWindow
         GL.Viewport(size);
         
         if (size != Vector2D<int>.Zero)
-            Camera.AspectRatio = size.X / size.Y;
+            Camera.AspectRatio = (float)size.X / size.Y;
     }
 
     /// <inheritdoc />

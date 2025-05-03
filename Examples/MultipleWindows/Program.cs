@@ -6,8 +6,14 @@ using System.Collections.Concurrent;
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Shared;
 
+namespace SharpEngine.Examples.MultipleWindows;
+
 // An example provided a lovely person in this thread:
 // https://github.com/dotnet/Silk.NET/issues/2436#issuecomment-2752966073
+
+/// <summary>
+///     Represents the main entry point of the application.
+/// </summary>
 public static partial class Program
 {
     private static readonly List<IWindow> _windows = [];
@@ -23,12 +29,23 @@ public static partial class Program
     {
         StartWindowQueueTask();
 
-        while (!_cancellationTokenSource.IsCancellationRequested)
+        try
         {
-            for (int i = 0; i < _windows.Count; i++)
-                UpdateWindow(ref i);
+            while (!_cancellationTokenSource.IsCancellationRequested)
+            {
+                for (int i = 0; i < _windows.Count; i++)
+                    UpdateWindow(ref i);
 
-            DequeueWindows();
+                DequeueWindows();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            _cancellationTokenSource.Dispose();
         }
     }
 
@@ -60,8 +77,8 @@ public static partial class Program
         if (_cancellationTokenSource.IsCancellationRequested)
             return;
         
-        while (_windowQueue.TryDequeue(out var options))
-            EnqueueWindow(options);
+        while (_windowQueue.TryDequeue(out var _))
+            EnqueueWindow();
     }
 
     private static void StartWindowQueueTask()
@@ -90,14 +107,13 @@ public static partial class Program
             }
         };
 
-        //var window = Window.Create(options);
         var window = new SharpEngine.Core.Windowing.Window(new(), options);
         window.Initialize();
 
         return window;
     }
 
-    private static void EnqueueWindow(WindowOptions options)
+    private static void EnqueueWindow()
     {
         var window = CreateWindow();
         foreach (var mouse in window!.Input!.Mice)

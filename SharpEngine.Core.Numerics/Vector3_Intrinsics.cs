@@ -74,9 +74,8 @@ namespace SharpEngine.Core.Numerics
         public readonly void CopyTo(float[] array, int index)
         {
             // Match the JIT's exception type here. For perf, a NullReference is thrown instead of an ArgumentNull.
-            if (array == null)
-                throw new NullReferenceException();
-            
+            ArgumentNullException.ThrowIfNull(array);
+
             if (index < 0 || index >= array.Length)
                 throw new ArgumentOutOfRangeException(nameof(index));
             
@@ -92,14 +91,12 @@ namespace SharpEngine.Core.Numerics
         ///     Returns a boolean indicating whether the given Vector3 is equal to this Vector3 instance.
         /// </summary>
         /// <param name="other">The Vector3 to compare this instance to.</param>
-        /// <returns>True if the other Vector3 is equal to this instance; False otherwise.</returns>
+        /// <returns>True if the other Vector3 is approximately equal to this instance; False otherwise.</returns>
         [JitIntrinsic]
         public readonly bool Equals(Vector3 other)
-        {
-            return X == other.X &&
-                   Y == other.Y &&
-                   Z == other.Z;
-        }
+            => MathF.Abs(X - other.X) < Float.Tolerance &&
+               MathF.Abs(Y - other.Y) < Float.Tolerance &&
+               MathF.Abs(Z - other.Z) < Float.Tolerance;
 
         #endregion Public Instance Methods
 
@@ -114,11 +111,9 @@ namespace SharpEngine.Core.Numerics
         [JitIntrinsic]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Dot(Vector3 vector1, Vector3 vector2)
-        {
-            return (vector1.X * vector2.X) +
-                   (vector1.Y * vector2.Y) +
-                   (vector1.Z * vector2.Z);
-        }
+            => (vector1.X * vector2.X) +
+               (vector1.Y * vector2.Y) +
+               (vector1.Z * vector2.Z);
 
         /// <summary>
         ///     Returns a vector whose elements are the minimum of each of the pairs of elements in the two source vectors.
@@ -280,9 +275,9 @@ namespace SharpEngine.Core.Numerics
         [JitIntrinsic]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(Vector3 left, Vector3 right)
-            => left.X == right.X &&
-               left.Y == right.Y &&
-               left.Z == right.Z;
+            => Math.Abs(left.X - right.X) < Float.Tolerance &&
+               Math.Abs(left.Y - right.Y) < Float.Tolerance &&
+               Math.Abs(left.Z - right.Z) < Float.Tolerance;
 
         /// <summary>
         ///     Returns a boolean indicating whether the two given vectors are not equal.
@@ -292,9 +287,7 @@ namespace SharpEngine.Core.Numerics
         /// <returns>True if the vectors are not equal; False if they are equal.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(Vector3 left, Vector3 right)
-            => left.X != right.X ||
-               left.Y != right.Y ||
-               left.Z != right.Z;
+            => !(left == right);
 
         /// <summary>
         ///     Converts the SharpEngine representation to a System.Numerics representation.
