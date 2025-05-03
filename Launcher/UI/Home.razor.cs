@@ -1,6 +1,7 @@
 ﻿using Launcher.Services;
 using Launcher.UI.Components;
 using Microsoft.AspNetCore.Components;
+
 using SharpEngine.Shared.Dto;
 using System.Diagnostics;
 using System.Text.Json;
@@ -10,6 +11,7 @@ using FilterMode = SharpEngine.Shared.Enums.FilterMode;
 namespace Launcher.UI
 {
     /// <summary>Represents the home page of the launcher.</summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S6966:Awaitable method should be used", Justification = "<Pending>")]
     public partial class Home : ComponentBase
     {
         [Inject]
@@ -123,7 +125,7 @@ namespace Launcher.UI
             if (pickedFile == null)
                 return;
 
-            if (pickedFile.FileName.EndsWith(".sharpproject") == false)
+            if (!pickedFile.FileName.EndsWith(".sharpproject"))
             {
                 _notificationService.Show("Invalid file type selected. Please select a .sharpproject file.");
                 return;
@@ -150,6 +152,8 @@ namespace Launcher.UI
             File.WriteAllText(_projectsFilePath, json);
         }
 
+        // If the user sets the project path as an executable command, this will execute that command.
+        // In most cases that should be fine as the developer has the launcher installed on their machine, however this still should be resolved soon.
         private static void OpenInExplorer(string projectPath)
             => Process.Start("explorer.exe", projectPath);
 

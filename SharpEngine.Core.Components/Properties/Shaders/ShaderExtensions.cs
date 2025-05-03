@@ -5,8 +5,15 @@ using System.Text.RegularExpressions;
 
 namespace SharpEngine.Core.Shaders;
 
+/// <summary>
+///     Represents a shader program in the engine.
+/// </summary>
 public partial class Shader
 {
+    /// <summary>
+    ///     Initializes and compiles vertex and fragment shaders into a shader program.
+    /// </summary>
+    /// <returns>The current instance after initialization.</returns>
     public Shader Initialize()
     {
         // Load and compile shader
@@ -59,7 +66,7 @@ public partial class Shader
     {
         if (!File.Exists(shaderPath))
         {
-            Debug.Log.Information($"Shader file not found: {shaderPath}");
+            Debug.Log.Information("Shader file not found: {Path}", shaderPath);
 
             shader = 0;
             return false;
@@ -74,14 +81,14 @@ public partial class Shader
 
         if (!CompileShader(shader))
         {
-            Debug.Log.Information($"Unable to load {shaderType} shader from '{shaderPath}'.");
+            Debug.Log.Information("Unable to load {Type} shader from '{Path}'.", shaderType, shaderPath);
             return false;
         }
 
         return true;
     }
 
-    public Shader SetUniformLocations()
+    private void SetUniformLocations()
     {
         // First, we have to get the number of active uniforms in the shader.
         _gl.GetProgram(Handle, GLEnum.ActiveUniforms, out var numberOfUniforms);
@@ -102,18 +109,17 @@ public partial class Shader
         }
 
         _uniformLocations = uniformLocations;
-        return this;
     }
 
     private static string ProcessIncludes(string shaderCode, string directory)
     {
-        string includePattern = @"#include\s+""(.+?)""";
+        const string includePattern = @"#include\s+""(.+?)""";
         return Regex.Replace(shaderCode, includePattern, match =>
         {
             string includePath = Path.Combine(directory, match.Groups[1].Value);
             string includeCode = File.ReadAllText(includePath);
             return ProcessIncludes(includeCode, Path.GetDirectoryName(includePath)!);
-        });
+        }, RegexOptions.NonBacktracking);
     }
 
     private bool CompileShader(uint shader)
@@ -127,7 +133,7 @@ public partial class Shader
         {
             // We can use `GL.GetShaderInfoLog(shader)` to get information about the error.
             var infoLog = _gl.GetShaderInfoLog(shader);
-            Debug.Log.Information($"Error occurred whilst compiling Shader({shader}).\n\n{infoLog}");
+            Debug.Log.Error("Error occurred whilst compiling Shader({Shader}).\n\n{Log}", shader, infoLog);
 
             return false;
         }
@@ -143,7 +149,7 @@ public partial class Shader
         if (statusCode != (int)GLEnum.True)
         {
             string infoLog = _gl.GetProgramInfoLog(program);
-            Debug.Log.Information($"Error occurred whilst linking Program({program}): {infoLog}");
+            Debug.Log.Error("Error occurred whilst linking Program({Program}): {Info}", program, infoLog);
 
             return false;
         }
@@ -168,7 +174,7 @@ public partial class Shader
         location = _gl.GetAttribLocation(Handle, attribName);
         if (location == ShaderAttributes.AttributeLocationNotFound)
         {
-            Debug.Log.Information($"Attribute '{attribName}' not found in shader program.");
+            Debug.Log.Warning("Attribute '{Attribute}' not found in shader program.", attribName);
             return false;
         }
 

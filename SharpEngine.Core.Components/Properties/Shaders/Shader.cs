@@ -1,5 +1,6 @@
 using SharpEngine.Shared;
 using Silk.NET.OpenGL;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SharpEngine.Core.Shaders;
 
@@ -9,15 +10,19 @@ namespace SharpEngine.Core.Shaders;
 public partial class Shader : IDisposable
 {
     /// <summary>Gets the handle to the shader program.</summary>
-    public uint Handle;
+    public uint Handle { get; private set; }
 
     /// <summary>Gets or sets the identifying name of the shader.</summary>
     public string Name { get; set; }
+
+    /// <summary>Gets or sets the path to the vertex shader file.</summary>
     public string VertPath { get; set; }
+
+    /// <summary>Gets or sets the path to the fragment shader file.</summary>
     public string FragPath { get; set; }
 
     private Dictionary<string, int> _uniformLocations = [];
-
+    private bool disposedValue;
     private readonly GL _gl;
 
     /// <summary>
@@ -27,6 +32,7 @@ public partial class Shader : IDisposable
     ///     Shaders are written in GLSL, which is a language very similar to C in its semantics.
     ///     The GLSL source is compiled *at runtime*, so it can optimize itself for the graphics card it's currently being used on.
     /// </remarks>
+    /// <param name="gl">The OpenGL instance where this shader is used.</param>
     /// <param name="vertPath">The vertex shader full path.</param>
     /// <param name="fragPath">The fragment shader full path.</param>
     /// <param name="name">The identifier name of the shader.</param>
@@ -52,9 +58,26 @@ public partial class Shader : IDisposable
     }
 
     /// <inheritdoc />
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposedValue)
+            return;
+        
+        if (disposing)
+        {
+            _gl.DeleteProgram(Handle);
+            Handle = 0;
+            _uniformLocations.Clear();
+        }
+
+        disposedValue = true;
+    }
+
+    /// <inheritdoc />
     public void Dispose()
     {
-        _gl.DeleteProgram(Handle);
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 }
