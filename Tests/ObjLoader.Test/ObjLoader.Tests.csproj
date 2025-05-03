@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  
+  <!-- TODO: These should be converted to xunit and moq, fluent assertions is a paid library -->
+  <ItemGroup>
+    <PackageReference Include="fluentassertions" Version="4.19.2" />
+    <PackageReference Include="NUnit" Version="3.7.1" />
+    <packagereference Include="NUnit3TestAdapter" Version=" 3.8.0-alpha1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\ObjLoader\SharpEngine.Core.ObjLoader.csproj" />
+  </ItemGroup>
+</Project>

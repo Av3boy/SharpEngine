@@ -2,6 +2,7 @@ using ImGuiNET;
 using SharpEngine.Core;
 using SharpEngine.Core.Audio;
 using SharpEngine.Core.Scenes;
+using SharpEngine.Shared;
 using SharpEngine.Shared.Extensions;
 using System.Text;
 
@@ -44,7 +45,7 @@ namespace SharpEngine.Editor.Windows
         {
             if (!File.Exists(filePath))
             {
-                Debug.LogInformation($"Audio file '{filePath}' does not exist.");
+                Debug.Log.Warning("Audio file '{FilePath}' does not exist.", filePath);
                 return;
             }
 
@@ -57,7 +58,7 @@ namespace SharpEngine.Editor.Windows
             }
             catch (Exception ex)
             {
-                Debug.LogInformation($"Error during audio playback: {ex.Message}");
+                Debug.Log.Error(ex, "Error during audio playback: {Message}", ex.Message);
             }
         }
 
@@ -65,25 +66,25 @@ namespace SharpEngine.Editor.Windows
         {
             if (Project is null)
             {
-                // TODO: This should never be possible. If the Project is null when it's loaded we should make sure it's initialized. 
+                // TODO: #78 This should never be possible. If the Project is null when it's loaded we should make sure it's initialized. 
                 // Editor service probably needs to be made shared so that we can initialize the project / solution when the editor is opened.
 
-                // TODO: Do we want to save here automatically or prompt the user to save?
-                Debug.LogInformation("The project was null");
+                // TODO: #77 Save automatically
+                Debug.Log.Information("The project was null");
                 return;
             }
 
-            Debug.LogInformation($"Starting {Project.Name}.");
-            ProcessExtensions.RunProcess($"dotnet run --project {Project.Path}/{Project.Name}.csproj", true, msg => Debug.LogInformation(msg));
+            Debug.Log.Information("Starting {ProjectName}.", Project.Name);
+            ProcessExtensions.RunProcess($"dotnet run --project {Project.Path}/{Project.Name}.csproj", true, Debug.Log.Information);
         }
 
         private void SaveScene(Scene scene)
         {
-            Console.WriteLine("Saving..");
+            Debug.Log.Information("Saving..");
 
             if (!scene.HasUnsavedChanges && scene.HasSaveFile())
             {
-                Console.WriteLine("No changes to save.");
+                Debug.Log.Information("No changes to save.");
                 return;
             }
 
@@ -91,7 +92,7 @@ namespace SharpEngine.Editor.Windows
             {
                 scene.SaveScene().Wait();
                 OnSceneLoaded?.Invoke(scene);
-                Console.WriteLine("File saved successfully!");
+                Debug.Log.Information("File saved successfully!");
                 return;
             }
 
@@ -110,15 +111,15 @@ namespace SharpEngine.Editor.Windows
                 scene.SaveScene(dialog.FileName).Wait();
                 Scene.SetFileFullPath(dialog.FileName);
 
-                Console.WriteLine("File saved successfully!");
+                Debug.Log.Information("File saved successfully!");
             }
             else
-                Console.WriteLine("File save cancelled.");
+                Debug.Log.Information("File save cancelled.");
         }
 
         private static bool SelectFile(out string selectedFile)
         {
-            Console.WriteLine("Selecting file..");
+            Debug.Log.Information("Selecting file..");
 
             using var dialog = new OpenFileDialog()
             {
@@ -140,12 +141,12 @@ namespace SharpEngine.Editor.Windows
 
         private void LoadScene(string sceneFile)
         {
-            Console.WriteLine($"Loading scene from file: {sceneFile}.");
+            Debug.Log.Information($"Loading scene from file: {sceneFile}.");
 
             var newScene = Scene.LoadScene(sceneFile);
             SetScene(newScene);
 
-            Console.WriteLine("Scene loaded successfully!");
+            Debug.Log.Information("Scene loaded successfully!");
         }
     }
 }

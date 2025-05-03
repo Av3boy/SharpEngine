@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <!-- TODO: This should be used with unit testing. -->
+  <ItemGroup>
+    <PackageReference Include="System.IO.Abstractions" Version="22.0.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SharpEngine.Core.Components\SharpEngine.Core.Components.csproj" />
+    <ProjectReference Include="..\SharpEngine.Shared\SharpEngine.Shared.csproj" />
+  </ItemGroup>
+</Project>

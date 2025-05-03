@@ -41,19 +41,18 @@ public static class Program
             var scene = !string.IsNullOrEmpty(sceneFile) ? Scene.LoadScene(sceneFile) : new Scene();
             var project = !string.IsNullOrEmpty(projectFile) ? Project.LoadProject(projectFile)
 #if DEBUG
-                // TODO: We should create an additional getter for the .sharpproject file.
                 : new Project() { Path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\Examples\Minimal"), Name = "Minimal" };
 #else
                 : new Project();
 #endif
             using var window = new EditorWindow(scene, project!, new DefaultViewSettings());
-            window.OnLoaded += () => Console.WriteLine("test");
+            window.OnLoaded += () => Debug.Log.Information("test");
 
             window.Run();
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Debug.LogInformation($"Failed to start the editor: {e.Message}", e, true);
+            Debug.Log.Information(ex, "Failed to start the editor: {Message}", ex.Message);
         }
     }
 }

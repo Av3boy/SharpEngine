@@ -1,22 +1,25 @@
+using ImGuiNET;
+using Minecraft.Block;
+using ObjLoader.Loaders.ObjLoader;
 using SharpEngine.Core;
+using SharpEngine.Core.Entities;
+using SharpEngine.Core.Entities.Lights;
+using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Entities.Properties.Meshes;
+using SharpEngine.Core.Entities.UI;
+using SharpEngine.Core.Entities.UI.Layouts;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
-using SharpEngine.Core.Entities;
-using SharpEngine.Core.Entities.Lights;
-
-using Minecraft.Block;
-using Silk.NET.Input;
-
-using System;
-using System.Numerics;
-using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Windowing;
-using SharpEngine.Core.Entities.UI.Layouts;
-using SharpEngine.Core.Entities.Properties;
-using ImGuiNET;
-using SharpEngine.Core.Entities.Properties.Meshes;
+using SharpEngine.Shared;
+using Silk.NET.Core.Native;
+using Silk.NET.Input;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using Tutorial;
 
 namespace Minecraft;
 
@@ -69,7 +72,7 @@ public class Minecraft : Game
 
             var gridLayout = new GridLayout<UIElement>();
 
-            // TODO: Fix UI renderer
+            // TODO: #89 Fix UI renderer
             _uiElem = new UIElement("uiElement");
             _scene.UIElements.Add(_uiElem);
 
@@ -87,7 +90,7 @@ public class Minecraft : Game
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            Debug.Log.Information(ex.Message, "{Message}", ex.Message);
         }
     }
 
@@ -145,10 +148,18 @@ public class Minecraft : Game
         InitializeLights();
         InitializeChunks();
 
-        // TODO: Does not work yet.
+        // TODO: #2 Does not work yet.
         // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
-        // var go = new GameObject();
-        // go.Meshes.Add(torus.First());
+
+        var model = ObjLoaderFactory.Load(Window.GL, @"C:\Users\antti\Documents\Untitled2.obj");
+        var go = new GameObject(model);
+        var go2 = new GameObject(model)
+        {
+            Transform = new Transform(new SharpEngine.Core.Numerics.Vector3(0, 0, 30))
+        };
+
+        _scene.Root.AddChild(go);
+        _scene.Root.AddChild(go2);
     }
 
     private void InitializeLights()
@@ -172,12 +183,13 @@ public class Minecraft : Game
 
     private void InitializeChunks()
     {
-        // TODO: Generate chunks when player moves
+        // TODO: #88 Generate chunks when player moves
 
-        // TODO: Generate chunks using 3d Perlin noise
+        // TODO: #87 Generate chunks using 3d Perlin noise
 
         const int chunkSize = 16;
-        const int numChunks = 3;
+        const int numChunks = 1;
+        // const int numChunks = 3;
 
         for (int i = 0; i < numChunks; i++)
         {
@@ -217,7 +229,7 @@ public class Minecraft : Game
     private void UpdateUI()
         => _uiElem.Transform.Rotation.Angle += 0.01f;
 
-    // TODO: Input system to let users change change key bindings?
+    // TODO: #21 Input system to let users change change key bindings?
     /// <inheritdoc />
     public override void HandleKeyboard(IKeyboard input, double deltaTime)
     {
@@ -226,7 +238,7 @@ public class Minecraft : Game
             if (input.IsKeyPressed(Key.Number0 + i))
             {
                 _inventory.SetSelectedSlot(i);
-                Console.WriteLine($"Selected slot: {i} ({_inventory.SelectedSlot.Items.Type})");
+                Debug.Log.Information("Selected slot: {I} ({Type})", i, _inventory.SelectedSlot.Items.Type);
             }
         }
 
@@ -247,9 +259,6 @@ public class Minecraft : Game
     }
 
     /// <inheritdoc />
-    public override void HandleMouse(IMouse mouse) { }
-
-    /// <inheritdoc />
     public override void HandleMouseDown(IMouse mouse, MouseButton button) 
     {
         if (button == MouseButton.Right)
@@ -264,7 +273,7 @@ public class Minecraft : Game
             }
             else
             {
-                Console.WriteLine($"No more {_inventory.SelectedSlot.Items.Type}s.");
+                Debug.Log.Information("No more {Type}s.", _inventory.SelectedSlot.Items.Type);
             }
         }
 
@@ -273,9 +282,9 @@ public class Minecraft : Game
             var destroyedBlockType = DestroyBlock();
             if (destroyedBlockType != BlockType.None)
             {
-                // TODO: The block should be added to the slot so that 0 is the last slot instead of 9.
-                // TODO: The first block destroyed doesn't seem to be added to the inventory.
-                Console.WriteLine($"Block destroyed: {destroyedBlockType}.");
+                // TODO: #86 The block should be added to the slot so that 0 is the last slot instead of 9.
+                // TODO: #86 The first block destroyed doesn't seem to be added to the inventory.
+                Debug.Log.Information("Block destroyed: {DestroyedBlockType}.", destroyedBlockType);
                 _inventory.AddToolbarItem(destroyedBlockType);
             }
         }
@@ -304,8 +313,7 @@ public class Minecraft : Game
         var newBlock = BlockFactory.CreateBlock(_inventory.SelectedSlot.Items.Type, newBlockPosition, $"Dirt ({_blocksNode.Children.Count})");
         _blocksNode.AddChild(newBlock);
 
-        Console.WriteLine($"New block created: {newBlock.Transform.Position}, block in view location: {intersectingObject!.Transform.Position}");
-
+        Debug.Log.Information("New block created: {Pos}, block in view location: {IntersectingPos}", newBlock.Transform.Position, intersectingObject!.Transform.Position);
     }
 
     private static Vector3 GetNewBlockPosition(Vector3 hitPosition, GameObject intersectingObject)
@@ -330,7 +338,7 @@ public class Minecraft : Game
             slotIndex = 0;
 
         _inventory.SetSelectedSlot(slotIndex);
-        Console.WriteLine($"Selected slot: {slotIndex}");
+        Debug.Log.Information("Selected slot: {Index}", slotIndex);
 
     }
 }

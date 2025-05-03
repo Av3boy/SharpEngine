@@ -20,12 +20,6 @@
   </PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="DefaultTextures\**" />
-	  <EmbeddedResource Remove="DefaultTextures\**" />
-	  <None Remove="DefaultTextures\**" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <None Include="..\icon.png">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
@@ -33,7 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-			<ProjectReference Include="..\Core\SharpEngine.Core.csproj" />
+			<ProjectReference Include="..\SharpEngine.Core\SharpEngine.Core.csproj" />
 			<ProjectReference Include="..\SharpEngine.Shared\SharpEngine.Shared.csproj" />
 	</ItemGroup>
 

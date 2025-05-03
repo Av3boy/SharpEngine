@@ -3,11 +3,11 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <Platforms>AnyCPU;x64;x86</Platforms>
-    <Configurations>Debug;Release;LauncherNonWindows</Configurations>
   </PropertyGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\SharpEngine.Core.csproj" />
+    <ProjectReference Include="..\..\ObjLoader\SharpEngine.Core.ObjLoader.csproj" />
+    <ProjectReference Include="..\..\SharpEngine.Core\SharpEngine.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

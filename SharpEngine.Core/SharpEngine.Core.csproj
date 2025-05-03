@@ -1,0 +1,62 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Everything needed to build games using a purely C# game engine.</Description>
+    
+    <Platforms>AnyCPU;x64;x86</Platforms>
+    <GeneratePackageOnBuild>$(GenerateNuGetPackages)</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/Av3boy/SharpEngine</PackageProjectUrl>
+    <PackageTags>game-engine;</PackageTags>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+
+    <!-- Required, atleast for now since another NuGet package with the SharpEngine.Core name already exists. -->
+    <PackageId>$(AssemblyName).NET</PackageId>
+    
+    <!-- TODO: This required by the AudioDevice class. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  
+  <ItemGroup>    
+    <PackageReference Include="Silk.NET.OpenAL" Version="$(SilkVersion)" />
+    <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="$(SilkVersion)" />
+    <PackageReference Include="Silk.NET.Input" Version="$(SilkVersion)" />
+    <PackageReference Include="Silk.NET.OpenGL" Version="$(SilkVersion)" />
+    <PackageReference Include="Silk.NET.Windowing" Version="$(SilkVersion)" />
+    
+    <PackageReference Include="StbImageSharp" Version="2.30.15" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SharpEngine.Core.Components\SharpEngine.Core.Components.csproj" />
+    <ProjectReference Include="..\SharpEngine.Core.Numerics\SharpEngine.Core.Numerics.csproj" />
+    <ProjectReference Include="..\SharpEngine.Shared\SharpEngine.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="_Resources\Shaders\lighting.frag" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\Light\DirectionalLight.glsl" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\Light\PointLight.glsl" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\Light\SpotLight.glsl" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\Material.glsl" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\shader.frag" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\shader.vert" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\shader2.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="_Resources\Shaders\uiShader.frag" CopyToOutputDirectory="Always" />
+    <None Update="_Resources\Shaders\uiShader.vert" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Textures\debug.jpg" CopyToOutputDirectory="Always" />
+    <None Update="_Resources\icon.png" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

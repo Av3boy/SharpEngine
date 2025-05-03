@@ -86,7 +86,7 @@ namespace Launcher.Services
             string createProject = $"dotnet new console -n {projectName} -o {project.Path} -f {FRAMEWORK}";
             string addProjectToSolution = $"dotnet sln {project.Path}/{projectName}.sln add {project.Path}/{projectName}.csproj";
 
-            // TODO: Add the NuGet package after it's been published
+            // TODO: #34 Add the NuGet package after it's been published
             //string installNuGetPackage = $"dotnet add {project.Path}/{projectName}.csproj package {SHARP_ENGINE_CORE_NUGET_PACKAGE}";
             string installNuGetPackage = "echo done";
 
@@ -109,9 +109,9 @@ namespace Launcher.Services
             else
                 _notificationService.Show("Solution and project created successfully!");
 
-            // TODO: Set example program.cs content with the minimal projects content.
+            // TODO: #34 Set example program.cs content with the minimal projects content.
             // string programFilePath = Path.Combine(project.Path!, "Program.cs");
-            // string programContent = ""; // TODO: Replace with program content
+            // string programContent = ""; 
             // 
             // File.WriteAllText(programFilePath, programContent);
         }

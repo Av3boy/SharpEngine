@@ -1,13 +1,20 @@
 <Project>
   
+  <!-- Solution target framework versions -->
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
 
+  <!-- Project default settings -->
+  <PropertyGroup>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!-- Signing details -->
+  <PropertyGroup>
     <Authors>Antti Veikkolainen</Authors>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Av3boy/SharpEngine</RepositoryUrl>
   </PropertyGroup>
 
@@ -23,11 +30,8 @@
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+  <PropertyGroup>
+    <SilkVersion>2.22.0</SilkVersion>
+  </PropertyGroup>
   
 </Project>
