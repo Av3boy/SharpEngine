@@ -83,7 +83,7 @@ namespace Tutorial
             Models.Add(model);
         }
 
-        private static unsafe void OnUpdate(double deltaTime)
+        private static void OnUpdate(double deltaTime)
         {
             var moveSpeed = 2.5f * (float) deltaTime;
 
@@ -104,7 +104,7 @@ namespace Tutorial
                 CameraPosition += Vector3.Normalize(Vector3.Cross(CameraFront, CameraUp)) * moveSpeed;
         }
 
-        private static unsafe void OnRender(double deltaTime)
+        private static void OnRender(double deltaTime)
         {
             Gl.Enable(EnableCap.DepthTest);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -130,7 +130,7 @@ namespace Tutorial
             }
         }
 
-        private static unsafe void RenderModel(Model_Old model, Matrix4x4 modelMatrix, Matrix4x4 view, Matrix4x4 projection)
+        private static void RenderModel(Model_Old model, Matrix4x4 modelMatrix, Matrix4x4 view, Matrix4x4 projection)
         {
             foreach (var mesh in model.Meshes)
             {
@@ -150,7 +150,7 @@ namespace Tutorial
 
         private static void OnFramebufferResize(Vector2D<int> newSize) => Gl.Viewport(newSize);
 
-        private static unsafe void OnMouseMove(IMouse mouse, Vector2 position)
+        private static void OnMouseMove(IMouse mouse, Vector2 position)
         {
             var lookSensitivity = 0.1f;
             if (LastMousePosition == default)
@@ -178,7 +178,7 @@ namespace Tutorial
 
         //We don't want to be able to zoom in too close or too far away so clamp to these values
 
-        private static unsafe void OnMouseWheel(IMouse mouse, ScrollWheel scrollWheel)
+        private static void OnMouseWheel(IMouse mouse, ScrollWheel scrollWheel)
             => CameraZoom = Math.Clamp(CameraZoom - scrollWheel.Y, 1.0f, 45f);
 
         private static void OnClose()

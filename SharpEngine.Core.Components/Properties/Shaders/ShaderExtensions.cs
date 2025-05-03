@@ -232,9 +232,9 @@ public partial class Shader
     ///   The matrix is transposed before being sent to the shader unless <paramref name="transpose"/> is set to <see langword="false"/>.
     ///   </para>
     /// </remarks>
-    public unsafe bool SetMatrix4(string name, Matrix4x4 data, bool transpose = true)
-        => TrySetUniform(name, data, (uniform, d) => _gl.UniformMatrix4(uniform, 1, transpose, (float*) &d));
-        // TrySetUniform(name, data, (uniform, d) => _gl.UniformMatrix4(uniform, transpose, d.ToSpan()));
+    public bool SetMatrix4(string name, Matrix4x4 data, bool transpose = true)
+        //=> TrySetUniform(name, data, (uniform, d) => _gl.UniformMatrix4(uniform, 1, transpose, (float*) &d));
+        => TrySetUniform(name, data, (uniform, d) => _gl.UniformMatrix4(uniform, transpose, d.ToSpan()));
 
     /// <summary>
     ///     Set a uniform Vector2 on this shader.
