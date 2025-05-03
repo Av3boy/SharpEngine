@@ -1,8 +1,9 @@
 ﻿using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Enums;
-
+using SharpEngine.Core.Scenes;
 using Silk.NET.Input;
+using System.Security.Cryptography.X509Certificates;
 
 namespace SharpEngine.Core.Interfaces;
 
@@ -13,6 +14,39 @@ namespace SharpEngine.Core.Interfaces;
 public class Game
 {
     /// <summary>
+    ///     Initializes a new instance of the <see cref="Game" />.
+    /// </summary>
+    /// <remarks>
+    ///     Sets up a default scene and camera.
+    /// </remarks>
+    public Game()
+    {
+        Scene = new Scene();
+        Camera = new(new System.Numerics.Vector3(0), new DefaultViewSettings());
+    }
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Game" />.
+    /// </summary>
+    /// <remarks>
+    ///     Sets up a default camera.
+    /// </remarks>
+    public Game(Scene scene)
+    {
+        Scene = scene;
+        Camera = new(new System.Numerics.Vector3(0), new DefaultViewSettings());
+    }
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Game" />.
+    /// </summary>
+    public Game(Scene scene, CameraView camera)
+    {
+        Scene = scene;
+        Camera = camera;
+    }
+
+    /// <summary>
     ///     Gets or sets the core settings of the game.
     /// </summary>
     public ISettings CoreSettings { get; init; } = new DefaultSettings();
@@ -20,7 +54,12 @@ public class Game
     /// <summary>
     ///     Gets or sets the camera of the game.
     /// </summary>
-    public CameraView Camera { get; set; } = new(new System.Numerics.Vector3(0), new DefaultViewSettings());
+    public CameraView Camera { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the scene loaded in the game.
+    /// </summary>
+    public Scene Scene { get; init; }
 
     /// <summary>
     ///     Executed when a mouse button is pressed.

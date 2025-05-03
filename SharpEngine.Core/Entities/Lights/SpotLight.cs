@@ -58,6 +58,7 @@ public class SpotLight : Light
     /// </summary>
     public float Quadratic { get; set; }
 
+    /// <inheritdoc />
     protected override void SetShaderUniforms(CameraView camera)
     {
         Shader.SetVector3("spotLight.position", (Vector3)Transform.Position);

@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using Shader = SharpEngine.Core.Shaders.Shader;
 using Silk.NET.GLFW;
 using SharpEngine.Shared;
+using SharpEngine.Core.Interfaces;
 
 namespace SharpEngine.Core.Windowing;
 
@@ -86,6 +87,14 @@ public class Window : SilkWindow
         Scene = scene;
         Settings = settings;
         Camera = camera;
+        InitializeWindow();
+    }
+
+    public Window(Game game)
+    {
+        Scene = game.Scene;
+        Settings = game.Camera.Settings;
+        Camera = game.Camera;
         InitializeWindow();
     }
 
@@ -159,12 +168,19 @@ public class Window : SilkWindow
 
             foreach (var type in rendererTypes)
             {
-                // Make sure the renderer has the correct constructor parameters!
-                // TODO: #75 The static reference to the context will not work when multiple windows are implemented, since the context will be different.
-                var requiredArguments = new object[] { Camera, this, Settings, Scene };
-                var renderer = (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
+                try
+                {
+                    // Make sure the renderer has the correct constructor parameters!
+                    // TODO: #75 The static reference to the context will not work when multiple windows are implemented, since the context will be different.
+                    var requiredArguments = new object[] { Camera, this, Settings, Scene };
+                    var renderer = (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
 
-                _renderers = _renderers.Append(renderer);
+                    _renderers = _renderers.Append(renderer);
+                }
+                catch (Exception ex)
+                {
+                    Debug.Log.Error(ex, ex.Message);
+                }
             }
 
             foreach (var renderer in _renderers)

@@ -72,6 +72,7 @@ public class Renderer : RendererBase
             _camera.SetShaderUniforms(_lightingShader.Shader!);
             Window.GL.BindVertexArray(_lightingShader.Vao);
 
+            // TODO: Streamline this part where the game objects are rendered
             var gameObjectRenderTasks = _scene.IterateAsync(_scene.Root.Children, RenderGameObject);
             var renderTask = Task.WhenAll(gameObjectRenderTasks);
 

@@ -1,42 +1,62 @@
-﻿using Silk.NET.Input;
+﻿using SharpEngine.Core.Entities.Views.Settings;
+using SharpEngine.Shared;
+
+using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
 
 using System.Collections.Concurrent;
-using SharpEngine.Core.Entities.Views.Settings;
-using SharpEngine.Shared;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
-// An example provided a lovely person in this thread:
-// https://github.com/dotnet/Silk.NET/issues/2436#issuecomment-2752966073
-public static partial class Program
+namespace SharpEngine.Core.Handlers;
+
+public class WindowHandler : EngineHandler
 {
     private static readonly List<IWindow> _windows = [];
     private static readonly List<IInputContext> _inputContexts = [];
     private static readonly ConcurrentQueue<WindowOptions> _windowQueue = [];
     private static readonly CancellationTokenSource _cancellationTokenSource = new();
 
-    /// <summary>
-    ///     The main entry point of the application.
-    /// </summary>
-    /// <param name="_">Arguments discarded.</param>
-    public static async Task Main(string[] _)
+    private IWindow _mainWindow;
+
+    public WindowHandler()
     {
-        SharpEngine.Core.Handlers.WindowHandler windowHandler = new();
-        windowHandler.Start();
+        StartWindowQueueTask();
+    }
 
-        Console.WriteLine("end");
-        Console.ReadLine();
+    public WindowHandler(IWindow window)
+    {
+        // TODO: Use IWindow instead of options.
+        StartWindowQueueTask();
+    }
 
+    private void StartWindowQueueTask(WindowOptions? options = null)
+    {
+        Task.Run(async () =>
+        {
+            _windowQueue.Enqueue(options ?? WindowOptions.Default);
+            while (!_cancellationTokenSource.IsCancellationRequested)
+            {
+                await Task.Delay(1000);
+                Debug.Log.Information("Running loop on background thread...");
+            }
+        });
+    }
 
-        // StartWindowQueueTask();
-        // 
-        // while (!_cancellationTokenSource.IsCancellationRequested)
-        // {
-        //     for (int i = 0; i < _windows.Count; i++)
-        //         UpdateWindow(ref i);
-        // 
-        //     DequeueWindows();
-        // }
+    /// <inheritdoc />
+    protected override Task ExecuteAsync(CancellationToken token)
+    {
+        while (!token.IsCancellationRequested)
+        {
+            for (int i = 0; i < _windows.Count; i++)
+                UpdateWindow(ref i);
+
+            DequeueWindows();
+        }
+
+        return Task.FromCanceled(token);
     }
 
     private static void UpdateWindow(ref int i)
@@ -56,7 +76,7 @@ public static partial class Program
 
             _windows.RemoveAt(i);
             i--; // Adjust the index to account for the removed item
-            
+
             if (_windows.Count == 0)
                 _cancellationTokenSource.Cancel();
         }
@@ -66,23 +86,12 @@ public static partial class Program
     {
         if (_cancellationTokenSource.IsCancellationRequested)
             return;
-        
+
         while (_windowQueue.TryDequeue(out var options))
             EnqueueWindow(options);
     }
 
-    private static void StartWindowQueueTask()
-        => Task.Run(async () =>
-        {
-            _windowQueue.Enqueue(WindowOptions.Default);
-            while (!_cancellationTokenSource.IsCancellationRequested)
-            {
-                await Task.Delay(1000);
-                Debug.Log.Information("Running loop on background thread...");
-            }
-        });
-
-    private static SharpEngine.Core.Windowing.Window CreateWindow()
+    private static Windowing.Window CreateWindow()
     {
         var options = new DefaultViewSettings() with
         {
@@ -97,8 +106,7 @@ public static partial class Program
             }
         };
 
-        //var window = Window.Create(options);
-        var window = new SharpEngine.Core.Windowing.Window(new(), options);
+        var window = new Windowing.Window(new(), options);
         window.Initialize();
 
         return window;

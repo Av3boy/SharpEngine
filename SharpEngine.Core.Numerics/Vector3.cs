@@ -305,18 +305,6 @@ namespace SharpEngine.Core.Numerics
                    (position.X * matrix.M13) + (position.Y * matrix.M23) + (position.Z * matrix.M33) + matrix.M43);
 
         /// <summary>
-        ///     Transforms a vector normal by the given matrix.
-        /// </summary>
-        /// <param name="normal">The source vector.</param>
-        /// <param name="matrix">The transformation matrix.</param>
-        /// <returns>The transformed vector.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector3 TransformNormal(Vector3 normal, Matrix4x4 matrix)
-            => new((normal.X * matrix.M11) + (normal.Y * matrix.M21) + (normal.Z * matrix.M31),
-                   (normal.X * matrix.M12) + (normal.Y * matrix.M22) + (normal.Z * matrix.M32),
-                   (normal.X * matrix.M13) + (normal.Y * matrix.M23) + (normal.Z * matrix.M33));
-
-        /// <summary>
         ///     Transforms a vector by the given Quaternion rotation value.
         /// </summary>
         /// <param name="value">The source vector to be rotated.</param>
@@ -344,6 +332,19 @@ namespace SharpEngine.Core.Numerics
                 (value.X * (xy2 + wz2)) + (value.Y * (1.0f - xx2 - zz2)) + (value.Z * (yz2 - wx2)),
                 (value.X * (xz2 - wy2)) + (value.Y * (yz2 + wx2)) + (value.Z * (1.0f - xx2 - yy2)));
         }
+
+        /// <summary>
+        ///     Transforms a vector normal by the given matrix.
+        /// </summary>
+        /// <param name="normal">The source vector.</param>
+        /// <param name="matrix">The transformation matrix.</param>
+        /// <returns>The transformed vector.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 TransformNormal(Vector3 normal, Matrix4x4 matrix)
+            => new((normal.X * matrix.M11) + (normal.Y * matrix.M21) + (normal.Z * matrix.M31),
+                   (normal.X * matrix.M12) + (normal.Y * matrix.M22) + (normal.Z * matrix.M32),
+                   (normal.X * matrix.M13) + (normal.Y * matrix.M23) + (normal.Z * matrix.M33));
+
         #endregion Public Static Methods
 
         #region Public operator methods
