@@ -233,7 +233,6 @@ public partial class Shader
     ///   </para>
     /// </remarks>
     public bool SetMatrix4(string name, Matrix4x4 data, bool transpose = true)
-        //=> TrySetUniform(name, data, (uniform, d) => _gl.UniformMatrix4(uniform, 1, transpose, (float*) &d));
         => TrySetUniform(name, data, (uniform, d) => _gl.UniformMatrix4(uniform, transpose, d.ToSpan()));
 
     /// <summary>

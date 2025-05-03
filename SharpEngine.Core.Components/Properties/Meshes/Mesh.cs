@@ -152,9 +152,13 @@ public class Mesh : IDisposable
         VBO = new BufferObject<float>(GL, Vertices, BufferTargetARB.ArrayBuffer);
         VAO = new VertexArrayObject<float, uint>(GL, VBO, EBO);
 
-        VAO.VertexAttributePointer(0, VertexData.VerticesSize, VertexAttribPointerType.Float, VertexData.Stride, VertexData.VerticesOffset);
-        VAO.VertexAttributePointer(1, VertexData.NormalsSize, VertexAttribPointerType.Float, VertexData.Stride, VertexData.NormalsOffset);
-        VAO.VertexAttributePointer(2, VertexData.TexCoordsSize, VertexAttribPointerType.Float, VertexData.Stride, VertexData.TexCoordsOffset);
+        VAO.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 8, 0);
+        VAO.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, 8, 3);
+        VAO.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, 8, 6);
+
+        // VAO.VertexAttributePointer(0, VertexData.VerticesSize, VertexAttribPointerType.Float, VertexData.Stride, VertexData.VerticesOffset);
+        // VAO.VertexAttributePointer(1, VertexData.NormalsSize, VertexAttribPointerType.Float, VertexData.Stride, VertexData.NormalsOffset);
+        // VAO.VertexAttributePointer(2, VertexData.TexCoordsSize, VertexAttribPointerType.Float, VertexData.Stride, VertexData.TexCoordsOffset);
     }
 
     /// <summary>
