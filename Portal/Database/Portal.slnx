@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Portal.Backend/Portal.Backend.csproj" />
+  <Project Path="Portal.Database/Portal.Database.csproj" Id="a1d45c26-40b8-4710-888f-0dd606dfeb4e" />
+</Solution>

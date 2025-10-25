@@ -11,7 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AssetStore.Database\AssetStore.Database.csproj" />
+    <ProjectReference Include="..\Portal.Database\Portal.Database.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
