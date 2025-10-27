@@ -1,7 +1,0 @@
-<Solution>
-  <Folder Name="/Core/">
-    <Project Path="../../Engine/SharpEngine.Shared/SharpEngine.Shared.csproj" />
-  </Folder>
-  <Project Path="../AssetStore.Database/AssetStore.Database.csproj" Id="5fdeeb5e-a89f-4e87-888b-ee44ac83d6fc" />
-  <Project Path="AssetStore.csproj" />
-</Solution>

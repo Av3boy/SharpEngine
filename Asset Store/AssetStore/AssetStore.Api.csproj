@@ -14,4 +14,8 @@
     <ProjectReference Include="..\AssetStore.Database\AssetStore.Database.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Comments\" />
+  </ItemGroup>
+
 </Project>

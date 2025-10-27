@@ -1,5 +1,6 @@
 using AssetStore.Database.Models;
 using Microsoft.AspNetCore.Mvc;
+using SharpEngine.Shared.Dto.AssetStore;
 
 namespace AssetStore.Controllers
 {
@@ -18,6 +19,12 @@ namespace AssetStore.Controllers
         public IEnumerable<Comment> GetAssetComments(Guid assetId)
         {
             return new List<Comment>();
+        }
+
+        [HttpPost]
+        public CommentDto PostComment(Guid assetId, CommentDto comment)
+        {
+            return new CommentDto();
         }
     }
 }
