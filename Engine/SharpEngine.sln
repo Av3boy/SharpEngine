@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjLoader.Tests", "Tests\Ob
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorial 4.1 - Model Loading", "Examples\Tutorial 4.1 - Model Loading\Tutorial 4.1 - Model Loading.csproj", "{17243B7C-E72B-6C26-FCFC-3D194F29B0AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpEngine.Rest", "SharpEngine.Rest\SharpEngine.Rest.csproj", "{FE7C7460-6599-4BF8-A756-0C04315D3144}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,6 +149,12 @@ Global
 		{17243B7C-E72B-6C26-FCFC-3D194F29B0AF}.LauncherNonWindows|Any CPU.Build.0 = Release|Any CPU
 		{17243B7C-E72B-6C26-FCFC-3D194F29B0AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17243B7C-E72B-6C26-FCFC-3D194F29B0AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE7C7460-6599-4BF8-A756-0C04315D3144}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE7C7460-6599-4BF8-A756-0C04315D3144}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE7C7460-6599-4BF8-A756-0C04315D3144}.LauncherNonWindows|Any CPU.ActiveCfg = Release|Any CPU
+		{FE7C7460-6599-4BF8-A756-0C04315D3144}.LauncherNonWindows|Any CPU.Build.0 = Release|Any CPU
+		{FE7C7460-6599-4BF8-A756-0C04315D3144}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE7C7460-6599-4BF8-A756-0C04315D3144}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
