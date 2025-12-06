@@ -1,0 +1,5 @@
+﻿.sidebar-item {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.5rem 1em;
+}

@@ -1,0 +1,23 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <Notification />
+
+    <Sidebar>
+        <SideBarItem Icon="SvgIcon.Home" />
+        <SideBarItem Icon="SvgIcon.Cog" OnClick="@OpenSettingsFlyout" />
+    </Sidebar>
+
+    <div class="content">
+        @Body
+    </div>
+</div>
+
+<SettingsFlyout @bind-IsVisible="@_settingsVisible" />
+
+@code {
+    private bool _settingsVisible;
+
+    private void OpenSettingsFlyout()
+        => _settingsVisible = true;
+}

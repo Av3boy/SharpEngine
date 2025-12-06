@@ -1,0 +1,47 @@
+﻿<th scope="col">
+    <button type="button" class="btn btn-light @_filterClass" @onclick="@OnFilterClicked">
+        @Title
+        <Icon IconType="@_icon" SizePx="16" />
+    </button>
+</th>
+
+@code {
+    /// <summary>Gets or sets the contents of the grid row header.</summary>
+    [Parameter]
+    public string Title { get; set; } = default!;
+
+    /// <summary>Gets or sets whether filtering is allowed for the header.</summary>
+    [Parameter]
+    public bool AllowFiltering { get; set; }
+
+    /// <summary>Gets or sets the event executed when the filter mode changes.</summary>
+    [Parameter]
+    public EventCallback<FilterMode> FilterChanged { get; set; }
+
+    /// <summary>Gets or sets the filter mode of the header.</summary>
+    [Parameter]
+    public FilterMode FilterMode { get; set; } = FilterMode.None;
+
+    private string _filterClass => AllowFiltering ? "filter-btn" : "filter-disabled";
+
+    private SvgIcon _icon => this.FilterMode switch
+    {
+        FilterMode.Ascending => SvgIcon.ChevronUp,
+        FilterMode.Descending => SvgIcon.ChevronDown,
+        _ => SvgIcon.None
+    };
+
+    private async Task OnFilterClicked()
+    {
+        FilterMode = FilterMode switch
+        {
+            FilterMode.None => FilterMode.Ascending,
+            FilterMode.Ascending => FilterMode.Descending,
+            FilterMode.Descending => FilterMode.None,
+            _ => FilterMode.None
+        };
+
+        if (AllowFiltering)
+            await FilterChanged.InvokeAsync(FilterMode);
+    }
+}

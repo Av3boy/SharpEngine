@@ -1,0 +1,15 @@
+﻿.btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+}
+
+.filter-disabled {
+  cursor: none;
+  pointer-events: none;
+}

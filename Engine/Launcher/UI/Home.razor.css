@@ -1,0 +1,68 @@
+﻿.toast {
+  right: 0;
+  transition: transform 0.5s ease-in-out;
+}
+
+.dialog {
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: auto;
+  max-width: 90%;
+}
+
+.toast, .dialog {
+  position: absolute;
+  top: 50px;
+}
+
+.notification-visible {
+  transform: translateX(0);
+}
+
+.notification-hidden {
+  transform: translateX(100%);
+}
+
+.create-project-dialog-hidden,
+.confirm-delete-hidden {
+  display: none;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 25px 0;
+}
+
+.alert-header {
+  display: flex;
+  justify-content: space-between;
+}
+.alert-header h4 {
+  padding: 0;
+}
+
+.flex-end {
+  justify-content: end;
+  display: flex;
+  gap: 8px;
+}
+
+.custom-file-upload {
+  display: inline-block;
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.hidden-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
