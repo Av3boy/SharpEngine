@@ -44,6 +44,11 @@ public class Project
     public static Project? LoadProject(string projectFile)
     {
         var json = File.ReadAllText(projectFile);
-        return JsonSerializer.Deserialize<Project>(json);
+        var project = JsonSerializer.Deserialize<Project>(json);
+
+        if (project is not null)
+            project.LastModified = File.GetLastWriteTime(projectFile);
+
+        return project;
     }
 }

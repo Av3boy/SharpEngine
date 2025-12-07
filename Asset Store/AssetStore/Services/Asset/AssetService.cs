@@ -10,8 +10,9 @@ public class AssetService : IAssetService
     private readonly ILogger<AssetService> _logger;
     private readonly Database.DatabaseContext _db;
 
-    public AssetService(ILogger<AssetService> _logger, Database.DatabaseContext db)
+    public AssetService(ILogger<AssetService> logger, Database.DatabaseContext db)
     {
+        _logger = logger;
         _db = db;
     }
 
@@ -21,7 +22,7 @@ public class AssetService : IAssetService
     {
         _logger.LogDebug("Creating asset.");
 
-        var model = (Asset)asset;
+        var model = (AssetStore.Database.Models.Asset)asset;
         await _db.Assets.AddAsync(model);
         await _db.SaveChangesAsync();
 

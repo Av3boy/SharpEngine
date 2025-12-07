@@ -1,9 +1,11 @@
 <Solution>
   <Folder Name="/Core/">
-    <Project Path="../Engine/SharpEngine.Rest/SharpEngine.Rest.csproj" />
-    <Project Path="../Engine/SharpEngine.Shared/SharpEngine.Shared.csproj" />
+    <Project Path="../Shared/SharpEngine.Identity/SharpEngine.Identity.csproj" Id="d0899b55-9fc1-4dff-81c3-44871aefd0e5" />
+    <Project Path="../Shared/SharpEngine.Rest/SharpEngine.Rest.csproj" />
+    <Project Path="../Shared/SharpEngine.Shared/SharpEngine.Shared.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
     <File Path="Directory.Build.props" />
     <File Path="Readme.md" />
   </Folder>
