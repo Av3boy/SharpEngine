@@ -1,7 +1,7 @@
 ﻿using SharpEngine.Shared.Dto.AssetStore;
 using SharpEngine.Shared.Dto.Primitives;
 
-namespace AssetStore.Services.Asset;
+namespace AssetStore.Api.v1.Services.Asset;
 
 /// <summary>
 ///     Contains definitions for handling assets.

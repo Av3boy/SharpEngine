@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SharpEngine.Shared.Dto.AssetStore;
 using SharpEngine.Shared.Dto.Primitives;
 
-namespace AssetStore.Services.Asset;
+namespace AssetStore.Api.v1.Services.Asset;
 
 public class AssetService : IAssetService
 {
@@ -22,7 +22,7 @@ public class AssetService : IAssetService
     {
         _logger.LogDebug("Creating asset.");
 
-        var model = (AssetStore.Database.Models.Asset)asset;
+        var model = (AssetModel)asset;
         await _db.Assets.AddAsync(model);
         await _db.SaveChangesAsync();
 

@@ -18,7 +18,7 @@ export function Header() {
 
         {/* Navigation */}
         <nav className="flex items-center gap-8">
-          <a href="#features" className="text-white/80 hover:text-white transition-colors">
+          <a href="/downloads" className="text-white/80 hover:text-white transition-colors">
             Download
           </a>
           

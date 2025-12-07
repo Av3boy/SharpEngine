@@ -6,8 +6,8 @@ namespace AssetStore.Database;
 
 public class DatabaseContext : DbContext
 {
-    public DbSet<Asset> Assets { get; set; }
-    public DbSet<Comment> Comments { get; set; }
+    public DbSet<AssetModel> Assets { get; set; }
+    public DbSet<CommentModel> Comments { get; set; }
 
     public DatabaseContext()
     {
@@ -22,7 +22,7 @@ public class DatabaseContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Asset>(entity =>
+        modelBuilder.Entity<AssetModel>(entity =>
         {
             entity.HasMany(asset => asset.Comments);
 
@@ -32,7 +32,7 @@ public class DatabaseContext : DbContext
                     value => new AssetId(value));
         });
 
-        modelBuilder.Entity<Comment>(entity => 
+        modelBuilder.Entity<CommentModel>(entity => 
         {
             entity.Property(u => u.Id)
                   .HasConversion(

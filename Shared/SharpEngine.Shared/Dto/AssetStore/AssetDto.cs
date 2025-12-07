@@ -14,7 +14,7 @@ public class AssetDto
     public decimal Price { get; set; }
     public DateTime CreatedAt { get; init; }
     public DateTime LastUpdatedAt { get; init; }
-    public IReadOnlyList<string> Tags { get; set; } = [];
+    public IReadOnlyList<string> KeyWords { get; set; } = [];
     public IReadOnlyList<CommentDto> Comments { get; set; } = [];
 
     public UserProfile Author { get; init; }
@@ -27,7 +27,7 @@ public class AssetDto
 
     // {Blob storage base url}/{container}/{blobName}/{author}/{assetId}/{version}/{assetId}
     public required string BlobUri { get; set; }
-    public required string FileSize { get; set; }
+    public required int FileSizeBytes { get; set; }
 
     public required string Checksum { get; set; }
 }

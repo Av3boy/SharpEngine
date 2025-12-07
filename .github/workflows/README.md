@@ -22,6 +22,7 @@ The `publish-core.yml` creates a zip file of the engine and adds a tag to github
 The `publish-asset-store.yml` is responsible of deploying the Asset Store web interface, API and Database into Azure.
 
 All Asset Store's resources can be found under the `rg-asset-store` resource group.
+TODO: Enable from selected access ips 
 
 ### Publish Web
 The `publish-web.yml` is responsible of (similarly to the Asset Store) deploying the SharpEngine web interface, API and Database into Azure.
