@@ -1,7 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ChevronDown, User } from 'lucide-react';
 
+import { HeaderLogin } from 'sharpengine-ui-shared/src/components/HeaderLogin'
+
 export function Header() {
+  const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggedIn] = useState(false); // Change this to true to simulate logged in state
 
@@ -59,19 +63,7 @@ export function Header() {
           </a>
         </nav>
 
-        {/* User Profile / Login */}
-        <div>
-          {isLoggedIn ? (
-            <button className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors">
-              <User className="w-5 h-5 text-white" />
-              <span className="text-white">Profile</span>
-            </button>
-          ) : (
-            <button className="px-6 py-2 text-white hover:text-blue-400 transition-colors">
-              Login
-            </button>
-          )}
-        </div>
+        <HeaderLogin onProfileClicked={() => navigate('/profile')} />
       </div>
     </header>
   );

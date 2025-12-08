@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import { SearchDropdown } from "./SearchDropdown";
 import { Asset } from "../types";
 
+import { useAuth0 } from "@auth0/auth0-react";
+
 interface HeaderProps {
   assets: Asset[];
 }
@@ -11,6 +13,8 @@ export function Header({ assets }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+
+  const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
 
   const filteredAssets = searchQuery.trim()
     ? assets.filter((asset) => {
