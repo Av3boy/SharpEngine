@@ -1,10 +1,8 @@
-﻿using SharpEngine.Core;
-using SharpEngine.Core.Entities.Views.Settings;
+﻿using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Scenes;
-using SharpEngine.Editor.Windows;
+
 using SharpEngine.Shared;
 using SharpEngine.Shared.Dto;
-using System.Reflection;
 
 namespace SharpEngine.Editor;
 
@@ -20,11 +18,25 @@ public static class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        Scene scene = new Scene();
+        Project project =
+        #if DEBUG
+                new Project() { Path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\Examples\Minimal"), Name = "Minimal" };
+#else
+                new Project();
+#endif
+
+        static bool TryGetProject(string projectFile, out Project? project)
+        {
+            project = Project.LoadProject(projectFile);
+            return project is not null;
+        }
+
         try
         {
             var editorPath = Environment.GetEnvironmentVariable(EnvironmentVariables.EDITOR_PATH_ENVIRONMENT_VARIABLE);
             if (string.IsNullOrWhiteSpace(editorPath))
-                Environment.SetEnvironmentVariable(EnvironmentVariables.EDITOR_PATH_ENVIRONMENT_VARIABLE, System.Environment.ProcessPath, EnvironmentVariableTarget.User);
+                Environment.SetEnvironmentVariable(EnvironmentVariables.EDITOR_PATH_ENVIRONMENT_VARIABLE, Environment.ProcessPath, EnvironmentVariableTarget.User);
 
             string? sceneFile = null;
             string? projectFile = null;
@@ -38,13 +50,19 @@ public static class Program
                     projectFile = arg;
             }
 
-            var scene = !string.IsNullOrEmpty(sceneFile) ? Scene.LoadScene(sceneFile) : new Scene();
-            var project = !string.IsNullOrEmpty(projectFile) ? Project.LoadProject(projectFile)
-#if DEBUG
-                : new Project() { Path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\Examples\Minimal"), Name = "Minimal" };
-#else
-                : new Project();
-#endif
+            if (!string.IsNullOrEmpty(sceneFile))
+                scene = Scene.LoadScene(sceneFile);
+
+            if (!string.IsNullOrEmpty(projectFile) && TryGetProject(projectFile, out Project? loadedProject))
+                project = loadedProject!;
+        }
+        catch (Exception ex)
+        {
+            Debug.Log.Information(ex, "Failed to start the editor: {Message}", ex.Message);
+        }
+
+        try
+        {
             using var window = new EditorWindow(scene, project!, new DefaultViewSettings());
             window.OnLoaded += () => Debug.Log.Information("test");
 
@@ -52,7 +70,7 @@ public static class Program
         }
         catch (Exception ex)
         {
-            Debug.Log.Information(ex, "Failed to start the editor: {Message}", ex.Message);
+            Debug.Log.Information(ex, "Unexpected error while running editor: {Message}", ex.Message);
         }
     }
 }
