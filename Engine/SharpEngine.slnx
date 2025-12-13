@@ -11,13 +11,33 @@
     <Project Path="Examples/Minimal/Minimal.csproj">
       <BuildType Solution="LauncherNonWindows|*" Project="Debug" />
     </Project>
+    <Project Path="Examples/MultipleWindows/MultipleWindows.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="Examples/Tutorial 4.1 - Model Loading/Tutorial 4.1 - Model Loading.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path="Directory.Build.props" />
     <File Path="README.md" />
   </Folder>
-  <Project Path="Core/SharpEngine.Core.csproj" />
+  <Folder Name="/Tests/">
+    <File Path="Test.Directory.Build.props" />
+    <Project Path="Tests/ObjLoader.Test/ObjLoader.Tests.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="Tests/SharpEngine.Core.Tests/SharpEngine.Core.Tests.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="Tests/SharpEngine.Editor.Tests/SharpEngine.Editor.Tests.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="Tests/SharpEngine.Shared.Tests/SharpEngine.Shared.Tests.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+  </Folder>
   <Project Path="Editor/SharpEngine.Editor.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Debug" />
   </Project>
@@ -25,7 +45,20 @@
     <BuildType Solution="LauncherNonWindows|*" Project="Debug" />
     <Deploy />
   </Project>
-  <Project Path="SharpEngine.Shared/SharpEngine.Shared.csproj" Id="f0beecf6-ba81-40e2-aa60-fc5b1539fc65">
+  <Project Path="ObjLoader/SharpEngine.Core.ObjLoader.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
+  <Project Path="SharpEngine.Core.Components/SharpEngine.Core.Components.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
+  <Project Path="SharpEngine.Core.Numerics/SharpEngine.Core.Numerics.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
+  <Project Path="SharpEngine.Core/SharpEngine.Core.csproj" />
+  <Project Path="../Shared/SharpEngine.Rest/SharpEngine.Rest.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
+  <Project Path="../Shared/SharpEngine.Shared/SharpEngine.Shared.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
 </Solution>

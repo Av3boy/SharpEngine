@@ -30,7 +30,9 @@ namespace SharpEngine.Core.Windowing;
 /// </summary>
 public class Window : SilkWindow
 {
+    private bool _windowInitialized;
     private bool _initialized;
+    
     private IEnumerable<RendererBase> _renderers = [];
     private ImGuiController? _imGuiController;
 
@@ -86,12 +88,14 @@ public class Window : SilkWindow
         Scene = scene;
         Settings = settings;
         Camera = camera;
-        InitializeWindow();
     }
 
     /// <summary>
-    ///     Initializes a new window without a dedicated camera.
+    ///     Initializes a new instance of <see cref="Window"/>.
     /// </summary>
+    /// <remarks>
+    ///     The new window is initialized without a dedicated camera.
+    /// </remarks>
     /// <param name="scene">Contains the game scene.</param>
     /// <param name="settings">The settings for the window.</param>
     public Window(Scene scene, IViewSettings settings)
@@ -99,20 +103,24 @@ public class Window : SilkWindow
         Scene = scene;
         Settings = settings;
         Camera = new(Vector3.One, settings);
-
-        InitializeWindow();
     }
 
-    private bool _windowInitialized;
-
-    private void InitializeWindow()
+    /// <summary>
+    ///     Initializes the ga
+    /// </summary>
+    public void InitializeWindow()
     {
+        if (_initialized)
+            return;
+
         CurrentWindow = CreateWindow(Settings.WindowOptions);
         CurrentWindow.Update += deltaTime => OnUpdateFrame(new Frame(deltaTime));
         CurrentWindow.Render += deltaTime => RenderFrame(new Frame(deltaTime));
         CurrentWindow.Resize += OnResize;
         CurrentWindow.Load += OnLoad;
         CurrentWindow.Closing += OnClosing;
+
+        _windowInitialized = true;
     }
 
     /// <inheritdoc />

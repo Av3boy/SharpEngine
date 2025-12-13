@@ -93,7 +93,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SharpEngine.Shared\SharpEngine.Shared.csproj" />
+      <ProjectReference Include="..\..\Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
     </ItemGroup>
 
 </Project>
