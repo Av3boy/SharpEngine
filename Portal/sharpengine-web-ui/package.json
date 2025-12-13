@@ -19,7 +19,7 @@
     "react-dom": "^19.2.1",
     "react-router-dom": "^7.10.1",
     "react-scripts": "5.0.1",
-    "sharpengine-ui-shared": "file:../../Shared/sharpengine-ui-shared",
+    "sharpengine-ui-shared": "file:../../Shared/sharpengine-ui-shared/dist",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },

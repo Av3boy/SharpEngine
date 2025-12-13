@@ -4,7 +4,7 @@ import { apiRequest, RestClientResult } from "./restClient";
 import { Asset } from '../types/asset'
 
 export async function fetchAssets(token: string): Promise<RestClientResult<Asset[]>> {
-  return await apiRequest<Asset[]>(`${Routes.ClientBase}/api/decks`, {
+  return await apiRequest<Asset[]>(`${Routes.AssetStore}/api/assets`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,

@@ -264,3 +264,5 @@ __pycache__/
 /Editor/shortcut.reg
 
 .env
+
+Shared/sharpengine-ui-shared/dist/
