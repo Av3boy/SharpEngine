@@ -3,13 +3,13 @@ name: Publish SharpEngine Web Portal
 on:
   push:
     branches:
-      - main
+    #   - main
       - feature/52-av-web
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [closed]
     branches:
       - main
-      - feature/52-av-web
+      # - feature/52-av-web
 
 jobs:
   build_and_deploy_job:
