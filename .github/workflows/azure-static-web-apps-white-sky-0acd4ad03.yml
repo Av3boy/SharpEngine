@@ -3,12 +3,12 @@ name: Publish Asset Store
 on:
   push:
     branches:
-      - main
+      # - main
       - feature/52-av-web
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - main
+      # - main
       - feature/52-av-web
 
 jobs:
