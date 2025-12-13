@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown, User } from 'lucide-react';
 
-import { HeaderLogin } from 'sharpengine-ui-shared/src/components/HeaderLogin'
+//import { HeaderLogin } from 'sharpengine-ui-shared/src/components/HeaderLogin'
 
 export function Header() {
   const navigate = useNavigate();
@@ -63,7 +63,7 @@ export function Header() {
           </a>
         </nav>
 
-        <HeaderLogin onProfileClicked={() => navigate('/profile')} />
+        {/* <HeaderLogin onProfileClicked={() => navigate('/profile')} /> */}
       </div>
     </header>
   );
