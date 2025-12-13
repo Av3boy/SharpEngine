@@ -20,9 +20,9 @@
 - More in the future? ..
 
 ## Getting started
-<h3 align="center"> All you need is the <a href>Core</a>!</h3>
+<h3 align="center"> All you need is the <a href="./Engine/SharpEngine.Core">Core</a>!</h3>
 
-Using <i>SharpEngine</i>, you can create your applications using a <i>Standalone</i> approach, where all you need is a reference to the <i>SharpEngine</i> <a href>Core</a>. You can use a local project reference from the repo or add a NuGet package reference using `dotnet add package SharpEngine.Core.NET`.
+Using <i>SharpEngine</i>, you can create your applications using a <i>Standalone</i> approach, where all you need is a reference to the <i><a href="./Engine/SharpEngine.Core">SharpEngine.Core</a></i>. You can use a local project reference from the repo or add a NuGet package reference using `dotnet add package SharpEngine.Core.NET`.
 
 After you have installed the NuGet package you initialize the <i>Game implementation</i>, <i>Scene</i> and <i>Window</i>:
 
