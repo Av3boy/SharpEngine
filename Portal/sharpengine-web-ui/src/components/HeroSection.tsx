@@ -13,11 +13,20 @@ export function HeroSection() {
   ];
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      if (parallaxRef.current) {
-        const scrolled = window.scrollY;
-        parallaxRef.current.style.transform = `translateY(${scrolled * 0.5}px)`;
-      }
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const el = parallaxRef.current;
+        if (el) {
+          const scrolled = window.scrollY;
+          // Clamp the effect to avoid aggressive overlap
+          const offset = Math.max(0, Math.min(scrolled, 600)) * 0.5;
+          el.style.transform = `translate3d(0, ${offset}px, 0)`;
+        }
+        ticking = false;
+      });
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -61,7 +70,7 @@ export function HeroSection() {
       {/* Parallax Video Background */}
       <div 
         ref={parallaxRef}
-        className="absolute inset-0 w-full h-[120%] -top-[10%]"
+        className="absolute inset-0 w-full h-[120%] -top-[10%] pointer-events-none"
         style={{ willChange: 'transform' }}
       >
         <video
@@ -69,11 +78,11 @@ export function HeroSection() {
           autoPlay
           muted
           playsInline
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover pointer-events-none"
           src={videos[videoIndex]}
         />
         {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/60"></div>
+        <div className="absolute inset-0 bg-black/60 pointer-events-none"></div>
       </div>
 
       {/* Content */}
