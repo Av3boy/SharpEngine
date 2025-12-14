@@ -76,12 +76,14 @@ export function Header() {
           <span className={`burger-lines ${isMobileMenuOpen ? 'open' : ''}`}></span>
         </button>
 
-        <HeaderLogin onProfileClicked={() => navigate('/profile')} 
-                     loginWithRedirect={loginWithRedirect} 
-                     logout={logout} 
-                     isAuthenticated={isAuthenticated} 
-                     user={user}
-                     useWithText={true} />
+        <div className="header__login-desktop">
+          <HeaderLogin onProfileClicked={() => navigate('/profile')} 
+                       loginWithRedirect={loginWithRedirect} 
+                       logout={logout} 
+                       isAuthenticated={isAuthenticated} 
+                       user={user}
+                       useWhiteText={true} />
+        </div>
       </div>
 
       {/* Mobile menu panel */}
@@ -89,6 +91,7 @@ export function Header() {
         <div className="header__mobile-panel bg-black/90 border-t border-white/10">
           <nav className="flex flex-col gap-2 px-6 py-4">
             <a href="/downloads" className="text-white/80 hover:text-white transition-colors py-2">Download</a>
+            
             <details className="mobile-details">
               <summary className="text-white/80 hover:text-white transition-colors py-2">Tutorials</summary>
               <div className="flex flex-col pl-4">
@@ -98,8 +101,16 @@ export function Header() {
                 <a href="/docs#api-reference" className="text-white/70 hover:text-white py-1">API Reference</a>
               </div>
             </details>
+
             <a href="/docs" className="text-white/80 hover:text-white transition-colors py-2">Documentation</a>
             <a href="#community" className="text-white/80 hover:text-white transition-colors py-2">Community</a>
+            
+            <HeaderLogin onProfileClicked={() => navigate('/profile')} 
+                         loginWithRedirect={loginWithRedirect} 
+                         logout={logout} 
+                         isAuthenticated={isAuthenticated} 
+                         user={user}
+                         useWhiteText={true} />
           </nav>
         </div>
       )}

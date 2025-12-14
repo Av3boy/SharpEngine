@@ -54,6 +54,13 @@
   display: none;
 }
 
+.header__login-desktop {
+  display: block;
+}
+.header__login-mobile {
+  display: none;
+}
+
 .mobile-details {
   /* remove default triangle marker for summary on some browsers */
 }
@@ -78,6 +85,12 @@
   .header__mobile-panel nav a,
   .header__mobile-panel nav summary {
     width: 100%;
+  }
+  .header__login-desktop {
+    display: none; /* hide desktop login inside small screens */
+  }
+  .header__login-mobile {
+    display: block; /* show mobile login under burger menu */
   }
   /* Horizontal variant: add class 'header__mobile-panel--horizontal' to make items inline */
   .header__mobile-panel--horizontal nav {
