@@ -1,5 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-// import CollapsableGrid from '../components/Grid/CollapsableGrid';
+import CollapsableGrid from '../components/Grid/CollapsableGrid';
 import type { Release } from './DownloadsPage';
 
 export type DownloadsGridProps = {
@@ -8,8 +8,7 @@ export type DownloadsGridProps = {
 
 export default function DownloadsGrid({ items }: DownloadsGridProps) {
   return (
-    <></>
-    /*<CollapsableGrid<Release>
+    <CollapsableGrid<Release>
       items={items}
       renderHeaders={['Release', 'Tag', 'Published', 'Assets']}
       keyExtractor={(item) => `${item.id}`}
@@ -47,6 +46,6 @@ export default function DownloadsGrid({ items }: DownloadsGridProps) {
           </TableBody>
         </Table>
       )}
-    />*/
+    />
   );
 }
