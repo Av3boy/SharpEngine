@@ -62,6 +62,7 @@ export function HeroSection() {
       <div 
         ref={parallaxRef}
         className="absolute inset-0 w-full h-[120%] -top-[10%]"
+        style={{ willChange: 'transform' }}
       >
         <video
           ref={videoRef}
