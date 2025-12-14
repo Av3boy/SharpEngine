@@ -1,12 +1,5 @@
-import { Search, ShoppingCart, User } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
-import { useNavigate } from 'react-router-dom';
-
-import { SearchDropdown } from "./SearchDropdown";
+import { AssetCard } from "../components/AssetCard";
 import { Asset } from "../types";
-
-import { useAuth0 } from "@auth0/auth0-react";
-import { HeaderLogin } from "sharpengine-ui-shared";
 
 const mockAssets: Asset[] = [
   {
@@ -94,85 +87,23 @@ const mockAssets: Asset[] = [
   },
 ];
 
-export function Header() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(null);
-
-  const navigate = useNavigate();
-  const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
-
-  const filteredAssets = searchQuery.trim()
-    ? mockAssets.filter((asset) => {
-        const query = searchQuery.toLowerCase();
-        return (
-          asset.title.toLowerCase().includes(query) ||
-          asset.keywords.some((keyword) => keyword.toLowerCase().includes(query)) ||
-          asset.author.toLowerCase().includes(query)
-        );
-      })
-    : [];
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setShowDropdown(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-                <ShoppingCart className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl text-gray-900">AssetStore</span>
+export function HomePage() {
+    return (
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {/* Hero Section */}
+            <div className="mb-8">
+              <h1 className="text-gray-900 mb-2">Popular Assets</h1>
+              <p className="text-gray-600">
+                Discover high-quality assets for your next game project
+              </p>
             </div>
-          </div>
 
-          {/* Search Bar */}
-          <div ref={searchRef} className="flex-1 max-w-2xl mx-8 relative">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search assets by name, keyword, or author..."
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setShowDropdown(true);
-                }}
-                onFocus={() => setShowDropdown(true)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
-              />
+            {/* Assets Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {mockAssets.map((asset) => (
+                <AssetCard key={asset.id} asset={asset} />
+              ))}
             </div>
-            
-            {showDropdown && searchQuery.trim() && (
-              <SearchDropdown 
-                assets={filteredAssets} 
-                onClose={() => setShowDropdown(false)}
-              />
-            )}
-          </div>
-
-          {/* Navigation */}
-          <div className="flex items-center gap-4">
-            <HeaderLogin onProfileClicked={() => navigate('/profile')} 
-                     loginWithRedirect={loginWithRedirect} 
-                     logout={logout} 
-                     isAuthenticated={isAuthenticated} 
-                     user={user} />
-          </div>
-        </div>
-      </div>
-    </header>
-  );
+        </main>
+    );
 }

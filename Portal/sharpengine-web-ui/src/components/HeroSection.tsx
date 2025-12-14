@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 
 export function HeroSection() {
-  const videoRef = useRef<HTMLDivElement>(null);
+  const parallaxRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [videoIndex, setVideoIndex] = useState(0);
 
   const videos = [
@@ -13,44 +14,63 @@ export function HeroSection() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (videoRef.current) {
+      if (parallaxRef.current) {
         const scrolled = window.scrollY;
-        videoRef.current.style.transform = `translateY(${scrolled * 0.5}px)`;
+        parallaxRef.current.style.transform = `translateY(${scrolled * 0.5}px)`;
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
-    const videoElement = document.querySelector('video');
-    if (!videoElement) return;
+    const el = videoRef.current;
+    if (!el) return;
 
     const handleVideoEnd = () => {
       setVideoIndex((prevIndex) => (prevIndex + 1) % videos.length);
     };
 
-    videoElement.addEventListener('ended', handleVideoEnd);
-    return () => videoElement.removeEventListener('ended', handleVideoEnd);
+    const handleLoadedData = () => {
+      // Ensure autoplay resumes when source changes
+      const playPromise = el.play();
+      if (playPromise && typeof playPromise.then === 'function') {
+        playPromise.catch(() => {
+          // If autoplay is blocked for some reason, try again on user scroll
+          const tryPlay = () => {
+            el.play().finally(() => {
+              window.removeEventListener('scroll', tryPlay);
+            });
+          };
+          window.addEventListener('scroll', tryPlay, { once: true });
+        });
+      }
+    };
+
+    el.addEventListener('ended', handleVideoEnd);
+    el.addEventListener('loadeddata', handleLoadedData);
+    return () => {
+      el.removeEventListener('ended', handleVideoEnd);
+      el.removeEventListener('loadeddata', handleLoadedData);
+    };
   }, [videos.length]);
 
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden">
       {/* Parallax Video Background */}
       <div 
-        ref={videoRef}
+        ref={parallaxRef}
         className="absolute inset-0 w-full h-[120%] -top-[10%]"
       >
         <video
-          key={videoIndex}
+          ref={videoRef}
           autoPlay
           muted
           playsInline
           className="w-full h-full object-cover"
-        >
-          <source src={videos[videoIndex]} type="video/mp4" />
-        </video>
+          src={videos[videoIndex]}
+        />
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-black/60"></div>
       </div>

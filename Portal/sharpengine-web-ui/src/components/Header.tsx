@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronDown, User } from 'lucide-react';
 
 import { HeaderLogin } from 'sharpengine-ui-shared'
+import { useAuth0 } from '@auth0/auth0-react';
 
 export function Header() {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isLoggedIn] = useState(false); // Change this to true to simulate logged in state
+
+  const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-sm border-b border-white/10">
@@ -63,7 +65,12 @@ export function Header() {
           </a>
         </nav>
 
-        <HeaderLogin onProfileClicked={() => navigate('/profile')} />
+        <HeaderLogin onProfileClicked={() => navigate('/profile')} 
+                     loginWithRedirect={loginWithRedirect} 
+                     logout={logout} 
+                     isAuthenticated={isAuthenticated} 
+                     user={user}
+                     useWithText={true} />
       </div>
     </header>
   );
