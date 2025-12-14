@@ -11,8 +11,9 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-const domain: string = process.env.AUTH0_DOMAIN || "";
-const clientId: string = process.env.AUTH0_CLIENT_ID || "";
+// In CRA, only variables prefixed with REACT_APP_ are exposed at build time
+const domain: string = process.env.REACT_APP_AUTH0_DOMAIN || "";
+const clientId: string = process.env.REACT_APP_AUTH0_CLIENT_ID || "";
 
 root.render(
   <React.StrictMode>

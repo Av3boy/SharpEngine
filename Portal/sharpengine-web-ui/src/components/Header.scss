@@ -1,0 +1,94 @@
+/* Responsive styles for Header component */
+
+.header {
+  /* ensure mobile panel overlays content below */
+}
+
+/* Hide desktop nav on small screens, show burger */
+.header__nav {
+  display: flex;
+}
+
+.header__burger {
+  display: none;
+  border: none;
+  background: transparent;
+  padding: 8px;
+  margin-left: 12px;
+  cursor: pointer;
+}
+
+.burger-lines {
+  position: relative;
+  display: inline-block;
+  width: 24px;
+  height: 2px;
+  background: #fff;
+  transition: transform 200ms ease, background 200ms ease;
+}
+.burger-lines::before,
+.burger-lines::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 24px;
+  height: 2px;
+  background: #fff;
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+.burger-lines::before { top: -7px; }
+.burger-lines::after { top: 7px; }
+
+.burger-lines.open {
+  background: transparent;
+}
+.burger-lines.open::before {
+  transform: translateY(7px) rotate(45deg);
+}
+.burger-lines.open::after {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile menu panel */
+.header__mobile-panel {
+  display: none;
+}
+
+.mobile-details {
+  /* remove default triangle marker for summary on some browsers */
+}
+
+/* Breakpoint: <= 768px */
+@media (max-width: 768px) {
+  .header__nav {
+    display: none;
+  }
+  .header__burger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .header__mobile-panel {
+    display: block;
+  }
+  .header__mobile-panel nav {
+    display: flex;
+    flex-direction: column; /* stack items vertically by default */
+  }
+  .header__mobile-panel nav a,
+  .header__mobile-panel nav summary {
+    width: 100%;
+  }
+  /* Horizontal variant: add class 'header__mobile-panel--horizontal' to make items inline */
+  .header__mobile-panel--horizontal nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .header__mobile-panel--horizontal nav a,
+  .header__mobile-panel--horizontal nav summary {
+    width: auto;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
