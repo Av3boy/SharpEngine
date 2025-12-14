@@ -1,24 +1,26 @@
-import { User } from "lucide-react";
+
+// import LogoutIcon from '@mui/icons-material/Logout';
+import { User } from "@auth0/auth0-react";
 
 export type HeaderLoginProps = {
   onProfileClicked: () => void;
   loginWithRedirect: () => void | Promise<void>;
   logout: () => void | Promise<void>;
   isAuthenticated: boolean;
-  user?: unknown;
+  user?: User;
   useWithText?: boolean;
 };
 
 export function HeaderLogin({onProfileClicked, loginWithRedirect, logout, isAuthenticated, user, useWithText}: HeaderLoginProps) {
   return (
-    <div>
+    <div className="flex items-center gap-4">
       {isAuthenticated ? (
         <>
           <button
             className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
             onClick={onProfileClicked}
           >
-            <User className={`w-5 h-5 ${useWithText ? "text-white" : ""}`} />
+            {/*<UserIcon className={`w-5 h-5 ${useWithText ? "text-white" : ""}`} />*/}
             <span className={` ${useWithText ? "text-white" : ""}`}>Profile</span>
           </button>
           <button onClick={() => logout()}>Logout</button>
