@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown, User } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 import { HeaderLogin } from 'sharpengine-ui-shared'
 import { useAuth0 } from '@auth0/auth0-react';
@@ -15,9 +15,9 @@ export function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-sm border-b border-white/10">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" onClick={() => navigate("/")} style={{cursor: "pointer"}}>
           <div className="w-10 h-10 rounded-lg flex items-center justify-center">
-            <img style={{filter: 'invert(1)'}} src="https://raw.githubusercontent.com/Av3boy/SharpEngine/main/Resources/icon.svg" alt="SharpEngine Logo" />
+            <img style={{filter: 'invert(1)'}} src="icon.svg" alt="SharpEngine Logo" />
           </div>
           <span className="text-white text-xl">SharpEngine</span>
         </div>
@@ -65,6 +65,7 @@ export function Header() {
           </a>
         </nav>
 
+        <p style={{color: 'white'}}>{isAuthenticated ? "yes": "no"}</p>
         <HeaderLogin onProfileClicked={() => navigate('/profile')} 
                      loginWithRedirect={loginWithRedirect} 
                      logout={logout} 

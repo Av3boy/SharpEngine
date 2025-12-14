@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
+
+import './index.tsx.scss';
 import App from './App';
+
 import reportWebVitals from './reportWebVitals';
 import { Auth0Provider } from '@auth0/auth0-react';
 
@@ -9,9 +11,8 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-const domain: string = "";
-const clientId: string = "";
-const audience: string = "";
+const domain: string = process.env.AUTH0_DOMAIN || "";
+const clientId: string = process.env.AUTH0_CLIENT_ID || "";
 
 root.render(
   <React.StrictMode>
@@ -20,7 +21,7 @@ root.render(
       clientId={clientId}
       authorizationParams={{
         redirect_uri: window.location.origin,
-        audience: audience,
+        //audience: audience,
       }}
     >
     <App />

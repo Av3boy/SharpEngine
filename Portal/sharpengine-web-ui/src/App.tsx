@@ -5,6 +5,8 @@ import HomePage from './pages/HomePage';
 import DownloadsPage from './pages/DownloadsPage';
 import UserProfilePage from './pages/UserProfilePage';
 
+import './App.tsx.scss';
+
 export default function App() {
   return (
     <Router>
@@ -12,8 +14,8 @@ export default function App() {
         <Header />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/downloads" element={<DownloadsPage />} />
-          <Route path="/profile" element={<UserProfilePage />} />
+          <Route path="/downloads" element={<div className="content"><DownloadsPage /></div>} />
+          <Route path="/profile" element={<div className="content"><UserProfilePage /></div>} />
         </Routes>
       </div>
     </Router>
