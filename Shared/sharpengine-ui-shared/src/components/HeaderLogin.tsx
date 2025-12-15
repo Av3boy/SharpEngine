@@ -15,6 +15,7 @@ export function HeaderLogin({ onProfileClicked, loginWithRedirect, logout, isAut
      return (
         <div className="flex items-center gap-4" style={{justifyContent: "space-between", gap: "16px"}}>
           <button
+
             className="text-white/80 hover:text-white transition-colors flex items-center"
             onClick={(e) => { e.preventDefault(); onProfileClicked(); }}
             aria-label={user?.name ? `Open profile for ${user.name}` : 'Open profile'}
@@ -24,7 +25,7 @@ export function HeaderLogin({ onProfileClicked, loginWithRedirect, logout, isAut
                 src={user.picture}
                 alt={user?.name ?? 'Profile picture'}
                 className="rounded-full"
-                style={{ width: 32, height: 32, objectFit: 'cover', border: '1px solid rgba(255,255,255,0.2)' }}
+                style={{ width: 32, height: 32, objectFit: 'cover', border: '1px solid rgba(255,255,255,0.2)', cursor: "pointer" }}
               />
             ) : (
               <span className="text-white/80 hover:text-white transition-colors">Profile</span>
@@ -32,6 +33,7 @@ export function HeaderLogin({ onProfileClicked, loginWithRedirect, logout, isAut
           </button>
           <button
             className="text-white/80 hover:text-white transition-colors"
+            style={{cursor: "pointer"}}
             onClick={(e) => { e.preventDefault(); logout(); }}
             aria-label="Logout"
           >

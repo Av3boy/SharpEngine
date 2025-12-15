@@ -38,7 +38,9 @@ export default function CollapsableGrid<T>(props: CollapsableGridProps<T>) {
   const [page, setPage] = React.useState(0);
 
   const data = React.useMemo(() => {
-    if (!enablePagination || rowsPerPage === -1) return items;
+    if (!enablePagination || rowsPerPage === -1)
+      return items;
+
     const start = page * rowsPerPage;
     return items.slice(start, start + rowsPerPage);
   }, [items, page, rowsPerPage, enablePagination]);
