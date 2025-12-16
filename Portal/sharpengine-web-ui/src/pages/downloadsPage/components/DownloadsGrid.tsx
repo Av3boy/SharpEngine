@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-import CollapsableGrid from '../components/Grid/CollapsableGrid';
-import type { Release } from './DownloadsPage';
+import CollapsableGrid from '../../../components/grid/CollapsableGrid';
+import type { Release } from '../DownloadsPage';
 
 export type DownloadsGridProps = {
   items: Release[];

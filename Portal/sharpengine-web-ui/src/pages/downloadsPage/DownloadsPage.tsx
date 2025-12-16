@@ -1,10 +1,11 @@
 // import { } from '@sharpengine-ui/sharpengine-ui/';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import "./DownloadsPage.tsx.scss";
 
-import DownloadsGrid from './DownloadsGrid';
-import type { DownloadsGridProps } from './DownloadsGrid';
+import DownloadsGrid from './components/DownloadsGrid';
+import type { DownloadsGridProps } from './components/DownloadsGrid';
+import StarrySky from '../../components/StarrySky';
 
 // Placeholder types you can extend later for GitHub releases
 // Minimal set of properties commonly needed in a downloads page
@@ -29,13 +30,13 @@ export interface Release {
 
 type FetchState = 'idle' | 'loading' | 'error' | 'success';
 
+// TODO: Move to .env
 const GITHUB_API = 'https://api.github.com/repos/Av3boy/SharpEngine/releases';
 
 export default function DownloadsPage() {
   const [releases, setReleases] = useState<Release[]>([]);
   const [state, setState] = useState<FetchState>('idle');
   const [error, setError] = useState<string | null>(null);
-  const skyRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -91,64 +92,13 @@ export default function DownloadsPage() {
 
   const hasData = useMemo(() => releases.length > 0, [releases]);
 
-  // Starry sky background mounted inside the main content wrapper
-  useEffect(() => {
-    const container = skyRef.current;
-    if (!container) return;
-
-    const STAR_COUNT = 300;
-    const MIN_DURATION = 2000;
-    const MAX_DURATION = 6000;
-
-    const random = (min: number, max: number) => Math.random() * (max - min) + min;
-
-    const placeStar = (star: HTMLDivElement) => {
-      // Position within container bounds using percentages
-      star.style.left = Math.random() * 100 + "%";
-      star.style.top = Math.random() * 100 + "%";
-    };
-
-    const sparkle = (star: HTMLDivElement) => {
-      const duration = random(MIN_DURATION, MAX_DURATION);
-      star.animate([
-        { opacity: 0 },
-        { opacity: random(0.6, 1) },
-        { opacity: 0 }
-      ], {
-        duration,
-        easing: "ease-in-out"
-      }).onfinish = () => {
-        placeStar(star);
-        sparkle(star);
-      };
-    };
-
-    const stars: HTMLDivElement[] = [];
-    for (let i = 0; i < STAR_COUNT; i++) {
-      const star = document.createElement("div");
-      star.className = "star";
-      placeStar(star);
-      container.appendChild(star);
-      stars.push(star);
-      setTimeout(() => sparkle(star), random(0, MAX_DURATION));
-    }
-
-    return () => {
-      // Cleanup: remove stars and their animations when component unmounts
-      stars.forEach((s) => s.remove());
-    };
-  }, []);
+  // Starry sky background moved into StarrySky component
 
   return (
-    <>
-      {/* 
-       * Placeholder Starry sky background overlay
-       * This is probably way too performance-heavy for production use
-       * but serves as a nice visual effect for now.
-       * Consider replacing with a static background or optimized canvas effect later.
-      */}
-      <div ref={skyRef} className="sky" aria-hidden="true" />
-      <div className="pt-20 px-6 max-w-5xl mx-auto relative">
+    <div className='bg-black' style={{ position: 'absolute', width: '100vw', height: '100vh' }}>
+      {/* Starry sky background overlay */}
+      <StarrySky className="sky" aria-hidden={true} />
+      <div className="downloads-content pt-20 px-6 max-w-5xl mx-auto relative">
 
         <h1 className="text-white text-4xl font-bold mb-4">Downloads</h1>
         {state === 'loading' && (
@@ -165,6 +115,6 @@ export default function DownloadsPage() {
           <DownloadsGrid items={releases} />
         )}
       </div>
-    </>
+    </div>
   );
 }

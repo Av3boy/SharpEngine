@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Settings, Mail, Bell } from 'lucide-react';
 
 export function SettingsTab() {
   const [subscribeToReleases, setSubscribeToReleases] = useState(true);
@@ -10,7 +9,7 @@ export function SettingsTab() {
   return (
     <div className="max-w-6xl mx-auto p-8">
       <div className="flex items-center gap-3 mb-6">
-        <Settings className="w-6 h-6 text-blue-600" />
+        {/*<Settings className="w-6 h-6 text-blue-600" />*/}
         <h2>Account Settings</h2>
       </div>
       
@@ -18,7 +17,7 @@ export function SettingsTab() {
         {/* Email Section */}
         <div className="border border-gray-200 rounded-lg p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Mail className="w-5 h-5 text-gray-600" />
+            {/*<Mail className="w-5 h-5 text-gray-600" />*/}
             <h3>Email Address</h3>
           </div>
           
@@ -36,7 +35,7 @@ export function SettingsTab() {
         {/* Notification Preferences Section */}
         <div className="border border-gray-200 rounded-lg p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Bell className="w-5 h-5 text-gray-600" />
+            {/*<Bell className="w-5 h-5 text-gray-600" />*/}
             <h3>Notification Preferences</h3>
           </div>
           

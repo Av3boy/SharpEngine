@@ -1,9 +1,9 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { ProfileHeader } from "./UserProfile/ProfileHeader";
-import { TabNavigation } from "./UserProfile/TabNavigation";
-import { AchievementsTab } from "./UserProfile/AchievementsTab";
-import { AssetsTab } from "./UserProfile/AssetsTab";
-import { SettingsTab } from "./UserProfile/SettingsTab";
+import { ProfileHeader } from "./components/ProfileHeader";
+import { TabNavigation } from "./components/TabNavigation";
+import { AchievementsTab } from "./components/AchievementsTab";
+import { AssetsTab } from "./components/AssetsTab";
+import { SettingsTab } from "./components/SettingsTab";
 import { useState } from "react";
 
 export default function UserProfilePage() {

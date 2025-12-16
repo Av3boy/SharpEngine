@@ -1,6 +1,3 @@
-import { ImageWithFallback } from './figma/ImageWithFallback';
-import { Trophy, Users } from 'lucide-react';
-
 interface Achievement {
   id: string;
   title: string;
@@ -63,7 +60,7 @@ export function AchievementsTab() {
   return (
     <div className="max-w-6xl mx-auto p-8">
       <div className="flex items-center gap-3 mb-6">
-        <Trophy className="w-6 h-6 text-blue-600" />
+        {/*<Trophy className="w-6 h-6 text-blue-600" />*/}
         <h2>Your Achievements</h2>
         <span className="text-gray-500">({mockAchievements.length} earned)</span>
       </div>
@@ -76,11 +73,11 @@ export function AchievementsTab() {
           >
             <div className="flex gap-4">
               <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
-                <ImageWithFallback
+                {/*<ImageWithFallback
                   src={achievement.imageUrl}
                   alt={achievement.title}
                   className="w-full h-full object-cover"
-                />
+                />*/}
               </div>
               
               <div className="flex-1">
@@ -97,7 +94,7 @@ export function AchievementsTab() {
                   </div>
                   
                   <div className={`flex items-center gap-1 ${getRarityColor(achievement.rarityPercentage)}`}>
-                    <Users className="w-4 h-4" />
+                    {/*<Users className="w-4 h-4" />*/}
                     <span>
                       {achievement.rarityPercentage}% ({getRarityLabel(achievement.rarityPercentage)})
                     </span>

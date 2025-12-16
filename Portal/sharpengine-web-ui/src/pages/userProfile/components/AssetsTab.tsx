@@ -1,5 +1,3 @@
-import { ImageWithFallback } from './figma/ImageWithFallback';
-import { FileImage, Download, Heart, Calendar } from 'lucide-react';
 
 interface Asset {
   id: string;
@@ -45,7 +43,7 @@ export function AssetsTab() {
   return (
     <div className="max-w-6xl mx-auto p-8">
       <div className="flex items-center gap-3 mb-6">
-        <FileImage className="w-6 h-6 text-blue-600" />
+        {/*<FileImage className="w-6 h-6 text-blue-600" />*/}
         <h2>Published Assets</h2>
         <span className="text-gray-500">({mockAssets.length} assets)</span>
       </div>
@@ -57,11 +55,11 @@ export function AssetsTab() {
             className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
           >
             <div className="aspect-video bg-gray-100 overflow-hidden">
-              <ImageWithFallback
+              {/*<ImageWithFallback
                 src={asset.imageUrl}
                 alt={asset.title}
                 className="w-full h-full object-cover"
-              />
+              />*/}
             </div>
             
             <div className="p-4">
@@ -74,7 +72,7 @@ export function AssetsTab() {
               <h3 className="mb-2">{asset.title}</h3>
               
               <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
-                <Calendar className="w-4 h-4" />
+                {/*<Calendar className="w-4 h-4" />*/}
                 <span>
                   {new Date(asset.publishedDate).toLocaleDateString('en-US', {
                     month: 'short',
@@ -86,12 +84,12 @@ export function AssetsTab() {
               
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-1 text-gray-600">
-                  <Download className="w-4 h-4" />
+                  {/*<Download className="w-4 h-4" />*/}
                   <span>{asset.downloads.toLocaleString()}</span>
                 </div>
                 
                 <div className="flex items-center gap-1 text-red-500">
-                  <Heart className="w-4 h-4" />
+                  {/*<Heart className="w-4 h-4" />*/}
                   <span>{asset.likes.toLocaleString()}</span>
                 </div>
               </div>
