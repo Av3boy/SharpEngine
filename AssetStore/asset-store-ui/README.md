@@ -1,46 +1,64 @@
-# Getting Started with Create React App
+# SharpEngine Monorepo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This repository is an npm workspace that hosts:
+- AssetStore UI app: AssetStore/asset-store-ui
+- Shared UI library: Shared/sharpengine-ui-shared
 
-## Available Scripts
+The shared library is consumed by the app via the workspace so both resolve a single React instance and the library builds automatically on install.
 
-In the project directory, you can run:
+## Quick Start
 
-### `npm start`
+```bash
+# From repo root
+npm install
+npm run start
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Common Commands
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```bash
+# Build both packages
+npm run build
 
-### `npm test`
+# Run the app only
+npm run start
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# Run tests (app)
+npm run test
+```
 
-### `npm run build`
+## Project Structure
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- App: AssetStore/asset-store-ui
+  - Depends on the shared library via file/workspace: "sharpengine-ui-shared": "file:../../Shared/sharpengine-ui-shared"
+- Library: Shared/sharpengine-ui-shared
+  - Emits dist/ via TypeScript (`npm run build`)
+  - Has `prepare` script to build on install
+  - Declares React-related packages as peerDependencies to avoid duplicates
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Why Workspaces
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Workspaces ensure:
+- A single React/ReactDOM instance across app and library
+- The library is symlinked and built automatically (`prepare`)
+- Clean local development without `npm link`
 
-### `npm run eject`
+## Troubleshooting
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- If you see duplicate React or context state issues:
+  1. Remove nested node_modules folders in the library
+     ```bash
+     # Windows PowerShell
+     rd /s /q Shared\sharpengine-ui-shared\node_modules
+     ```
+  2. Reinstall from the repo root
+     ```bash
+     npm install
+     ```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- If the app cannot import from the shared library, ensure the dependency is set to the package root (not `dist/`) and the library's `prepare` script exists.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Notes
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- The app renders a global error alert by subscribing to the shared `ErrorEventsProvider`. Components publish errors via `useErrorEvents().publish(...)`.
+- The library exposes: `ErrorEventsProvider`, `useErrorEvents` from `sharpengine-ui-shared`.

@@ -9,6 +9,17 @@ public partial class Program
         
         ConfigureServices(builder.Services);
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(name: "default", policy =>
+            {
+                policy.AllowAnyOrigin()
+                      .WithOrigins("http://localhost:3000")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            });
+        });
+
         var app = builder.Build();
         Configure(app, app.Environment);
 

@@ -10,3 +10,6 @@ export * from './api/mockDeckApi';
 
 // Types
 export * from './types/asset';
+
+// Errors (global error events context)
+export * from './errors/ErrorEvents';

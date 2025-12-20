@@ -10,14 +10,15 @@ namespace AssetStore.Api.v1.Controllers;
 /// </summary>
 [ApiController]
 [Route(AssetStoreRoutes.ChecoutRoute)]
-public class CheckoutController : ControllerBase
+public class CheckoutController : Controller
 {
     [HttpPost]
-    public IActionResult CreateCheckoutSession()
+    public ActionResult CreateCheckoutSession()
     {
         var domain = "http://localhost:3000"; // Asset store ui url
         var options = new SessionCreateOptions
         {
+            UiMode = "embedded",
             LineItems =
             [
                 new() {
@@ -34,26 +35,26 @@ public class CheckoutController : ControllerBase
                 },
             ],
             Mode = "payment",
-            SuccessUrl = domain + "/checkout?success=true",
+            ReturnUrl = domain + "/checkout?success=true",
         };
 
         var service = new SessionService();
         Session session = service.Create(options);
 
-        return new { clientSecret = session.ClientSecret };
+        return Json(new { clientSecret = session.ClientSecret });
     }
+}
 
-    [Route("session-status")]
-    [ApiController]
-    public class SessionStatusController : Controller
+[Route("session-status")]
+[ApiController]
+public class SessionStatusController : Controller
+{
+    [HttpGet]
+    public ActionResult SessionStatus([FromQuery] string session_id)
     {
-        [HttpGet]
-        public ActionResult SessionStatus([FromQuery] string session_id)
-        {
-            var sessionService = new SessionService();
-            Session session = sessionService.Get(session_id);
+        var sessionService = new SessionService();
+        Session session = sessionService.Get(session_id);
 
-            return Json(new { status = session.Status, customer_email = session.CustomerDetails.Email });
-        }
+        return Json(new { status = session.Status, customer_email = session.CustomerDetails.Email });
     }
 }
