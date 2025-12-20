@@ -21,6 +21,10 @@
     "declarationDir": "./dist",
     "outDir": "./dist",
     "noEmit": false,
+    "sourceMap": false,
+    "declarationMap": false,
+    "inlineSourceMap": false,
+    "inlineSources": false,
     "jsx": "react-jsx"
   },
   "include": [

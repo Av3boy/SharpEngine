@@ -130,12 +130,13 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-                <ShoppingCart className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl text-gray-900">AssetStore</span>
-            </div>
+        {/* Logo */}
+        <div className="flex items-center gap-2" onClick={() => navigate("/")} style={{cursor: "pointer"}}>
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center">
+            <img src="icon.svg" style={{minHeight: '40px', height: '40px'}} alt="SharpEngine Logo" />
+          </div>
+          <span className="text-xl">Asset Store</span>
+        </div>
           </div>
 
           {/* Search Bar */}
@@ -164,13 +165,15 @@ export function Header() {
           </div>
 
           {/* Navigation */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 mx-8">
             <HeaderLogin onProfileClicked={() => navigate('/profile')} 
                      loginWithRedirect={loginWithRedirect} 
                      logout={logout} 
                      isAuthenticated={isAuthenticated} 
                      user={user} />
           </div>
+
+          <ShoppingCart style={{cursor: 'pointer'}} onClick={() => navigate('/checkout')} />
         </div>
       </div>
     </header>

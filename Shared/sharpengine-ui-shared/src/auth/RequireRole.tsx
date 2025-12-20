@@ -1,8 +1,7 @@
-import { useAuth0, User } from "@auth0/auth0-react";
+import { User } from "@auth0/auth0-react";
 import { Navigate, Outlet } from "react-router-dom";
 
-export default function RequireRole({ role }: { role: "admin" | "editor" }) {
-  const { user } = useAuth0();
+export default function RequireRole({ role, user }: { role: "admin" | "editor", user?: User }) {
 
   if (!user) {
     return <Navigate to="/403" replace />;

@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "AssetStore/asset-store-ui"
+		},
+		{
+			"path": "Shared/sharpengine-ui-shared"
+		},
+		{
+			"path": "Portal/sharpengine-web-ui"
+		}
+	],
+	"settings": {}
+}

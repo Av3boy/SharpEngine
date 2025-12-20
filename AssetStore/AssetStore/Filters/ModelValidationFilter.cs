@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
-using System.Net;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace AssetStore.Api.Filters;
 
@@ -9,12 +9,11 @@ namespace AssetStore.Api.Filters;
 public class ValidateModelAttribute : ActionFilterAttribute
 {
     /// <inheritdoc />
-    public override void OnActionExecuting(HttpActionContext actionContext)
+    public override void OnActionExecuting(ActionExecutingContext context)
     {
-        if (actionContext.ModelState.IsValid != false)
+        if (context.ModelState.IsValid)
             return;
-        
-        actionContext.Response = actionContext.Request.CreateErrorResponse(
-            HttpStatusCode.BadRequest, actionContext.ModelState);
+
+        context.Result = new BadRequestObjectResult(context.ModelState);
     }
 }

@@ -3,16 +3,17 @@ import { Header } from './components/Header';
 
 import HomePage from './pages/HomePage';
 import DownloadsPage from './pages/downloadsPage/DownloadsPage';
-import UserProfilePage from './pages/userProfile/UserProfilePage';
+import UserProfilePage from 'sharpengine-ui-shared/pages/userProfile/UserProfilePage';
 
-import RequireAuth from './auth/RequireAuth';
-import { useAuth0 } from '@auth0/auth0-react';
+import RequireAuth from 'sharpengine-ui-shared/auth/RequireAuth';
+import { useAuth0, User } from '@auth0/auth0-react';
 
 import './App.tsx.scss';
-import ErrorPage from './pages/ErrorPage';
+import ErrorPage from 'sharpengine-ui-shared/pages/ErrorPage';
 
 export default function App() {
-    const { isAuthenticated, user } = useAuth0();
+  const { isAuthenticated, user } = useAuth0();
+  const auth0User = user as User;
 
   return (
     <Router>

@@ -8,6 +8,8 @@ public static class AssetStore
     public const string Apiv1Route = "api/v1";
     public const string AssetsRoute = Apiv1Route + "/assets";
     public const string CommentsRoute = Apiv1Route + "/comments";
+    public const string ChecoutRoute = Apiv1Route + "/checkout";
+    
     public static string GetById(Guid assetId) => $"assets/{assetId}";
 
     public const string GET_ALL_BY_KEYWORD = "/keyword";

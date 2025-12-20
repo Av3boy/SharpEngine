@@ -7,6 +7,11 @@
   ],
   "dependencies": {
     "@auth0/auth0-react": "^2.11.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.6",
+    "@mui/material": "^7.3.6",
+    "@stripe/react-stripe-js": "^5.4.1",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
@@ -20,13 +25,17 @@
     "react-dom": "^19.2.1",
     "react-router-dom": "^7.10.1",
     "react-scripts": "5.0.1",
-    "sharpengine-ui-shared": "file:../../Shared/sharpengine-ui-shared",
+    "sass": "^1.96.0",
+    "sharpengine-ui-shared": "file:../../Shared/sharpengine-ui-shared/dist",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
+  "devDependencies": {
+    "dotenv-cli": "^11.0.0"
+  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "dotenv -e ../../.env -- react-scripts start",
+    "build": "dotenv -e ../../.env -- react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

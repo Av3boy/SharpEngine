@@ -11,6 +11,16 @@ export type HeaderLoginProps = {
 
 export function HeaderLogin({ onProfileClicked, loginWithRedirect, logout, isAuthenticated, user, useWhiteText }: HeaderLoginProps) {
 
+  function loginUser(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault(); 
+    loginWithRedirect();
+  }
+
+  function logoutUser(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    logout();
+  }
+
    if (isAuthenticated)
      return (
         <div className="flex items-center gap-4" style={{justifyContent: "space-between", gap: "16px"}}>
@@ -34,7 +44,7 @@ export function HeaderLogin({ onProfileClicked, loginWithRedirect, logout, isAut
           <button
             className="text-white/80 hover:text-white transition-colors"
             style={{cursor: "pointer"}}
-            onClick={(e) => { e.preventDefault(); logout(); }}
+            onClick={(e) => logoutUser(e)}
             aria-label="Logout"
           >
             <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#e3e3e3">
@@ -52,8 +62,8 @@ export function HeaderLogin({ onProfileClicked, loginWithRedirect, logout, isAut
     return (
       <button
         className="text-white/80 hover:text-white transition-colors"
-        style={{alignSelf: "start"}}
-        onClick={(e) => { e.preventDefault(); loginWithRedirect(); }}
+        style={{alignSelf: "start", cursor: "pointer"}}
+        onClick={(e) => loginUser(e)}
       >
         Login
       </button>

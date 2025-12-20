@@ -1,7 +1,4 @@
-import { useLocation } from "react-router-dom";
-
-export default function ErrorPage() {
-    const location = useLocation();
+export default function ErrorPage({location}: any) {
     const raw = location.search || location.hash || "";
     const cleaned = raw.replace("#", "").split("?").slice(1).join("?");
     const searchParams = new URLSearchParams(cleaned);

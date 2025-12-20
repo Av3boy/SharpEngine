@@ -1,4 +1,3 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import { ProfileHeader } from "./components/ProfileHeader";
 import { TabNavigation } from "./components/TabNavigation";
 import { AchievementsTab } from "./components/AchievementsTab";
@@ -7,7 +6,6 @@ import { SettingsTab } from "./components/SettingsTab";
 import { useState } from "react";
 
 export default function UserProfilePage() {
-  const { isAuthenticated, user } = useAuth0();
   const [activeTab, setActiveTab] = useState('achievements');
 
   return (
