@@ -8,8 +8,6 @@
 
 </div>
 
-<div>
-
 ## About
 
 <i>SharpEngine</i> is a game engine written in purely in C# using [Silk.NET](https://github.com/dotnet/Silk.NET) as a wrapper for the graphics rendering pipeline. <i>SharpEngine</i> aims to enable developers to create <b>basic</b> applications using simple instructions or <b>advanced</b> applications by exposing <b>every</b> component.
