@@ -5,10 +5,22 @@
 <div align="center">
 
 [![NuGet Version](https://img.shields.io/nuget/v/SharpEngine.Core.NET)](https://www.nuget.org/packages/SharpEngine.Core.NET)
+![NuGet Downloads](https://img.shields.io/nuget/dt/PACKAGE_NAME)
 
+<!--
+![Build](https://img.shields.io/github/actions/workflow/status/Av3boy/SharpEngine/build.yml)
+![Coverage](https://img.shields.io/codecov/c/github/Av3boy/SharpEngine)
+![Quality Gate](https://img.shields.io/sonar/quality_gate/PROJECT_KEY)
+
+![License](https://img.shields.io/github/license/Av3boy/SharpEngine)
+![.NET](https://img.shields.io/badge/.NET-8.0-blue)
+
+![Stars](https://img.shields.io/github/stars/Av3boy/SharpEngine)
+
+![Issues](https://img.shields.io/github/issues/Av3boy/SharpEngine)
+![PRs](https://img.shields.io/github/issues-pr/Av3boy/SharpEngine)
+-->
 </div>
-
-<div>
 
 ## About
 
@@ -67,6 +79,8 @@ Currently the <i>Editor</i> contains 5 different windows:
 ![editor](./Resources/Screenshots/editor.png)
 
 ### Launcher
+
+The launcher is an interface for easily accessing your projects and managing the versions of the engine you have installed.
 
 ![launcher](./Resources/Screenshots/launcher.png)
 
