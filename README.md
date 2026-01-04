@@ -80,6 +80,8 @@ Currently the <i>Editor</i> contains 5 different windows:
 
 ### Launcher
 
+The launcher is an interface for easily accessing your projects and managing the versions of the engine you have installed.
+
 ![launcher](./Resources/Screenshots/launcher.png)
 
 ## Examples
