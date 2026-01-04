@@ -55,10 +55,10 @@
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
   <Project Path="SharpEngine.Core/SharpEngine.Core.csproj" />
-  <Project Path="../Shared/SharpEngine.Rest/SharpEngine.Rest.csproj">
+  <Project Path="../../SharpEngine-Shared/SharpEngine.Rest/SharpEngine.Rest.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
-  <Project Path="../Shared/SharpEngine.Shared/SharpEngine.Shared.csproj">
+  <Project Path="../../SharpEngine-Shared/SharpEngine.Shared/SharpEngine.Shared.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
 </Solution>
