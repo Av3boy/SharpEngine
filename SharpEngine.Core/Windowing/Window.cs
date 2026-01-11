@@ -30,6 +30,7 @@ namespace SharpEngine.Core.Windowing;
 /// </summary>
 public class Window : SilkWindow
 {
+    private const string _iconPath = "_Resources/icon.png";
     private bool _windowInitialized;
     private bool _initialized;
     
@@ -151,7 +152,7 @@ public class Window : SilkWindow
             Input = CurrentWindow.CreateInput();
             CurrentWindow.MakeCurrent();
 
-            SetWindowIcon(PathExtensions.GetAssemblyPath("_Resources/icon.png"));
+            SetWindowIcon(PathExtensions.GetAssemblyPath(_iconPath));
 
             AssignInputEvents();
 
@@ -169,6 +170,7 @@ public class Window : SilkWindow
             {
                 // Make sure the renderer has the correct constructor parameters!
                 // TODO: #75 The static reference to the context will not work when multiple windows are implemented, since the context will be different.
+                // TODO: #128 This is now redundant and can be loaded from a DI service.
                 var requiredArguments = new object[] { Camera, this, Settings, Scene };
                 var renderer = (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
 

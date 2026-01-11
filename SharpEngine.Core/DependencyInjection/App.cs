@@ -16,6 +16,7 @@ public class App
         _configuration = configuration;
     }
 
+    // TODO: Integrate into the existing windowing / startup system.
     public void Run(CancellationToken cancellationToken)
     {
         try
