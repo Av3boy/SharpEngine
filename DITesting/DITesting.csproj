@@ -12,4 +12,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SharpEngine.Core\SharpEngine.Core.csproj" />
+  </ItemGroup>
+
 </Project>
