@@ -11,6 +11,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SharpEngine.Core.Components\SharpEngine.Core.Components.csproj" />
-    <ProjectReference Include="..\..\Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
+    <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
   </ItemGroup>
 </Project>

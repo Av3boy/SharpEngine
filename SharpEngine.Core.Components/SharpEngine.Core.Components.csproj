@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SharpEngine.Core.Numerics\SharpEngine.Core.Numerics.csproj" />
-    <ProjectReference Include="..\..\Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
+    <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

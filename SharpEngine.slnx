@@ -42,15 +42,6 @@
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
   </Folder>
-
-  <Project Path="../SharpEngine-Editor/SharpEngine.Editor.csproj">
-    <BuildType Solution="LauncherNonWindows|*" Project="Debug" />
-  </Project>
-
-  <Project Path="../SharpEngine-Launcher/Launcher/Launcher.csproj">
-    <BuildType Solution="LauncherNonWindows|*" Project="Debug" />
-    <Deploy />
-  </Project>
   <Project Path="DITesting/DITesting.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
