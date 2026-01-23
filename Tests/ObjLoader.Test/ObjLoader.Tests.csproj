@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>$(DotNetTargetFramework)</TargetFramework>
   </PropertyGroup>
   
   <!-- TODO: These should be converted to xunit and moq, fluent assertions is a paid library -->

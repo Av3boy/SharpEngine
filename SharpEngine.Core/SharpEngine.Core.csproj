@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>Everything needed to build games using a purely C# game engine.</Description>
@@ -33,9 +33,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\SharpEngine-Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
     <ProjectReference Include="..\SharpEngine.Core.Components\SharpEngine.Core.Components.csproj" />
     <ProjectReference Include="..\SharpEngine.Core.Numerics\SharpEngine.Core.Numerics.csproj" />
-    <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

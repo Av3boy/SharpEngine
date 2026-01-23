@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>$(DotNetTargetFramework)</TargetFramework>
   </PropertyGroup>
 
   <!-- TODO: This should be used with unit testing. -->
@@ -11,6 +11,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SharpEngine.Core.Components\SharpEngine.Core.Components.csproj" />
-    <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
+    <ProjectReference Include="..\..\..\SharpEngine-Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
   </ItemGroup>
 </Project>

@@ -22,6 +22,8 @@ using System.Threading.Tasks;
 using Shader = SharpEngine.Core.Shaders.Shader;
 using Silk.NET.GLFW;
 using SharpEngine.Shared;
+using SharpEngine.Shared.Dto;
+using System.Reflection;
 
 namespace SharpEngine.Core.Windowing;
 
@@ -77,19 +79,6 @@ public class Window : SilkWindow
     /// <returns>The OpenGL context for this window.</returns>
     public static GL GetGL() => GL;
     private static void SetGL(GL gl) => GL = gl;
-    
-    /// <summary>
-    ///     Initializes a new instance of <see cref="Window"/>.
-    /// </summary>
-    /// <param name="camera">The camera the window should render from.</param>
-    /// <param name="scene">Contains the game scene.</param>
-    /// <param name="settings">The settings for the window.</param>
-    public Window(CameraView camera, Scene scene, IViewSettings settings)
-    {
-        Scene = scene;
-        Settings = settings;
-        Camera = camera;
-    }
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
@@ -100,10 +89,29 @@ public class Window : SilkWindow
     /// <param name="scene">Contains the game scene.</param>
     /// <param name="settings">The settings for the window.</param>
     public Window(Scene scene, IViewSettings settings)
+        : this(new(Vector3.One, settings), scene, settings) { }
+
+    /// <summary>
+    ///     Initializes a new instance of <see cref="Window"/>.
+    /// </summary>
+    /// <param name="camera">The camera the window should render from.</param>
+    /// <param name="scene">Contains the game scene.</param>
+    /// <param name="settings">The settings for the window.</param>
+    public Window(CameraView camera, Scene scene, IViewSettings settings)
     {
+        // TODO:
+        // Should the developer need to call for a window initialization?
+        // Meaning should should we move this project loading part to a separate function?
+
+        var project = new Project();
+        var currentAssemlyVersion = typeof(Window).Assembly.GetVersion();
+        
+        if (currentAssemlyVersion != project.EngineVersion)
+            Debug.Log.Warning("The current engine version ({CurrentVersion}) does not match the project engine version ({ProjectVersion}). This may lead to unexpected behavior.", currentAssemlyVersion, project.EngineVersion);
+
         Scene = scene;
         Settings = settings;
-        Camera = new(Vector3.One, settings);
+        Camera = camera;
     }
 
     /// <summary>
