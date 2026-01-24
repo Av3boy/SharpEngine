@@ -2,7 +2,7 @@
   
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-	    <TargetFramework>$(DotNetTargetFramework)</TargetFramework>
+	    <TargetFramework>$(TargetFramework)</TargetFramework>
         <Platforms>AnyCPU;x64;x86</Platforms>
     </PropertyGroup>
   

@@ -1,7 +1,8 @@
 <Project>
   
   <!-- Solution target framework versions -->
-  <PropertyGroup>
+  <!-- This is read from the "Workspace" level. Read more here: TBD -->
+  <PropertyGroup Condition="'$(TargetFramework)'==''">
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 

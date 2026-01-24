@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Everything needed to build games using a purely C# game engine.</Description>
-    
-    <Platforms>AnyCPU;x64;x86</Platforms>
-    <GeneratePackageOnBuild>$(GenerateNuGetPackages)</GeneratePackageOnBuild>
-    <PackageProjectUrl>https://github.com/Av3boy/SharpEngine</PackageProjectUrl>
-    <PackageTags>game-engine;</PackageTags>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+	  <Description>Everything needed to build games using a purely C# game engine.</Description>
+	  <TargetFramework>$(TargetFramework)</TargetFramework>
+	  <Platforms>AnyCPU;x64;x86</Platforms>
+	  <GeneratePackageOnBuild>$(GenerateNuGetPackages)</GeneratePackageOnBuild>
+	  <PackageProjectUrl>https://github.com/Av3boy/SharpEngine</PackageProjectUrl>
+	  <PackageTags>game-engine;</PackageTags>
+	  <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 
     <!-- Required, atleast for now since another NuGet package with the SharpEngine.Core name already exists. -->
     <PackageId>$(AssemblyName).NET</PackageId>
@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\SharpEngine-Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
+    <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
     <ProjectReference Include="..\SharpEngine.Core.Components\SharpEngine.Core.Components.csproj" />
     <ProjectReference Include="..\SharpEngine.Core.Numerics\SharpEngine.Core.Numerics.csproj" />
   </ItemGroup>
