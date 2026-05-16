@@ -9,8 +9,6 @@ namespace SharpEngine.Core.Shaders;
 /// </summary>
 public partial class Shader : IDisposable
 {
-    private static readonly ILogger<Shader> Logger = LoggingExtensions.CreateLogger<Shader>();
-
     /// <summary>Gets the handle to the shader program.</summary>
     public uint Handle { get; private set; }
 
@@ -24,6 +22,7 @@ public partial class Shader : IDisposable
     public string FragPath { get; set; }
 
     private readonly GL _gl;
+    private readonly ILogger<Shader> _logger;
 
     private Dictionary<string, int> _uniformLocations = [];
     private bool disposedValue;
@@ -35,6 +34,7 @@ public partial class Shader : IDisposable
     ///     Shaders are written in GLSL, which is a language very similar to C in its semantics.
     ///     The GLSL source is compiled *at runtime*, so it can optimize itself for the graphics card it's currently being used on.
     /// </remarks>
+    /// <param name="gl">The OpenGL context.</param>
     /// <param name="vertPath">The vertex shader full path.</param>
     /// <param name="fragPath">The fragment shader full path.</param>
     /// <param name="name">The identifier name of the shader.</param>
@@ -43,6 +43,8 @@ public partial class Shader : IDisposable
         _gl = gl;
         Name = name;
 
+        _logger = LoggingExtensions.CreateLogger<Shader>();
+
         // There are several different types of shaders, but the only two you need for basic rendering are the vertex and fragment shaders.
         // The vertex shader is responsible for moving around vertices, and uploading that data to the fragment shader.
         //   The vertex shader won't be too important here, but they'll be more important later.
@@ -50,10 +52,10 @@ public partial class Shader : IDisposable
         //   The fragment shader is what we'll be using the most here.
 
         if (!vertPath.EndsWith(".vert"))
-            Logger.LogWarning("Vertex shaders should have the file extension '.vert' for easier manageability.");
+            _logger.LogWarning("Vertex shaders should have the file extension '.vert' for easier manageability.");
 
         if (!fragPath.EndsWith(".frag"))
-            Logger.LogWarning("Fragment shaders should have the file extension '.frag' for easier manageability.");
+            _logger.LogWarning("Fragment shaders should have the file extension '.frag' for easier manageability.");
 
         VertPath = vertPath;
         FragPath = fragPath;

@@ -38,16 +38,187 @@ public static class Cube
         _loaded = true;
     }
 
-    private static bool _loaded;
+    private readonly static bool _loaded;
 
-    public static Model_Old Model;
+    /// <summary>The loaded model of the cube.</summary>
+    public static Model_Old Model = null!;
 
+    /// <summary>The cube mesh.</summary>
+    public static readonly Mesh Mesh = null!;
+
+    private static readonly float[] Vertices =
+    [
+        -0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+        -0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+
+        -0.5f, -0.5f,  0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
+
+        -0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+
+        -0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f, -0.5f,
+
+        -0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f, -0.5f,
+    ];
+
+    private readonly static float[] Normals =
+    [
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
+
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+    ];
+
+    private readonly static float[] TextureCoordinates =
+    [
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        0.0f, 1.0f
+    ];
+
+    private readonly static uint[] Indices =
+    [
+        // Front face
+        0, 1, 2,
+        2, 3, 0,
+
+        // Back face
+        4, 5, 6,
+        6, 7, 4,
+
+        // Left face
+        4, 0, 3,
+        3, 7, 4,
+
+        // Right face
+        1, 5, 6,
+        6, 2, 1,
+
+        // Top face
+        3, 2, 6,
+        6, 7, 3,
+
+        // Bottom face
+        4, 5, 1,
+        1, 0, 4
+    ];
+
+    /// <summary>
+    /// Creates a model with a mesh containing diffuse and optional specular texture maps.
+    /// </summary>
+    /// <param name="diffuseMapFile">The file path to the diffuse texture map.</param>
+    /// <param name="specularMapFile">The file path to the specular texture map, or <see langword="null"/> to omit specular mapping.</param>
+    /// <returns>A new model instance containing a mesh with the specified texture maps.</returns>
     public static Model_Old CreateModel(string diffuseMapFile, string? specularMapFile = null)
     {
         var diffuseTexture = TextureService.Instance.LoadTexture(diffuseMapFile, TextureType.Diffuse);
-        var specularTexture = string.IsNullOrWhiteSpace(specularMapFile)
-            ? null
-            : TextureService.Instance.LoadTexture(specularMapFile, TextureType.Specular);
+        var specularTexture = string.IsNullOrWhiteSpace(specularMapFile) ? 
+            null : TextureService.Instance.LoadTexture(specularMapFile, TextureType.Specular);
 
         var material = new Material(diffuseTexture, specularTexture);
         var textures = new List<Components.Properties.Textures.Texture> { diffuseTexture };
@@ -66,168 +237,6 @@ public static class Cube
 
         return model;
     }
-
-    /// <summary>The cube mesh.</summary>
-    public static readonly Mesh Mesh;
-
-    public static float[] Vertices =
-        [
-            -0.5f, -0.5f, -0.5f,
-             0.5f, -0.5f, -0.5f,
-             0.5f,  0.5f, -0.5f,
-             0.5f,  0.5f, -0.5f,
-            -0.5f,  0.5f, -0.5f,
-            -0.5f, -0.5f, -0.5f,
-
-            -0.5f, -0.5f,  0.5f,
-             0.5f, -0.5f,  0.5f,
-             0.5f,  0.5f,  0.5f,
-             0.5f,  0.5f,  0.5f,
-            -0.5f,  0.5f,  0.5f,
-            -0.5f, -0.5f,  0.5f,
-
-            -0.5f,  0.5f,  0.5f,
-            -0.5f,  0.5f, -0.5f,
-            -0.5f, -0.5f, -0.5f,
-            -0.5f, -0.5f, -0.5f,
-            -0.5f, -0.5f,  0.5f,
-            -0.5f,  0.5f,  0.5f,
-
-             0.5f,  0.5f,  0.5f,
-             0.5f,  0.5f, -0.5f,
-             0.5f, -0.5f, -0.5f,
-             0.5f, -0.5f, -0.5f,
-             0.5f, -0.5f,  0.5f,
-             0.5f,  0.5f,  0.5f,
-
-            -0.5f, -0.5f, -0.5f,
-             0.5f, -0.5f, -0.5f,
-             0.5f, -0.5f,  0.5f,
-             0.5f, -0.5f,  0.5f,
-            -0.5f, -0.5f,  0.5f,
-            -0.5f, -0.5f, -0.5f,
-
-            -0.5f,  0.5f, -0.5f,
-             0.5f,  0.5f, -0.5f,
-             0.5f,  0.5f,  0.5f,
-             0.5f,  0.5f,  0.5f,
-            -0.5f,  0.5f,  0.5f,
-            -0.5f,  0.5f, -0.5f,
-        ];
-    public static float[] Normals =
-    [
-          0.0f, 0.0f, -1.0f,
-              0.0f, 0.0f, -1.0f,
-              0.0f, 0.0f, -1.0f,
-              0.0f, 0.0f, -1.0f,
-              0.0f, 0.0f, -1.0f,
-              0.0f, 0.0f, -1.0f,
-
-              0.0f, 0.0f, 1.0f,
-              0.0f, 0.0f, 1.0f,
-              0.0f, 0.0f, 1.0f,
-              0.0f, 0.0f, 1.0f,
-              0.0f, 0.0f, 1.0f,
-              0.0f, 0.0f, 1.0f,
-
-             -1.0f, 0.0f, 0.0f,
-             -1.0f, 0.0f, 0.0f,
-             -1.0f, 0.0f, 0.0f,
-             -1.0f, 0.0f, 0.0f,
-             -1.0f, 0.0f, 0.0f,
-             -1.0f, 0.0f, 0.0f,
-
-              1.0f, 0.0f, 0.0f,
-              1.0f, 0.0f, 0.0f,
-              1.0f, 0.0f, 0.0f,
-              1.0f, 0.0f, 0.0f,
-              1.0f, 0.0f, 0.0f,
-              1.0f, 0.0f, 0.0f,
-
-              0.0f, -1.0f, 0.0f,
-              0.0f, -1.0f, 0.0f,
-              0.0f, -1.0f, 0.0f,
-              0.0f, -1.0f, 0.0f,
-              0.0f, -1.0f, 0.0f,
-              0.0f, -1.0f, 0.0f,
-
-              0.0f, 1.0f, 0.0f,
-              0.0f, 1.0f, 0.0f,
-              0.0f, 1.0f, 0.0f,
-              0.0f, 1.0f, 0.0f,
-              0.0f, 1.0f, 0.0f,
-              0.0f, 1.0f, 0.0f,
-        ];
-    public static float[] TextureCoordinates =
-        [
-              0.0f, 0.0f,
-              1.0f, 0.0f,
-              1.0f, 1.0f,
-              1.0f, 1.0f,
-              0.0f, 1.0f,
-              0.0f, 0.0f,
-
-              0.0f, 0.0f,
-              1.0f, 0.0f,
-              1.0f, 1.0f,
-              1.0f, 1.0f,
-              0.0f, 1.0f,
-              0.0f, 0.0f,
-
-              1.0f, 0.0f,
-              1.0f, 1.0f,
-              0.0f, 1.0f,
-              0.0f, 1.0f,
-              0.0f, 0.0f,
-              1.0f, 0.0f,
-
-              1.0f, 0.0f,
-              1.0f, 1.0f,
-              0.0f, 1.0f,
-              0.0f, 1.0f,
-              0.0f, 0.0f,
-              1.0f, 0.0f,
-
-              0.0f, 1.0f,
-              1.0f, 1.0f,
-              1.0f, 0.0f,
-              1.0f, 0.0f,
-              0.0f, 0.0f,
-              0.0f, 1.0f,
-
-              0.0f, 1.0f,
-              1.0f, 1.0f,
-              1.0f, 0.0f,
-              1.0f, 0.0f,
-              0.0f, 0.0f,
-              0.0f, 1.0f
-        ];
-    public static uint[] Indices =
-        [
-            // Front face
-            0, 1, 2,
-            2, 3, 0,
-
-            // Back face
-            4, 5, 6,
-            6, 7, 4,
-
-            // Left face
-            4, 0, 3,
-            3, 7, 4,
-
-            // Right face
-            1, 5, 6,
-            6, 2, 1,
-
-            // Top face
-            3, 2, 6,
-            6, 7, 3,
-
-            // Bottom face
-            4, 5, 1,
-            1, 0, 4
-        ];
 
     private static float[] BuildVertices()
     {

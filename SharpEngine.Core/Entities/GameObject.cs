@@ -42,10 +42,12 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
         _shaderVertPath = _Resources.Default.VertexShader;
         _shaderFragPath = _Resources.Default.FragmentShader;
         _shaderName = "lighting";
-
-        Shader = null!;
     }
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="GameObject"/> class with a legacy model.
+    /// </summary>
+    /// <param name="model">The legacy model.</param>
     [Obsolete("This constructor is obsolete. Use the empty constructor instead.")]
     public GameObject(Model_Old model) : base(string.Empty)
     {
@@ -55,8 +57,6 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
         _shaderVertPath = _Resources.Default.VertexShader;
         _shaderFragPath = _Resources.Default.FragmentShader;
         _shaderName = "lighting";
-
-        Shader = null!;
     }
 
     /// <summary>
@@ -75,12 +75,15 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
         _shaderName = shader.Name;
     }
 
-    public Shader Shader { get; set; }
+    /// <summary>
+    ///     Gets or sets the shader of the game object.
+    /// </summary>
+    public Shader? Shader { get; set; }
 
     /// <summary>
     ///     Gets or sets the mesh of the game object.
     /// </summary>
-    public Model_Old Model { get; set; }
+    public Model_Old? Model { get; set; }
 
     /// <summary>
     ///    Gets or sets the transform of the game object.
@@ -109,6 +112,9 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     /// <param name="camera">The camera view used to retrieve view and projection matrices.</param>
     protected virtual void SetShaderUniforms(CameraView camera)
     {
+        if (Shader is null)
+            throw new NullReferenceException(nameof(Shader));
+
         Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
 
         // TODO: One of these could be calculated once and "reloaded" if it changes.
@@ -155,7 +161,7 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     }
 
     private static object GetShareGroupKey(Window window)
-        => (object?)window.SharedContext ?? (object?)window.GLContext ?? (object)window;
+        => (object?)window.SharedContext ?? (object?)window.GLContext ?? window;
 
     private Model_Old? GetOrCreateModelForWindow(Window window, GL gl)
     {
@@ -195,8 +201,8 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     private static Mesh CloneMesh(GL gl, Mesh template)
     {
         var textures = template.Textures is null ? 
-            new List<EngineTexture>() : 
-            template.Textures.Select(t => new EngineTexture(gl, t.Path, t.Type)).ToList();
+            new List<EngineTexture>() :
+            [.. template.Textures.Select(t => new EngineTexture(gl, t.Path, t.Type))];
 
         var clone = new Mesh(gl, template.Vertices, template.Indices, textures)
         {
@@ -204,7 +210,7 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
         };
 
         if (template.Materials is { Count: > 0 })
-            clone.Materials = template.Materials.Select(m => CloneMaterial(gl, m)).ToList();
+            clone.Materials = [.. template.Materials.Select(m => CloneMaterial(gl, m))];
 
         return clone;
     }

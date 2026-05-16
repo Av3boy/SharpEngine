@@ -69,7 +69,7 @@ public class Window : SilkWindow
     protected Scene Scene { get; private set; }
 
     /// <summary>The OpenGL context.</summary>
-    private GL _gl;
+    private GL _gl = null!;
 
     private static GL? _sharedGl;
 
@@ -95,6 +95,12 @@ public class Window : SilkWindow
     public GL GetGL() => _gl;
     private void SetGL(GL gl) => _gl = gl;
 
+    /// <summary>
+    ///     Initializes a new instance of <see cref="Window"/>.
+    /// </summary>
+    /// <param name="camera">The camera the window should render from.</param>
+    /// <param name="scene">Contains the game scene.</param>
+    /// <param name="settings">The settings for the window.</param>
     public Window(CameraView camera, Scene scene, IViewSettings settings) : 
         this(camera, scene, settings, LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Window>()) { }
 
@@ -266,7 +272,7 @@ public class Window : SilkWindow
         }
     }
 
-    private IReadOnlyList<RendererBase> CreateRenderers()
+    private RendererBase[] CreateRenderers()
     {
         if (_registeredRenderers.Length > 0)
             return _registeredRenderers;
@@ -275,13 +281,12 @@ public class Window : SilkWindow
             .SelectMany(assembly => assembly.GetTypes())
             .Where(type => type.IsSubclassOf(typeof(RendererBase)) && !type.IsAbstract);
 
-        return rendererTypes
+        return [.. rendererTypes
             .Select(type =>
             {
                 var requiredArguments = new object[] { Camera, Settings, Scene };
                 return (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
-            })
-            .ToArray();
+            })];
     }
 
     /// <summary>

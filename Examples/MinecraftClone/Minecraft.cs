@@ -20,6 +20,7 @@ using Silk.NET.Input;
 
 using System;
 using System.Numerics;
+using Silk.NET.OpenGL;
 
 namespace Minecraft;
 
@@ -44,13 +45,11 @@ public class Minecraft : Game
     /// <summary>
     ///     Gets the main window.
     /// </summary>
-    public Window Window
+    public static Window Window
     {
-        get => _window ?? throw new InvalidOperationException("The game window has not been assigned yet.");
-        set => _window = value;
+        get => field ?? throw new InvalidOperationException("The game window has not been assigned yet.");
+        set;
     }
-
-    private Window? _window;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Minecraft"/>.
@@ -159,7 +158,7 @@ public class Minecraft : Game
         // TODO: #2 Does not work yet.
         // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
 
-        var model = ObjLoaderFactory.Load(_window.GetGL(), @"C:\Users\antti\Documents\Untitled2.obj");
+        var model = ObjLoaderFactory.Load(Window.GetGL(), @"C:\Users\antti\Documents\Untitled2.obj");
         var go = new GameObject(model);
         var go2 = new GameObject(model)
         {
@@ -228,14 +227,8 @@ public class Minecraft : Game
     }
 
     /// <inheritdoc />
-    public override void Update(double deltaTime, IInputContext input)
-    {
-        //UpdateUI();
-        _input.HandleKeyboard(input.Keyboards[0], (float)deltaTime);
-    }
-
-    private void UpdateUI()
-        => _uiElem.Transform.Rotation.Angle += 0.01f;
+    public override void Update(double deltaTime, IInputContext input) 
+        => _input.HandleKeyboard(input.Keyboards[0], (float)deltaTime);
 
     // TODO: #21 Input system to let users change change key bindings?
     /// <inheritdoc />

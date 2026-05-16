@@ -1,11 +1,15 @@
 using Microsoft.Extensions.Logging;
+using SharpEngine.Telemetry;
 using System.IO;
 
 namespace ObjLoader.Loaders.MaterialLoader
 {
+    /// <summary>
+    ///     A facade for the <see cref="MaterialLibraryLoader"/> to provide a simplified interface for loading material libraries.
+    /// </summary>
     public class MaterialLibraryLoaderFacade : IMaterialLibraryLoaderFacade
     {
-        private static readonly ILogger<MaterialLibraryLoaderFacade> Logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<MaterialLibraryLoaderFacade>();
+        private static readonly ILogger<MaterialLibraryLoaderFacade> Logger = LoggingExtensions.CreateLogger<MaterialLibraryLoaderFacade>();
 
         private readonly MaterialLibraryLoader _loader;
 

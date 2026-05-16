@@ -19,13 +19,13 @@ public partial class Shader
         // Load and compile shader
         if (!LoadShader(ShaderType.VertexShader, VertPath, out uint vertexShader))
         {
-            Logger.LogError("Unable to load vertex shader.");
+            _logger.LogError("Unable to load vertex shader.");
             return this;
         }
 
         if (!LoadShader(ShaderType.FragmentShader, FragPath, out uint fragmentShader))
         {
-            Logger.LogError("Unable to load fragment shader.");
+            _logger.LogError("Unable to load fragment shader.");
             return this;
         }
 
@@ -50,7 +50,7 @@ public partial class Shader
 
         if (!shaderLinked)
         {
-            Logger.LogInformation("Unable to link shader program.");
+            _logger.LogInformation("Unable to link shader program.");
             return this;
         }
 
@@ -66,7 +66,7 @@ public partial class Shader
     {
         if (!File.Exists(shaderPath))
         {
-            Logger.LogInformation("Shader file not found: {Path}", shaderPath);
+            _logger.LogInformation("Shader file not found: {Path}", shaderPath);
 
             shader = 0;
             return false;
@@ -81,7 +81,7 @@ public partial class Shader
 
         if (!CompileShader(shader))
         {
-            Logger.LogInformation("Unable to load {Type} shader from '{Path}'.", shaderType, shaderPath);
+            _logger.LogInformation("Unable to load {Type} shader from '{Path}'.", shaderType, shaderPath);
             return false;
         }
 
@@ -133,7 +133,7 @@ public partial class Shader
         {
             // We can use `GL.GetShaderInfoLog(shader)` to get information about the error.
             var infoLog = _gl.GetShaderInfoLog(shader);
-            Logger.LogError("Error occurred whilst compiling Shader({Shader}).\n\n{Log}", shader, infoLog);
+            _logger.LogError("Error occurred whilst compiling Shader({Shader}).\n\n{Log}", shader, infoLog);
 
             return false;
         }
@@ -149,7 +149,7 @@ public partial class Shader
         if (statusCode != (int)GLEnum.True)
         {
             string infoLog = _gl.GetProgramInfoLog(program);
-            Logger.LogError("Error occurred whilst linking Program({Program}): {Info}", program, infoLog);
+            _logger.LogError("Error occurred whilst linking Program({Program}): {Info}", program, infoLog);
 
             return false;
         }
@@ -174,7 +174,7 @@ public partial class Shader
         location = _gl.GetAttribLocation(Handle, attribName);
         if (location == ShaderAttributes.AttributeLocationNotFound)
         {
-            Logger.LogWarning("Attribute '{Attribute}' not found in shader program.", attribName);
+            _logger.LogWarning("Attribute '{Attribute}' not found in shader program.", attribName);
             return false;
         }
 
@@ -194,7 +194,7 @@ public partial class Shader
     {
         if (!_uniformLocations.TryGetValue(uniformName, out int location))
         {
-            Logger.LogInformation("Uniform '{UniformName}' not found in shader '{ShaderName}'.", uniformName, Name);
+            _logger.LogInformation("Uniform '{UniformName}' not found in shader '{ShaderName}'.", uniformName, Name);
             return false;
         }
 

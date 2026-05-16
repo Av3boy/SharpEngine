@@ -61,7 +61,7 @@ public static class Program
                 window.HandleMouseWheel += game.HandleMouseWheel;
                 window.OnAfterRender += game.OnAfterRender;
 
-                game.Window = window;
+                Minecraft.Window = window;
             },
             name: "minecraft",
             isDefault: true);

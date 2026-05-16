@@ -67,6 +67,7 @@ public class ShaderService
     ///     Loads a shader from the specified vertex and fragment paths. <br />
     ///     If the shader is loaded already, adds it to the cache.
     /// </summary>
+    /// <param name="window">The game window.</param>
     /// <param name="vertPath">The vertex shader full path.</param>
     /// <param name="fragPath">The fragment shader full path.</param>
     /// <param name="name">A name identifier for the shader.</param>
@@ -75,9 +76,30 @@ public class ShaderService
     public Shader LoadShader(Window window, string vertPath, string fragPath, string name)
         => LoadShader(window.GetGL(), GetShareGroupKey(window), vertPath, fragPath, name);
 
+    /// <summary>
+    ///     Loads a shader from the specified vertex and fragment paths. <br />
+    ///     If the shader is loaded already, adds it to the cache.
+    /// </summary>
+    /// <param name="gl">The OpenGL context.</param>
+    /// <param name="vertPath">The vertex shader full path.</param>
+    /// <param name="fragPath">The fragment shader full path.</param>
+    /// <param name="name">A name identifier for the shader.</param>
+    /// <returns>A shader with the given name.</returns>
+    /// <exception cref="FileNotFoundException">Thrown when either the vertex or fragment shader is not found.</exception>
     public Shader LoadShader(GL gl, string vertPath, string fragPath, string name)
         => LoadShader(gl, shareGroupKey: gl, vertPath, fragPath, name);
 
+    /// <summary>
+    ///     Loads a shader from the specified vertex and fragment paths. <br />
+    ///     If the shader is loaded already, adds it to the cache.
+    /// </summary>
+    /// <param name="gl">The OpenGL context.</param>
+    /// <param name="shareGroupKey">A key representing the share group for the shader.</param>
+    /// <param name="vertPath">The vertex shader full path.</param>
+    /// <param name="fragPath">The fragment shader full path.</param>
+    /// <param name="name">A name identifier for the shader.</param>
+    /// <returns>A shader with the given name.</returns>
+    /// <exception cref="FileNotFoundException">Thrown when either the vertex or fragment shader is not found.</exception>
     public Shader LoadShader(GL gl, object shareGroupKey, string vertPath, string fragPath, string name)
     {
         var cacheKey = new ShaderCacheKey(name, shareGroupKey);
