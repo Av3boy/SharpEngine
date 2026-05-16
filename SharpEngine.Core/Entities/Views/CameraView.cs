@@ -1,4 +1,3 @@
-using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Shaders;
 using System.Numerics;
@@ -24,6 +23,16 @@ public class CameraView : View
         Position = position;
         AspectRatio = settings.WindowOptions.Size.X / (float)settings.WindowOptions.Size.Y;
     }
+
+    /// <summary>
+    ///     Creates a default camera view with the specified position and settings, or default values if not provided.
+    /// </summary>
+    /// <param name="position">The initial position of the camera. If not provided, defaults to (0,0,0).</param>
+    /// <param name="settings">The settings for the camera. If not provided, defaults to <see cref="DefaultViewSettings"/>.</param>
+    /// <returns>A new instance of <see cref="CameraView"/>.</returns>
+    public static CameraView CreateDefault(Vector3? position = null, IViewSettings? settings = null)
+        => new(position ?? new Vector3(0), 
+               settings ?? new DefaultViewSettings());
 
     // Rotation around the X axis (radians)
     private float _pitch;

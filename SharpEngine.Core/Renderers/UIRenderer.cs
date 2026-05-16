@@ -19,10 +19,9 @@ public class UIRenderer : RendererBase
 {
     private readonly Scene _scene;
     private readonly CameraView _camera;
-    private readonly Window _window;
     private readonly ILogger<UIRenderer> _logger;
 
-    private readonly GL _gl;
+    private GL _gl = null!;
 
     /// <inheritdoc />
     public override RenderFlags RenderFlag => RenderFlags.UIRenderer;
@@ -30,13 +29,24 @@ public class UIRenderer : RendererBase
     /// <summary>
     ///     Initializes a new instance of <see cref="UIRenderer"/>.
     /// </summary>
-    public UIRenderer(CameraView camera, Window window, ISettings settings, Scene scene, ILogger<UIRenderer>? logger = null) : base(settings)
+    public UIRenderer(CameraView camera, ISettings settings, Scene scene)
+        : this(camera, settings, scene, LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<UIRenderer>())
+    {
+    }
+
+    /// <summary>
+    ///     Initializes a new instance of <see cref="UIRenderer"/>.
+    /// </summary>
+    public UIRenderer(CameraView camera, ISettings settings, Scene scene, ILogger<UIRenderer> logger) : base(settings)
     {
         _scene = scene;
         _camera = camera;
-        _window = window;
-        _logger = logger ?? LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<UIRenderer>();
+        _logger = logger;
+    }
 
+    /// <inheritdoc />
+    protected override void OnWindowAttached(Window window)
+    {
         _gl = window.GetGL();
     }
 
@@ -54,7 +64,7 @@ public class UIRenderer : RendererBase
             // Disable face culling to render both sides of the quad
             _gl.Disable(EnableCap.CullFace);
 
-            var uiElementRenderTasks = _scene.IterateAsync<UIElement>(_scene.UIElements, elem => elem.Render(_camera, _window));
+            var uiElementRenderTasks = _scene.IterateAsync<UIElement>(_scene.UIElements, elem => elem.Render(_camera, Window));
 
             return Task.WhenAll(uiElementRenderTasks);
         }

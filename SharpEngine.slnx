@@ -11,9 +11,6 @@
   </Folder>
 
   <Folder Name="/Examples/">
-    <Project Path="DITesting/DITesting.csproj">
-      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-    </Project>
     <Project Path="Examples/MinecraftClone/Minecraft.csproj">
       <BuildType Solution="LauncherNonWindows|*" Project="Debug" />
     </Project>

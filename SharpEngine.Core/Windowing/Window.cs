@@ -1,4 +1,3 @@
-using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Enums;
@@ -6,6 +5,8 @@ using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Renderers;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
+using Shader = SharpEngine.Core.Shaders.Shader;
+
 using Microsoft.Extensions.Logging;
 
 using Silk.NET.Input;
@@ -19,9 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Threading.Tasks;
-using Shader = SharpEngine.Core.Shaders.Shader;
-using Silk.NET.GLFW;
 
 namespace SharpEngine.Core.Windowing;
 
@@ -33,7 +31,7 @@ public class Window : SilkWindow
     private const string _iconPath = "_Resources/icon.png";
     private bool _windowInitialized;
     private bool _initialized;
-    private readonly IReadOnlyList<Func<Window, RendererBase>> _rendererFactories;
+    private readonly RendererBase[] _registeredRenderers;
     private readonly ILogger<Window> _logger;
     
     private IEnumerable<RendererBase> _renderers = [];
@@ -89,27 +87,28 @@ public class Window : SilkWindow
     /// </summary>
     public static GL GL => SharedGL;
 
-    // TODO: #93 Use this method.
     /// <summary>
     ///     Gets the current OpenGL context.
     /// </summary>
     /// <returns>The OpenGL context for this window.</returns>
     public GL GetGL() => _gl;
     private void SetGL(GL gl) => _gl = gl;
-    
+
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
     /// </summary>
     /// <param name="camera">The camera the window should render from.</param>
     /// <param name="scene">Contains the game scene.</param>
     /// <param name="settings">The settings for the window.</param>
-    public Window(CameraView camera, Scene scene, IViewSettings settings, IEnumerable<Func<Window, RendererBase>>? rendererFactories = null, ILogger<Window>? logger = null)
+    /// <param name="logger">The logger for the window.</param>
+    /// <param name="renderers">The renderers for the window.</param>
+    public Window(CameraView camera, Scene scene, IViewSettings settings, ILogger<Window> logger, IEnumerable<RendererBase>? renderers = null)
     {
         Scene = scene;
         Settings = settings;
         Camera = camera;
-        _rendererFactories = rendererFactories?.ToArray() ?? [];
-        _logger = logger ?? LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Window>();
+        _registeredRenderers = renderers?.ToArray() ?? [];
+        _logger = logger;
 
         InitializeWindow();
     }
@@ -122,13 +121,15 @@ public class Window : SilkWindow
     /// </remarks>
     /// <param name="scene">Contains the game scene.</param>
     /// <param name="settings">The settings for the window.</param>
-    public Window(Scene scene, IViewSettings settings, IEnumerable<Func<Window, RendererBase>>? rendererFactories = null, ILogger<Window>? logger = null)
+    /// <param name="logger">The logger for the window.</param>
+    /// <param name="renderers">The renderers for the window.</param>
+    public Window(Scene scene, IViewSettings settings, ILogger<Window> logger, IEnumerable<RendererBase>? renderers = null)
     {
         Scene = scene;
         Settings = settings;
         Camera = new(Vector3.One, settings);
-        _rendererFactories = rendererFactories?.ToArray() ?? [];
-        _logger = logger ?? LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Window>();
+        _registeredRenderers = renderers?.ToArray() ?? [];
+        _logger = logger;
 
         InitializeWindow();
     }
@@ -181,6 +182,8 @@ public class Window : SilkWindow
             _sharedGl ??= context;
 
             Input = CurrentWindow.CreateInput();
+
+            // TODO: Skip calling this for secondary windows?
             CurrentWindow.MakeCurrent();
 
             SetWindowIcon(PathExtensions.GetAssemblyPath(_iconPath));
@@ -189,13 +192,13 @@ public class Window : SilkWindow
 
             _gl.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-            // Load all meshes from the mesh cache
-            // MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
-
             _renderers = CreateRenderers();
 
             foreach (var renderer in _renderers)
+            {
+                renderer.AttachWindow(this);
                 renderer.Initialize();
+            }
 
             _imGuiController = new ImGuiController(_gl, CurrentWindow, Input);
 
@@ -251,8 +254,8 @@ public class Window : SilkWindow
 
     private IReadOnlyList<RendererBase> CreateRenderers()
     {
-        if (_rendererFactories.Count > 0)
-            return _rendererFactories.Select(factory => factory(this)).ToArray();
+        if (_registeredRenderers.Length > 0)
+            return _registeredRenderers;
 
         var rendererTypes = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(assembly => assembly.GetTypes())
@@ -261,7 +264,7 @@ public class Window : SilkWindow
         return rendererTypes
             .Select(type =>
             {
-                var requiredArguments = new object[] { Camera, this, Settings, Scene };
+                var requiredArguments = new object[] { Camera, Settings, Scene };
                 return (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
             })
             .ToArray();

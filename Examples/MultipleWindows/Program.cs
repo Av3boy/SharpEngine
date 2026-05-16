@@ -6,6 +6,8 @@ using Silk.NET.Windowing;
 using System.Collections.Concurrent;
 using SharpEngine.Core.Entities.Views.Settings;
 
+using Window = SharpEngine.Core.Windowing.Window;
+
 namespace SharpEngine.Examples.MultipleWindows;
 
 // An example provided a lovely person in this thread:
@@ -16,7 +18,10 @@ namespace SharpEngine.Examples.MultipleWindows;
 /// </summary>
 public static partial class Program
 {
-    private static readonly ILogger Logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger(typeof(Program));
+    private static readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+    private static readonly ILogger _logger = _loggerFactory.CreateLogger(typeof(Program));
+    private static readonly ILogger<Window> _windowLogger = _loggerFactory.CreateLogger<Window>();
+
     private static readonly List<IWindow> _windows = [];
     private static readonly List<IInputContext> _inputContexts = [];
     private static readonly ConcurrentQueue<WindowOptions> _windowQueue = [];
@@ -89,11 +94,11 @@ public static partial class Program
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
                 await Task.Delay(1000);
-                Logger.LogInformation("Running loop on background thread...");
+                _logger.LogInformation("Running loop on background thread...");
             }
         });
 
-    private static SharpEngine.Core.Windowing.Window CreateWindow()
+    private static Window CreateWindow()
     {
         var options = new DefaultViewSettings() with
         {
@@ -107,8 +112,8 @@ public static partial class Program
                     y: 400 + (50 * _windows.Count))
             }
         };
-
-        var window = new SharpEngine.Core.Windowing.Window(new(), options);
+            
+        var window = new Window(new(), options, _windowLogger);
         window.Initialize();
 
         return window;
@@ -124,8 +129,6 @@ public static partial class Program
         _windows.Add(window);
     }
 
-    private static void Mouse_Click(IMouse args1, Silk.NET.Input.MouseButton arg2, System.Numerics.Vector2 arg3)
-    {
-        _windowQueue.Enqueue(WindowOptions.Default);
-    }
+    private static void Mouse_Click(IMouse args1, MouseButton arg2, System.Numerics.Vector2 arg3)
+        => _windowQueue.Enqueue(WindowOptions.Default);
 }

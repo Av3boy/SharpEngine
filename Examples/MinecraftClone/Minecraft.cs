@@ -1,25 +1,25 @@
 using ImGuiNET;
+
 using Minecraft.Block;
 using Microsoft.Extensions.Logging;
+
 using ObjLoader.Loaders.ObjLoader;
+
 using SharpEngine.Core;
 using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Lights;
 using SharpEngine.Core.Entities.Properties;
-using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Entities.UI.Layouts;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Windowing;
-using Silk.NET.Core.Native;
+
 using Silk.NET.Input;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using Tutorial;
 
 namespace Minecraft;
 
@@ -44,16 +44,22 @@ public class Minecraft : Game
     /// <summary>
     ///     Gets the main window.
     /// </summary>
-    public Window? Window { get; set; }
+    public Window Window
+    {
+        get => _window ?? throw new InvalidOperationException("The game window has not been assigned yet.");
+        set => _window = value;
+    }
+
+    private Window? _window;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Minecraft"/>.
     /// </summary>
-    public Minecraft(Scene scene, ISettings settings, ILogger<Minecraft>? logger = null)
+    public Minecraft(Scene scene, ISettings settings, ILogger<Minecraft> logger)
     {
         _scene = scene;
         CoreSettings = settings;
-        _logger = logger ?? LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Minecraft>();
+        _logger = logger;
 
         _inventory = new Inventory();
 
@@ -78,15 +84,15 @@ public class Minecraft : Game
             _uiElem = new UIElement("uiElement");
             _scene.UIElements.Add(_uiElem);
 
-            //var uiElem2 = new UIElement("uiElement");
-            //uiElem2.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.2f, 0.2f);
-            //uiElem2.Transform.Position = new Vector2(30, 0);
+            var uiElem2 = new UIElement("uiElement");
+            uiElem2.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.2f, 0.2f);
+            uiElem2.Transform.Position = new SharpEngine.Core.Numerics.Vector2(30, 0);
 
-            // gridLayout.AddChild(_uiElem, uiElem2);
-            // _scene.UIElements.Add(_uiElem);
-            // _scene.UIElements.Add(uiElem2);
+            gridLayout.AddChild(_uiElem, uiElem2);
+            _scene.UIElements.Add(_uiElem);
+            _scene.UIElements.Add(uiElem2);
 
-            //_scene.UIElements.Add(gridLayout);
+            _scene.UIElements.Add(gridLayout);
 
             InitializeWorld();
         }
@@ -153,7 +159,7 @@ public class Minecraft : Game
         // TODO: #2 Does not work yet.
         // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
 
-        var model = ObjLoaderFactory.Load(Window.GL, @"C:\Users\antti\Documents\Untitled2.obj");
+        var model = ObjLoaderFactory.Load(_window.GetGL(), @"C:\Users\antti\Documents\Untitled2.obj");
         var go = new GameObject(model);
         var go2 = new GameObject(model)
         {

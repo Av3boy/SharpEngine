@@ -20,15 +20,14 @@ namespace SharpEngine.Core.Renderers;
 /// </summary>
 public class Renderer : RendererBase
 {
-    private readonly LampShader _lampShader;
-    private readonly LightingShader _lightingShader;
+    private LampShader _lampShader = null!;
+    private LightingShader _lightingShader = null!;
 
     private readonly CameraView _camera;
     private readonly Scene _scene;
-    private readonly Window _window;
     private readonly ILogger<Renderer> _logger;
 
-    private readonly GL _gl;
+    private GL _gl = null!;
 
     // TODO: #7 Property for specific type of objects
     // No heavy iteration reads for filtering,
@@ -44,16 +43,19 @@ public class Renderer : RendererBase
     ///     Initializes a new instance of <see cref="Renderer"/>.
     /// </summary>
     /// <param name="camera">The game the renderer is being used for.</param>
-    /// <param name="window">The window executing the renderer.</param>
     /// <param name="settings">The settings for the renderer.</param>
     /// <param name="scene">The game scene to be rendered.</param>
-    public Renderer(CameraView camera, Window window, ISettings settings, Scene scene, ILogger<Renderer>? logger = null) : base(settings)
+    /// <param name="logger">The logger for the renderer.</param>
+    public Renderer(CameraView camera, ISettings settings, Scene scene, ILogger<Renderer> logger) : base(settings)
     {
         _camera = camera;
         _scene = scene;
-        _window = window;
-        _logger = logger ?? LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Renderer>();
+        _logger = logger;
+    }
 
+    /// <inheritdoc />
+    protected override void OnWindowAttached(Window window)
+    {
         _gl = window.GetGL();
 
         // TODO: #5 These should be refactored out. The minimum build shouldn't need to use these.
@@ -107,8 +109,8 @@ public class Renderer : RendererBase
             return Task.CompletedTask;
 
         // TODO: #7 Skip blocks that are behind others relative to the camera
-        return gameObject.Render(_camera, _window);
-        // gameObject.Render(_camera, _window);
+        return gameObject.Render(_camera, Window);
+        // gameObject.Render(_camera, Window);
     }
 
     private Task RenderLight(SceneNode node)
@@ -116,7 +118,7 @@ public class Renderer : RendererBase
         if (node is not Light light)
             return Task.CompletedTask;
 
-        return light.Render(_camera, _window);
+        return light.Render(_camera, Window);
     }
 
     private static bool IsInViewFrustum(BoundingBox boundingBox, CameraView camera)

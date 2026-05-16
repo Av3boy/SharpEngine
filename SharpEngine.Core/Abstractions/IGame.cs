@@ -10,7 +10,7 @@ namespace SharpEngine.Core.Interfaces;
 ///     Contains definitions the Game class must implement.
 ///     To consider: move into a abstract class so that the game doesn't necessarily have to implement all methods.
 /// </summary>
-public class Game
+public abstract class Game
 {
     /// <summary>
     ///     Gets or sets the core settings of the game.
@@ -20,7 +20,7 @@ public class Game
     /// <summary>
     ///     Gets or sets the camera of the game.
     /// </summary>
-    public CameraView Camera { get; set; } = new(new System.Numerics.Vector3(0), new DefaultViewSettings());
+    public CameraView Camera { get; set; } = CameraView.CreateDefault();
 
     /// <summary>
     ///     Executed when a mouse button is pressed.
