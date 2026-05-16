@@ -22,12 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SharpEngine.Core.Numerics\SharpEngine.Core.Numerics.csproj" />
-    <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
+    <PackageReference Include="Silk.NET.OpenGL" Version="$(SilkVersion)" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silk.NET.OpenGL" Version="$(SilkVersion)" />
+    <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Telemetry\SharpEngine.Telemetry.csproj" />
+    <ProjectReference Include="..\SharpEngine.Core.Numerics\SharpEngine.Core.Numerics.csproj" />
+    <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
+    <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Telemetry\SharpEngine.Telemetry.csproj" />
     <ProjectReference Include="..\SharpEngine.Core.Components\SharpEngine.Core.Components.csproj" />
     <ProjectReference Include="..\SharpEngine.Core.Numerics\SharpEngine.Core.Numerics.csproj" />
   </ItemGroup>

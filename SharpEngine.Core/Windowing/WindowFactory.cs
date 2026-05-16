@@ -1,9 +1,8 @@
-using SharpEngine.Core.Windowing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DITesting;
+namespace SharpEngine.Core.Windowing;
 
 internal sealed class WindowRegistration
 {

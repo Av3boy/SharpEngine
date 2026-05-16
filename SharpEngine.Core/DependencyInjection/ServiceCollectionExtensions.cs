@@ -4,7 +4,7 @@ using SharpEngine.Core.Windowing;
 using System;
 using System.Linq;
 
-namespace DITesting;
+namespace SharpEngine.Core.DependencyInjection;
 
 /// <summary>
 ///     Provides window-related dependency injection registrations.

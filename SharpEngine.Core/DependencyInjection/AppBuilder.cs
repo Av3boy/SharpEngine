@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace DITesting;
+namespace SharpEngine.Core.DependencyInjection;
 
 /// <summary>
 ///     Represents a Dependency Injection builder for configuring services and building the application.

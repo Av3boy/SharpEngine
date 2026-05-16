@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using SharpEngine.Telemetry;
 using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Shaders;
@@ -8,7 +9,7 @@ namespace SharpEngine.Core.Shaders;
 /// </summary>
 public partial class Shader : IDisposable
 {
-    private static readonly ILogger<Shader> Logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Shader>();
+    private static readonly ILogger<Shader> Logger = LoggingExtensions.CreateLogger<Shader>();
 
     /// <summary>Gets the handle to the shader program.</summary>
     public uint Handle { get; private set; }

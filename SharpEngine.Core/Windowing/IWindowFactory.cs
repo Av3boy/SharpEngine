@@ -1,7 +1,6 @@
-using SharpEngine.Core.Windowing;
 using System.Collections.Generic;
 
-namespace DITesting;
+namespace SharpEngine.Core.Windowing;
 
 /// <summary>
 ///     Creates configured window instances from DI registrations.

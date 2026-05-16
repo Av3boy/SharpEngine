@@ -55,6 +55,9 @@
   <Project Path="../SharpEngine-Shared/SharpEngine.Shared/SharpEngine.Shared.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
+  <Project Path="../SharpEngine-Shared/SharpEngine.Telemetry/SharpEngine.Telemetry.csproj" Id="bfb0783a-67b6-442a-bb39-b9d6267f1e1b">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
   <Project Path="ObjLoader/SharpEngine.Core.ObjLoader.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
