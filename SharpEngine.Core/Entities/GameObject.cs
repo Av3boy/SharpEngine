@@ -26,7 +26,7 @@ namespace SharpEngine.Core.Entities;
 public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
 {
     private readonly object _modelCacheLock = new();
-    private readonly Dictionary<object, Model_Old> _modelByShareGroup = [];
+    private readonly Dictionary<object, Model> _modelByShareGroup = [];
 
     private readonly string _shaderVertPath;
     private readonly string _shaderFragPath;
@@ -45,11 +45,10 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="GameObject"/> class with a legacy model.
+    ///     Initializes a new instance of the <see cref="GameObject"/> class with a model.
     /// </summary>
-    /// <param name="model">The legacy model.</param>
-    [Obsolete("This constructor is obsolete. Use the empty constructor instead.")]
-    public GameObject(Model_Old model) : base(string.Empty)
+    /// <param name="model">The model.</param>
+    public GameObject(Model model) : base(string.Empty)
     {
         Model = model;
         BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
@@ -64,7 +63,7 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     /// </summary>
     /// <param name="shader">The shader to be used by the game object.</param>
     /// <param name="model">The model of the game object.</param>
-    public GameObject(Shader shader, Model_Old model) : base(string.Empty)
+    public GameObject(Shader shader, Model model) : base(string.Empty)
     {
         Model = model;
         BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
@@ -83,7 +82,7 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     /// <summary>
     ///     Gets or sets the mesh of the game object.
     /// </summary>
-    public Model_Old? Model { get; set; }
+    public Model? Model { get; set; }
 
     /// <summary>
     ///    Gets or sets the transform of the game object.
@@ -163,7 +162,7 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     private static object GetShareGroupKey(Window window)
         => (object?)window.SharedContext ?? (object?)window.GLContext ?? window;
 
-    private Model_Old? GetOrCreateModelForWindow(Window window, GL gl)
+    private Model? GetOrCreateModelForWindow(Window window, GL gl)
     {
         if (Model is null)
             return null;
@@ -186,11 +185,11 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
         }
     }
 
-    private static Model_Old CloneModel(GL gl, Model_Old template)
+    private static Model CloneModel(GL gl, Model template)
     {
         // Create an empty model and populate it with meshes recreated against the provided GL instance.
         // This allows rendering on windows that don't share the original context.
-        var clone = new Model_Old(gl, string.Empty);
+        var clone = new Model(gl, string.Empty);
 
         foreach (var mesh in template.Meshes)
             clone.Meshes.Add(CloneMesh(gl, mesh));

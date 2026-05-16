@@ -1,9 +1,9 @@
 using System.IO;
 using System.Collections.Generic;
 
+using SharpEngine.Core.Components.Properties.Textures;
 using SharpEngine.Core.Windowing;
 using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
-using TextureType = Silk.NET.Assimp.TextureType;
 
 namespace SharpEngine.Core.Textures;
 

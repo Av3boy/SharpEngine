@@ -1,11 +1,10 @@
 using ObjLoader.Loader.TypeParsers;
 using ObjLoader.Loaders.MaterialLoader;
-
-using SharpEngine.Core.Entities.Properties.Meshes;
 using Silk.NET.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using SharpEngine.Core.Entities.Properties.Meshes;
 using Tutorial;
 
 namespace ObjLoader.Loaders.ObjLoader
@@ -25,7 +24,7 @@ namespace ObjLoader.Loaders.ObjLoader
         /// <param name="meshFilePath">Specifies the file path of the mesh to be loaded, which determines the loading method based on its extension.</param>
         /// <returns>The model loaded from the file.</returns>
         /// <exception cref="NotSupportedException">Thrown when the file extension of the provided path is not recognized as a supported mesh format.</exception>
-        public static Model_Old Load(GL gl, string path)
+        public static Model Load(GL gl, string path)
             => Path.GetExtension(path) switch
             {
                 FbxExtension => LoadFbx("", path),
@@ -34,18 +33,20 @@ namespace ObjLoader.Loaders.ObjLoader
             };
 
         // TODO: #3 Load fbx mesh from file
-        private static Model_Old LoadFbx(string identifier, string meshFilePath)
+        private static Model LoadFbx(string identifier, string meshFilePath)
         {
             throw new NotImplementedException();
         }
 
-        private static Model_Old LoadObj(GL gl, string path)
+        private static Model LoadObj(GL gl, string path)
         {
-            return new Model_Old(gl, path);
+            var meshes = LoadObjMeshes(gl, path);
+            return new Model(gl, path, meshes);
+        }
 
-            // TOOD: Use the ObjLoader to load the model instead of the external library.
-
-            /*var dataStore = new DataStore();
+        private static List<Mesh> LoadObjMeshes(GL gl, string path)
+        {
+            var dataStore = new DataStore();
 
             var faceParser = new FaceParser(dataStore);
             var groupParser = new GroupParser(dataStore);
@@ -57,9 +58,10 @@ namespace ObjLoader.Loaders.ObjLoader
             var materialLibraryParser = new MaterialLibraryParser(materialLibraryLoader);
             var useMaterialParser = new UseMaterialParser(dataStore);
 
-            var loader = new ObjLoader(path, dataStore).SetupTypeParsers(faceParser, groupParser, normalParser, textureParser, vertexParser, materialLibraryParser, useMaterialParser);
+            var loader = new ObjLoader(path, dataStore)
+                .SetupTypeParsers(faceParser, groupParser, normalParser, textureParser, vertexParser, materialLibraryParser, useMaterialParser);
+
             return loader.Load(gl);
-            */
         }
     }
 }

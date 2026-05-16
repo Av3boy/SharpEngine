@@ -1,11 +1,11 @@
 using SharpEngine.Core._Resources;
 using SharpEngine.Core.Components.Properties;
+using SharpEngine.Core.Components.Properties.Textures;
 using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Textures;
 using SharpEngine.Core.Windowing;
 using System.Collections.Generic;
 using Tutorial;
-using TextureType = Silk.NET.Assimp.TextureType;
 
 namespace SharpEngine.Core.Primitives;
 
@@ -33,7 +33,7 @@ public static class Cube
         };
 
         Mesh = MeshService.Instance.LoadMesh(nameof(Cube), mesh);
-        Model = new(Window.SharedGL, Mesh);
+        Model = new(Window.SharedGL, string.Empty, new[] { Mesh });
 
         _loaded = true;
     }
@@ -41,7 +41,7 @@ public static class Cube
     private readonly static bool _loaded;
 
     /// <summary>The loaded model of the cube.</summary>
-    public static Model_Old Model = null!;
+    public static Model Model = null!;
 
     /// <summary>The cube mesh.</summary>
     public static readonly Mesh Mesh = null!;
@@ -214,7 +214,7 @@ public static class Cube
     /// <param name="diffuseMapFile">The file path to the diffuse texture map.</param>
     /// <param name="specularMapFile">The file path to the specular texture map, or <see langword="null"/> to omit specular mapping.</param>
     /// <returns>A new model instance containing a mesh with the specified texture maps.</returns>
-    public static Model_Old CreateModel(string diffuseMapFile, string? specularMapFile = null)
+    public static Model CreateModel(string diffuseMapFile, string? specularMapFile = null)
     {
         var diffuseTexture = TextureService.Instance.LoadTexture(diffuseMapFile, TextureType.Diffuse);
         var specularTexture = string.IsNullOrWhiteSpace(specularMapFile) ? 
@@ -232,7 +232,7 @@ public static class Cube
             Materials = [material]
         };
 
-        var model = new Model_Old(Window.SharedGL, string.Empty);
+        var model = new Model(Window.SharedGL, string.Empty);
         model.Meshes.Add(mesh);
 
         return model;

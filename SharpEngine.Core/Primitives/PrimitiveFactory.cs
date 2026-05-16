@@ -30,7 +30,7 @@ public static class PrimitiveFactory
     /// <exception cref="InvalidOperationException">Thrown when the specified primitive type does not exist.</exception>
     public static GameObject Create(PrimitiveType primitiveType, Vector3 position, string diffuseMapFile, string? specularMapFile = null, string? vertShaderFile = null, string? fragShaderFile = null)
     {
-        Model_Old model = primitiveType switch
+        Model model = primitiveType switch
         {
             PrimitiveType.Cube => Cube.CreateModel(diffuseMapFile, specularMapFile),
             // PrimitiveType.Plane => [Plane.Mesh],

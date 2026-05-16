@@ -6,7 +6,7 @@
 
   <!-- TODO: This should be used with unit testing. -->
   <ItemGroup>
-    <PackageReference Include="System.IO.Abstractions" Version="22.0.13" />
+    <PackageReference Include="System.IO.Abstractions" Version="22.1.1" />
   </ItemGroup>
 
   <ItemGroup>

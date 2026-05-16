@@ -13,9 +13,6 @@ namespace ObjLoader
     {
         private Group _currentGroup;
 
-        private readonly List<Group> _groups = [];
-        private readonly List<Material> _materials = [];
-
         public List<Vertex> Vertices { get; } = [];
 
         public List<TextureCoordinate> Textures { get; } = [];
@@ -39,13 +36,13 @@ namespace ObjLoader
         public void PushGroup(string groupName)
         {
             _currentGroup = new Group(groupName);
-            _groups.Add(_currentGroup);
+        Groups.Add(_currentGroup);
         }
 
         /// <inheritdoc />
         public void SetMaterial(string materialName)
         {
-            var material = _materials.SingleOrDefault(x => x.Name.EqualsOrdinalIgnoreCase(materialName));
+        var material = Materials.SingleOrDefault(x => x.Name.EqualsOrdinalIgnoreCase(materialName));
             _currentGroup.Material = material;
         }
     }

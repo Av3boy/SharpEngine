@@ -1,13 +1,11 @@
-﻿using Silk.NET.Assimp;
-using Silk.NET.OpenGL;
-using SixLabors.ImageSharp;
+﻿using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Components.Properties.Textures;
 
 /// <summary>
 ///     Represents a texture program.
 /// </summary>
-public partial class Texture : IDisposable, IDeepCloneable<Texture>, IEquatable<Texture>
+public partial class Texture : IDisposable, IEquatable<Texture>
 {
     /// <summary>The OpenGL handle for the texture.</summary>
     public readonly uint Handle;

@@ -24,7 +24,7 @@ namespace Tutorial
 
         private static Texture Texture;
         private static Shader Shader;
-        private static List<Model_Old> Models = [];
+        private static List<Model> Models = [];
 
         //Setup the camera's location, directions, and movement speed
         private static Vector3 CameraPosition = new(0.0f, 0.0f, 3.0f);
@@ -130,7 +130,7 @@ namespace Tutorial
             }
         }
 
-        private static void RenderModel(Model_Old model, Matrix4x4 modelMatrix, Matrix4x4 view, Matrix4x4 projection)
+        private static void RenderModel(Model model, Matrix4x4 modelMatrix, Matrix4x4 view, Matrix4x4 projection)
         {
             foreach (var mesh in model.Meshes)
             {
