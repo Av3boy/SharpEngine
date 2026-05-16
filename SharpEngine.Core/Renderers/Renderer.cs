@@ -6,7 +6,7 @@ using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
-using SharpEngine.Shared;
+using Microsoft.Extensions.Logging;
 using Silk.NET.OpenGL;
 
 using System;
@@ -26,6 +26,7 @@ public class Renderer : RendererBase
     private readonly CameraView _camera;
     private readonly Scene _scene;
     private readonly Window _window;
+    private readonly ILogger<Renderer> _logger;
 
     private readonly GL _gl;
 
@@ -46,11 +47,12 @@ public class Renderer : RendererBase
     /// <param name="window">The window executing the renderer.</param>
     /// <param name="settings">The settings for the renderer.</param>
     /// <param name="scene">The game scene to be rendered.</param>
-    public Renderer(CameraView camera, Window window, ISettings settings, Scene scene) : base(settings)
+    public Renderer(CameraView camera, Window window, ISettings settings, Scene scene, ILogger<Renderer>? logger = null) : base(settings)
     {
         _camera = camera;
         _scene = scene;
         _window = window;
+        _logger = logger ?? LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Renderer>();
 
         _gl = window.GetGL();
 
@@ -89,7 +91,7 @@ public class Renderer : RendererBase
         }
         catch (Exception ex)
         {
-            Debug.Log.Error(ex, "{Message}", ex.Message);
+            _logger.LogError(ex, "{Message}", ex.Message);
             return Task.FromException(ex);
         }
     }

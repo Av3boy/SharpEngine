@@ -1,5 +1,5 @@
 ﻿using SharpEngine.Core.Components.Properties;
-using SharpEngine.Shared;
+using Microsoft.Extensions.Logging;
 using Silk.NET.OpenGL;
 using System;
 
@@ -10,6 +10,8 @@ namespace SharpEngine.Core.Shaders;
 /// </summary>
 public abstract class ShaderBase
 {
+    private static readonly ILogger<ShaderBase> Logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<ShaderBase>();
+
     /// <summary>Gets the shader.</summary>
     public Shader? Shader { get; protected set; }
 
@@ -26,7 +28,7 @@ public abstract class ShaderBase
     {
         if (Shader is null)
         {
-            Debug.Log.Error("Unable to set shader attributes, shader not found.");
+            Logger.LogError("Unable to set shader attributes, shader not found.");
             return false;
         }
 

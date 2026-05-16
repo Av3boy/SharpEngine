@@ -1,4 +1,4 @@
-﻿using SharpEngine.Shared;
+﻿using Microsoft.Extensions.Logging;
 using Silk.NET.OpenAL;
 
 using System;
@@ -12,6 +12,8 @@ namespace SharpEngine.Core.Audio;
 /// </summary>
 public class WavPlayer : AudioPlayerBase
 {
+    private static readonly ILogger<WavPlayer> Logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<WavPlayer>();
+
     /// <inheritdoc />
     protected override string FileExtension => ".wav";
 
@@ -41,7 +43,7 @@ public class WavPlayer : AudioPlayerBase
 
         if (!CheckHeader(file, ref index, WavConstants.RiffHeader))
         {
-            Debug.Log.Warning("Given file is not in RIFF format");
+            Logger.LogWarning("Given file is not in RIFF format");
             return;
         }
 
@@ -49,7 +51,7 @@ public class WavPlayer : AudioPlayerBase
 
         if (!CheckHeader(file, ref index, WavConstants.WaveHeader))
         {
-            Debug.Log.Warning("Given file is not in WAVE format");
+            Logger.LogWarning("Given file is not in WAVE format");
             return;
         }
 

@@ -4,7 +4,7 @@ using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
-using SharpEngine.Shared;
+using Microsoft.Extensions.Logging;
 using Silk.NET.OpenGL;
 
 using System;
@@ -20,6 +20,7 @@ public class UIRenderer : RendererBase
     private readonly Scene _scene;
     private readonly CameraView _camera;
     private readonly Window _window;
+    private readonly ILogger<UIRenderer> _logger;
 
     private readonly GL _gl;
 
@@ -29,11 +30,12 @@ public class UIRenderer : RendererBase
     /// <summary>
     ///     Initializes a new instance of <see cref="UIRenderer"/>.
     /// </summary>
-    public UIRenderer(CameraView camera, Window window, ISettings settings, Scene scene) : base(settings)
+    public UIRenderer(CameraView camera, Window window, ISettings settings, Scene scene, ILogger<UIRenderer>? logger = null) : base(settings)
     {
         _scene = scene;
         _camera = camera;
         _window = window;
+        _logger = logger ?? LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<UIRenderer>();
 
         _gl = window.GetGL();
     }
@@ -58,7 +60,7 @@ public class UIRenderer : RendererBase
         }
         catch (Exception ex)
         {
-            Debug.Log.Error(ex, "{Message}", ex.Message);
+            _logger.LogError(ex, "{Message}", ex.Message);
             return Task.FromException(ex);
         }
     }

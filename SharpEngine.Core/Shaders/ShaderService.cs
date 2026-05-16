@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
 using SharpEngine.Core.Windowing;
-using SharpEngine.Shared;
 using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Shaders;
@@ -13,6 +13,8 @@ namespace SharpEngine.Core.Shaders;
 /// </summary>
 public class ShaderService
 {
+    private static readonly ILogger<ShaderService> Logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<ShaderService>();
+
     /// <summary>
     ///     Gets the singleton instance of the <see cref="ShaderService"/>.
     /// </summary>
@@ -86,13 +88,13 @@ public class ShaderService
 
         if (!File.Exists(vertPath))
         {
-            Debug.Log.Information("Vertex shader file not found: {VertPath}", vertPath);
+            Logger.LogInformation("Vertex shader file not found: {VertPath}", vertPath);
             throw new FileNotFoundException($"Vertex shader file not found: {vertPath}");
         }
 
         if (!File.Exists(fragPath))
         {
-            Debug.Log.Information("Fragment shader file not found: {FragPath}", fragPath);
+            Logger.LogInformation("Fragment shader file not found: {FragPath}", fragPath);
             throw new FileNotFoundException($"Fragment shader file not found: {fragPath}");
         }
 

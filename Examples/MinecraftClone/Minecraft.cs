@@ -1,5 +1,6 @@
 using ImGuiNET;
 using Minecraft.Block;
+using Microsoft.Extensions.Logging;
 using ObjLoader.Loaders.ObjLoader;
 using SharpEngine.Core;
 using SharpEngine.Core.Entities;
@@ -12,7 +13,6 @@ using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Windowing;
-using SharpEngine.Shared;
 using Silk.NET.Core.Native;
 using Silk.NET.Input;
 using System;
@@ -31,6 +31,7 @@ namespace Minecraft;
 public class Minecraft : Game
 {
     private readonly Scene _scene;
+    private readonly ILogger<Minecraft> _logger;
 
     private SceneNode _lightsNode;
     private SceneNode _blocksNode;
@@ -48,10 +49,11 @@ public class Minecraft : Game
     /// <summary>
     ///     Initializes a new instance of the <see cref="Minecraft"/>.
     /// </summary>
-    public Minecraft(Scene scene, ISettings settings)
+    public Minecraft(Scene scene, ISettings settings, ILogger<Minecraft>? logger = null)
     {
         _scene = scene;
         CoreSettings = settings;
+        _logger = logger ?? LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Minecraft>();
 
         _inventory = new Inventory();
 
@@ -90,7 +92,7 @@ public class Minecraft : Game
         }
         catch (Exception ex)
         {
-            Debug.Log.Information(ex.Message, "{Message}", ex.Message);
+            _logger.LogInformation(ex, "{Message}", ex.Message);
         }
     }
 
@@ -238,7 +240,7 @@ public class Minecraft : Game
             if (input.IsKeyPressed(Key.Number0 + i))
             {
                 _inventory.SetSelectedSlot(i);
-                Debug.Log.Information("Selected slot: {I} ({Type})", i, _inventory.SelectedSlot.Items.Type);
+                _logger.LogInformation("Selected slot: {I} ({Type})", i, _inventory.SelectedSlot.Items.Type);
             }
         }
 
@@ -273,7 +275,7 @@ public class Minecraft : Game
             }
             else
             {
-                Debug.Log.Information("No more {Type}s.", _inventory.SelectedSlot.Items.Type);
+                _logger.LogInformation("No more {Type}s.", _inventory.SelectedSlot.Items.Type);
             }
         }
 
@@ -284,7 +286,7 @@ public class Minecraft : Game
             {
                 // TODO: #86 The block should be added to the slot so that 0 is the last slot instead of 9.
                 // TODO: #86 The first block destroyed doesn't seem to be added to the inventory.
-                Debug.Log.Information("Block destroyed: {DestroyedBlockType}.", destroyedBlockType);
+                _logger.LogInformation("Block destroyed: {DestroyedBlockType}.", destroyedBlockType);
                 _inventory.AddToolbarItem(destroyedBlockType);
             }
         }
@@ -313,7 +315,7 @@ public class Minecraft : Game
         var newBlock = BlockFactory.CreateBlock(_inventory.SelectedSlot.Items.Type, newBlockPosition, $"Dirt ({_blocksNode.Children.Count})");
         _blocksNode.AddChild(newBlock);
 
-        Debug.Log.Information("New block created: {Pos}, block in view location: {IntersectingPos}", newBlock.Transform.Position, intersectingObject!.Transform.Position);
+        _logger.LogInformation("New block created: {Pos}, block in view location: {IntersectingPos}", newBlock.Transform.Position, intersectingObject!.Transform.Position);
     }
 
     private static Vector3 GetNewBlockPosition(Vector3 hitPosition, GameObject intersectingObject)
@@ -338,7 +340,7 @@ public class Minecraft : Game
             slotIndex = 0;
 
         _inventory.SetSelectedSlot(slotIndex);
-        Debug.Log.Information("Selected slot: {Index}", slotIndex);
+        _logger.LogInformation("Selected slot: {Index}", slotIndex);
 
     }
 }

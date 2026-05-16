@@ -1,10 +1,10 @@
-﻿using Silk.NET.Input;
+﻿using Microsoft.Extensions.Logging;
+using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
 
 using System.Collections.Concurrent;
 using SharpEngine.Core.Entities.Views.Settings;
-using SharpEngine.Shared;
 
 namespace SharpEngine.Examples.MultipleWindows;
 
@@ -16,6 +16,7 @@ namespace SharpEngine.Examples.MultipleWindows;
 /// </summary>
 public static partial class Program
 {
+    private static readonly ILogger Logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger(typeof(Program));
     private static readonly List<IWindow> _windows = [];
     private static readonly List<IInputContext> _inputContexts = [];
     private static readonly ConcurrentQueue<WindowOptions> _windowQueue = [];
@@ -88,7 +89,7 @@ public static partial class Program
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
                 await Task.Delay(1000);
-                Debug.Log.Information("Running loop on background thread...");
+                Logger.LogInformation("Running loop on background thread...");
             }
         });
 

@@ -11,6 +11,9 @@
   </Folder>
 
   <Folder Name="/Examples/">
+    <Project Path="DITesting/DITesting.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
     <Project Path="Examples/MinecraftClone/Minecraft.csproj">
       <BuildType Solution="LauncherNonWindows|*" Project="Debug" />
     </Project>
@@ -53,9 +56,6 @@
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
   <Project Path="../SharpEngine-Shared/SharpEngine.Shared/SharpEngine.Shared.csproj">
-    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-  </Project>
-  <Project Path="DITesting/DITesting.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
   <Project Path="ObjLoader/SharpEngine.Core.ObjLoader.csproj">

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SharpEngine.Core.Windowing;
 using System;
 using System.Threading;
 
@@ -22,6 +23,33 @@ public class App
         try
         {
             Console.WriteLine("app started. Resolving services.");
+
+            if (cancellationToken.IsCancellationRequested)
+                return;
+
+            var windowFactory = _serviceProvider.GetService<IWindowFactory>();
+            if (windowFactory is not null && windowFactory.RegisteredWindows.Count > 0)
+            {
+                using var factoryWindow = windowFactory.CreateWindow();
+
+                Console.WriteLine("Required services resolved.");
+                Console.WriteLine("Starting window.");
+
+                factoryWindow.Run();
+                return;
+            }
+
+            var window = _serviceProvider.GetService<Window>();
+            if (window is not null)
+            {
+                Console.WriteLine("Required services resolved.");
+                Console.WriteLine("Starting window.");
+
+                using (window)
+                    window.Run();
+
+                return;
+            }
 
             var scopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
             using var scope = scopeFactory.CreateScope();

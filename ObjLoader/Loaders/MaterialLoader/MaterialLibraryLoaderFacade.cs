@@ -1,10 +1,12 @@
-using SharpEngine.Shared;
+using Microsoft.Extensions.Logging;
 using System.IO;
 
 namespace ObjLoader.Loaders.MaterialLoader
 {
     public class MaterialLibraryLoaderFacade : IMaterialLibraryLoaderFacade
     {
+        private static readonly ILogger<MaterialLibraryLoaderFacade> Logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<MaterialLibraryLoaderFacade>();
+
         private readonly MaterialLibraryLoader _loader;
 
         /// <summary>
@@ -21,7 +23,7 @@ namespace ObjLoader.Loaders.MaterialLoader
         {
             if (!File.Exists(materialFileName))
             {
-                Debug.Log.Warning("Material file '{MaterialFileName}' doesn't exist.", materialFileName);
+                Logger.LogWarning("Material file '{MaterialFileName}' doesn't exist.", materialFileName);
                 return;
             }    
 

@@ -6,6 +6,7 @@ using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Renderers;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
+using Microsoft.Extensions.Logging;
 
 using Silk.NET.Input;
 using Silk.NET.Maths;
@@ -21,7 +22,6 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Shader = SharpEngine.Core.Shaders.Shader;
 using Silk.NET.GLFW;
-using SharpEngine.Shared;
 
 namespace SharpEngine.Core.Windowing;
 
@@ -33,6 +33,8 @@ public class Window : SilkWindow
     private const string _iconPath = "_Resources/icon.png";
     private bool _windowInitialized;
     private bool _initialized;
+    private readonly IReadOnlyList<Func<Window, RendererBase>> _rendererFactories;
+    private readonly ILogger<Window> _logger;
     
     private IEnumerable<RendererBase> _renderers = [];
     private ImGuiController? _imGuiController;
@@ -101,11 +103,13 @@ public class Window : SilkWindow
     /// <param name="camera">The camera the window should render from.</param>
     /// <param name="scene">Contains the game scene.</param>
     /// <param name="settings">The settings for the window.</param>
-    public Window(CameraView camera, Scene scene, IViewSettings settings)
+    public Window(CameraView camera, Scene scene, IViewSettings settings, IEnumerable<Func<Window, RendererBase>>? rendererFactories = null, ILogger<Window>? logger = null)
     {
         Scene = scene;
         Settings = settings;
         Camera = camera;
+        _rendererFactories = rendererFactories?.ToArray() ?? [];
+        _logger = logger ?? LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Window>();
 
         InitializeWindow();
     }
@@ -118,11 +122,13 @@ public class Window : SilkWindow
     /// </remarks>
     /// <param name="scene">Contains the game scene.</param>
     /// <param name="settings">The settings for the window.</param>
-    public Window(Scene scene, IViewSettings settings)
+    public Window(Scene scene, IViewSettings settings, IEnumerable<Func<Window, RendererBase>>? rendererFactories = null, ILogger<Window>? logger = null)
     {
         Scene = scene;
         Settings = settings;
         Camera = new(Vector3.One, settings);
+        _rendererFactories = rendererFactories?.ToArray() ?? [];
+        _logger = logger ?? LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Window>();
 
         InitializeWindow();
     }
@@ -158,7 +164,7 @@ public class Window : SilkWindow
         }
         catch (Exception ex)
         {
-            Debug.Log.Error(ex, "Error running window: {Message}", ex.Message);
+            _logger.LogError(ex, "Error running window: {Message}", ex.Message);
         }
     }
 
@@ -186,21 +192,7 @@ public class Window : SilkWindow
             // Load all meshes from the mesh cache
             // MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
 
-            // Using reflection, find all renderers that implement the RendererBase.
-            var rendererTypes = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(assembly => assembly.GetTypes())
-                .Where(type => type.IsSubclassOf(typeof(RendererBase)) && !type.IsAbstract);
-
-            foreach (var type in rendererTypes)
-            {
-                // Make sure the renderer has the correct constructor parameters!
-                // TODO: #75 The static reference to the context will not work when multiple windows are implemented, since the context will be different.
-                // TODO: #128 This is now redundant and can be loaded from a DI service.
-                var requiredArguments = new object[] { Camera, this, Settings, Scene };
-                var renderer = (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
-
-                _renderers = _renderers.Append(renderer);
-            }
+            _renderers = CreateRenderers();
 
             foreach (var renderer in _renderers)
                 renderer.Initialize();
@@ -211,7 +203,7 @@ public class Window : SilkWindow
         }
         catch (Exception ex)
         {
-            Debug.Log.Information(ex, "Error loading window: {Message}", ex.Message);
+            _logger.LogInformation(ex, "Error loading window: {Message}", ex.Message);
         }
 
         base.OnLoad();
@@ -253,8 +245,26 @@ public class Window : SilkWindow
         }
         catch (Exception ex)
         {
-            Debug.Log.Information(ex.Message);
+            _logger.LogInformation("{Message}", ex.Message);
         }
+    }
+
+    private IReadOnlyList<RendererBase> CreateRenderers()
+    {
+        if (_rendererFactories.Count > 0)
+            return _rendererFactories.Select(factory => factory(this)).ToArray();
+
+        var rendererTypes = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(assembly => assembly.GetTypes())
+            .Where(type => type.IsSubclassOf(typeof(RendererBase)) && !type.IsAbstract);
+
+        return rendererTypes
+            .Select(type =>
+            {
+                var requiredArguments = new object[] { Camera, this, Settings, Scene };
+                return (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
+            })
+            .ToArray();
     }
 
     /// <summary>
@@ -283,7 +293,7 @@ public class Window : SilkWindow
         }
 
         if (Settings.PrintFrameRate)
-            Debug.Log.Information($"FPS: {frame.FrameRate}");
+            _logger.LogInformation("FPS: {FrameRate}", frame.FrameRate);
 
         // TODO: #21 Handle multiple mice?
         var mouse = Input?.Mice[0];
@@ -311,7 +321,7 @@ public class Window : SilkWindow
     {
         if (Input is null)
         {
-            Debug.Log.Information("Input is null. No input events will be assigned.");
+            _logger.LogInformation("Input is null. No input events will be assigned.");
             return;
         }
 

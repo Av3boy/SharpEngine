@@ -1,4 +1,4 @@
-using SharpEngine.Shared;
+using Microsoft.Extensions.Logging;
 using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Shaders;
@@ -8,6 +8,8 @@ namespace SharpEngine.Core.Shaders;
 /// </summary>
 public partial class Shader : IDisposable
 {
+    private static readonly ILogger<Shader> Logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Shader>();
+
     /// <summary>Gets the handle to the shader program.</summary>
     public uint Handle { get; private set; }
 
@@ -47,10 +49,10 @@ public partial class Shader : IDisposable
         //   The fragment shader is what we'll be using the most here.
 
         if (!vertPath.EndsWith(".vert"))
-            Debug.Log.Warning("Vertex shaders should have the file extension '.vert' for easier manageability.");
+            Logger.LogWarning("Vertex shaders should have the file extension '.vert' for easier manageability.");
 
         if (!fragPath.EndsWith(".frag"))
-            Debug.Log.Warning("Fragment shaders should have the file extension '.frag' for easier manageability.");
+            Logger.LogWarning("Fragment shaders should have the file extension '.frag' for easier manageability.");
 
         VertPath = vertPath;
         FragPath = fragPath;

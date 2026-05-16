@@ -1,7 +1,7 @@
-﻿using SharpEngine.Core.Entities;
+﻿using Microsoft.Extensions.Logging;
+using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.UI;
-using SharpEngine.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +15,8 @@ namespace SharpEngine.Core.Scenes;
 /// </summary>
 public class Scene
 {
+    private static readonly ILogger<Scene> Logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Scene>();
+
     /// <summary>The file extension by which saved scenes are associated with.</summary>
     public const string SceneFileExtension = "sharpscene";
 
@@ -183,7 +185,7 @@ public class Scene
     /// <returns>The scene from the given file. Loads an empty scene if unable to load the scene.</returns>
     public static Scene LoadScene(string sceneFile)
     {
-        Debug.Log.Debug(sceneFile);
+        Logger.LogDebug("Loading scene from {SceneFile}", sceneFile);
 
         var loadedScene = JsonSerializer.Deserialize<Scene>(sceneFile);
 
