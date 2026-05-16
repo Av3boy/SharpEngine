@@ -104,6 +104,16 @@ public class Window : SilkWindow
     /// <param name="renderers">The renderers for the window.</param>
     public Window(CameraView camera, Scene scene, IViewSettings settings, ILogger<Window> logger, IEnumerable<RendererBase>? renderers = null)
     {
+        // TODO:
+        // Should the developer need to call for a window initialization?
+        // Meaning should should we move this project loading part to a separate function?
+
+        var project = new Project();
+        var currentAssemlyVersion = typeof(Window).Assembly.GetVersion();
+        
+        if (currentAssemlyVersion != project.EngineVersion)
+            Debug.Log.Warning("The current engine version ({CurrentVersion}) does not match the project engine version ({ProjectVersion}). This may lead to unexpected behavior.", currentAssemlyVersion, project.EngineVersion);
+
         Scene = scene;
         Settings = settings;
         Camera = camera;
