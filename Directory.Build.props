@@ -2,7 +2,7 @@
   
   <!-- Solution target framework versions -->
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <DotNetTargetFramework>net8.0</DotNetTargetFramework>
   </PropertyGroup>
 
   <!-- Project default settings -->

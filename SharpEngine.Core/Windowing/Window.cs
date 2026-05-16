@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using SharpEngine.Shared.Dto;
 
 namespace SharpEngine.Core.Windowing;
 
@@ -94,6 +95,9 @@ public class Window : SilkWindow
     public GL GetGL() => _gl;
     private void SetGL(GL gl) => _gl = gl;
 
+    public Window(CameraView camera, Scene scene, IViewSettings settings) : 
+        this(camera, scene, settings, LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Window>()) { }
+
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
     /// </summary>
@@ -107,18 +111,18 @@ public class Window : SilkWindow
         // TODO:
         // Should the developer need to call for a window initialization?
         // Meaning should should we move this project loading part to a separate function?
-
-        var project = new Project();
-        var currentAssemlyVersion = typeof(Window).Assembly.GetVersion();
         
-        if (currentAssemlyVersion != project.EngineVersion)
-            Debug.Log.Warning("The current engine version ({CurrentVersion}) does not match the project engine version ({ProjectVersion}). This may lead to unexpected behavior.", currentAssemlyVersion, project.EngineVersion);
-
         Scene = scene;
         Settings = settings;
         Camera = camera;
         _registeredRenderers = renderers?.ToArray() ?? [];
         _logger = logger;
+
+        var project = new Project();
+        var currentAssemlyVersion = typeof(Window).Assembly.GetVersion();
+
+        if (currentAssemlyVersion != project.EngineVersion)
+            _logger.LogWarning("The current engine version ({CurrentVersion}) does not match the project engine version ({ProjectVersion}). This may lead to unexpected behavior.", currentAssemlyVersion, project.EngineVersion);
 
         InitializeWindow();
     }
