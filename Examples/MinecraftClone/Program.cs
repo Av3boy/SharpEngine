@@ -33,7 +33,7 @@ public static class Program
         });
 
         services.AddSingleton<Scene>();
-        services.AddSingleton<Game, Minecraft>();
+        services.AddSingleton<Minecraft>();
         services.AddSingleton<CameraView>(serviceProvider => serviceProvider.GetRequiredService<Minecraft>().Camera);
         services.AddTransient<RendererBase, Renderer>();
         services.AddTransient<RendererBase, UIRenderer>();
