@@ -240,11 +240,12 @@ public class Window : SilkWindow
 
             UseShaders();
 
-            var renderTasks = _renderers.Where(renderer => Settings.RendererFlags.HasFlag(renderer.RenderFlag))
-                                        .Select(renderer => renderer.Render())
-                                        .ToList();
+            var activeRenderers = _renderers.Where(renderer => Settings.RendererFlags.HasFlag(renderer.RenderFlag))
+                                            .OrderBy(renderer => renderer.RenderFlag)
+                                            .ToList();
 
-            Task.WaitAll([.. renderTasks]);
+            foreach (var renderer in activeRenderers)
+                renderer.Render().GetAwaiter().GetResult();
 
             AfterRender(frame);
 

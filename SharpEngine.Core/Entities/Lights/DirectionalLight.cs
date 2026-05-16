@@ -29,8 +29,9 @@ public class DirectionalLight : Light
     }
 
     /// <inheritdoc />
-    public Task Render(CameraView camera, Window window)
+    public override Task Render(CameraView camera, Window window)
     {
+        Shader = ShaderService.Instance.LoadShader(window, Default.VertexShader, Default.FragmentShader, "lighting");
         Shader.SetVector3("dirLight.direction", Direction);
         Shader.SetVector3("dirLight.ambient", Ambient);
         Shader.SetVector3("dirLight.diffuse", Diffuse);

@@ -4,7 +4,9 @@ using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
+using SharpEngine.Core.Textures;
 using SharpEngine.Core.Windowing;
+using SharpEngine.Core._Resources;
 
 using Silk.NET.OpenGL;
 using System;
@@ -12,6 +14,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
 using Vector2 = SharpEngine.Core.Numerics.Vector2;
+using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
 
 namespace SharpEngine.Core.Entities.UI;
 
@@ -36,6 +39,7 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
     }
 
     private readonly UIShader _uiShader = new();
+    private readonly Texture _texture = TextureService.Instance.LoadTexture(Default.DebugTexture);
 
     /// <summary>Gets or sets the width of the ui element.</summary>
     public float Width { get; set; } = 10;
@@ -135,6 +139,7 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
 
         _uiShader.Shader!.Use();
         gl.BindVertexArray(contextState.Vao);
+        _texture.Use(TextureUnit.Texture0);
 
         VAO = contextState.Vao;
 
@@ -147,6 +152,7 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
         _uiShader.Shader!.SetVector2("screenSize", new System.Numerics.Vector2(screenWidth, screenHeight));
         _uiShader.Shader!.SetVector2("position", (System.Numerics.Vector2)Transform.Position);
         _uiShader.Shader!.SetFloat("rotation", Math.DegreesToRadians(Transform.Rotation.Angle));
+        _uiShader.Shader!.SetInt("texture1", 0);
         _uiShader.Shader!.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
         _uiShader.Shader!.SetMatrix4("orthoMatrix", OrthoMatrix); // Pass the orthographic matrix to the shader
 

@@ -145,7 +145,10 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
             foreach (var material in mesh.Materials)
                 material.SetUniformValues(Shader);
 
-            glInstance.DrawArrays(PrimitiveType.Triangles, 0, (uint)mesh.Vertices.Length);
+            if (mesh.Indices.Length > 0)
+                glInstance.DrawElements<uint>(PrimitiveType.Triangles, (uint)mesh.Indices.Length, DrawElementsType.UnsignedInt, []);
+            else
+                glInstance.DrawArrays(PrimitiveType.Triangles, 0, (uint)(mesh.Vertices.Length / (VertexData.VerticesSize + VertexData.NormalsSize + VertexData.TexCoordsSize)));
         }
 
         return Task.CompletedTask;

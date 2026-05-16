@@ -114,13 +114,11 @@ public class Material : ICloneable, IEquatable<Material>
         {
             SpecularMap.Use(TextureUnit.Texture1);
             shader.SetInt("material.specular", SPECULAR_UNIT);
-            shader.SetVector3("material.specular", Specular);
             shader.SetFloat("material.shininess", Shininess);
         }
         else
         {
-            shader.SetInt("material.specular", 0);
-            shader.SetVector3("material.specular", Vector3.Zero);
+            shader.SetInt("material.specular", DIFFUSE_UNIT);
             shader.SetFloat("material.shininess", 0);
         }
     }

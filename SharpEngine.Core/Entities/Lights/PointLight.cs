@@ -65,8 +65,9 @@ public class PointLight : Light
     }
 
     /// <inheritdoc />
-    public Task Render(CameraView camera, Window window)
+    public override Task Render(CameraView camera, Window window)
     {
+        Shader = ShaderService.Instance.LoadShader(window, Default.VertexShader, Default.FragmentShader, "lighting");
         SetShaderUniforms(camera);
 
         return Task.CompletedTask;

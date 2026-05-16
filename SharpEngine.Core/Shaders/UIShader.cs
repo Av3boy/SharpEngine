@@ -22,26 +22,14 @@ internal class UIShader : ShaderBase
         if (!base.SetAttributes(gl))
             return false;
 
-        if (!Shader!.TryGetAttribLocation(ShaderAttributes.Pos, out int positionLocation))
-            return false;
+        gl.EnableVertexAttribArray(0);
+        gl.VertexAttribPointer(0, VertexData.VerticesSize, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
 
-        var positionLocationUint = (uint)positionLocation;
-        gl.EnableVertexAttribArray(positionLocationUint);
-        gl.VertexAttribPointer(positionLocationUint, VertexData.VerticesSize, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
+        gl.EnableVertexAttribArray(1);
+        gl.VertexAttribPointer(1, VertexData.NormalsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.NormalsOffset);
 
-        if (!Shader!.TryGetAttribLocation(ShaderAttributes.Normal, out int normalLocation))
-            return false;
-
-        var normalLocationUint = (uint)normalLocation;
-        gl.EnableVertexAttribArray(normalLocationUint);
-        gl.VertexAttribPointer(normalLocationUint, VertexData.NormalsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.NormalsOffset);
-
-        if (!Shader!.TryGetAttribLocation(ShaderAttributes.TexCoords, out int texCoordLocation))
-            return false;
-
-        var texCoordLocationUint = (uint)texCoordLocation;
-        gl.EnableVertexAttribArray(texCoordLocationUint);
-        gl.VertexAttribPointer(texCoordLocationUint, VertexData.TexCoordsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.TexCoordsOffset);
+        gl.EnableVertexAttribArray(2);
+        gl.VertexAttribPointer(2, VertexData.TexCoordsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.TexCoordsOffset);
 
         return true;
     }

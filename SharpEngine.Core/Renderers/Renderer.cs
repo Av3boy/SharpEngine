@@ -1,4 +1,5 @@
 using SharpEngine.Core.Entities;
+using SharpEngine.Core.Entities.Lights;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
@@ -76,6 +77,9 @@ public class Renderer : RendererBase
             _camera.SetShaderUniforms(_lightingShader.Shader!);
             _gl.BindVertexArray(_lightingShader.Vao);
 
+            var lightRenderTasks = _scene.IterateAsync(_scene.Root.Children, RenderLight);
+            Task.WaitAll([.. lightRenderTasks]);
+
             var gameObjectRenderTasks = _scene.IterateAsync(_scene.Root.Children, RenderGameObject);
             var renderTask = Task.WhenAll(gameObjectRenderTasks);
 
@@ -92,7 +96,7 @@ public class Renderer : RendererBase
 
     private Task RenderGameObject(SceneNode node)
     {
-        if (node is not GameObject gameObject)
+        if (node is not GameObject gameObject || node is Light)
             return Task.CompletedTask;
 
         // TODO: #7 Fix culling for blocks that are partially in view
@@ -103,6 +107,14 @@ public class Renderer : RendererBase
         // TODO: #7 Skip blocks that are behind others relative to the camera
         return gameObject.Render(_camera, _window);
         // gameObject.Render(_camera, _window);
+    }
+
+    private Task RenderLight(SceneNode node)
+    {
+        if (node is not Light light)
+            return Task.CompletedTask;
+
+        return light.Render(_camera, _window);
     }
 
     private static bool IsInViewFrustum(BoundingBox boundingBox, CameraView camera)
