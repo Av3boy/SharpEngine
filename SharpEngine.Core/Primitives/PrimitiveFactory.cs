@@ -42,9 +42,10 @@ public static class PrimitiveFactory
             _ => throw new InvalidOperationException($"A primitive of type {primitiveType} does not exist.")
         };
 
-        var shader = ShaderService.Instance.LoadShader(vertShaderFile ?? _Resources.Default.VertexShader, fragShaderFile ?? _Resources.Default.FragmentShader, "lighting");
-        return new GameObject(shader, model)
+        // Shader compilation is context-dependent; the GameObject will acquire the correct shader per-window during rendering.
+        return new GameObject()
         {
+            Model = model,
             Transform = new Transform((Numerics.Vector3)position),
         };
     }

@@ -8,7 +8,7 @@ namespace SharpEngine.Core.Components.Properties;
 /// <summary>
 ///     Represents the material rendered onto a game object.
 /// </summary>
-public class Material
+public class Material : ICloneable, IEquatable<Material>
 {
     /// <summary>
     ///     Initializes a new instance of <see cref="Material"/>.
@@ -124,4 +124,27 @@ public class Material
             shader.SetFloat("material.shininess", 0);
         }
     }
+
+    /// <inheritdoc />
+    public object Clone()
+        => MemberwiseClone();
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
+
+        if (ReferenceEquals(this, obj))
+            return true;
+
+        if (GetType() != obj.GetType())
+            return false;
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool Equals(Material? other) => Equals(other);
+
 }

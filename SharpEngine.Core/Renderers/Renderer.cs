@@ -26,6 +26,8 @@ public class Renderer : RendererBase
     private readonly Scene _scene;
     private readonly Window _window;
 
+    private readonly GL _gl;
+
     // TODO: #7 Property for specific type of objects
     // No heavy iteration reads for filtering,
     // instead use a notification system from the scene that an item has been removed / added?
@@ -49,9 +51,11 @@ public class Renderer : RendererBase
         _scene = scene;
         _window = window;
 
+        _gl = window.GetGL();
+
         // TODO: #5 These should be refactored out. The minimum build shouldn't need to use these.
-        _lightingShader = new LightingShader();
-        _lampShader = new LampShader();
+        _lightingShader = new LightingShader(_gl);
+        _lampShader = new LampShader(_gl);
     }
 
     /// <inheritdoc />
@@ -62,20 +66,20 @@ public class Renderer : RendererBase
 
         try
         {
-            Window.GL.Enable(EnableCap.DepthTest);
+            _gl.Enable(EnableCap.DepthTest);
 
             // Enable image transparency.
             // TODO: #62 Needs testing.
-            Window.GL.Enable(EnableCap.Blend);
-            Window.GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            _gl.Enable(EnableCap.Blend);
+            _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             _camera.SetShaderUniforms(_lightingShader.Shader!);
-            Window.GL.BindVertexArray(_lightingShader.Vao);
+            _gl.BindVertexArray(_lightingShader.Vao);
 
             var gameObjectRenderTasks = _scene.IterateAsync(_scene.Root.Children, RenderGameObject);
             var renderTask = Task.WhenAll(gameObjectRenderTasks);
 
-            Window.GL.BindVertexArray(_lampShader.Vao);
+            _gl.BindVertexArray(_lampShader.Vao);
 
             return renderTask;
         }

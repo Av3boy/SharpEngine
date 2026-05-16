@@ -18,7 +18,7 @@ public static class Cube
 
         var defaultTexture = TextureService.Instance.LoadTexture(Default.DebugTexture);
 
-        var mesh = new Mesh(Window.GL)
+        var mesh = new Mesh(Window.SharedGL)
         {
             Vertices = [.. Vertices],
             Normals = [.. Normals],
@@ -30,7 +30,7 @@ public static class Cube
         };
 
         Mesh = MeshService.Instance.LoadMesh(nameof(Cube), mesh);
-        Model = new(Window.GL, Mesh);
+        Model = new(Window.SharedGL, Mesh);
 
         _loaded = true;
     }

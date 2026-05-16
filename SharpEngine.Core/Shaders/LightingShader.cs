@@ -8,45 +8,49 @@ namespace SharpEngine.Core.Shaders;
 
 internal class LightingShader : ShaderBase
 {
+    private readonly GL _gl;
+
     /// <summary>
     ///     Initializes a new instance of <see cref="LightingShader" />.
     /// </summary>
-    public LightingShader()
+    public LightingShader(GL gl)
     {
-        Shader = ShaderService.Instance.LoadShader(Default.VertexShader, Default.FragmentShader, "lighting").Initialize();
+        _gl = gl;
 
-        Vao = Window.GL.GenVertexArray();
-        Window.GL.BindVertexArray(Vao);
+        Shader = ShaderService.Instance.LoadShader(_gl, Default.VertexShader, Default.FragmentShader, "lighting");
 
-        SetAttributes();
+        Vao = _gl.GenVertexArray();
+        _gl.BindVertexArray(Vao);
+
+        SetAttributes(_gl);
     }
 
     /// <inheritdoc />
-    public override bool SetAttributes()
+    public override bool SetAttributes(GL gl)
     {
-        if (!base.SetAttributes())
+        if (!base.SetAttributes(gl))
             return false;
 
         /*if (!Shader!.TryGetAttribLocation(ShaderAttributes.Pos, out int positionLocation))
             return false;
 
         var positionLocationUint = (uint)positionLocation;
-        Window.GL.EnableVertexAttribArray(positionLocationUint);
-        Window.GL.VertexAttribPointer(positionLocationUint, VertexData.VerticesSize, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
+        _gl.EnableVertexAttribArray(positionLocationUint);
+        _gl.VertexAttribPointer(positionLocationUint, VertexData.VerticesSize, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
         
         if (!Shader!.TryGetAttribLocation(ShaderAttributes.Normal, out int normalLocation))
             return false;
         
         var normalLocationUint = (uint)normalLocation;
-        Window.GL.EnableVertexAttribArray(normalLocationUint);
-        Window.GL.VertexAttribPointer(normalLocationUint, VertexData.NormalsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.NormalsOffset);
+        _gl.EnableVertexAttribArray(normalLocationUint);
+        _gl.VertexAttribPointer(normalLocationUint, VertexData.NormalsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.NormalsOffset);
         
         if (!Shader!.TryGetAttribLocation(ShaderAttributes.TexCoords, out int texCoordLocation))
             return false;
         
         var texCoordLocationUint = (uint)texCoordLocation;
-        Window.GL.EnableVertexAttribArray(texCoordLocationUint);
-        Window.GL.VertexAttribPointer(texCoordLocationUint, VertexData.TexCoordsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.TexCoordsOffset);
+        _gl.EnableVertexAttribArray(texCoordLocationUint);
+        _gl.VertexAttribPointer(texCoordLocationUint, VertexData.TexCoordsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.TexCoordsOffset);
         */
         return true;
     }

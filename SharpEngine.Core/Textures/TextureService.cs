@@ -25,6 +25,7 @@ public class TextureService
     ///     Loads a texture from the specified path.
     /// </summary>
     /// <param name="path">the full path to the texture.</param>
+    /// <param name="textureType">The type of the texture.</param>
     /// <returns>The loaded texture program.</returns>
     public Texture LoadTexture(string path, TextureType textureType = TextureType.Diffuse)
     {
@@ -39,7 +40,7 @@ public class TextureService
             return cachedTexture;
 
         // Generate handle
-        var texture = new Texture(Window.GL, path, textureType);
+        var texture = new Texture(Window.SharedGL, path, textureType);
 
         // Add it to the cache
         _textureCache[path] = texture;

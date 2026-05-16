@@ -7,6 +7,8 @@ using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
 
 using Silk.NET.OpenGL;
+using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
 using Vector2 = SharpEngine.Core.Numerics.Vector2;
@@ -31,8 +33,6 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
     {
         // TODO: #5 Support custom meshes?
         Mesh = MeshService.Instance.LoadMesh(nameof(Primitives.Plane), Primitives.Plane.Mesh);
-
-        Initialize();
     }
 
     private readonly UIShader _uiShader = new();
@@ -46,37 +46,77 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
     /// <summary>Gets or sets the mesh of the UI element.</summary>
     public Mesh Mesh { get; set; }
 
-    /// <inheritdoc />
-    public uint VAO { get; set; }
+    /// <summary>
+    ///     Gets the most recently used VAO for this element.
+    /// </summary>
+    /// <remarks>
+    ///     UIElement maintains VAOs per OpenGL context. This property is updated on render.
+    /// </remarks>
+    public uint VAO { get; private set; }
 
-    /// <inheritdoc />
-    public void Initialize()
+    private sealed record SharedBuffers(uint Vbo, uint Ebo, int IndexCount);
+    private sealed record ContextState(uint Vao);
+
+    private readonly object _gpuLock = new();
+    private readonly Dictionary<object, SharedBuffers> _sharedBuffersByShareGroup = [];
+    private readonly Dictionary<object, ContextState> _contextStateByContext = [];
+
+    private static object GetShareGroupKey(Window window)
+        => (object?)window.SharedContext ?? (object?)window.GLContext ?? (object)window;
+
+    private static object GetContextKey(Window window)
+        => (object?)window.GLContext ?? (object)window;
+
+    private SharedBuffers EnsureSharedBuffers(GL gl, Window window)
     {
-        VAO = Window.GL.GenVertexArray();
-        Bind();
+        var shareGroupKey = GetShareGroupKey(window);
 
-        InitializeBuffers(Mesh);
+        lock (_gpuLock)
+        {
+            if (_sharedBuffersByShareGroup.TryGetValue(shareGroupKey, out var buffers))
+                return buffers;
 
-        _uiShader.Shader?.Use();
-        _uiShader.SetAttributes();
+            // Buffers are shareable across contexts in the same share group.
+            var vbo = gl.GenBuffer();
+            gl.BindBuffer(GLEnum.ArrayBuffer, vbo);
+            gl.BufferData(GLEnum.ArrayBuffer, Mesh.GetVertices(), GLEnum.StaticDraw);
+
+            var ebo = gl.GenBuffer();
+            gl.BindBuffer(GLEnum.ElementArrayBuffer, ebo);
+            gl.BufferData(GLEnum.ElementArrayBuffer, Mesh.Indices, GLEnum.StaticDraw);
+
+            buffers = new SharedBuffers(vbo, ebo, Mesh.Indices.Length);
+            _sharedBuffersByShareGroup[shareGroupKey] = buffers;
+
+            return buffers;
+        }
     }
 
-    /// <inheritdoc />
-    public void Bind()
+    private ContextState EnsureContextState(GL gl, Window window, SharedBuffers sharedBuffers)
     {
-        Window.GL.BindVertexArray(VAO);
-    }
+        var contextKey = GetContextKey(window);
 
-    /// <inheritdoc />
-    public void InitializeBuffers(Mesh mesh, bool useMeshVertices = false)
-    {
-        var vertexBufferObject = Window.GL.GenBuffer();
-        Window.GL.BindBuffer(GLEnum.ArrayBuffer, vertexBufferObject);
-        Window.GL.BufferData<float>(GLEnum.ArrayBuffer, mesh.GetVertices(), GLEnum.StaticDraw);
+        lock (_gpuLock)
+        {
+            if (_contextStateByContext.TryGetValue(contextKey, out var state))
+                return state;
 
-        var elementBufferObject = Window.GL.GenBuffer();
-        Window.GL.BindBuffer(GLEnum.ElementArrayBuffer, elementBufferObject);
-        Window.GL.BufferData<uint>(GLEnum.ElementArrayBuffer, mesh.Indices, GLEnum.StaticDraw);
+            // VAOs are generally not shared between contexts.
+            var vao = gl.GenVertexArray();
+            gl.BindVertexArray(vao);
+
+            gl.BindBuffer(GLEnum.ArrayBuffer, sharedBuffers.Vbo);
+            gl.BindBuffer(GLEnum.ElementArrayBuffer, sharedBuffers.Ebo);
+
+            _uiShader.EnsureInitialized(window);
+            _uiShader.Shader!.Use();
+            _uiShader.SetAttributes(gl);
+
+            state = new ContextState(vao);
+            _contextStateByContext[contextKey] = state;
+
+            return state;
+        }
     }
 
     Matrix4x4 OrthoMatrix = Matrix4x4.CreateOrthographicOffCenter(-1, 1, -1, 1, -1, 1);
@@ -86,22 +126,31 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
     /// </summary>
     public override Task Render(CameraView camera, Window window)
     {
-        _uiShader.Shader.Use();
-        Bind();
+        var gl = window.GetGL();
+
+        _uiShader.EnsureInitialized(window);
+
+        var sharedBuffers = EnsureSharedBuffers(gl, window);
+        var contextState = EnsureContextState(gl, window, sharedBuffers);
+
+        _uiShader.Shader!.Use();
+        gl.BindVertexArray(contextState.Vao);
+
+        VAO = contextState.Vao;
 
         // TODO: #75 These should come from somewhere else.
         const float screenWidth = 1280;
         const float screenHeight = 720;
 
-        _uiShader.Shader.SetFloat("width", Width);
-        _uiShader.Shader.SetFloat("height", Height);
-        _uiShader.Shader.SetVector2("screenSize", new System.Numerics.Vector2(screenWidth, screenHeight));
-        _uiShader.Shader.SetVector2("position", (System.Numerics.Vector2)Transform.Position);
-        _uiShader.Shader.SetFloat("rotation", Math.DegreesToRadians(Transform.Rotation.Angle));
-        _uiShader.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
-        _uiShader.Shader.SetMatrix4("orthoMatrix", OrthoMatrix); // Pass the orthographic matrix to the shader
+        _uiShader.Shader!.SetFloat("width", Width);
+        _uiShader.Shader!.SetFloat("height", Height);
+        _uiShader.Shader!.SetVector2("screenSize", new System.Numerics.Vector2(screenWidth, screenHeight));
+        _uiShader.Shader!.SetVector2("position", (System.Numerics.Vector2)Transform.Position);
+        _uiShader.Shader!.SetFloat("rotation", Math.DegreesToRadians(Transform.Rotation.Angle));
+        _uiShader.Shader!.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
+        _uiShader.Shader!.SetMatrix4("orthoMatrix", OrthoMatrix); // Pass the orthographic matrix to the shader
 
-        Window.GL.DrawElements<uint>(PrimitiveType.Triangles, (uint)Mesh.Indices.Length, DrawElementsType.UnsignedInt, []);
+        gl.DrawElements<uint>(PrimitiveType.Triangles, (uint)sharedBuffers.IndexCount, DrawElementsType.UnsignedInt, []);
 
         return Task.CompletedTask;
     }

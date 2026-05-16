@@ -5,6 +5,10 @@
     <BuildType Name="LauncherNonWindows" />
     <BuildType Name="Release" />
   </Configurations>
+  <Folder Name="/Docs/">
+    <File Path="ATAM.md" />
+    <File Path="README.md" />
+  </Folder>
 
   <Folder Name="/Examples/">
     <Project Path="Examples/MinecraftClone/Minecraft.csproj">
@@ -42,30 +46,27 @@
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
   </Folder>
-  <Project Path="DITesting/DITesting.csproj">
-    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-  </Project>
-
-  <Project Path="ObjLoader/SharpEngine.Core.ObjLoader.csproj">
-    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-  </Project>
-
-  <Project Path="SharpEngine.Core.Components/SharpEngine.Core.Components.csproj">
-    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-  </Project>
-
-  <Project Path="SharpEngine.Core.Numerics/SharpEngine.Core.Numerics.csproj">
-    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-  </Project>
-
-  <Project Path="SharpEngine.Core/SharpEngine.Core.csproj" />
-
+  <Folder Name="/Tests/ArchitectureTests/" />
+  <Folder Name="/Tests/IntegrationTests/" />
+  <Folder Name="/Tests/UnitTests/" />
   <Project Path="../SharpEngine-Shared/SharpEngine.Rest/SharpEngine.Rest.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
-
   <Project Path="../SharpEngine-Shared/SharpEngine.Shared/SharpEngine.Shared.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
+  <Project Path="DITesting/DITesting.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
+  <Project Path="ObjLoader/SharpEngine.Core.ObjLoader.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
+  <Project Path="SharpEngine.Core.Components/SharpEngine.Core.Components.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
+  <Project Path="SharpEngine.Core.Numerics/SharpEngine.Core.Numerics.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
+  <Project Path="SharpEngine.Core/SharpEngine.Core.csproj" />
   
 </Solution>

@@ -68,15 +68,32 @@ public class Window : SilkWindow
     protected Scene Scene { get; private set; }
 
     /// <summary>The OpenGL context.</summary>
-    public static GL GL;
+    private GL _gl;
+
+    private static GL? _sharedGl;
+
+    /// <summary>
+    ///     Gets the shared OpenGL instance used for resource creation when windows share an OpenGL context.
+    /// </summary>
+    /// <remarks>
+    ///     This is primarily for backward compatibility with code that assumed a single global GL instance.
+    ///     For multi-window support, prefer using <see cref="GetGL"/> and ensuring the correct context is current.
+    /// </remarks>
+    public static GL SharedGL
+        => _sharedGl ?? throw new InvalidOperationException("No OpenGL context has been created yet.");
+
+    /// <summary>
+    ///     Backward compatible alias for <see cref="SharedGL"/>.
+    /// </summary>
+    public static GL GL => SharedGL;
 
     // TODO: #93 Use this method.
     /// <summary>
     ///     Gets the current OpenGL context.
     /// </summary>
     /// <returns>The OpenGL context for this window.</returns>
-    public static GL GetGL() => GL;
-    private static void SetGL(GL gl) => GL = gl;
+    public GL GetGL() => _gl;
+    private void SetGL(GL gl) => _gl = gl;
     
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
@@ -89,6 +106,8 @@ public class Window : SilkWindow
         Scene = scene;
         Settings = settings;
         Camera = camera;
+
+        InitializeWindow();
     }
 
     /// <summary>
@@ -104,6 +123,8 @@ public class Window : SilkWindow
         Scene = scene;
         Settings = settings;
         Camera = new(Vector3.One, settings);
+
+        InitializeWindow();
     }
 
     /// <summary>
@@ -149,6 +170,10 @@ public class Window : SilkWindow
             var context = CurrentWindow.CreateOpenGL();
             SetGL(context);
 
+            // Capture the first created GL as the shared GL. This enables resource caches to work across windows
+            // when those windows are created with a shared OpenGL context.
+            _sharedGl ??= context;
+
             Input = CurrentWindow.CreateInput();
             CurrentWindow.MakeCurrent();
 
@@ -156,7 +181,7 @@ public class Window : SilkWindow
 
             AssignInputEvents();
 
-            GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            _gl.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
             // Load all meshes from the mesh cache
             // MeshService.Instance.LoadMesh("cube", Primitives.Cube.Mesh);
@@ -180,7 +205,7 @@ public class Window : SilkWindow
             foreach (var renderer in _renderers)
                 renderer.Initialize();
 
-            _imGuiController = new ImGuiController(GL, CurrentWindow, Input);
+            _imGuiController = new ImGuiController(_gl, CurrentWindow, Input);
 
             _initialized = true;
         }
@@ -209,7 +234,7 @@ public class Window : SilkWindow
 
             _imGuiController?.Update((float)frame.FrameTime);
 
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            _gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             ToggleWireFrame(Settings.UseWireFrame);
 
@@ -235,8 +260,8 @@ public class Window : SilkWindow
     ///     Toggles the renderer between wireframe and fill mode.
     /// </summary>
     /// <param name="useWireFrame">Determines whether objects should be rendered in wireframe.</param>
-    private static void ToggleWireFrame(bool useWireFrame)
-        => GL.PolygonMode(GLEnum.FrontAndBack, useWireFrame ? PolygonMode.Line : PolygonMode.Fill);
+    private void ToggleWireFrame(bool useWireFrame)
+        => _gl.PolygonMode(GLEnum.FrontAndBack, useWireFrame ? PolygonMode.Line : PolygonMode.Fill);
 
     private List<Shader> _shaders = [];
 
@@ -327,7 +352,7 @@ public class Window : SilkWindow
     /// <inheritdoc />
     protected void OnResize(Vector2D<int> size)
     {
-        GL.Viewport(size);
+        _gl.Viewport(size);
         
         if (size != Vector2D<int>.Zero)
             Camera.AspectRatio = (float)size.X / size.Y;

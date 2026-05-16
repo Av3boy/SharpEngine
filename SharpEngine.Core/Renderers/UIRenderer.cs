@@ -21,6 +21,8 @@ public class UIRenderer : RendererBase
     private readonly CameraView _camera;
     private readonly Window _window;
 
+    private readonly GL _gl;
+
     /// <inheritdoc />
     public override RenderFlags RenderFlag => RenderFlags.UIRenderer;
 
@@ -32,6 +34,8 @@ public class UIRenderer : RendererBase
         _scene = scene;
         _camera = camera;
         _window = window;
+
+        _gl = window.GetGL();
     }
 
     /// <inheritdoc />
@@ -42,11 +46,11 @@ public class UIRenderer : RendererBase
 
         try
         {
-            Window.GL.Enable(EnableCap.DepthTest);
-            Window.GL.DepthFunc(DepthFunction.Less);
+            _gl.Enable(EnableCap.DepthTest);
+            _gl.DepthFunc(DepthFunction.Less);
 
             // Disable face culling to render both sides of the quad
-            Window.GL.Disable(EnableCap.CullFace);
+            _gl.Disable(EnableCap.CullFace);
 
             var uiElementRenderTasks = _scene.IterateAsync<UIElement>(_scene.UIElements, elem => elem.Render(_camera, _window));
 

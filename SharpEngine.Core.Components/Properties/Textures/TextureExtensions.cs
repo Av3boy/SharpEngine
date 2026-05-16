@@ -3,8 +3,11 @@ using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Components.Properties.Textures;
 
-public partial class Texture
+public partial class Texture : IDisposable
 {
+    /// <summary>
+    ///     Initializes the texture by loading the image data and creating the OpenGL texture.
+    /// </summary>
     public void Initialize()
     {
         // Bind the handle
@@ -30,14 +33,17 @@ public partial class Texture
         _gl.GenerateMipmap(GLEnum.Texture2D);
     }
 
+    /// <summary>
+    ///     Configures the currently bound 2D texture.
+    /// </summary>
     public void SetParameters()
     {
         _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)GLEnum.ClampToEdge);
         _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)GLEnum.ClampToEdge);
         _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)GLEnum.LinearMipmapLinear);
         _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)GLEnum.Linear);
-        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
-        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 8);
+        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0); // TODO: Calculate this based on the texture size
+        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 8); // TODO: Calculate this based on the texture size
         _gl.GenerateMipmap(TextureTarget.Texture2D);
     }
 
@@ -55,6 +61,7 @@ public partial class Texture
         _gl.BindTexture(TextureTarget.Texture2D, Handle);
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
         _gl.DeleteTexture(Handle);

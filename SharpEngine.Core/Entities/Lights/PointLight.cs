@@ -28,7 +28,7 @@ public class PointLight : Light
 
         _index = index;
 
-        LampShader = new LampShader();
+        LampShader = new LampShader(Window.SharedGL);
 
     }
 

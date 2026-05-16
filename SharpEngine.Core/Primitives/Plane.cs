@@ -9,7 +9,7 @@ namespace SharpEngine.Core.Primitives;
 public static class Plane
 {
     /// <summary>The plane mesh.</summary>
-    public static Mesh Mesh { get; } = new(Window.GL)
+    public static Mesh Mesh { get; } = new(Window.SharedGL)
     {
         Vertices =
         [

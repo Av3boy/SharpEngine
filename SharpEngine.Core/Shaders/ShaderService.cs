@@ -1,8 +1,10 @@
-﻿using System.IO;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 using SharpEngine.Core.Windowing;
 using SharpEngine.Shared;
+using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Shaders;
 
@@ -16,7 +18,9 @@ public class ShaderService
     /// </summary>
     public static ShaderService Instance { get; } = new ShaderService();
 
-    private readonly Dictionary<string, Shader> _shaderCache = [];
+    private readonly Dictionary<ShaderCacheKey, Shader> _shaderCache = [];
+
+    private readonly record struct ShaderCacheKey(string Name, object ShareGroupKey);
 
     /// <summary>
     ///    Gets or sets whether there are shaders to load.
@@ -49,8 +53,10 @@ public class ShaderService
     /// </exception>
     public Shader GetByName(string name)
     {
-        if (_shaderCache.TryGetValue(name, out var cachedShader))
-            return cachedShader;
+        // Legacy API: return first shader found with this name.
+        foreach (var kvp in _shaderCache)
+            if (kvp.Key.Name == name)
+                return kvp.Value;
 
         throw new KeyNotFoundException($"Shader with name {name} not found in cache.");
     }
@@ -64,10 +70,18 @@ public class ShaderService
     /// <param name="name">A name identifier for the shader.</param>
     /// <returns>A shader with the given name.</returns>
     /// <exception cref="FileNotFoundException">Thrown when either the vertex or fragment shader is not found.</exception>
-    public Shader LoadShader(string vertPath, string fragPath, string name)
+    public Shader LoadShader(Window window, string vertPath, string fragPath, string name)
+        => LoadShader(window.GetGL(), GetShareGroupKey(window), vertPath, fragPath, name);
+
+    public Shader LoadShader(GL gl, string vertPath, string fragPath, string name)
+        => LoadShader(gl, shareGroupKey: gl, vertPath, fragPath, name);
+
+    public Shader LoadShader(GL gl, object shareGroupKey, string vertPath, string fragPath, string name)
     {
-        // Check if the shader is already in the cache
-        if (_shaderCache.TryGetValue(name, out var cachedShader))
+        var cacheKey = new ShaderCacheKey(name, shareGroupKey);
+
+        // Check if the shader is already in the cache for this share group.
+        if (_shaderCache.TryGetValue(cacheKey, out var cachedShader))
             return cachedShader;
 
         if (!File.Exists(vertPath))
@@ -82,12 +96,16 @@ public class ShaderService
             throw new FileNotFoundException($"Fragment shader file not found: {fragPath}");
         }
 
-        // Create a new shader instance and add it to the cache
-        var shader = new Shader(Window.GL, vertPath, fragPath, name).Initialize();
-        _shaderCache[name] = shader;
+        // Create a new shader instance and add it to the cache.
+        // Shader program objects are shareable across contexts *only* when those contexts share.
+        var shader = new Shader(gl, vertPath, fragPath, name).Initialize();
+        _shaderCache[cacheKey] = shader;
 
         HasShadersToLoad = true;
 
         return shader;
     }
+
+    private static object GetShareGroupKey(Window window)
+        => (object?)window.SharedContext ?? (object?)window.GLContext ?? (object)window;
 }

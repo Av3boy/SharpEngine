@@ -1,6 +1,5 @@
 using SharpEngine.Shared;
 using Silk.NET.OpenGL;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SharpEngine.Core.Shaders;
 
@@ -21,9 +20,10 @@ public partial class Shader : IDisposable
     /// <summary>Gets or sets the path to the fragment shader file.</summary>
     public string FragPath { get; set; }
 
+    private readonly GL _gl;
+
     private Dictionary<string, int> _uniformLocations = [];
     private bool disposedValue;
-    private readonly GL _gl;
 
     /// <summary>
     ///    Initializes a new instance of <see cref="Shader"/>.
@@ -32,14 +32,13 @@ public partial class Shader : IDisposable
     ///     Shaders are written in GLSL, which is a language very similar to C in its semantics.
     ///     The GLSL source is compiled *at runtime*, so it can optimize itself for the graphics card it's currently being used on.
     /// </remarks>
-    /// <param name="gl">The OpenGL instance where this shader is used.</param>
     /// <param name="vertPath">The vertex shader full path.</param>
     /// <param name="fragPath">The fragment shader full path.</param>
     /// <param name="name">The identifier name of the shader.</param>
     public Shader(GL gl, string vertPath, string fragPath, string name)
     {
-        Name = name;
         _gl = gl;
+        Name = name;
 
         // There are several different types of shaders, but the only two you need for basic rendering are the vertex and fragment shaders.
         // The vertex shader is responsible for moving around vertices, and uploading that data to the fragment shader.
@@ -65,7 +64,8 @@ public partial class Shader : IDisposable
         
         if (disposing)
         {
-            _gl.DeleteProgram(Handle);
+            // TODO: Collect handles in a separate container with proper access to the shared GL context.
+            //_gl.DeleteProgram(Handle);
             Handle = 0;
             _uniformLocations.Clear();
         }

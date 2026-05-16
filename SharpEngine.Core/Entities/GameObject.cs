@@ -1,6 +1,9 @@
 using SharpEngine.Core.Attributes;
 using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.Views;
+using SharpEngine.Core.Components.Properties;
+using EngineTexture = SharpEngine.Core.Components.Properties.Textures.Texture;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
@@ -11,6 +14,9 @@ using Shader = SharpEngine.Core.Shaders.Shader;
 using Silk.NET.OpenGL;
 using Tutorial;
 using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SharpEngine.Core.Entities;
 
@@ -19,34 +25,54 @@ namespace SharpEngine.Core.Entities;
 /// </summary>
 public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
 {
+    private readonly object _modelCacheLock = new();
+    private readonly Dictionary<object, Model_Old> _modelByShareGroup = [];
+
+    private readonly string _shaderVertPath;
+    private readonly string _shaderFragPath;
+    private readonly string _shaderName;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="GameObject"/>.
     /// </summary>
     public GameObject() : base(string.Empty)
     {
         BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
-        Shader = ShaderService.Instance.LoadShader(_Resources.Default.VertexShader, _Resources.Default.FragmentShader, "lighting");
+
+        _shaderVertPath = _Resources.Default.VertexShader;
+        _shaderFragPath = _Resources.Default.FragmentShader;
+        _shaderName = "lighting";
+
+        Shader = null!;
     }
 
+    [Obsolete("This constructor is obsolete. Use the empty constructor instead.")]
     public GameObject(Model_Old model) : base(string.Empty)
     {
         Model = model;
         BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
-        Shader = ShaderService.Instance.LoadShader(_Resources.Default.VertexShader, _Resources.Default.FragmentShader, "lighting");
+
+        _shaderVertPath = _Resources.Default.VertexShader;
+        _shaderFragPath = _Resources.Default.FragmentShader;
+        _shaderName = "lighting";
+
+        Shader = null!;
     }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="GameObject"/> with specified textures and shaders.
     /// </summary>
-    /// <param name="diffuseMapFile">The file path of the diffuse map texture.</param>
-    /// <param name="specularMapFile">The file path of the specular map texture.</param>
-    /// <param name="vertShaderFile">The file path of the vertex shader.</param>
-    /// <param name="fragShaderFile">The file path of the fragment shader.</param>
+    /// <param name="shader">The shader to be used by the game object.</param>
+    /// <param name="model">The model of the game object.</param>
     public GameObject(Shader shader, Model_Old model) : base(string.Empty)
     {
         Model = model;
         BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
         Shader = shader;
+
+        _shaderVertPath = shader.VertPath;
+        _shaderFragPath = shader.FragPath;
+        _shaderName = shader.Name;
     }
 
     public Shader Shader { get; set; }
@@ -77,6 +103,10 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     [Inspector(DisplayInInspector = false)]
     public BoundingBox BoundingBox { get; set; }
 
+    /// <summary>
+    ///     Sets shader uniforms for model, view, and projection matrices.
+    /// </summary>
+    /// <param name="camera">The camera view used to retrieve view and projection matrices.</param>
     protected virtual void SetShaderUniforms(CameraView camera)
     {
         Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
@@ -93,7 +123,16 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
         if (Model is null || Model.Meshes is null)
             return Task.CompletedTask;
 
-        foreach (var mesh in Model.Meshes)
+        var glInstance = window.GetGL();
+
+        // Ensure this instance is using a shader compiled for the correct context/share-group.
+        Shader = ShaderService.Instance.LoadShader(window, _shaderVertPath, _shaderFragPath, _shaderName);
+
+        var modelToRender = GetOrCreateModelForWindow(window, glInstance);
+        if (modelToRender is null)
+            return Task.CompletedTask;
+
+        foreach (var mesh in modelToRender.Meshes)
         {
             mesh.Bind();
 
@@ -106,9 +145,96 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
             foreach (var material in mesh.Materials)
                 material.SetUniformValues(Shader);
 
-            Window.GL.DrawArrays(PrimitiveType.Triangles, 0, (uint)mesh.Vertices.Length);
+            glInstance.DrawArrays(PrimitiveType.Triangles, 0, (uint)mesh.Vertices.Length);
         }
 
         return Task.CompletedTask;
+    }
+
+    private static object GetShareGroupKey(Window window)
+        => (object?)window.SharedContext ?? (object?)window.GLContext ?? (object)window;
+
+    private Model_Old? GetOrCreateModelForWindow(Window window, GL gl)
+    {
+        if (Model is null)
+            return null;
+
+        var shareGroupKey = GetShareGroupKey(window);
+
+        lock (_modelCacheLock)
+        {
+            if (_modelByShareGroup.TryGetValue(shareGroupKey, out var cachedModel))
+                return cachedModel;
+
+            // If this model was created using the same GL instance, we can reuse it for this share group.
+            // Otherwise, build a copy of the model bound to the GL instance for this window.
+            var canReuseModel = Model.Meshes.Count > 0 && ReferenceEquals(Model.Meshes[0].GL, gl);
+
+            var modelForWindow = canReuseModel ? Model : CloneModel(gl, Model);
+            _modelByShareGroup[shareGroupKey] = modelForWindow;
+
+            return modelForWindow;
+        }
+    }
+
+    private static Model_Old CloneModel(GL gl, Model_Old template)
+    {
+        // Create an empty model and populate it with meshes recreated against the provided GL instance.
+        // This allows rendering on windows that don't share the original context.
+        var clone = new Model_Old(gl, string.Empty);
+
+        foreach (var mesh in template.Meshes)
+            clone.Meshes.Add(CloneMesh(gl, mesh));
+
+        return clone;
+    }
+
+    private static Mesh CloneMesh(GL gl, Mesh template)
+    {
+        var textures = template.Textures is null ? 
+            new List<EngineTexture>() : 
+            template.Textures.Select(t => new EngineTexture(gl, t.Path, t.Type)).ToList();
+
+        var clone = new Mesh(gl, template.Vertices, template.Indices, textures)
+        {
+            Name = template.Name,
+        };
+
+        if (template.Materials is { Count: > 0 })
+            clone.Materials = template.Materials.Select(m => CloneMaterial(gl, m)).ToList();
+
+        return clone;
+    }
+
+    private static Material CloneMaterial(GL gl, Material template)
+    {
+        var diffuse = new EngineTexture(gl, template.DiffuseMap.Path, template.DiffuseMap.Type);
+
+        EngineTexture? specular = null;
+        if (template.UseSpecularMap)
+            specular = new EngineTexture(gl, template.SpecularMap.Path, template.SpecularMap.Type);
+
+        var clone = new Material(diffuse, specular)
+        {
+            Name = template.Name,
+            DiffuseTextureMap = template.DiffuseTextureMap,
+            SpecularTextureMap = template.SpecularTextureMap,
+            Specular = template.Specular,
+            Shininess = template.Shininess,
+            AmbientColor = template.AmbientColor,
+            DiffuseColor = template.DiffuseColor,
+            SpecularColor = template.SpecularColor,
+            SpecularCoefficient = template.SpecularCoefficient,
+            Transparency = template.Transparency,
+            IlluminationModel = template.IlluminationModel,
+            AmbientTextureMap = template.AmbientTextureMap,
+            SpecularHighlightTextureMap = template.SpecularHighlightTextureMap,
+            BumpMap = template.BumpMap,
+            DisplacementMap = template.DisplacementMap,
+            StencilDecalMap = template.StencilDecalMap,
+            AlphaTextureMap = template.AlphaTextureMap,
+        };
+
+        return clone;
     }
 }

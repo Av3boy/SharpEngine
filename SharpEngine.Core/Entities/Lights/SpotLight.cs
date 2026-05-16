@@ -25,7 +25,6 @@ public class SpotLight : Light
         Linear = 0.09f;
         Quadratic = 0.032f;
 
-        Shader = ShaderService.Instance.LoadShader(Default.VertexShader, Default.FragmentShader, "lighting");
     }
 
     /// <summary>
@@ -77,6 +76,7 @@ public class SpotLight : Light
     /// <inheritdoc />
     public override Task Render(CameraView camera, Window window)
     {
+        Shader = ShaderService.Instance.LoadShader(window, Default.VertexShader, Default.FragmentShader, "lighting");
         SetShaderUniforms(camera);
     
         return Task.CompletedTask;

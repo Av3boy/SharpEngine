@@ -8,31 +8,35 @@ namespace SharpEngine.Core.Shaders;
 
 internal class LampShader : ShaderBase
 {
+    private readonly GL _gl;
+
     /// <summary>
     ///     Initializes a new instance of <see cref="LampShader" />.
     /// </summary>
-    public LampShader()
+    public LampShader(GL gl)
     {
-        Shader = ShaderService.Instance.LoadShader(Default.VertexShader, Default.LightShader, "lamp").Initialize();
+        _gl = gl;
 
-        Vao = Window.GL.GenVertexArray();
-        Window.GL.BindVertexArray(Vao);
+        Shader = ShaderService.Instance.LoadShader(_gl, Default.VertexShader, Default.LightShader, "lamp");
 
-        SetAttributes();
+        Vao = _gl.GenVertexArray();
+        _gl.BindVertexArray(Vao);
+
+        SetAttributes(_gl);
     }
 
     /// <inheritdoc />
-    public override bool SetAttributes()
+    public override bool SetAttributes(GL gl)
     {
-        if (!base.SetAttributes())
+        if (!base.SetAttributes(gl))
             return false;
 
         if (!Shader!.TryGetAttribLocation(ShaderAttributes.Pos, out int positionLocation))
             return false;
 
         var positionLocationUint = (uint)positionLocation;
-        Window.GL.EnableVertexAttribArray(positionLocationUint);
-        Window.GL.VertexAttribPointer(positionLocationUint, 3, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
+        _gl.EnableVertexAttribArray(positionLocationUint);
+        _gl.VertexAttribPointer(positionLocationUint, 3, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
 
         return true;
     }

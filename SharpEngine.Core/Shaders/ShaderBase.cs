@@ -1,5 +1,6 @@
 ﻿using SharpEngine.Core.Components.Properties;
 using SharpEngine.Shared;
+using Silk.NET.OpenGL;
 using System;
 
 namespace SharpEngine.Core.Shaders;
@@ -21,7 +22,7 @@ public abstract class ShaderBase
     /// <returns>
     ///     <see langword="true" /> if the attributes were set successfully; otherwise <see langword="false" />.
     /// </returns>
-    public virtual bool SetAttributes()
+    public virtual bool SetAttributes(GL gl)
     {
         if (Shader is null)
         {
