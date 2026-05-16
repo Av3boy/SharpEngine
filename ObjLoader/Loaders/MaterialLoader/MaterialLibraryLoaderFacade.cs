@@ -13,19 +13,23 @@ namespace ObjLoader.Loaders.MaterialLoader
 
         private readonly MaterialLibraryLoader _loader;
 
+        private readonly string _path;
+
         /// <summary>
         ///     Initializes a new instance of <see cref="MaterialLibraryLoaderFacade"/>.
         /// </summary>
         /// <param name="loader">Provides the functionality to load material libraries.</param>
-        public MaterialLibraryLoaderFacade(MaterialLibraryLoader loader)
+        public MaterialLibraryLoaderFacade(MaterialLibraryLoader loader, string path)
         {
             _loader = loader;
+            _path = path;
         }
 
         /// <inheritdoc />
         public void Load(string materialFileName)
         {
-            if (!File.Exists(materialFileName))
+            string materialFilePath = Path.Combine(Path.GetDirectoryName(_path)!, materialFileName);
+            if (!File.Exists(materialFilePath))
             {
                 Logger.LogWarning("Material file '{MaterialFileName}' doesn't exist.", materialFileName);
                 return;

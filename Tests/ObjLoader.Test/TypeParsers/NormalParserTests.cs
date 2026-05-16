@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
 using ObjLoader.Loader.TypeParsers;
-using SharpEngine.Core.Components.Obsolete.ObjLoader.DataStore;
+using SharpEngine.Core.Components.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
 
 namespace ObjLoader.Test.TypeParsers

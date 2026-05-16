@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using NUnit.Framework;
-using ObjLoader.Loader.Data;
 using System.Linq;
+
+using NUnit.Framework;
 using FluentAssertions;
-using SharpEngine.Core.Components.Obsolete.ObjLoader.DataStore;
-using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Components.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties;
 using ObjLoader.Loaders.MaterialLoader;
 

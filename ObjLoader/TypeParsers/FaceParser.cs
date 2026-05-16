@@ -1,7 +1,7 @@
 ﻿using ObjLoader.Loader.Common;
 using ObjLoader.Loader.Data.Elements;
 using ObjLoader.TypeParsers;
-using SharpEngine.Core.Components.Obsolete.ObjLoader.DataStore;
+using SharpEngine.Core.Components.ObjLoader.DataStore;
 using System;
 
 namespace ObjLoader.Loader.TypeParsers

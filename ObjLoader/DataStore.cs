@@ -1,7 +1,7 @@
 ﻿using ObjLoader.Loader.Common;
 using ObjLoader.Loader.Data.Elements;
 
-using SharpEngine.Core.Components.Obsolete.ObjLoader.DataStore;
+using SharpEngine.Core.Components.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
 using System.Collections.Generic;

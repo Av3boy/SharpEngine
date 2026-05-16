@@ -55,7 +55,7 @@ namespace ObjLoader.Loaders.ObjLoader
             var vertexParser = new VertexParser(dataStore);
 
             var materialLibraryLoader = new MaterialLibraryLoader(path, dataStore);
-            var materialLibraryParser = new MaterialLibraryParser(materialLibraryLoader);
+            var materialLibraryParser = new MaterialLibraryParser(materialLibraryLoader, path);
             var useMaterialParser = new UseMaterialParser(dataStore);
 
             var loader = new ObjLoader(path, dataStore)

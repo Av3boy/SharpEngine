@@ -1,6 +1,6 @@
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
 
-namespace SharpEngine.Core.Components.Obsolete.ObjLoader.DataStore
+namespace SharpEngine.Core.Components.ObjLoader.DataStore
 {
     public interface IVertexDataStore
     {
