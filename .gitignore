@@ -262,3 +262,5 @@ __pycache__/
 
 # Registry file for setting the .sharpengine file type
 /Editor/shortcut.reg
+
+.env

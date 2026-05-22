@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace>Tutorial</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <!--
+        <ProjectReference Include="..\..\..\..\src\Input\Silk.NET.Input\Silk.NET.Input.csproj" />
+        <ProjectReference Include="..\..\..\..\src\OpenGL\Silk.NET.OpenGL\Silk.NET.OpenGL.csproj" />
+        <ProjectReference Include="..\..\..\..\src\Windowing\Silk.NET.Windowing\Silk.NET.Windowing.csproj" />
+        <ProjectReference Include="..\..\..\..\src\Assimp\Silk.NET.Assimp\Silk.NET.Assimp.csproj" />
+    -->
+      <PackageReference Include="Silk.NET.Input" Version="$(SilkVersion)" />
+      <PackageReference Include="Silk.NET.OpenGL" Version="$(SilkVersion)" />
+      <PackageReference Include="Silk.NET.Windowing" Version="$(SilkVersion)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\ObjLoader\SharpEngine.Core.ObjLoader.csproj" />
+      <ProjectReference Include="..\..\SharpEngine.Core.Components\SharpEngine.Core.Components.csproj" />
+      <ProjectReference Include="..\..\SharpEngine.Core\SharpEngine.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="cube.obj">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="shader2.vert">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="silk.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Untitled2.obj">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+</Project>
