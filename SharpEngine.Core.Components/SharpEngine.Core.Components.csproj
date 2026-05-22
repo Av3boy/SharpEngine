@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(DotNetTargetFramework)</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GeneratePackageOnBuild>$(GenerateNuGetPackages)</GeneratePackageOnBuild>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StbImageSharp" Version="2.30.15" />
+    <PackageReference Include="Silk.NET.OpenGL" Version="2.23.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Telemetry\SharpEngine.Telemetry.csproj" />
+    <ProjectReference Include="..\SharpEngine.Core.Numerics\SharpEngine.Core.Numerics.csproj" />
+    <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
+  </ItemGroup>
+
+</Project>
