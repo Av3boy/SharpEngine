@@ -17,6 +17,19 @@ public class Particle : GameObject
         StartTimeTicks = DateTime.UtcNow.Ticks;
     }
 
-    public long StartTimeTicks { get; set; }
-    public int LifeTimeMilliseconds { get; set; }
+    /// <summary>
+    ///     Gets or sets the time when the particle was emitted, represented in ticks.
+    /// </summary>
+    /// <remarks>
+    ///     This value is used to determine when the particle should be removed based on its <seealso cref="LifeTimeMilliseconds">lifetime</seealso>.
+    /// </remarks>
+    public long StartTimeTicks { get; private set; }
+
+    /// <summary>
+    ///     Gets or sets the lifetime of the particle in milliseconds.
+    /// </summary>
+    /// <remarks>
+    ///     This value is used to determine when the particle should be removed based on its <seealso cref="StartTimeTicks">start time</seealso>.
+    /// </remarks>
+    public int LifeTimeMilliseconds { get; private set; }
 }

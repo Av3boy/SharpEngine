@@ -1,8 +1,9 @@
 using SharpEngine.Core._Resources;
 using SharpEngine.Core.Entities.Views;
-using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
+
+using System;
 using System.Numerics;
 using System.Threading.Tasks;
 
@@ -51,8 +52,13 @@ public class PointLight : Light
     /// </summary>
     public float Quadratic { get; set; }
 
+    /// <inheritdoc />
+    /// <exception cref="NullReferenceException"></exception>
     protected override void SetShaderUniforms(CameraView camera)
     {
+        if (Shader == null)
+            throw new NullReferenceException(nameof(Shader));
+
         Shader.SetVector3($"pointLights[{_index}].position", (Vector3)Transform.Position);
         Shader.SetVector3($"pointLights[{_index}].ambient", Ambient);
         Shader.SetVector3($"pointLights[{_index}].diffuse", Diffuse);

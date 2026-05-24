@@ -1,11 +1,11 @@
 using SharpEngine.Core._Resources;
 using SharpEngine.Core.Components.Properties;
+using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Components.Properties.Textures;
 using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Textures;
 using SharpEngine.Core.Windowing;
 using System.Collections.Generic;
-using Tutorial;
 
 namespace SharpEngine.Core.Primitives;
 

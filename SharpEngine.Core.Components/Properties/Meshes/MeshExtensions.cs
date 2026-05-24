@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace SharpEngine.Core.Entities.Properties.Meshes;
+﻿namespace SharpEngine.Core.Entities.Properties.Meshes;
 
 /// <summary>
 ///     Contains extension methods for handling meshes.

@@ -3,8 +3,6 @@ using ImGuiNET;
 using Minecraft.Block;
 using Microsoft.Extensions.Logging;
 
-using ObjLoader.Loaders.ObjLoader;
-
 using SharpEngine.Core;
 using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Lights;
@@ -15,12 +13,12 @@ using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Windowing;
+using SharpEngine.Core.ObjLoader.Loaders.ObjLoader;
 
 using Silk.NET.Input;
 
 using System;
 using System.Numerics;
-using Silk.NET.OpenGL;
 
 namespace Minecraft;
 

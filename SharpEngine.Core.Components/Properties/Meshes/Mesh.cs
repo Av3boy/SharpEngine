@@ -1,9 +1,8 @@
-﻿using ObjLoader.Loader.Data.Elements;
-using SharpEngine.Core.Attributes;
+﻿using SharpEngine.Core.Attributes;
 using SharpEngine.Core.Components.Properties;
+using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
 using Silk.NET.OpenGL;
-using Tutorial;
 
 using Texture2 = SharpEngine.Core.Components.Properties.Textures.Texture;
 

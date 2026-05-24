@@ -1,4 +1,4 @@
-﻿namespace ObjLoader.Loader.Data.Elements
+﻿namespace SharpEngine.Core.Components.Properties.Meshes.MeshData
 {
     public class Face
     {

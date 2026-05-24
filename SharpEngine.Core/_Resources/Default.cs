@@ -16,8 +16,12 @@ public static class Default
     /// <summary>Gets the path to the lighting fragment shader.</summary>
     public static string FragmentShader => PathExtensions.GetAssemblyPath("_Resources\\Shaders\\lighting.frag");
 
+    /// <summary>Gets the path to the default shader used for rendering light sources.</summary>
     public static string LightShader => PathExtensions.GetAssemblyPath("_Resources\\Shaders\\shader.frag");
-    
+
+    /// <summary>Gets the path to the default vertex shader used for rendering UI elements.</summary>
     public static string UIVertexShader => PathExtensions.GetAssemblyPath("_Resources\\Shaders\\uiShader.vert");
+
+    /// <summary>Gets the path to the default fragment shader used for rendering UI elements.</summary>
     public static string UIFragmentShader => PathExtensions.GetAssemblyPath("_Resources\\Shaders\\uiShader.frag");
 }

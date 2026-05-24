@@ -1,10 +1,11 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using ObjLoader.Loader.TypeParsers;
+
 using SharpEngine.Core.Components.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
+using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
 
-namespace ObjLoader.Test.TypeParsers
+namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
 {
     [TestFixture]
     public class VertexParserTests

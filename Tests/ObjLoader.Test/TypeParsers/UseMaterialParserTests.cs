@@ -1,14 +1,13 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using ObjLoader.Loader.TypeParsers;
 
-namespace ObjLoader.Test.TypeParsers
+namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
 {
     [TestFixture]
     public class UseMaterialParserTests
     {
         private ElementGroupSpy _elementGroupSpy;
-        private UseMaterialParser _parser;
+        private Loader.TypeParsers.UseMaterialParser _parser;
 
         [SetUp]
         public void SetUp()

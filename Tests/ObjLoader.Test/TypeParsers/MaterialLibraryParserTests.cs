@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using ObjLoader.Loader.TypeParsers;
-using ObjLoader.Loaders.MaterialLoader;
+using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
+using SharpEngine.Core.ObjLoader.Loaders.MaterialLoader;
 
-namespace ObjLoader.Test.TypeParsers
+namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
 {
     [TestFixture]
     public class MaterialLibraryParserTests

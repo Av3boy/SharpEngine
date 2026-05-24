@@ -1,7 +1,7 @@
 using Silk.NET.OpenGL;
 using System.Runtime.InteropServices;
 
-namespace SharpEngine.Core.Components.Properties.Meshes.MeshData
+namespace SharpEngine.Core.Components.Properties.Meshes
 {
     /// <summary>
     ///     Represents a buffer object in OpenGL that manages memory allocation and data transfer for a specific data type.

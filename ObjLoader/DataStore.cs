@@ -1,13 +1,11 @@
-﻿using ObjLoader.Loader.Common;
-using ObjLoader.Loader.Data.Elements;
-
-using SharpEngine.Core.Components.ObjLoader.DataStore;
+﻿using SharpEngine.Core.Components.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
+using SharpEngine.Shared.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ObjLoader
+namespace SharpEngine.Core.ObjLoader
 {
     public class DataStore : IGroupDataStore, IFaceGroup
     {

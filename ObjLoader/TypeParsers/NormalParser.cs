@@ -1,8 +1,8 @@
-using ObjLoader.Loader.Common;
-using ObjLoader.TypeParsers;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
+using SharpEngine.Core.ObjLoader.TypeParsers;
+using SharpEngine.Shared.Extensions;
 
-namespace ObjLoader.Loader.TypeParsers
+namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
 {
     public class NormalParser : TypeParserBase, ITypeParser
     {

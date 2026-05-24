@@ -1,7 +1,7 @@
 ﻿using SharpEngine.Core.Components.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties;
 
-namespace ObjLoader.Loader.Data.Elements
+namespace SharpEngine.Core.Components.Properties.Meshes.MeshData
 {
     public class Group : IFaceGroup
     {

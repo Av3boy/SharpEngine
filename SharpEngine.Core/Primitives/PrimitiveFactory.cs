@@ -1,8 +1,8 @@
-﻿using SharpEngine.Core.Entities;
+﻿using SharpEngine.Core.Components.Properties.Meshes;
+using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Properties;
 using System;
 using System.Numerics;
-using Tutorial;
 
 namespace SharpEngine.Core.Primitives;
 

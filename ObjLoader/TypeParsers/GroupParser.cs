@@ -1,6 +1,6 @@
-﻿using ObjLoader.TypeParsers;
+﻿using SharpEngine.Core.ObjLoader.TypeParsers;
 
-namespace ObjLoader.Loader.TypeParsers
+namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
 {
     public class GroupParser : TypeParserBase, ITypeParser
     {

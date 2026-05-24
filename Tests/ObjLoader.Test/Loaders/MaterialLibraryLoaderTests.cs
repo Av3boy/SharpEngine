@@ -7,9 +7,9 @@ using NUnit.Framework;
 using FluentAssertions;
 using SharpEngine.Core.Components.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties;
-using ObjLoader.Loaders.MaterialLoader;
+using SharpEngine.Core.ObjLoader.Loaders.MaterialLoader;
 
-namespace ObjLoader.Test.Loaders
+namespace SharpEngine.Core.ObjLoader.Tests.Loaders
 {
     [TestFixture]
     public class MaterialLibraryLoaderTests
@@ -103,10 +103,7 @@ namespace ObjLoader.Test.Loaders
 
         private void LoadMaterial()
         {
-            var data = Encoding.ASCII.GetBytes(MaterialLibrary);
-            var materialStream = new MemoryStream(data);
-
-            _materialLibraryLoader.Load(materialStream);
+            _materialLibraryLoader.ParseFile(MaterialLibrary);
             _firstMaterial = _materialLibrarySpy.Materials.First();
             _secondMaterial = _materialLibrarySpy.Materials.ElementAt(1);
         }

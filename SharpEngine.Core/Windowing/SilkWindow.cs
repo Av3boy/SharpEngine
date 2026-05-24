@@ -1,15 +1,14 @@
+using SharpEngine.Core.Entities.Views.Settings;
 using Silk.NET.Core;
 using Silk.NET.Core.Contexts;
 using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
-using MouseButton = Silk.NET.Input.MouseButton;
-
 using StbImageSharp;
-
 using System;
 using System.IO;
 using System.Numerics;
+using MouseButton = Silk.NET.Input.MouseButton;
 
 namespace SharpEngine.Core.Windowing;
 
@@ -37,6 +36,11 @@ public abstract class SilkWindow : IWindow
         get => CurrentWindow.IsClosing;
         set => CurrentWindow.IsClosing = value;
     }
+
+    /// <summary>
+    ///     Gets the settings for the current window.
+    /// </summary>
+    public IViewSettings Settings { get; protected set; } = ViewSettings.Default;
 
     /// <summary>Gets or sets the input context for the window.</summary>
     public IInputContext? Input { get; protected set; }
@@ -159,6 +163,7 @@ public abstract class SilkWindow : IWindow
         set => CurrentWindow.ShouldSwapAutomatically = value;
     }
 
+    /// <summary>Gets a value indicating whether the window is focused.</summary>
     public bool IsFocused { get; }
 
     /// <inheritdoc />

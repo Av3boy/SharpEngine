@@ -1,38 +1,56 @@
-using ObjLoader.Loader.Data.Elements;
-using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
 using SharpEngine.Core.Entities.Properties.Meshes;
-using Silk.NET.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using EngineTexture = SharpEngine.Core.Components.Properties.Textures.Texture;
 using EngineTextureType = SharpEngine.Core.Components.Properties.Textures.TextureType;
 
-namespace Tutorial
+using Silk.NET.OpenGL;
+
+namespace SharpEngine.Core.Components.Properties.Meshes
 {
+    /// <summary>
+    ///     Represents a 3D model, which may consist of multiple meshes, materials, and textures. 
+    /// </summary>
+    /// <remarks>
+    ///     This class is responsible for processing raw mesh data into a format suitable for rendering, including expanding vertices based on face definitions and building materials and textures as needed. 
+    /// </remarks>
     public class Model : IDisposable
     {
         private readonly GL _gl;
 
+        /// <summary>Gets the file path to where the model is stored.</summary>
         public string Path { get; }
 
+        /// <summary>Gets the list of meshes contained within the model.</summary>
         public List<Mesh> Meshes { get; set; } = [];
 
+        /// <summary>
+        ///     Initializes a new instance of the Model class with the specified OpenGL context and model file path.
+        /// </summary>
+        /// <param name="gl">The GL context used for rendering and resource management.</param>
+        /// <param name="path">The file path of the model asset.</param>
         public Model(GL gl, string path)
         {
             _gl = gl;
             Path = path;
         }
 
+        /// <summary>
+        ///     Initializes a new instance of the Model class, stores the GL context and path, and processes the provided meshes.
+        /// </summary>
+        /// <remarks>
+        ///     Input meshes are enumerated and processed immediately to populate the Model's Meshes collection.
+        /// </remarks>
+        /// <param name="gl">The OpenGL context used for creating and managing rendering resources.</param>
+        /// <param name="path">The file path of the model resource.</param>
+        /// <param name="meshes">A sequence of meshes to be processed and stored; each mesh is converted via ProcessMesh.</param>
         public Model(GL gl, string path, IEnumerable<Mesh> meshes)
         {
             _gl = gl;
             Path = path;
-            Meshes = meshes.Select(ProcessMesh).ToList();
+            Meshes = [.. meshes.Select(ProcessMesh)];
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             foreach (var mesh in Meshes)
@@ -41,10 +59,21 @@ namespace Tutorial
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        ///     Produces a GPU-ready Mesh from the provided mesh by cloning when already processed or by expanding vertices and constructing indices, materials, and textures.
+        /// </summary>
+        /// <param name="mesh">Source mesh to process. Must not be null.</param>
+        /// <returns>
+        ///     A Mesh prepared for rendering: either a cloned processed mesh if the input already contains vertex buffer
+        ///     data, or a newly constructed Mesh with expanded vertices, generated index buffer, and associated textures
+        ///     and materials.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown if the input mesh is null.</exception>"
         public Mesh ProcessMesh(Mesh mesh)
         {
             ArgumentNullException.ThrowIfNull(mesh);
 
+            // TODO: Instead of cloning the object, we should just update the values.
             if (mesh.Vertices.Length > 0)
                 return CloneProcessedMesh(mesh);
 
@@ -53,6 +82,7 @@ namespace Tutorial
             var materials = BuildMaterials(mesh).ToList();
             var textures = BuildTextures(materials).ToList();
 
+            // TODO: Instead of cloning the object, we should just update the values.
             return new Mesh(_gl, BuildVertices(vertices), indices, textures)
             {
                 Name = mesh.Name,
@@ -67,9 +97,9 @@ namespace Tutorial
         private Mesh CloneProcessedMesh(Mesh template)
         {
             var materials = template.Materials.Select(CloneMaterial).ToList();
-            var textures = materials.Count > 0 ? BuildTextures(materials).ToList() : CloneTextures(template.Textures).ToList();
+            var textures = materials.Count > 0 ? BuildTextures(materials) : CloneTextures(template.Textures);
 
-            return new Mesh(_gl, template.Vertices, template.Indices, textures)
+            return new Mesh(_gl, template.Vertices, template.Indices, textures.ToList())
             {
                 Name = template.Name,
                 Vertices2 = template.Vertices2,
@@ -90,12 +120,12 @@ namespace Tutorial
             if (vertices.Count > 0)
                 return vertices;
 
-            return mesh.Vertices2.Select(vertex =>
+            return [.. mesh.Vertices2.Select(vertex =>
             {
                 vertex.BoneIds ??= new int[Vertex.MAX_BONE_INFLUENCE];
                 vertex.Weights ??= new float[Vertex.MAX_BONE_INFLUENCE];
                 return vertex;
-            }).ToList();
+            })];
         }
 
         private static IEnumerable<FaceVertex> EnumerateFaceVertices(IEnumerable<Group> groups)
@@ -130,11 +160,9 @@ namespace Tutorial
                 : default;
 
         private static System.Numerics.Vector2 GetTextureCoordinates(Mesh mesh, int textureIndex)
-            => textureIndex > 0 && textureIndex <= mesh.TextureCoordinates2.Count
-                ? new System.Numerics.Vector2(
-                    mesh.TextureCoordinates2[textureIndex - 1].X,
-                    mesh.TextureCoordinates2[textureIndex - 1].Y)
-                : default;
+            => textureIndex > 0 && textureIndex <= mesh.TextureCoordinates2.Count ? 
+                new System.Numerics.Vector2(mesh.TextureCoordinates2[textureIndex - 1].X, mesh.TextureCoordinates2[textureIndex - 1].Y) : 
+                default;
 
         private IEnumerable<Material> BuildMaterials(Mesh mesh)
         {
@@ -145,10 +173,9 @@ namespace Tutorial
                 .ToList();
 
             if (materialDefinitions.Count == 0)
-                materialDefinitions = mesh.Materials
+                materialDefinitions = [.. mesh.Materials
                     .Where(material => material is not null)
-                    .DistinctBy(material => material.Name)
-                    .ToList();
+                    .DistinctBy(material => material.Name)];
 
             foreach (var material in materialDefinitions)
             {
@@ -224,10 +251,12 @@ namespace Tutorial
 
         private static IEnumerable<EngineTexture> BuildTextures(IEnumerable<Material> materials)
             => materials
-                .SelectMany(material => material.UseSpecularMap
-                    ? new[] { material.DiffuseMap, material.SpecularMap }
-                    : new[] { material.DiffuseMap })
+                .SelectMany(GetMaterialEngineTextures)
                 .Distinct();
+        private static EngineTexture[] GetMaterialEngineTextures(Material material) 
+            => material.UseSpecularMap ? 
+                [material.DiffuseMap, material.SpecularMap] : 
+                [material.DiffuseMap];
 
         private string ResolveAssetPath(string assetPath)
         {
@@ -235,9 +264,9 @@ namespace Tutorial
                 return assetPath;
 
             var directory = System.IO.Path.GetDirectoryName(Path);
-            return string.IsNullOrWhiteSpace(directory)
-                ? assetPath
-                : System.IO.Path.Combine(directory, assetPath);
+
+            return string.IsNullOrWhiteSpace(directory) ? 
+                assetPath : System.IO.Path.Combine(directory, assetPath);
         }
 
         private static float[] BuildVertices(IEnumerable<Vertex> vertexCollection)
@@ -258,7 +287,7 @@ namespace Tutorial
                 vertices.Add(vertex.TexCoords.Y);
             }
 
-            return vertices.ToArray();
+            return [.. vertices];
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿using ObjLoader.Loader.Common;
-using ObjLoader.Loader.Data.Elements;
-using ObjLoader.TypeParsers;
-using SharpEngine.Core.Components.ObjLoader.DataStore;
+﻿using SharpEngine.Core.Components.ObjLoader.DataStore;
+using SharpEngine.Core.Components.Properties.Meshes.MeshData;
+using SharpEngine.Core.ObjLoader.TypeParsers;
+using SharpEngine.Shared.Extensions;
+
 using System;
 
-namespace ObjLoader.Loader.TypeParsers
+namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
 {
     public class FaceParser : TypeParserBase, ITypeParser
     {

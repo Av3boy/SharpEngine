@@ -2,13 +2,15 @@
 using System.Text;
 using System.Linq;
 using NUnit.Framework;
-using ObjLoader.Loader.Loaders;
-using ObjLoader.Loader.TypeParsers;
 using FluentAssertions;
-using ObjLoader.Loaders.MaterialLoader;
-using SharpEngine.Core.Entities.Properties.Meshes;
 
-namespace ObjLoader.Test.Loaders
+using SharpEngine.Core.Entities.Properties.Meshes;
+using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
+using SharpEngine.Core.ObjLoader.Loaders.MaterialLoader;
+
+using CoreObjLoader = SharpEngine.Core.ObjLoader.Loaders.ObjLoader.ObjLoader;
+
+namespace SharpEngine.Core.ObjLoader.Tests.Loaders
 {
     [TestFixture]
     public class ObjLoaderTests
@@ -25,7 +27,7 @@ namespace ObjLoader.Test.Loaders
             }
         }
 
-        private ObjLoader.Loaders.ObjLoader.ObjLoader _loader;
+        private CoreObjLoader _loader;
 
         private Mesh _loadResult;
         private DataStore _textureDataStore;
@@ -53,8 +55,8 @@ namespace ObjLoader.Test.Loaders
             _materialStreamProviderSpy = new MaterialStreamProviderSpy();
             _materialStreamProviderSpy.StreamToReturn = CreateMemoryStreamFromString(MaterialLibraryString);
 
-            _materialLibraryLoader = new MaterialLibraryLoader("", _textureDataStore);
-            _materialLibraryLoaderFacade = new MaterialLibraryLoaderFacade(_materialLibraryLoader);
+            _materialLibraryLoader = new MaterialLibraryLoader(_textureDataStore);
+            _materialLibraryLoaderFacade = new MaterialLibraryLoaderFacade(_materialLibraryLoader, "");
             // _materialLibraryParser = new MaterialLibraryParser(_materialLibraryLoaderFacade);
             _useMaterialParser = new UseMaterialParser(_textureDataStore);
 
@@ -84,7 +86,7 @@ namespace ObjLoader.Test.Loaders
         public void Loads_object_correctly_when_material_is_not_found()
         {
             _materialStreamProviderSpy.StreamToReturn = null;
-            var materialLibraryLoaderFacade = new MaterialLibraryLoaderFacade(_materialLibraryLoader);
+            var materialLibraryLoaderFacade = new MaterialLibraryLoaderFacade(_materialLibraryLoader, "");
             // var materialLibraryParser = new MaterialLibraryParser(materialLibraryLoaderFacade);
 
             // _loader = new Loader.Loaders.ObjLoader(_textureDataStore, _faceParser, _groupParser, _normalParser, _textureParser, _vertexParser, materialLibraryParser, _useMaterialParser);

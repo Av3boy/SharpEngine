@@ -1,10 +1,10 @@
-using ObjLoader.Loader.Common;
-using ObjLoader.TypeParsers;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
-using System;
-using Tutorial;
+using SharpEngine.Core.ObjLoader.TypeParsers;
+using SharpEngine.Shared.Extensions;
 
-namespace ObjLoader.Loader.TypeParsers
+using System;
+
+namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
 {
     public class VertexParser : TypeParserBase, ITypeParser
     {

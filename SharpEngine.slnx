@@ -32,8 +32,8 @@
   </Folder>
 
   <Folder Name="/Tests/">
-    <File Path="Test.Directory.Build.props" />
-    <Project Path="Tests/ObjLoader.Test/ObjLoader.Tests.csproj">
+    <File Path="Tests/Directory.Build.props" />
+    <Project Path="Tests/ObjLoader.Test/SharpEngine.Core.ObjLoader.Tests.csproj">
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
     <Project Path="Tests/SharpEngine.Core.Tests/SharpEngine.Core.Tests.csproj">

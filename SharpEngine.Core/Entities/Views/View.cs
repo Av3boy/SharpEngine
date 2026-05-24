@@ -1,9 +1,8 @@
-﻿using SharpEngine.Core.Components.Properties;
-using SharpEngine.Core.Entities.Views.Settings;
+﻿using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
+
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 
 namespace SharpEngine.Core.Entities.Views;

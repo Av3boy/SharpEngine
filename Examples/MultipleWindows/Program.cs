@@ -33,12 +33,11 @@ public static partial class Program
     /// <param name="_">Arguments discarded.</param>
     public static async Task Main(string[] _)
     {
-        SharpEngine.Core.Handlers.WindowHandler windowHandler = new();
+        Core.Handlers.WindowHandler windowHandler = new();
         windowHandler.Start();
 
         Console.WriteLine("end");
         Console.ReadLine();
-
 
         // StartWindowQueueTask();
         // 

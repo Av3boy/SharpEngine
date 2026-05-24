@@ -1,8 +1,7 @@
-﻿using ObjLoader.Loader.Loaders;
-using ObjLoader.Loaders.MaterialLoader;
-using ObjLoader.TypeParsers;
+﻿using SharpEngine.Core.ObjLoader.Loaders.MaterialLoader;
+using SharpEngine.Core.ObjLoader.TypeParsers;
 
-namespace ObjLoader.Loader.TypeParsers
+namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
 {
     public class MaterialLibraryParser : TypeParserBase, ITypeParser
     {
