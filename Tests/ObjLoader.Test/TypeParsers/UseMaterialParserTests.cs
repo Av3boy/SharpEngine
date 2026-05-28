@@ -1,19 +1,19 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
 
 namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
 {
     [TestFixture]
     public class UseMaterialParserTests
     {
-        private ElementGroupSpy _elementGroupSpy;
-        private Loader.TypeParsers.UseMaterialParser _parser;
+        private readonly ElementGroupSpy _elementGroupSpy;
+        private readonly UseMaterialParser _parser;
 
-        [SetUp]
-        public void SetUp()
+        public UseMaterialParserTests()
         {
             _elementGroupSpy = new ElementGroupSpy();
-            // _parser = new UseMaterialParser(_elementGroupSpy);
+            _parser = new UseMaterialParser(_elementGroupSpy);
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             _elementGroupSpy.MaterialName.Should().BeEquivalentTo("materialName");
         }
 
-        private class ElementGroupSpy // : IElementGroup
+        private class ElementGroupSpy : IMaterialDataStore
         {
             public string MaterialName { get; private set; }
 

@@ -3,7 +3,7 @@ namespace SharpEngine.Core.Components.ObjLoader.DataStore
     /// <summary>
     ///     Defines operations for managing groups of faces while parsing OBJ files.
     /// </summary>
-    public interface IGroupDataStore
+    public interface IGroupDataStore : IDataStore
     {
         /// <summary>
         ///     Creates and activates a new face group with the provided name.

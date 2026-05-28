@@ -2,6 +2,7 @@
 using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
 using SharpEngine.Shared.Extensions;
+
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,7 +16,7 @@ namespace SharpEngine.Core.ObjLoader
     ///     Stores parsed OBJ file data such as vertices, normals, texture coordinates, materials and groups.
     ///     This type is used by the OBJ loader type parsers to collect geometry and material information.
     /// </summary>
-    public class DataStore : IGroupDataStore, IFaceGroup
+    public class DataStore : IGroupDataStore, IFaceGroup, ITextureDataStore, INormalDataStore, IVertexDataStore, IMaterialDataStore
     {
         private Group _currentGroup = null!;
 
@@ -46,7 +47,8 @@ namespace SharpEngine.Core.ObjLoader
         ///     Adds a parsed face to the active group.
         /// </summary>
         /// <param name="face">The parsed face to add.</param>
-        public void AddFace(Face face) => _currentGroup.AddFace(face);
+        public void AddFace(Face face)
+            => _currentGroup.AddFace(face);
 
         /// <summary>
         ///     Creates and activates a new group with the given name.
@@ -65,5 +67,17 @@ namespace SharpEngine.Core.ObjLoader
             var material = Materials.SingleOrDefault(x => x.Name.EqualsOrdinalIgnoreCase(materialName));
             _currentGroup.Material = material;
         }
+
+        /// <inheritdoc />
+        public void AddTexture(TextureCoordinate texture)
+            => Textures.Add(texture);
+        
+        /// <inheritdoc />
+        public void AddNormal(Normal normal)
+            => Normals.Add(normal);
+        
+        /// <inheritdoc />
+        public void AddVertex(Vertex vertex)
+            => Vertices.Add(vertex);
     }
 }

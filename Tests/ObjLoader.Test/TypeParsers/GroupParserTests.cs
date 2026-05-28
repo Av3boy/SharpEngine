@@ -9,15 +9,13 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
     [TestFixture]
     public class GroupParserTests
     {
-        private GroupDataStoreMock _groupDataStoreMock;
-        private GroupParser _groupParser;
+        private readonly GroupDataStoreMock _groupDataStoreMock;
+        private readonly GroupParser _groupParser;
 
-        [SetUp]
-        public void SetUp()
+        public GroupParserTests()
         {
             _groupDataStoreMock = new GroupDataStoreMock();
-
-            // _groupParser = new GroupParser(_groupDataStoreMock);
+            _groupParser = new GroupParser(_groupDataStoreMock);
         }
 
         [Test]

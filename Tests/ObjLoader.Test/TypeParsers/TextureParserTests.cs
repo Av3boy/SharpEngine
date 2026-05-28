@@ -10,15 +10,14 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
     [TestFixture]
     public class TextureParserTests
     {
-        private TextureDataStoreMock _textureDataStoreMock;
-        private TextureParser _textureParser;
+        private readonly TextureDataStoreMock _textureDataStoreMock;
+        private readonly TextureParser _textureParser;
 
-        [SetUp]
-        public void SetUp()
+        public TextureParserTests()
         {
             _textureDataStoreMock = new TextureDataStoreMock();
 
-            // _textureParser = new TextureParser(_textureDataStoreMock);
+            _textureParser = new TextureParser(_textureDataStoreMock);
         }
 
         [Test]

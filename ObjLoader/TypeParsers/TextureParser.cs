@@ -1,4 +1,5 @@
-﻿using SharpEngine.Core.Components.Properties.Meshes.MeshData;
+﻿using SharpEngine.Core.Components.ObjLoader.DataStore;
+using SharpEngine.Core.Components.Properties.Meshes.MeshData;
 using SharpEngine.Core.ObjLoader.TypeParsers;
 using SharpEngine.Shared.Extensions;
 
@@ -9,13 +10,13 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
     /// </summary>
     public class TextureParser : TypeParserBase, ITypeParser
     {
-        private readonly DataStore _dataStore;
+        private readonly ITextureDataStore _dataStore;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TextureParser"/>.
         /// </summary>
         /// <param name="dataStore">The data store to which the parsed texture coordinates will be added.</param>
-        public TextureParser(DataStore dataStore)
+        public TextureParser(ITextureDataStore dataStore)
         {
             _dataStore = dataStore;
         }
@@ -32,7 +33,7 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
             float y = parts[1].ParseInvariantFloat();
 
             var texture = new TextureCoordinate(x, y);
-            _dataStore.Textures.Add(texture);
+            _dataStore.AddTexture(texture);
         }
     }
 }

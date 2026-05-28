@@ -6,18 +6,20 @@ using FluentAssertions;
 using SharpEngine.Core.Components.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.ObjLoader.Loaders.MaterialLoader;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SharpEngine.Core.ObjLoader.Tests.Loaders
 {
     [TestFixture]
     public class MaterialLibraryLoaderTests
     {
-        private MaterialLibrarySpy _materialLibrarySpy;
+        private readonly MaterialLibrarySpy _materialLibrarySpy;
+        private readonly MaterialLibraryLoader _materialLibraryLoader;
+
         private Material _firstMaterial;
         private Material _secondMaterial;
         private const float Epsilon = 0.000001f;
         
-        private MaterialLibraryLoader _materialLibraryLoader;
 
         public MaterialLibraryLoaderTests()
         {
@@ -98,6 +100,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.Loaders
             _firstMaterial.StencilDecalMap.Should().BeEquivalentTo("lenna_stencil.tga");
         }
 
+        [MemberNotNull(nameof(_firstMaterial), nameof(_secondMaterial))]
         private void LoadMaterial()
         {
             _materialLibraryLoader.ParseFile(MaterialLibrary);

@@ -10,15 +10,13 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
     [TestFixture]
     public class VertexParserTests
     {
-        private VertexDataStoreMock _vertexDataStoreMock;
-        private VertexParser _vertexParser;
+        private readonly VertexDataStoreMock _vertexDataStoreMock;
+        private readonly VertexParser _vertexParser;
 
-        [SetUp]
-        public void SetUp()
+        public VertexParserTests()
         {
             _vertexDataStoreMock = new VertexDataStoreMock();
-
-            // _vertexParser = new VertexParser(_vertexDataStoreMock);
+            _vertexParser = new VertexParser(_vertexDataStoreMock);
         }
 
         [Test]
@@ -65,6 +63,5 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
                 ParsedVertex = vertex;
             }
         }
-        
     }
 }

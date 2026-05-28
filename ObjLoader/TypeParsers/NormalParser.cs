@@ -1,3 +1,4 @@
+using SharpEngine.Core.Components.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
 using SharpEngine.Core.ObjLoader.TypeParsers;
 using SharpEngine.Shared.Extensions;
@@ -9,13 +10,13 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
     /// </summary>
     public class NormalParser : TypeParserBase, ITypeParser
     {
-        private readonly DataStore _dataStore;
+        private readonly INormalDataStore _dataStore;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="NormalParser"/>.
         /// </summary>
         /// <param name="dataStore">The data store to which the parsed normals will be added.</param>
-        public NormalParser(DataStore dataStore)
+        public NormalParser(INormalDataStore dataStore)
         {
             _dataStore = dataStore;
         }
@@ -33,7 +34,7 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
             float z = parts[2].ParseInvariantFloat();
 
             var normal = new Normal(x, y, z);
-            _dataStore.Normals.Add(normal);
+            _dataStore.AddNormal(normal);
         }
     }
 }

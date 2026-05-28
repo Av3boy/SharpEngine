@@ -8,14 +8,13 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
     [TestFixture]
     public class MaterialLibraryParserTests
     {
-        private MaterialLibraryLoaderFacadeSpy _materialLibraryLoaderFacadeSpy;
-        private MaterialLibraryParser _parser;
+        private readonly MaterialLibraryLoaderFacadeSpy _materialLibraryLoaderFacadeSpy;
+        private readonly MaterialLibraryParser _parser;
 
-        [SetUp]
-        public void SetUp()
+        public MaterialLibraryParserTests()
         {
             _materialLibraryLoaderFacadeSpy = new MaterialLibraryLoaderFacadeSpy();
-            // _parser = new MaterialLibraryParser(_materialLibraryLoaderFacadeSpy);
+            _parser = new MaterialLibraryParser(_materialLibraryLoaderFacadeSpy);
         }
 
         [Test]

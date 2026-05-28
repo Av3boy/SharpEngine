@@ -1,4 +1,5 @@
-﻿using SharpEngine.Core.ObjLoader.TypeParsers;
+﻿using SharpEngine.Core.Components.ObjLoader.DataStore;
+using SharpEngine.Core.ObjLoader.TypeParsers;
 
 namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
 {
@@ -7,13 +8,13 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
     /// </summary>
     public class UseMaterialParser : TypeParserBase, ITypeParser
     {
-        private readonly DataStore _dataStore;
+        private readonly IMaterialDataStore _dataStore;
 
         /// <summary>
         ///     Initializes a new instance of <see cref="UseMaterialParser"/> with the specified data store.
         /// </summary>
         /// <param name="dataStore">The data store to use.</param>
-        public UseMaterialParser(DataStore dataStore)
+        public UseMaterialParser(IMaterialDataStore dataStore)
         {
             _dataStore = dataStore;
         }

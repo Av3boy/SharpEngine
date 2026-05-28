@@ -1,3 +1,4 @@
+using SharpEngine.Core.Components.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
 using SharpEngine.Core.ObjLoader.TypeParsers;
 using SharpEngine.Shared.Extensions;
@@ -11,13 +12,13 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
     /// </summary>
     public class VertexParser : TypeParserBase, ITypeParser
     {
-        private readonly DataStore _dataStore;
+        private readonly IVertexDataStore _dataStore;
 
         /// <summary>
         ///     Initializes a new instance of <see cref="VertexParser"/> with the specified data store to populate.
         /// </summary>
         /// <param name="dataStore">The data store to populate.</param>
-        public VertexParser(DataStore dataStore)
+        public VertexParser(IVertexDataStore dataStore)
         {
             _dataStore = dataStore;
         }
@@ -38,7 +39,8 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
             {
                 Position = new System.Numerics.Vector3(x, y, z),
             };
-            _dataStore.Vertices.Add(vertex);
+
+            _dataStore.AddVertex(vertex);
         }
     }
 }

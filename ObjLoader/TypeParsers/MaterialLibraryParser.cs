@@ -8,16 +8,15 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
     /// </summary>
     public class MaterialLibraryParser : TypeParserBase, ITypeParser
     {
-        private readonly MaterialLibraryLoaderFacade _libraryLoaderFacade;
+        private readonly IMaterialLibraryLoaderFacade _libraryLoaderFacade;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MaterialLibraryParser"/>.
         /// </summary>
-        /// <param name="loader">The material library loader.</param>
-        /// <param name="path">The path to the material library file.</param>
-        public MaterialLibraryParser(MaterialLibraryLoader loader, string path)
+        /// <param name="facade">The material library loader facade.</param>
+        public MaterialLibraryParser(IMaterialLibraryLoaderFacade facade) 
         {
-            _libraryLoaderFacade = new MaterialLibraryLoaderFacade(loader, path);
+            _libraryLoaderFacade = facade;
         }
 
         /// <inheritdoc />

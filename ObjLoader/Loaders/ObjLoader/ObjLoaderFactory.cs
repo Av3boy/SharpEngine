@@ -57,7 +57,9 @@ namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
             var vertexParser = new VertexParser(dataStore);
 
             var materialLibraryLoader = new MaterialLibraryLoader(dataStore);
-            var materialLibraryParser = new MaterialLibraryParser(materialLibraryLoader, path);
+
+            var materialLoader = new MaterialLibraryLoaderFacade(materialLibraryLoader, path);
+            var materialLibraryParser = new MaterialLibraryParser(materialLoader);
             var useMaterialParser = new UseMaterialParser(dataStore);
 
             var loader = new ObjLoader(path, dataStore)

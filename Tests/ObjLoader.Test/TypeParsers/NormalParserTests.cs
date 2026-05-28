@@ -3,21 +3,20 @@ using NUnit.Framework;
 
 using SharpEngine.Core.Components.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
+using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
 
 namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
 {
     [TestFixture]
     public class NormalParserTests
     {
-        private Loader.TypeParsers.NormalParser _normalParser;
-        private NormalDataStoreMock _normalDataStoreMock;
+        private readonly NormalParser _normalParser;
+        private readonly NormalDataStoreMock _normalDataStoreMock;
 
-        [SetUp]
-        public void SetUp()
+        public NormalParserTests()
         {
             _normalDataStoreMock = new NormalDataStoreMock();
-
-            // _normalParser = new NormalParser(_normalDataStoreMock);
+            _normalParser = new NormalParser(_normalDataStoreMock);
         }
 
         [Test]

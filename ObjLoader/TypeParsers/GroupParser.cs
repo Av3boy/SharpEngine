@@ -1,4 +1,5 @@
-﻿using SharpEngine.Core.ObjLoader.TypeParsers;
+﻿using SharpEngine.Core.Components.ObjLoader.DataStore;
+using SharpEngine.Core.ObjLoader.TypeParsers;
 
 namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
 {
@@ -7,13 +8,13 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
     /// </summary>
     public class GroupParser : TypeParserBase, ITypeParser
     {
-        private readonly DataStore _dataStore;
+        private readonly IGroupDataStore _dataStore;
 
         /// <summary>
         ///     Initializes a new instance of <see cref="GroupParser"/> with the specified data store to populate during parsing.
         /// </summary>
         /// <param name="dataStore">The data store to populate.</param>
-        public GroupParser(DataStore dataStore)
+        public GroupParser(IGroupDataStore dataStore)
         {
             _dataStore = dataStore;
         }

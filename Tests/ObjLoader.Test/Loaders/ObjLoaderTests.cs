@@ -57,10 +57,10 @@ namespace SharpEngine.Core.ObjLoader.Tests.Loaders
 
             _materialLibraryLoader = new MaterialLibraryLoader(_textureDataStore);
             _materialLibraryLoaderFacade = new MaterialLibraryLoaderFacade(_materialLibraryLoader, "");
-            // _materialLibraryParser = new MaterialLibraryParser(_materialLibraryLoaderFacade);
+            _materialLibraryParser = new MaterialLibraryParser(_materialLibraryLoaderFacade);
             _useMaterialParser = new UseMaterialParser(_textureDataStore);
 
-            // _loader = new Loader.Loaders.ObjLoader(_textureDataStore, _faceParser, _groupParser, _normalParser, _textureParser, _vertexParser, _materialLibraryParser, _useMaterialParser);
+            _loader = new CoreObjLoader("", _textureDataStore);
         }
 
         [Test]
@@ -79,17 +79,17 @@ namespace SharpEngine.Core.ObjLoader.Tests.Loaders
 
             var group = _loadResult.Groups.First();
             group.Faces.Should().HaveCount(12);
-            group.Material.Name.Should().BeEquivalentTo("cube_material");
+            group.Material!.Name.Should().BeEquivalentTo("cube_material");
         }
 
         [Test]
         public void Loads_object_correctly_when_material_is_not_found()
         {
-            _materialStreamProviderSpy.StreamToReturn = null;
+            _materialStreamProviderSpy.StreamToReturn = null!;
             var materialLibraryLoaderFacade = new MaterialLibraryLoaderFacade(_materialLibraryLoader, "");
-            // var materialLibraryParser = new MaterialLibraryParser(materialLibraryLoaderFacade);
+            var materialLibraryParser = new MaterialLibraryParser(_materialLibraryLoaderFacade);
 
-            // _loader = new Loader.Loaders.ObjLoader(_textureDataStore, _faceParser, _groupParser, _normalParser, _textureParser, _vertexParser, materialLibraryParser, _useMaterialParser);
+            _loader = new CoreObjLoader("", _textureDataStore);
 
             Load();
 
@@ -109,7 +109,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.Loaders
         {
             var objectStream = CreateMemoryStreamFromString(ObjectFileString);
 
-            // _loadResult = _loader.Load(objectStream);
+            _loadResult = _loader.Load(null!).First();
         }
 
         private Stream CreateMemoryStreamFromString(string str)
