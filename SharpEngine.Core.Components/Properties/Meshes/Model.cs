@@ -68,7 +68,7 @@ namespace SharpEngine.Core.Components.Properties.Meshes
         ///     data, or a newly constructed Mesh with expanded vertices, generated index buffer, and associated textures
         ///     and materials.
         /// </returns>
-        /// <exception cref="ArgumentNullException">Thrown if the input mesh is null.</exception>"
+        /// <exception cref="ArgumentNullException">Thrown if the input mesh is null.</exception>
         public Mesh ProcessMesh(Mesh mesh)
         {
             ArgumentNullException.ThrowIfNull(mesh);
@@ -169,17 +169,17 @@ namespace SharpEngine.Core.Components.Properties.Meshes
             var materialDefinitions = mesh.Groups
                 .Select(group => group.Material)
                 .Where(material => material is not null)
-                .DistinctBy(material => material.Name)
+                .DistinctBy(material => material!.Name)
                 .ToList();
 
             if (materialDefinitions.Count == 0)
                 materialDefinitions = [.. mesh.Materials
                     .Where(material => material is not null)
-                    .DistinctBy(material => material.Name)];
+                    .DistinctBy(material => material!.Name)];
 
             foreach (var material in materialDefinitions)
             {
-                var runtimeMaterial = CreateRuntimeMaterial(material);
+                var runtimeMaterial = CreateRuntimeMaterial(material!);
                 if (runtimeMaterial is not null)
                     yield return runtimeMaterial;
             }
@@ -196,7 +196,7 @@ namespace SharpEngine.Core.Components.Properties.Meshes
             if (!string.IsNullOrWhiteSpace(definition.SpecularTextureMap))
                 specularTexture = new EngineTexture(_gl, ResolveAssetPath(definition.SpecularTextureMap), EngineTextureType.Specular);
 
-            return new Material(diffuseTexture, specularTexture)
+            return new Material(definition.Name, diffuseTexture, specularTexture)
             {
                 Name = definition.Name,
                 AmbientColor = definition.AmbientColor,
@@ -221,13 +221,15 @@ namespace SharpEngine.Core.Components.Properties.Meshes
 
         private Material CloneMaterial(Material material)
         {
-            var diffuseTexture = new EngineTexture(_gl, material.DiffuseMap.Path, material.DiffuseMap.Type);
+            EngineTexture? diffuseTexture = null;
+            if (material.DiffuseMap != null)
+                diffuseTexture = new EngineTexture(_gl, material.DiffuseMap.Path, material.DiffuseMap.Type);
+            
             EngineTexture? specularTexture = null;
-
             if (material.UseSpecularMap)
-                specularTexture = new EngineTexture(_gl, material.SpecularMap.Path, material.SpecularMap.Type);
+                specularTexture = new EngineTexture(_gl, material!.SpecularMap!.Path, material.SpecularMap.Type);
 
-            return new Material(diffuseTexture, specularTexture)
+            return new Material(material.Name, diffuseTexture, specularTexture)
             {
                 Name = material.Name,
                 AmbientColor = material.AmbientColor,
@@ -253,10 +255,19 @@ namespace SharpEngine.Core.Components.Properties.Meshes
             => materials
                 .SelectMany(GetMaterialEngineTextures)
                 .Distinct();
-        private static EngineTexture[] GetMaterialEngineTextures(Material material) 
-            => material.UseSpecularMap ? 
-                [material.DiffuseMap, material.SpecularMap] : 
-                [material.DiffuseMap];
+        private static EngineTexture[] GetMaterialEngineTextures(Material material)
+        {
+            ArgumentNullException.ThrowIfNull(material);
+
+            var materials = new List<EngineTexture>();
+            if (material.UseSpecularMap)
+                materials.Add(material.SpecularMap!);
+            
+            if (material.DiffuseMap != null)
+                materials.Add(material.DiffuseMap);
+
+            return [.. materials];
+        }
 
         private string ResolveAssetPath(string assetPath)
         {

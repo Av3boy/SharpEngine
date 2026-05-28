@@ -1,7 +1,9 @@
-﻿using SharpEngine.Core.Handlers;
+﻿using Microsoft.Extensions.Logging;
+
+using SharpEngine.Core.Handlers;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Windowing;
-using SharpEngine.Shared;
+using SharpEngine.Telemetry;
 
 using System.Threading.Tasks;
 
@@ -19,9 +21,12 @@ public static class Engine
 
     private static bool _initialized = false;
 
+    private readonly static ILogger _logger;
+
     static Engine()
     {
         Initialize();
+        _logger = LoggingExtensions.CreateLogger(typeof(Engine));
     }
 
     /// <summary>
@@ -29,25 +34,23 @@ public static class Engine
     /// </summary>
     public static void Initialize()
     {
-        Debug.Log.Debug("Initializing engine...");
+        _logger.LogDebug("Initializing engine...");
 
         if (_initialized)
         {
-            Debug.Log.Warning("Reinitializing engine.");
+            _logger.LogWarning("Reinitializing engine.");
             Services.StopAllAsync().Wait();
         }
 
-        Services = new EngineServiceManager();
-
         _initialized = true;
-        Debug.Log.Debug("Engine successfully initialized.");
+        _logger.LogDebug("Engine successfully initialized.");
     }
 
     /// <summary>
-    ///     
+    ///     Creates and initializes a new window using the provided <see cref="Game"/> context and registers the window handler.
     /// </summary>
     /// <param name="game">The game context provides access to the current scene and camera settings for window initialization.</param>
-    /// <returns>Returns the newly created window instance.</returns>
+    /// <returns>Returns the newly created <see cref="Window"/> instance.</returns>
     public static Window Initialize(Game game)
     {
         var window = new Window(game);
@@ -59,20 +62,19 @@ public static class Engine
     }
 
     /// <summary>
-    ///     Stops and clears all running services.
+    ///     Stops all engine services and shuts down the engine asynchronously.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing an asynchronous operation.</returns>
+    /// <returns>A <see cref="Task"/> that completes when shutdown finishes.</returns>
     public static async Task ShutdownAsync()
     {
         if (Services == null)
             return;
 
-        Debug.Log.Debug("Shutting down engine...");
+        _logger.LogDebug("Shutting down engine...");
 
         await Services.StopAllAsync();
-        Services = new();
 
         _initialized = false;
-        Debug.Log.Debug("Engine successfully shut down.");
+        _logger.LogDebug("Engine successfully shut down.");
     }
 }

@@ -3,16 +3,16 @@ using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Components.Properties;
-using EngineTexture = SharpEngine.Core.Components.Properties.Textures.Texture;
+using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
 using Shader = SharpEngine.Core.Shaders.Shader;
+using EngineTexture = SharpEngine.Core.Components.Properties.Textures.Texture;
 
 using Silk.NET.OpenGL;
-using Tutorial;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
@@ -216,13 +216,14 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
 
     private static Material CloneMaterial(GL gl, Material template)
     {
-        var diffuse = new EngineTexture(gl, template.DiffuseMap.Path, template.DiffuseMap.Type);
+        ArgumentNullException.ThrowIfNull(template);
+        var diffuse = new EngineTexture(gl, template.DiffuseMap!.Path, template.DiffuseMap!.Type);
 
         EngineTexture? specular = null;
         if (template.UseSpecularMap)
-            specular = new EngineTexture(gl, template.SpecularMap.Path, template.SpecularMap.Type);
+            specular = new EngineTexture(gl, template.SpecularMap!.Path, template.SpecularMap!.Type);
 
-        var clone = new Material(diffuse, specular)
+        var clone = new Material(template.Name, diffuse, specular)
         {
             Name = template.Name,
             DiffuseTextureMap = template.DiffuseTextureMap,

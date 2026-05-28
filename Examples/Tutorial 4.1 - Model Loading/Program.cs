@@ -16,16 +16,20 @@ using System.Numerics;
 
 namespace Tutorial
 {
+    /// <summary>
+    ///     Represents the main entry point of the application, demonstrating model loading and rendering using Silk.NET and SharpEngine.Core.
+    /// </summary>
     public static class Program
     {
         #region fields
-        private static IWindow window;
-        private static GL Gl;
-        private static IKeyboard primaryKeyboard;
 
-        private static Texture Texture;
-        private static Shader Shader;
-        private static List<Model> Models = [];
+        private static IWindow? window;
+        private static GL? Gl;
+        private static IKeyboard? primaryKeyboard;
+
+        private static Texture? Texture;
+        private static Shader? Shader;
+        private static readonly List<Model> _models = [];
 
         //Setup the camera's location, directions, and movement speed
         private static Vector3 CameraPosition = new(0.0f, 0.0f, 3.0f);
@@ -38,6 +42,7 @@ namespace Tutorial
 
         //Used to track change in mouse movement to allow for moving of the Camera
         private static Vector2 LastMousePosition;
+
         #endregion
 
         private static void Main(string[] _)
@@ -60,11 +65,13 @@ namespace Tutorial
 
         private static void OnLoad()
         {
+            if (window == null)
+                throw new NullReferenceException("Window is not initialized.");
+
             IInputContext input = window.CreateInput();
             primaryKeyboard = input.Keyboards[0];
             
-            if (primaryKeyboard != null)
-                primaryKeyboard.KeyDown += KeyDown;
+            primaryKeyboard?.KeyDown += KeyDown;
             
             for (int i = 0; i < input.Mice.Count; i++)
             {
@@ -80,12 +87,15 @@ namespace Tutorial
 
             var model = ObjLoaderFactory.Load(Gl, "Untitled2.obj");
 
-            Models.Add(model);
-            Models.Add(model);
+            _models.Add(model);
+            _models.Add(model);
         }
 
         private static void OnUpdate(double deltaTime)
         {
+            if (primaryKeyboard == null)
+                throw new NullReferenceException("Primary keyboard is not initialized.");
+
             var moveSpeed = 2.5f * (float) deltaTime;
 
             //Move forwards
@@ -107,6 +117,12 @@ namespace Tutorial
 
         private static void OnRender(double deltaTime)
         {
+            if (Gl == null)
+                throw new NullReferenceException("OpenGL context is not initialized.");
+
+            if (window == null)
+                throw new NullReferenceException("Window is not initialized.");
+
             Gl.Enable(EnableCap.DepthTest);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -122,17 +138,26 @@ namespace Tutorial
             //Note that the aspect ratio calculation must be performed as a float, otherwise integer division will be performed (truncating the result).
             var projection = Matrix4x4.CreatePerspectiveFieldOfView(SharpEngine.Core.Math.DegreesToRadians(CameraZoom), (float)size.X / size.Y, 0.1f, 100.0f);
 
-            for (int i = 0; i < Models.Count; i++)
+            for (int i = 0; i < _models.Count; i++)
             {
                 if (i >= 1)
                     modelMatrix = Matrix4x4.CreateTranslation(0, -30.0f, 0.0f) * modelMatrix;
 
-                RenderModel(Models[i], modelMatrix, view, projection);
+                RenderModel(_models[i], modelMatrix, view, projection);
             }
         }
 
         private static void RenderModel(Model model, Matrix4x4 modelMatrix, Matrix4x4 view, Matrix4x4 projection)
         {
+            if (Texture == null)
+                throw new NullReferenceException("Texture is not initialized.");
+
+            if (Shader == null)
+                throw new NullReferenceException("Shader is not initialized.");
+
+            if (Gl == null)
+                throw new NullReferenceException("OpenGL context is not initialized.");
+
             foreach (var mesh in model.Meshes)
             {
                 mesh.Bind();
@@ -149,7 +174,7 @@ namespace Tutorial
             }
         }
 
-        private static void OnFramebufferResize(Vector2D<int> newSize) => Gl.Viewport(newSize);
+        private static void OnFramebufferResize(Vector2D<int> newSize) => Gl!.Viewport(newSize);
 
         private static void OnMouseMove(IMouse mouse, Vector2 position)
         {
@@ -184,18 +209,18 @@ namespace Tutorial
 
         private static void OnClose()
         {
-            foreach (var model in Models)
+            foreach (var model in _models)
                 model.Dispose();
 
-            Shader.Dispose();
-            Texture.Dispose();
+            Shader?.Dispose();
+            Texture?.Dispose();
         }
 
         private static void KeyDown(IKeyboard keyboard, Key key, int arg3)
         {
             if (key == Key.Escape)
             {
-                window.Close();
+                window!.Close();
             }
         }
     }

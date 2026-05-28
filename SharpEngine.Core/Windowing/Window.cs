@@ -5,7 +5,10 @@ using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Renderers;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
+using SharpEngine.Core.Interfaces;
 using Shader = SharpEngine.Core.Shaders.Shader;
+
+using SharpEngine.Shared.Dto;
 
 using Microsoft.Extensions.Logging;
 
@@ -20,11 +23,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Threading.Tasks;
-using Shader = SharpEngine.Core.Shaders.Shader;
-using Silk.NET.GLFW;
-using SharpEngine.Shared;
-using SharpEngine.Core.Interfaces;
 
 namespace SharpEngine.Core.Windowing;
 
@@ -46,11 +44,6 @@ public class Window : SilkWindow
     ///     Gets or sets the view for the window.
     /// </summary>
     public readonly CameraView Camera;
-
-    /// <summary>
-    ///     Gets the settings for the current window.
-    /// </summary>
-    public IViewSettings Settings;
 
     /// <summary>The event executed when mouse events are executed.</summary>
     public event Action<IMouse>? OnHandleMouse;
@@ -121,29 +114,35 @@ public class Window : SilkWindow
         // TODO:
         // Should the developer need to call for a window initialization?
         // Meaning should should we move this project loading part to a separate function?
-        
+
         Scene = scene;
         Settings = settings;
         Camera = camera;
         _registeredRenderers = renderers?.ToArray() ?? [];
         _logger = logger;
 
+        CheckEngineVersion();
+
+        // NOTE: Window initialization is intentionally not performed automatically
+        // here. Call InitializeWindow() explicitly when ready to create the underlying
+        // native window and load resources. See the TODO in the project for reasoning.
+    }
+
+    private void CheckEngineVersion()
+    {
         var project = new Project();
         var currentAssemlyVersion = typeof(Window).Assembly.GetVersion();
 
         if (currentAssemlyVersion != project.EngineVersion)
             _logger.LogWarning("The current engine version ({CurrentVersion}) does not match the project engine version ({ProjectVersion}). This may lead to unexpected behavior.", currentAssemlyVersion, project.EngineVersion);
-
-        InitializeWindow();
     }
 
+    /// <summary>
+    ///     Initializes a new instance of <see cref="Window"/>.
+    /// </summary>
+    /// <param name="game">The game instance.</param>
     public Window(Game game)
-    {
-        Scene = game.Scene;
-        Settings = game.Camera.Settings;
-        Camera = game.Camera;
-        InitializeWindow();
-    }
+        : this(game.Scene, game.Camera.Settings, LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Window>()) { }
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
@@ -163,13 +162,12 @@ public class Window : SilkWindow
         _registeredRenderers = renderers?.ToArray() ?? [];
         _logger = logger;
 
-        InitializeWindow();
+        // Initialization is deferred. Call Initialize() when you want the
+        // native window to be created and resources to be loaded.
     }
 
-    /// <summary>
-    ///     Initializes the ga
-    /// </summary>
-    public void InitializeWindow()
+    /// <inheritdoc />
+    public override void Initialize()
     {
         if (_initialized)
             return;

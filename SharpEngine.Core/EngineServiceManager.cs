@@ -1,4 +1,7 @@
-﻿using SharpEngine.Shared;
+﻿using Microsoft.Extensions.Logging;
+
+using SharpEngine.Core.Handlers;
+using SharpEngine.Telemetry;
 
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +15,16 @@ namespace SharpEngine.Core;
 public class EngineServiceManager
 {
     private readonly List<EngineHandler> handlers = [];
+    private readonly ILogger<EngineServiceManager> _logger;
+
+    /// <summary>
+    ///     Initializes a new instance of <see cref="EngineServiceManager"/>.
+    /// </summary>
+    /// <param name="logger">The logger to use for logging messages.</param>
+    public EngineServiceManager(ILogger<EngineServiceManager>? logger = null)
+    {
+        _logger = logger ?? LoggingExtensions.CreateLogger<EngineServiceManager>();
+    }
 
     /// <summary>
     ///     Registers a new engine handler and starts its operation.
@@ -19,18 +32,18 @@ public class EngineServiceManager
     /// <param name="handler">The handler to register.</param>
     public void RegisterHandler(EngineHandler handler)
     {
-        Debug.Log.Debug("Registering handler: '{Handler}'", handler.GetType().Name);
+        _logger.LogDebug("Registering handler: '{Handler}'.", handler.GetType().Name);
 
         handlers.Add(handler);
         handler.Start();
 
-        Debug.Log.Debug("Handler '{Handler}' registered successfully.", handler.GetType().Name);
+        _logger.LogDebug("Handler '{Handler}' registered successfully.", handler.GetType().Name);
     }
 
     /// <summary>
     ///     Stops all active handlers asynchronously by calling their StopAsync method.
     /// </summary>
-    /// <returns>This method does not return a value.</returns>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task StopAllAsync()
     {
         var stopTasks = handlers.Select(handler => handler.StopAsync());

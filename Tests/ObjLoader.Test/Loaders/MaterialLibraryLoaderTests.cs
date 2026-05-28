@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Linq;
 
 using NUnit.Framework;
@@ -21,11 +19,10 @@ namespace SharpEngine.Core.ObjLoader.Tests.Loaders
         
         private MaterialLibraryLoader _materialLibraryLoader;
 
-        [SetUp]
-        public void SetUp()
+        public MaterialLibraryLoaderTests()
         {
             _materialLibrarySpy = new MaterialLibrarySpy();
-            // _materialLibraryLoader = new MaterialLibraryLoader(_materialLibrarySpy);
+            _materialLibraryLoader = new MaterialLibraryLoader(null!);
         }
 
         [Test]

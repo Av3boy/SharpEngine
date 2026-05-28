@@ -1,6 +1,8 @@
-﻿using SharpEngine.Core.Entities;
-using SharpEngine.Shared;
+﻿using Microsoft.Extensions.Logging;
+using SharpEngine.Core.Entities;
+using System;
 using System.Collections.Generic;
+
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,22 +14,23 @@ internal class ParticleEmitter : EngineHandler
     public int ParticleLifeTimeMilliseconds { get; set; }
 
     private readonly List<Particle> _particles = new();
+    private readonly object _particlesLock = new();
 
-    private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly SemaphoreSlim _pauseSemaphore = new(1, 1);
     private bool _isPaused = false;
 
-    internal ParticleEmitter()
-    {
-        _cancellationTokenSource = new CancellationTokenSource();
-        Task.Run(() => StartEmitter(_cancellationTokenSource.Token));
-    }
+    /// <summary>
+    ///     Initializes a new instance of <see cref="ParticleEmitter"/>.
+    /// </summary>
+    /// <param name="logger">The logger to use for logging events.</param>
+    public ParticleEmitter(ILogger<ParticleEmitter> logger) : base(logger) { }
 
     /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken token)
     {
-        await StartDisposer(token);
-        await StartEmitter(token);
+        // Run disposer and emitter concurrently so particles are emitted and
+        // disposed in parallel while respecting pause behavior.
+        await Task.WhenAll(StartDisposer(token), StartEmitter(token));
     }
 
     private async Task StartEmitter(CancellationToken token)
@@ -47,22 +50,41 @@ internal class ParticleEmitter : EngineHandler
 
     private async Task StartDisposer(CancellationToken token)
     {
+        // Periodically remove expired particles. This loop honors the same
+        // pause semaphore so disposal pauses when emitter is paused.
         while (!token.IsCancellationRequested)
         {
             // Wait if emitting is paused
             await _pauseSemaphore.WaitAsync(token);
             _pauseSemaphore.Release();
+
+            // Remove expired particles
+            var nowTicks = DateTime.UtcNow.Ticks;
+            lock (_particlesLock)
+            {
+                _particles.RemoveAll(p => (nowTicks - p.StartTimeTicks) / TimeSpan.TicksPerMillisecond >= p.LifeTimeMilliseconds);
+            }
+
+            // Avoid a tight loop — check disposal every 50ms
+            await Task.Delay(50, token);
         }
     }
 
-    public void EmitParticle()
+    private void EmitParticle()
     {
         var particle = new Particle(ParticleLifeTimeMilliseconds);
-        _particles.Add(particle);
-
-        Debug.Log.Information("Emitting particle.");
+        lock (_particlesLock)
+        {
+            _particles.Add(particle);
+        }
     }
 
+    /// <summary>
+    ///     Pauses the emission of particles.
+    /// </summary>
+    /// <remarks>
+    ///     If already paused, this method does nothing.
+    /// </remarks>
     public void Pause()
     {
         if (_isPaused)
@@ -72,6 +94,12 @@ internal class ParticleEmitter : EngineHandler
         _pauseSemaphore.Wait();
     }
 
+    /// <summary>
+    ///     Resumes the emission of particles.
+    /// </summary>
+    /// <remarks>
+    ///     If not paused, this method does nothing.
+    /// </remarks>
     public void Resume()
     {
         if (!_isPaused)
@@ -79,14 +107,5 @@ internal class ParticleEmitter : EngineHandler
 
         _pauseSemaphore.Release();
         _isPaused = false;
-    }
-
-    public void Stop() => _cancellationTokenSource.Cancel();
-
-    /// <inheritdoc />
-    public override ValueTask DisposeAsync()
-    {
-        _cancellationTokenSource.Dispose();
-        return base.DisposeAsync();
     }
 }
