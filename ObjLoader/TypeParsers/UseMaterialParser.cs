@@ -2,10 +2,17 @@
 
 namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
 {
+    /// <summary>
+    ///     Parses material usage lines ("usemtl") and assigns materials to the current group.
+    /// </summary>
     public class UseMaterialParser : TypeParserBase, ITypeParser
     {
         private readonly DataStore _dataStore;
 
+        /// <summary>
+        ///     Initializes a new instance of <see cref="UseMaterialParser"/> with the specified data store.
+        /// </summary>
+        /// <param name="dataStore">The data store to use.</param>
         public UseMaterialParser(DataStore dataStore)
         {
             _dataStore = dataStore;

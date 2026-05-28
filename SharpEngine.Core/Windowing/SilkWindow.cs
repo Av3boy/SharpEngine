@@ -1,16 +1,22 @@
 using SharpEngine.Core.Entities.Views.Settings;
+
 using Silk.NET.Core;
 using Silk.NET.Core.Contexts;
 using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
+using MouseButton = Silk.NET.Input.MouseButton;
+
 using StbImageSharp;
+
 using System;
 using System.IO;
 using System.Numerics;
-using MouseButton = Silk.NET.Input.MouseButton;
 
 namespace SharpEngine.Core.Windowing;
+
+// TODO: The warnings produced by enabling this need to be implemented.
+#pragma warning disable CS0067 // Event is required by IWindow but not used by this implementation
 
 /// <summary>
 ///     Represents an abstraction for the <see cref="IWindow"/> interface.

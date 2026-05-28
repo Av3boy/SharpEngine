@@ -3,7 +3,7 @@
 namespace SharpEngine.Core.Components.Properties.Textures;
 
 /// <summary>
-///     Represents a texture program.
+///     Represents a texture resource managed in OpenGL with associated metadata.
 /// </summary>
 public partial class Texture : IDisposable, IEquatable<Texture>
 {
@@ -35,7 +35,9 @@ public partial class Texture : IDisposable, IEquatable<Texture>
         Initialize();
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Creates a deep clone of the texture using the same OpenGL context.
+    /// </summary>
     /// <remarks>Assumes that the OpenGL context is the same as the original texture.</remarks>
     public Texture DeepClone()
         => new(_gl, Path, Type);

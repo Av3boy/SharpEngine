@@ -1,86 +1,98 @@
-﻿using ObjLoader.Loader.Common;
-using ObjLoader.Loader.Loaders;
-using SharpEngine.Core.Components.Properties;
+﻿using SharpEngine.Core.Components.Properties;
+using SharpEngine.Core.ObjLoader.Loader.Loaders;
+using SharpEngine.Shared.Extensions;
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Numerics;
 
-namespace ObjLoader.Loaders.MaterialLoader
+namespace SharpEngine.Core.ObjLoader.Loaders.MaterialLoader
 {
     // https://paulbourke.net/dataformats/mtl/
 
+    /// <summary>
+    ///     Handles loading of material libraries (.mtl files) referenced by .obj files.
+    /// </summary>
+    /// <remarks>
+    ///     Parses material properties and texture maps, and stores them in the provided <see cref="DataStore"/>. 
+    ///     Also handles opening material library files based on the path of the .obj file.
+    /// </remarks>
     public class MaterialLibraryLoader : LoaderBase
     {
-        private string _objPath;
         private readonly DataStore _dataStore;
         private readonly Dictionary<string, Action<string>> _parseActionDictionary = [];
         private readonly List<string> _unrecognizedLines = [];
 
-        private Material CurrentMaterial { get; set; }
+        private Material _currentMaterial = new(string.Empty);
 
         // TODO: #2 See Model class. This support both materials and textures
 
-        public MaterialLibraryLoader(string objPath, DataStore dataStore)
+        /// <summary>
+        ///     Initializes a new instance of <see cref="MaterialLibraryLoader"/> and registers parse actions for .mtl directives.
+        /// </summary>
+        /// <remarks>
+        ///     Registers parse actions for common .mtl directives (for example: newmtl, Ka, Kd, Ks,
+        ///     Ns, d, Tr, illum, map_*, bump, disp, decal) to populate Material instances.
+        /// </remarks>
+        /// <param name="dataStore">DataStore used to register and store parsed materials and texture references.</param>
+        public MaterialLibraryLoader(DataStore dataStore)
         {         
-            _objPath = objPath;
             _dataStore = dataStore;
 
             AddParseAction("newmtl", PushMaterial);
-            AddParseAction("Ka", d => CurrentMaterial.AmbientColor = ParseVec3(d));
-            AddParseAction("Kd", d => CurrentMaterial.DiffuseColor = ParseVec3(d));
-            AddParseAction("Ks", d => CurrentMaterial.SpecularColor = ParseVec3(d));
-            AddParseAction("Ns", d => CurrentMaterial.SpecularCoefficient = d.ParseInvariantFloat());
+            AddParseAction("Ka", d => _currentMaterial.AmbientColor = ParseVec3(d));
+            AddParseAction("Kd", d => _currentMaterial.DiffuseColor = ParseVec3(d));
+            AddParseAction("Ks", d => _currentMaterial.SpecularColor = ParseVec3(d));
+            AddParseAction("Ns", d => _currentMaterial.SpecularCoefficient = d.ParseInvariantFloat());
 
-            AddParseAction("d", d => CurrentMaterial.Transparency = d.ParseInvariantFloat());
-            AddParseAction("Tr", d => CurrentMaterial.Transparency = d.ParseInvariantFloat());
+            AddParseAction("d", d => _currentMaterial.Transparency = d.ParseInvariantFloat());
+            AddParseAction("Tr", d => _currentMaterial.Transparency = d.ParseInvariantFloat());
 
-            AddParseAction("illum", i => CurrentMaterial.IlluminationModel = i.ParseInvariantInt());
+            AddParseAction("illum", i => _currentMaterial.IlluminationModel = i.ParseInvariantInt());
 
-            AddParseAction("map_Ka", m => CurrentMaterial.AmbientTextureMap = m);
-            AddParseAction("map_Kd", m => CurrentMaterial.DiffuseTextureMap = m);
+            AddParseAction("map_Ka", m => _currentMaterial.AmbientTextureMap = m);
+            AddParseAction("map_Kd", m => _currentMaterial.DiffuseTextureMap = m);
 
-            AddParseAction("map_Ks", m => CurrentMaterial.SpecularTextureMap = m);
-            AddParseAction("map_Ns", m => CurrentMaterial.SpecularHighlightTextureMap = m);
+            AddParseAction("map_Ks", m => _currentMaterial.SpecularTextureMap = m);
+            AddParseAction("map_Ns", m => _currentMaterial.SpecularHighlightTextureMap = m);
 
-            AddParseAction("map_d", m => CurrentMaterial.AlphaTextureMap = m);
+            AddParseAction("map_d", m => _currentMaterial.AlphaTextureMap = m);
 
-            AddParseAction("map_bump", m => CurrentMaterial.BumpMap = m);
-            AddParseAction("bump", m => CurrentMaterial.BumpMap = m);
+            AddParseAction("map_bump", m => _currentMaterial.BumpMap = m);
+            AddParseAction("bump", m => _currentMaterial.BumpMap = m);
 
-            AddParseAction("disp", m => CurrentMaterial.DisplacementMap = m);
+            AddParseAction("disp", m => _currentMaterial.DisplacementMap = m);
 
-            AddParseAction("decal", m => CurrentMaterial.StencilDecalMap = m);
+            AddParseAction("decal", m => _currentMaterial.StencilDecalMap = m);
         }
 
-        private void AddParseAction(string key, Action<string> action) => _parseActionDictionary.Add(key.ToLowerInvariant(), action);
+        private void AddParseAction(string key, Action<string> action) 
+            => _parseActionDictionary.Add(key.ToLowerInvariant(), action);
 
         /// <inheritdoc />
         protected override void ParseLine(string keyword, string data)
         {
-            var parseAction = GetKeywordAction(keyword);
+            var parseAction = GetKeywordAction(keyword, out bool found);
 
-            if (parseAction == null)
+            if (!found)
             {
                 _unrecognizedLines.Add(keyword + " " + data);
                 return;
             }
 
-            parseAction(data);
+            parseAction!(data);
         }
 
-        private Action<string> GetKeywordAction(string keyword)
+        private Action<string>? GetKeywordAction(string keyword, out bool found)
         {
-            _parseActionDictionary.TryGetValue(keyword.ToLowerInvariant(), out var action);
-
+            found = _parseActionDictionary.TryGetValue(keyword.ToLowerInvariant(), out var action);
             return action;
         }
 
         private void PushMaterial(string materialName)
         {
-            CurrentMaterial = new Material(materialName);
-            _dataStore.Materials.Add(CurrentMaterial);
+            _currentMaterial = new Material(materialName);
+            _dataStore.Materials.Add(_currentMaterial);
         }
 
         private static Vector3 ParseVec3(string data)
@@ -92,16 +104,6 @@ namespace ObjLoader.Loaders.MaterialLoader
             float z = parts[2].ParseInvariantFloat();
 
             return new Vector3(x, y, z);
-        }
-
-        public void Load(Stream lineStream) => StartLoad(lineStream);
-
-        /// <inheritdoc />
-        public Stream Open(string materialFilePath)
-        {
-            var dir = Path.GetDirectoryName(_objPath);
-            var path = Path.Combine(dir, materialFilePath);
-            return File.Open(path, FileMode.Open, FileAccess.Read);
         }
     }
 }

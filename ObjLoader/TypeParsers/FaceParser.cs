@@ -7,10 +7,17 @@ using System;
 
 namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
 {
+    /// <summary>
+    ///     Parses face definitions ("f") and populates the current group's faces.
+    /// </summary>
     public class FaceParser : TypeParserBase, ITypeParser
     {
         private readonly IFaceGroup _faceGroup;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="FaceParser"/>.
+        /// </summary>
+        /// <param name="faceGroup"></param>
         public FaceParser(IFaceGroup faceGroup)
         {
             _faceGroup = faceGroup;

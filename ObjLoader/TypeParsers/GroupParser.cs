@@ -2,10 +2,17 @@
 
 namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
 {
+    /// <summary>
+    ///     Parses group definition lines ("g") and pushes a new group into the data store.
+    /// </summary>
     public class GroupParser : TypeParserBase, ITypeParser
     {
         private readonly DataStore _dataStore;
 
+        /// <summary>
+        ///     Initializes a new instance of <see cref="GroupParser"/> with the specified data store to populate during parsing.
+        /// </summary>
+        /// <param name="dataStore">The data store to populate.</param>
         public GroupParser(DataStore dataStore)
         {
             _dataStore = dataStore;

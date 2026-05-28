@@ -4,9 +4,9 @@ using System.Runtime.InteropServices;
 namespace SharpEngine.Core.Components.Properties.Meshes
 {
     /// <summary>
-    ///     Represents a buffer object in OpenGL that manages memory allocation and data transfer for a specific data type.
+    ///     Represents an OpenGL buffer object that manages memory allocation and data transfer for a specific value type.
     /// </summary>
-    /// <typeparam name="TDataType">Specifies the type of data stored in the buffer, which must be an unmanaged type for proper memory handling.</typeparam>
+    /// <typeparam name="TDataType">The unmanaged element type stored in the buffer.</typeparam>
     public class BufferObject<TDataType> : IDisposable where TDataType : unmanaged
     {
         private readonly uint _handle;

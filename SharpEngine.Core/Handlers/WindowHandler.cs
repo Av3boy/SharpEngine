@@ -1,5 +1,8 @@
-﻿using SharpEngine.Core.Entities.Views.Settings;
-using SharpEngine.Shared;
+﻿using Microsoft.Extensions.Logging;
+
+using SharpEngine.Core.Entities.Views.Settings;
+using SharpEngine.Telemetry;
+using SharpEngine.Core.Windowing;
 
 using Silk.NET.Input;
 using Silk.NET.Maths;
@@ -12,40 +15,97 @@ using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Handlers;
 
+/// <summary>
+///     Manages application windows and their input contexts. 
+///     
+///     This handler maintains queue of window creation requests, starts a background task to process that queue,
+///     and runs the per-frame update/render loop for all active windows until cancellation is requested.
+/// </summary>
+/// <remarks>
+///     Windows are created and enqueued on a background task. 
+///     
+///     The handler will call DoEvents, DoUpdate and DoRender on each managed window every loop iteration.
+///     When a window is closing it will be disposed and removed from the managed list.
+/// </remarks>
 public class WindowHandler : EngineHandler
 {
-    private static readonly List<IWindow> _windows = [];
+    private static readonly List<SilkWindow> _windows = [];
     private static readonly List<IInputContext> _inputContexts = [];
     private static readonly ConcurrentQueue<WindowOptions> _windowQueue = [];
     private static readonly CancellationTokenSource _cancellationTokenSource = new();
 
-    private IWindow _mainWindow;
+    private readonly ILogger<WindowHandler> _logger;
 
-    public WindowHandler()
+    private SilkWindow? _mainWindow;
+
+    /// <summary>
+    ///     Gets the main window registered with this handler, if any.
+    /// </summary>
+    public SilkWindow? MainWindow => _mainWindow;
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="WindowHandler"/>
+    /// </summary>
+    /// <remarks>
+    ///     Starts the window queue as a background task.
+    /// </remarks>
+    /// <param name="logger">Optional logger instance; if null a default logger will be created.</param>
+    public WindowHandler(ILogger<WindowHandler>? logger = null) : base(logger ?? LoggingExtensions.CreateLogger<WindowHandler>())
     {
-        StartWindowQueueTask();
+        _logger = logger ?? LoggingExtensions.CreateLogger<WindowHandler>();
+
+        // Enqueue a default window creation request when no explicit window is provided.
+        StartWindowQueueTask(WindowOptions.Default);
     }
 
-    public WindowHandler(IWindow window)
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="WindowHandler"/>
+    /// </summary>
+    /// <remarks>
+    ///     Starts the window queue as a background task.
+    /// </remarks>
+    /// <param name="window">An existing window instance.</param>
+    /// <param name="logger">Optional logger instance; if null a default logger will be created.</param>
+    public WindowHandler(SilkWindow window, ILogger<WindowHandler>? logger = null) : base(logger ?? LoggingExtensions.CreateLogger<WindowHandler>())
     {
-        // TODO: Use IWindow instead of options.
-        StartWindowQueueTask();
+        _logger = logger ?? LoggingExtensions.CreateLogger<WindowHandler>();
+
+        // Register the provided window as the main window so it is managed immediately.
+        RegisterWindow(window, isMain: true);
+
+        // Start the queue task but do not enqueue an additional default window.
+        StartWindowQueueTask(window.Settings.WindowOptions);
     }
 
+    /// <summary>
+    ///     Starts a background task that enqueues an initial <see cref="WindowOptions"/> and runs until the shared cancellation token is requested.
+    /// </summary>
+    /// <param name="options">Optional window options to enqueue; if null <see cref="WindowOptions.Default"/> is used.</param>
     private void StartWindowQueueTask(WindowOptions? options = null)
     {
         Task.Run(async () =>
         {
-            _windowQueue.Enqueue(options ?? WindowOptions.Default);
+            // Only enqueue when an explicit options value is provided. The caller
+            // controls whether a default window should be queued.
+            if (options is not null)
+                _windowQueue.Enqueue(options.Value);
+
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
                 await Task.Delay(1000);
-                Debug.Log.Information("Running loop on background thread...");
+                _logger.LogDebug("Running loop on background thread...");
             }
         });
     }
 
     /// <inheritdoc />
+    /// <summary>
+    ///     Runs the main update loop for managed windows. 
+    /// </summary>
+    /// <remarks>
+    ///     This method will continue to run until the provided cancellation <paramref name="token"/> is cancelled.
+    /// </remarks>
+    /// <param name="token">A <see cref="CancellationToken"/> that, when cancelled, ends the loop.</param>
     protected override Task ExecuteAsync(CancellationToken token)
     {
         while (!token.IsCancellationRequested)
@@ -59,6 +119,16 @@ public class WindowHandler : EngineHandler
         return Task.FromCanceled(token);
     }
 
+    /// <summary>
+    ///     Advances a single window through its event, update and render phases.
+    /// </summary>
+    /// <remarks>
+    ///     If the window is closing it will be disposed and removed from the managed list.
+    /// </remarks>
+    /// <param name="i">
+    ///     Reference to the index of the window in the internal list; 
+    ///     this method may decrement the index if the window is removed.
+    /// </param>
     private static void UpdateWindow(ref int i)
     {
         var window = _windows[i];
@@ -82,6 +152,10 @@ public class WindowHandler : EngineHandler
         }
     }
 
+    /// <summary>
+    ///     Dequeues any pending window creation requests and enqueues the resulting windows for management. 
+    ///     No action is taken if cancellation has been requested.
+    /// </summary>
     private static void DequeueWindows()
     {
         if (_cancellationTokenSource.IsCancellationRequested)
@@ -91,13 +165,20 @@ public class WindowHandler : EngineHandler
             EnqueueWindow(options);
     }
 
-    private static Windowing.Window CreateWindow()
+    /// <summary>
+    ///     Creates and initializes a new <see cref="Windowing.Window"/> instance using the provided <see cref="WindowOptions"/>. 
+    ///     
+    ///     The created window's position will be offset based on the current number of managed windows to help avoid overlap.
+    /// </summary>
+    /// <param name="options">Options to use when creating the window.</param>
+    /// <returns>A newly initialized <see cref="Windowing.Window"/>.</returns>
+    private static Windowing.Window CreateWindow(WindowOptions options)
     {
-        var options = new DefaultViewSettings() with
+        var viewSettings = new DefaultViewSettings() with
         {
-            WindowOptions = WindowOptions.Default with
+            WindowOptions = options with
             {
-                Title = "Window" + _windows.Count,
+                Title = options.Title ?? "Window" + _windows.Count,
 
                 // This is to make sure the windows don't overlap
                 Position = new Vector2D<int>(
@@ -106,15 +187,19 @@ public class WindowHandler : EngineHandler
             }
         };
 
-        var window = new Windowing.Window(new(), options);
+        var window = new Windowing.Window(new(), viewSettings, LoggingExtensions.CreateLogger<Windowing.Window>());
         window.Initialize();
 
         return window;
     }
 
+    /// <summary>
+    ///     Creates a new window from the provided options, wires up mouse click handlers, and begins managing the window and its input context.
+    /// </summary>
+    /// <param name="options">Options used to create the new window.</param>
     private static void EnqueueWindow(WindowOptions options)
     {
-        var window = CreateWindow();
+        var window = CreateWindow(options);
         foreach (var mouse in window!.Input!.Mice)
             mouse.Click += Mouse_Click;
 
@@ -122,6 +207,36 @@ public class WindowHandler : EngineHandler
         _windows.Add(window);
     }
 
+    /// <summary>
+    ///     Registers an existing window instance with the handler and optionally marks it as the main window.
+    /// </summary>
+    /// <param name="window">The window instance to register.</param>
+    /// <param name="isMain">Whether this window should be considered the main window.</param>
+    private void RegisterWindow(SilkWindow window, bool isMain = false)
+    {
+        if (window is null)
+            return;
+
+        if (window.Input is not null)
+        {
+            foreach (var mouse in window.Input.Mice)
+                mouse.Click += Mouse_Click;
+
+            _inputContexts.Add(window.Input);
+        }
+
+        _windows.Add(window);
+
+        if (isMain)
+            _mainWindow = window;
+    }
+
+    /// <summary>
+    ///     Global mouse click handler that enqueues a request to create a new default window.
+    /// </summary>
+    /// <param name="args1">The mouse instance that raised the click event.</param>
+    /// <param name="arg2">The mouse button that was clicked.</param>
+    /// <param name="arg3">The pointer position when the click occurred.</param>
     private static void Mouse_Click(IMouse args1, Silk.NET.Input.MouseButton arg2, System.Numerics.Vector2 arg3)
     {
         _windowQueue.Enqueue(WindowOptions.Default);

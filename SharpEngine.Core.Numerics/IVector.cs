@@ -10,6 +10,4 @@ public interface IVector
 
     /// <inheritdoc cref="System.Numerics.Vector3.Y" />
     float Y { get; set; }
-
-    public const float Epsilon = 1e-5f;
 }

@@ -50,6 +50,9 @@ public class AppBuilder
     /// <summary>
     ///     Builds the App instance if not already built.
     /// </summary>
+    /// <remarks>
+    ///     This method lazily initializes and caches the App instance.
+    /// </remarks>
     /// <returns>The App instance.</returns>
     public App Build()
     {

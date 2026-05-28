@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Properties;
-using SharpEngine.Core.Entities.UI;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

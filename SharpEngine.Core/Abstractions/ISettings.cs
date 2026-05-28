@@ -1,6 +1,5 @@
 ﻿using SharpEngine.Core.Renderers;
 using Silk.NET.Input;
-using Silk.NET.Windowing;
 
 namespace SharpEngine.Core.Interfaces;
 

@@ -6,8 +6,22 @@ using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Shaders;
 
+/// <summary>
+///     Represents a shader used for rendering UI elements. 
+/// </summary>
+/// <remarks>
+///     This shader is responsible for rendering 2D UI components on the screen, such as buttons, panels, and other interface elements.
+///     It is designed to work with the specific vertex and fragment shaders defined for UI rendering in the game engine.
+/// </remarks>
 internal class UIShader : ShaderBase
 {
+    /// <summary>
+    ///     Ensures that the shader is initialized. 
+    /// </summary>
+    /// <remarks>
+    ///     This method should be called before using the shader to ensure that it is properly loaded and ready for use.
+    /// </remarks>
+    /// <param name="window">The window where the shader will be used.</param>
     public void EnsureInitialized(Window window)
     {
         if (Shader is not null)

@@ -1,13 +1,15 @@
-using ObjLoader.Loader.TypeParsers;
-using ObjLoader.Loaders.MaterialLoader;
 using Silk.NET.OpenGL;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
-using SharpEngine.Core.Entities.Properties.Meshes;
-using Tutorial;
 
-namespace ObjLoader.Loaders.ObjLoader
+using SharpEngine.Core.Entities.Properties.Meshes;
+using SharpEngine.Core.Components.Properties.Meshes;
+using SharpEngine.Core.ObjLoader.Loaders.MaterialLoader;
+using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
+
+namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
 {
     /// <summary>
     ///     Handles loading 3D models.
@@ -21,7 +23,7 @@ namespace ObjLoader.Loaders.ObjLoader
         ///     Loads a mesh based on the file extension of the provided path.
         /// </summary>
         /// <param name="gl">The OpenGL context where the model should be bound.</param>
-        /// <param name="meshFilePath">Specifies the file path of the mesh to be loaded, which determines the loading method based on its extension.</param>
+        /// <param name="path">Specifies the file path of the mesh to be loaded, which determines the loading method based on its extension.</param>
         /// <returns>The model loaded from the file.</returns>
         /// <exception cref="NotSupportedException">Thrown when the file extension of the provided path is not recognized as a supported mesh format.</exception>
         public static Model Load(GL gl, string path)
@@ -54,7 +56,7 @@ namespace ObjLoader.Loaders.ObjLoader
             var textureParser = new TextureParser(dataStore);
             var vertexParser = new VertexParser(dataStore);
 
-            var materialLibraryLoader = new MaterialLibraryLoader(path, dataStore);
+            var materialLibraryLoader = new MaterialLibraryLoader(dataStore);
             var materialLibraryParser = new MaterialLibraryParser(materialLibraryLoader, path);
             var useMaterialParser = new UseMaterialParser(dataStore);
 

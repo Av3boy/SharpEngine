@@ -13,9 +13,10 @@ public class Material : ICloneable, IEquatable<Material>
     /// <summary>
     ///     Initializes a new instance of <see cref="Material"/>.
     /// </summary>
+    /// <param name="materialName">The name assigned to the new material.</param>
     /// <param name="diffuseMap">The diffuse map texture of the material.</param>
     /// <param name="specularMap">The specular map texture of the material. Defaults to the diffuse map if not provided.</param>
-    public Material(Texture diffuseMap, Texture? specularMap = null)
+    public Material(string materialName, Texture? diffuseMap = null, Texture? specularMap = null) : this(materialName)
     {
         DiffuseMap = diffuseMap;
         SpecularMap = specularMap ?? diffuseMap;
@@ -37,19 +38,19 @@ public class Material : ICloneable, IEquatable<Material>
     public string Name { get; set; }
 
     /// <summary>Gets or sets the diffuse map texture.</summary>
-    public Texture DiffuseMap { get; set; }
+    public Texture? DiffuseMap { get; set; }
 
     /// <summary>Gets or sets the path to the diffuse texture map.</summary>
-    public string DiffuseTextureMap { get; set; }
+    public string? DiffuseTextureMap { get; set; }
 
     /// <summary>Gets or sets the specular map texture.</summary>
-    public Texture SpecularMap { get; set; }
+    public Texture? SpecularMap { get; set; }
 
     /// <summary>Gets or sets the path to the specular texture map.</summary>
-    public string SpecularTextureMap { get; set; }
+    public string? SpecularTextureMap { get; set; }
 
     /// <summary>Gets a value indicating whether the material uses a specular map.</summary>
-    public bool UseSpecularMap => SpecularMap.Handle != DiffuseMap.Handle;
+    public bool UseSpecularMap => SpecularMap is not null && SpecularMap?.Handle != DiffuseMap?.Handle;
 
     /// <summary>The texture unit for the diffuse map.</summary>
     public const int DIFFUSE_UNIT = 0;
@@ -82,22 +83,22 @@ public class Material : ICloneable, IEquatable<Material>
     public int IlluminationModel { get; set; }
 
     /// <summary>Gets or sets the path to the ambient texture map.</summary>
-    public string AmbientTextureMap { get; set; }
+    public string? AmbientTextureMap { get; set; }
 
     /// <summary>Gets or sets the path to the specular highlight texture map.</summary>
-    public string SpecularHighlightTextureMap { get; set; }
+    public string? SpecularHighlightTextureMap { get; set; }
 
     /// <summary>Gets or sets the path to the bump map.</summary>
-    public string BumpMap { get; set; }
+    public string? BumpMap { get; set; }
 
     /// <summary>Gets or sets the path to the displacement map.</summary>
-    public string DisplacementMap { get; set; }
+    public string? DisplacementMap { get; set; }
 
     /// <summary>Gets or sets the path to the stencil decal map.</summary>
-    public string StencilDecalMap { get; set; }
+    public string? StencilDecalMap { get; set; }
 
     /// <summary>Gets or sets the path to the alpha texture map.</summary>
-    public string AlphaTextureMap { get; set; }
+    public string? AlphaTextureMap { get; set; }
 
     /// <summary>
     ///     Sets the uniform values for the material in the specified shader.
@@ -107,10 +108,13 @@ public class Material : ICloneable, IEquatable<Material>
     {
         // TODO: Get all shader uniforms and set their values automatically
 
-        DiffuseMap.Use(TextureUnit.Texture0);
-        shader.SetInt("material.diffuse", DIFFUSE_UNIT);
+        if (DiffuseMap is not null)
+        {
+            DiffuseMap.Use(TextureUnit.Texture0);
+            shader.SetInt("material.diffuse", DIFFUSE_UNIT);
+        }
 
-        if (UseSpecularMap)
+        if (SpecularMap is not null)
         {
             SpecularMap.Use(TextureUnit.Texture1);
             shader.SetInt("material.specular", SPECULAR_UNIT);
@@ -145,4 +149,9 @@ public class Material : ICloneable, IEquatable<Material>
     /// <inheritdoc />
     public bool Equals(Material? other) => Equals(other);
 
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -4,10 +4,17 @@ using SharpEngine.Shared.Extensions;
 
 namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
 {
+    /// <summary>
+    ///     Represents a parser for normal vector definitions in an OBJ file, responsible for parsing lines that define vertex normals and storing them in the data store.
+    /// </summary>
     public class NormalParser : TypeParserBase, ITypeParser
     {
         private readonly DataStore _dataStore;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="NormalParser"/>.
+        /// </summary>
+        /// <param name="dataStore">The data store to which the parsed normals will be added.</param>
         public NormalParser(DataStore dataStore)
         {
             _dataStore = dataStore;

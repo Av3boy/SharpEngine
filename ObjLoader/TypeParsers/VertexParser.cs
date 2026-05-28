@@ -6,10 +6,17 @@ using System;
 
 namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
 {
+    /// <summary>
+    ///     Parses vertex position lines ("v x y z") and adds them to the data store.
+    /// </summary>
     public class VertexParser : TypeParserBase, ITypeParser
     {
         private readonly DataStore _dataStore;
 
+        /// <summary>
+        ///     Initializes a new instance of <see cref="VertexParser"/> with the specified data store to populate.
+        /// </summary>
+        /// <param name="dataStore">The data store to populate.</param>
         public VertexParser(DataStore dataStore)
         {
             _dataStore = dataStore;

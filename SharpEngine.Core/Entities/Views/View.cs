@@ -21,8 +21,13 @@ public class View
         Settings = settings;
     }
 
+    /// <summary>Gets the front vector of the camera.</summary>
     protected Vector3 _front = -Vector3.UnitZ;
+
+    /// <summary>Gets the up vector of the camera.</summary>
     protected Vector3 _up = Vector3.UnitY;
+
+    /// <summary>Gets the right vector of the camera.</summary>
     protected Vector3 _right = Vector3.UnitX;
 
     /// <summary>Gets the front vector of the camera.</summary>

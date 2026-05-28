@@ -1,7 +1,5 @@
 using SharpEngine.Core._Resources;
-using SharpEngine.Core.Entities.Properties.Meshes;
-using SharpEngine.Core.Extensions;
-using SharpEngine.Core.Windowing;
+
 using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Shaders;
@@ -13,6 +11,7 @@ internal class LightingShader : ShaderBase
     /// <summary>
     ///     Initializes a new instance of <see cref="LightingShader" />.
     /// </summary>
+    /// <param name="gl">The OpenGL context used to create and configure the shader program.</param>
     public LightingShader(GL gl)
     {
         _gl = gl;

@@ -10,7 +10,7 @@ using System.Threading;
 namespace SharpEngine.Core.DependencyInjection;
 
 /// <summary>
-///     Represents the entry point of the application , responsible for resolving required services and running the main loop or window.
+///     Represents the application entry point responsible for resolving required services and running the main loop or window.
 /// </summary>
 public class App
 {
@@ -52,6 +52,7 @@ public class App
                 logger.LogInformation("Required services resolved.");
                 logger.LogInformation("Starting window.");
 
+                factoryWindow.Initialize();
                 factoryWindow.Run();
                 return;
             }
@@ -63,7 +64,10 @@ public class App
                 logger.LogInformation("Starting window.");
 
                 using (window)
+                {
+                    window.Initialize();
                     window.Run();
+                }
 
                 return;
             }
@@ -78,8 +82,6 @@ public class App
             bool running = !cancellationToken.IsCancellationRequested;
             while (running)
             {
-
-                //system.Update();
                 logger.LogInformation("frame tick.");
 
                 Thread.Sleep(1000); // Simulate frame delay
@@ -92,7 +94,7 @@ public class App
     }
 
     /// <summary>
-    ///     Runs the application by resolving required services and starting either a window or a main processing loop.
+    ///     Runs the application without a <see cref="CancellationToken"/>.
     /// </summary>
     public void Run() => Run(CancellationToken.None);
 }

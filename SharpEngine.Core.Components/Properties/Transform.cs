@@ -12,6 +12,11 @@ public class Transform : ITransform<Vector3>
     ///     Initializes a new instance of <see cref="Transform" />.
     /// </summary>
     public Transform() { }
+
+    /// <summary>
+    ///     Initializes a new instance of <see cref="Transform" />.
+    /// </summary>
+    /// <param name="position">The initial position of the game object.</param>
     public Transform(Vector3 position) 
     {
         Position = position;

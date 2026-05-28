@@ -1,6 +1,6 @@
-using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Windowing;
+
 using System;
 using System.Threading.Tasks;
 

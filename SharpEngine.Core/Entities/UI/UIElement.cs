@@ -7,14 +7,13 @@ using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Textures;
 using SharpEngine.Core.Windowing;
 using SharpEngine.Core._Resources;
+using Vector2 = SharpEngine.Core.Numerics.Vector2;
+using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
 
 using Silk.NET.OpenGL;
-using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
-using Vector2 = SharpEngine.Core.Numerics.Vector2;
-using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
 
 namespace SharpEngine.Core.Entities.UI;
 

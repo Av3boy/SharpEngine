@@ -1,7 +1,6 @@
 using SharpEngine.Core._Resources;
 using SharpEngine.Core.Entities.Properties.Meshes;
-using SharpEngine.Core.Extensions;
-using SharpEngine.Core.Windowing;
+
 using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Shaders;
@@ -11,8 +10,9 @@ internal class LampShader : ShaderBase
     private readonly GL _gl;
 
     /// <summary>
-    ///     Initializes a new instance of <see cref="LampShader" />.
+    ///     Initializes a new instance of <see cref="LampShader" /> using the provided OpenGL context.
     /// </summary>
+    /// <param name="gl">The OpenGL context to use for shader and VAO creation.</param>
     public LampShader(GL gl)
     {
         _gl = gl;

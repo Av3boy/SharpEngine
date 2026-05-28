@@ -1,4 +1,5 @@
 ﻿using SharpEngine.Core.Renderers;
+
 using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;

@@ -3,7 +3,6 @@ using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Scenes;
 using Silk.NET.Input;
-using System.Security.Cryptography.X509Certificates;
 
 namespace SharpEngine.Core.Interfaces;
 

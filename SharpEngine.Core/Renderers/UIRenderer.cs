@@ -2,8 +2,8 @@ using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
-using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
+
 using Microsoft.Extensions.Logging;
 using Silk.NET.OpenGL;
 

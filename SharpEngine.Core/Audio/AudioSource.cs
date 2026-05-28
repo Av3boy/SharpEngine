@@ -3,7 +3,7 @@
 namespace SharpEngine.Core.Audio;
 
 /// <summary>
-///     Represents a source for audio
+///     Represents a source for audio that can be played, stopped and queried.
 /// </summary>
 public class AudioSource
 {
@@ -21,9 +21,9 @@ public class AudioSource
     }
 
     /// <summary>
-    ///     Gets the source identifier.
+    ///     Gets the numeric identifier for the OpenAL source.
     /// </summary>
-    /// <returns>The identifier to the source.</returns>
+    /// <returns>The identifier of the underlying OpenAL source.</returns>
     public uint Get() => _source;
 
     /// <summary>

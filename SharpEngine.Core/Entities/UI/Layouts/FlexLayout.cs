@@ -1,7 +1,6 @@
 ﻿using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
 using System;
-using System.Numerics;
 
 namespace SharpEngine.Core.Entities.UI.Layouts;
 

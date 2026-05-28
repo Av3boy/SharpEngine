@@ -3,14 +3,13 @@ using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
 using Silk.NET.OpenGL;
-
+using System.Diagnostics.CodeAnalysis;
 using Texture2 = SharpEngine.Core.Components.Properties.Textures.Texture;
 
 namespace SharpEngine.Core.Entities.Properties.Meshes;
 
 /// <summary>
-///     Represents a game object mesh, which is a collection of vertices, normals, texture coordinates, and indices
-///     used to define the shape and appearance of a 3D object.
+///     Represents a mesh composed of vertex data, indices, textures and materials which can be uploaded to GPU buffers.
 /// </summary>
 public class Mesh : IDisposable
 {
@@ -73,17 +72,17 @@ public class Mesh : IDisposable
     /// <summary>
     ///     Gets or sets the textures used by the mesh.
     /// </summary>
-    public IReadOnlyList<Texture2> Textures { get; set; }
+    public IReadOnlyList<Texture2> Textures { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the legacy textures used by the mesh.
     /// </summary>
-    public IReadOnlyList<Texture> Textures_Old { get; set; }
+    public IReadOnlyList<Texture> Textures_Old { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the Vertex Array Object (VAO) for the mesh.
     /// </summary>
-    public VertexArrayObject<float, uint> VAO { get; set; }
+    public VertexArrayObject<float, uint> VAO { get; private set; }
 
     /// <summary>
     ///     Gets or sets the Vertex Buffer Object (VBO) for the mesh.
@@ -145,6 +144,7 @@ public class Mesh : IDisposable
     /// <summary>
     ///     Allocates the required memory for the mesh and sets up the Vertex Array Object (VAO), Vertex Buffer Object (VBO), and Element Buffer Object (EBO).
     /// </summary>
+    [MemberNotNull(nameof(EBO), nameof(VBO), nameof(VAO))]
     public void SetupMesh()
     {
         EBO = new BufferObject<uint>(GL, Indices, BufferTargetARB.ElementArrayBuffer);

@@ -1,7 +1,5 @@
-﻿using SharpEngine.Core.Components.Properties;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Silk.NET.OpenGL;
-using System;
 
 namespace SharpEngine.Core.Shaders;
 

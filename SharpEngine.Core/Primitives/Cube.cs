@@ -5,6 +5,7 @@ using SharpEngine.Core.Components.Properties.Textures;
 using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Textures;
 using SharpEngine.Core.Windowing;
+
 using System.Collections.Generic;
 
 namespace SharpEngine.Core.Primitives;
@@ -29,11 +30,11 @@ public static class Cube
             Indices = [.. Indices],
             Textures = [defaultTexture],
             // Materials = [MaterialService.Instance.LoadMaterial(Default.DebugMaterial)],
-            Materials = [new(defaultTexture)]
+            Materials = [new("Debug", defaultTexture)]
         };
 
         Mesh = MeshService.Instance.LoadMesh(nameof(Cube), mesh);
-        Model = new(Window.SharedGL, string.Empty, new[] { Mesh });
+        Model = new(Window.SharedGL, string.Empty, [Mesh]);
 
         _loaded = true;
     }
@@ -41,7 +42,7 @@ public static class Cube
     private readonly static bool _loaded;
 
     /// <summary>The loaded model of the cube.</summary>
-    public static Model Model = null!;
+    public static Model Model { get; private set; } = null!;
 
     /// <summary>The cube mesh.</summary>
     public static readonly Mesh Mesh = null!;
@@ -209,7 +210,7 @@ public static class Cube
     ];
 
     /// <summary>
-    /// Creates a model with a mesh containing diffuse and optional specular texture maps.
+    ///     Creates a model with a mesh containing diffuse and optional specular texture maps.
     /// </summary>
     /// <param name="diffuseMapFile">The file path to the diffuse texture map.</param>
     /// <param name="specularMapFile">The file path to the specular texture map, or <see langword="null"/> to omit specular mapping.</param>
@@ -220,8 +221,8 @@ public static class Cube
         var specularTexture = string.IsNullOrWhiteSpace(specularMapFile) ? 
             null : TextureService.Instance.LoadTexture(specularMapFile, TextureType.Specular);
 
-        var material = new Material(diffuseTexture, specularTexture);
-        var textures = new List<Components.Properties.Textures.Texture> { diffuseTexture };
+        var material = new Material("Debug", diffuseTexture, specularTexture);
+        var textures = new List<Texture> { diffuseTexture };
 
         if (specularTexture is not null && specularTexture.Handle != diffuseTexture.Handle)
             textures.Add(specularTexture);

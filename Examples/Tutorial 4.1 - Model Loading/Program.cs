@@ -1,6 +1,7 @@
-using ObjLoader.Loaders.ObjLoader;
 using SharpEngine.Core._Resources;
 using SharpEngine.Core.Extensions;
+using SharpEngine.Core.Components.Properties.Meshes;
+using SharpEngine.Core.ObjLoader.Loaders.ObjLoader;
 using Shader = SharpEngine.Core.Shaders.Shader;
 using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
 
