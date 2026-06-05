@@ -1,0 +1,73 @@
+<Solution>
+
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="LauncherNonWindows" />
+    <BuildType Name="Release" />
+  </Configurations>
+  <Folder Name="/Docs/">
+    <File Path="ATAM.md" />
+    <File Path="README.md" />
+  </Folder>
+
+  <Folder Name="/Examples/">
+    <Project Path="Examples/MinecraftClone/Minecraft.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Debug" />
+    </Project>
+    <Project Path="Examples/Minimal/Minimal.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Debug" />
+    </Project>
+    <Project Path="Examples/MultipleWindows/MultipleWindows.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="Examples/Tutorial 4.1 - Model Loading/Tutorial 4.1 - Model Loading.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+  </Folder>
+
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".github/copilot-instructions.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="README.md" />
+  </Folder>
+
+  <Folder Name="/Tests/">
+    <File Path="Tests/Directory.Build.props" />
+    <Project Path="Tests/ObjLoader.Test/SharpEngine.Core.ObjLoader.Tests.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="Tests/SharpEngine.Core.Tests/SharpEngine.Core.Tests.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="Tests/SharpEngine.Editor.Tests/SharpEngine.Editor.Tests.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="Tests/SharpEngine.Shared.Tests/SharpEngine.Shared.Tests.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Tests/ArchitectureTests/" />
+  <Folder Name="/Tests/IntegrationTests/" />
+  <Folder Name="/Tests/UnitTests/" />
+  <Project Path="../SharpEngine-Shared/SharpEngine.Rest/SharpEngine.Rest.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
+  <Project Path="../SharpEngine-Shared/SharpEngine.Shared/SharpEngine.Shared.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
+  <Project Path="../SharpEngine-Shared/SharpEngine.Telemetry/SharpEngine.Telemetry.csproj" Id="bfb0783a-67b6-442a-bb39-b9d6267f1e1b">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
+  <Project Path="ObjLoader/SharpEngine.Core.ObjLoader.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
+  <Project Path="SharpEngine.Core.Components/SharpEngine.Core.Components.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
+  <Project Path="SharpEngine.Core.Numerics/SharpEngine.Core.Numerics.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
+  <Project Path="SharpEngine.Core/SharpEngine.Core.csproj" />
+  
+</Solution>
