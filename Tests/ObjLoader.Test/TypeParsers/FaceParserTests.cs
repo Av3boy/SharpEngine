@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 using SharpEngine.Core.Components.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
@@ -7,21 +7,18 @@ using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
 
 namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
 {
-    [TestFixture]
     public class FaceParserTests
     {
-        private FaceGroupSpy _faceGroupSpy;
-        private FaceParser _faceParser;
+        private readonly FaceGroupSpy _faceGroupSpy;
+        private readonly FaceParser _faceParser;
 
-        [SetUp]
-        public void SetUp()
+        public FaceParserTests()
         {
             _faceGroupSpy = new FaceGroupSpy();
-
             _faceParser = new FaceParser(_faceGroupSpy);
         }
 
-        [Test]
+        [Fact]
         public void CanParse_returns_true_on_face_line()
         {
             const string groupKeyword = "f";
@@ -30,7 +27,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             canParse.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void CanParse_returns_false_on_non_normal_line()
         {
             const string invalidKeyword = "vt";
@@ -39,7 +36,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             canParse.Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void Parses_normal_line_correctly_1()
         {
             const string faceLine = "1 2 3";
@@ -60,7 +57,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             parsedFace[2].NormalIndex.Should().Be(0);
         }
 
-        [Test]
+        [Fact]
         public void Parses_normal_line_correctly_2()
         {
             const string faceLine = "3/1 4/2 5/3";
@@ -83,7 +80,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             parsedFace[2].NormalIndex.Should().Be(0);
         }
 
-        [Test]
+        [Fact]
         public void Parses_normal_line_correctly_3()
         {
             const string faceLine = "6/4/1 3/5/3 7/6/5";
@@ -106,7 +103,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             parsedFace[2].NormalIndex.Should().Be(5);
         }
 
-        [Test]
+        [Fact]
         public void Parses_normal_line_correctly_4()
         {
             const string faceLine = "6//1 3//3 7//5";

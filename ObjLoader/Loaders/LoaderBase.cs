@@ -1,4 +1,5 @@
 using System.IO;
+using System.IO.Abstractions;
 
 namespace SharpEngine.Core.ObjLoader.Loader.Loaders
 {
@@ -7,6 +8,18 @@ namespace SharpEngine.Core.ObjLoader.Loader.Loaders
     /// </summary>
     public abstract class LoaderBase
     {
+        private readonly IFileStreamFactory _fileStreamFactory;
+        private readonly IFileManager _fileManager;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="LoaderBase"/>.
+        /// </summary>
+        protected LoaderBase(IFileStreamFactory fileStreamFactory, IFileManager fileManager)
+        {
+            _fileStreamFactory = fileStreamFactory;
+            _fileManager = fileManager;
+        }
+
         /// <summary>
         ///     Parses the file at the specified path and processes each line via <see cref="ParseLine(string, string)"/>.
         /// </summary>
@@ -16,8 +29,8 @@ namespace SharpEngine.Core.ObjLoader.Loader.Loaders
         /// <param name="path">The path of the file to open and parse.</param>
         public void ParseFile(string path)
         {
-            using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            using var lineStreamReader = new StreamReader(fileStream);
+            using var fileStream = _fileStreamFactory.FileSystem.FileStream.New(path, FileMode.Open, FileAccess.Read);
+            using var lineStreamReader = _fileManager.StreamReader(path);
             
             while (!lineStreamReader.EndOfStream)
             {

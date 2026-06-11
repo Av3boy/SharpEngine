@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 using SharpEngine.Core.Components.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
@@ -7,7 +7,6 @@ using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
 
 namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
 {
-    [TestFixture]
     public class VertexParserTests
     {
         private readonly VertexDataStoreMock _vertexDataStoreMock;
@@ -19,7 +18,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             _vertexParser = new VertexParser(_vertexDataStoreMock);
         }
 
-        [Test]
+        [Fact]
         public void CanParse_returns_false_on_non_vertex_line()
         {
             const string invalidVertex = "vt";
@@ -28,7 +27,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             canParse.Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void CanParse_returns_true_on_vertex_line()
         {
             const string vertexLine = "v";
@@ -37,7 +36,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             canParse.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void Parses_vertex_line_correctly()
         {
             const string vertexLine = "0.123 0.234 0.345";

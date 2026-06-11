@@ -34,7 +34,21 @@
 
   <Folder Name="/Tests/">
     <File Path="Tests/Directory.Build.props" />
+  </Folder>
+  <Folder Name="/Tests/ArchitectureTests/">
+    <Project Path="SharpEngine.Core.ArchitectureTests/SharpEngine.Core.ArchitectureTests.csproj" Id="e4f1185d-2a6e-40cf-8095-bfaaa6cab123">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Tests/IntegrationTests/" />
+  <Folder Name="/Tests/UnitTests/">
     <Project Path="Tests/ObjLoader.Test/SharpEngine.Core.ObjLoader.Tests.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="Tests/SharpEngine.Core.Components.Tests/SharpEngine.Core.Components.Tests.csproj" Id="98a6ad4c-b5dd-4408-8266-652e4f0e51d3">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="Tests/SharpEngine.Core.Numerics.Tests/SharpEngine.Core.Numerics.Tests.csproj" Id="35366be2-38ad-4321-9036-b010de526027">
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
     <Project Path="Tests/SharpEngine.Core.Tests/SharpEngine.Core.Tests.csproj">
@@ -47,9 +61,6 @@
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
   </Folder>
-  <Folder Name="/Tests/ArchitectureTests/" />
-  <Folder Name="/Tests/IntegrationTests/" />
-  <Folder Name="/Tests/UnitTests/" />
   <Project Path="../SharpEngine-Shared/SharpEngine.Rest/SharpEngine.Rest.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>

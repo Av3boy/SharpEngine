@@ -130,7 +130,7 @@ public class Window : SilkWindow
 
     private void CheckEngineVersion()
     {
-        var project = new Project();
+        var project = new ProjectDto();
         var currentAssemlyVersion = typeof(Window).Assembly.GetVersion();
 
         if (currentAssemlyVersion != project.EngineVersion)
@@ -143,6 +143,9 @@ public class Window : SilkWindow
     /// <param name="game">The game instance.</param>
     public Window(Game game)
         : this(game.Scene, game.Camera.Settings, LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Window>()) { }
+
+    public Window(Scene scene, IViewSettings settings)
+        : this(scene, settings, LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Window>()) { }
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.

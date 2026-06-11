@@ -1,12 +1,11 @@
 ﻿using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 using SharpEngine.Core.Components.ObjLoader.DataStore;
 using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
 
 namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
 {
-    [TestFixture]
     public class GroupParserTests
     {
         private readonly GroupDataStoreMock _groupDataStoreMock;
@@ -18,7 +17,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             _groupParser = new GroupParser(_groupDataStoreMock);
         }
 
-        [Test]
+        [Fact]
         public void CanParse_returns_true_on_normal_line()
         {
             const string groupKeyword = "g";
@@ -27,7 +26,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             canParse.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void CanParse_returns_false_on_non_normal_line()
         {
             const string invalidKeyword = "vt";
@@ -36,7 +35,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             canParse.Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void Parses_normal_line_correctly()
         {
             const string normalLine = "test group";

@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
+
 using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
 using SharpEngine.Core.ObjLoader.Loaders.MaterialLoader;
 
 namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
 {
-    [TestFixture]
     public class MaterialLibraryParserTests
     {
         private readonly MaterialLibraryLoaderFacadeSpy _materialLibraryLoaderFacadeSpy;
@@ -17,7 +17,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             _parser = new MaterialLibraryParser(_materialLibraryLoaderFacadeSpy);
         }
 
-        [Test]
+        [Fact]
         public void CanParse_returns_true_on_mtlib_line()
         {
             const string groupKeyword = "mtllib";
@@ -26,7 +26,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             canParse.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void CanParse_returns_false_on_non_mtlib_line()
         {
             const string invalidKeyword = "vt";
@@ -35,7 +35,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             canParse.Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void Parses_mtlib_line_correctly()
         {
             const string faceLine = "cube.mtl";

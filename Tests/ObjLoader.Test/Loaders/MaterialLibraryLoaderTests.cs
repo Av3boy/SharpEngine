@@ -1,16 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using NUnit.Framework;
 using FluentAssertions;
+using Xunit;
+
 using SharpEngine.Core.Components.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.ObjLoader.Loaders.MaterialLoader;
 using System.Diagnostics.CodeAnalysis;
+using Moq;
+using SharpEngine.Core.ObjLoader.Loader.Loaders;
+using System.IO.Abstractions;
 
 namespace SharpEngine.Core.ObjLoader.Tests.Loaders
 {
-    [TestFixture]
     public class MaterialLibraryLoaderTests
     {
         private readonly MaterialLibrarySpy _materialLibrarySpy;
@@ -24,10 +27,10 @@ namespace SharpEngine.Core.ObjLoader.Tests.Loaders
         public MaterialLibraryLoaderTests()
         {
             _materialLibrarySpy = new MaterialLibrarySpy();
-            _materialLibraryLoader = new MaterialLibraryLoader(null!);
+            _materialLibraryLoader = new MaterialLibraryLoader(_materialLibrarySpy, Mock.Of<IFileStreamFactory>(), Mock.Of<IFileManager>());
         }
 
-        [Test]
+        [Fact]
         public void Adds_correct_materials()
         {
             LoadMaterial();
@@ -37,7 +40,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.Loaders
             _secondMaterial.Name.Should().BeEquivalentTo("second_material");
         }
 
-        [Test]
+        [Fact]
         public void Sets_correct_ambient_color()
         {
             LoadMaterial();
@@ -47,7 +50,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.Loaders
             _firstMaterial.AmbientColor.Z.Should().BeApproximately(3, Epsilon);
         }
 
-        [Test]
+        [Fact]
         public void Sets_correct_diffuse_color()
         {
             LoadMaterial();
@@ -57,7 +60,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.Loaders
             _firstMaterial.DiffuseColor.Z.Should().BeApproximately(0.0314f, Epsilon);
         }
 
-        [Test]
+        [Fact]
         public void Sets_correct_specular()
         {
             LoadMaterial();
@@ -69,7 +72,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.Loaders
             _firstMaterial.SpecularCoefficient.Should().BeApproximately(32, Epsilon);
         }
 
-        [Test]
+        [Fact]
         public void Sets_correct_transparency()
         {
             LoadMaterial();
@@ -77,7 +80,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.Loaders
             _firstMaterial.Transparency.Should().BeApproximately(0.5f, Epsilon);
         }
 
-        [Test]
+        [Fact]
         public void Sets_correct_illumination_model()
         {
             LoadMaterial();
@@ -85,7 +88,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.Loaders
             _firstMaterial.IlluminationModel.Should().Be(2);
         }
 
-        [Test]
+        [Fact]
         public void Sets_correct_texure_maps()
         {
             LoadMaterial();
@@ -126,7 +129,7 @@ disp lenna_disp.tga
 decal lenna_stencil.tga
 newmtl second_material";
 
-        private class MaterialLibrarySpy : IMaterialLibrary
+        private class MaterialLibrarySpy : IMaterialDataStore
         {
             public List<Material> Materials { get; private set; }
 
@@ -135,10 +138,12 @@ newmtl second_material";
                 Materials = new List<Material>();
             }
 
-            public void Push(Material material)
+            public void AddMaterial(Material material)
             {
                 Materials.Add(material);
             }
+
+            public void SetMaterial(string materialName) => throw new System.NotImplementedException();
         }
     }
 }

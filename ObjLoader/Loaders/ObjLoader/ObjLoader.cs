@@ -1,8 +1,11 @@
 ﻿using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.ObjLoader.Loader.Loaders;
 using SharpEngine.Core.ObjLoader.TypeParsers;
+
 using Silk.NET.OpenGL;
+
 using System.Collections.Generic;
+using System.IO.Abstractions;
 
 namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
 {
@@ -21,7 +24,9 @@ namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
         /// </summary>
         /// <param name="path">The path to the OBJ file.</param>
         /// <param name="dataStore">The data store to populate during parsing.</param>
-        public ObjLoader(string path, DataStore dataStore)
+        /// <param name="fileStreamFactory">Represents a factory for creating file streams.</param>
+        /// <param name="fileManager">Represents a manager for handling file operations.</param>
+        public ObjLoader(string path, DataStore dataStore, IFileStreamFactory fileStreamFactory, IFileManager fileManager) : base(fileStreamFactory, fileManager)
         {
             _path = path;
             _dataStore = dataStore;
