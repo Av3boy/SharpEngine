@@ -14,25 +14,29 @@ public class Material : ICloneable, IEquatable<Material>
     ///     Initializes a new instance of <see cref="Material"/>.
     /// </summary>
     /// <param name="materialName">The name assigned to the new material.</param>
+    public Material(string materialName)
+        : this(materialName, diffuseMap: null, specularMap: null) { }
+
+    /// <summary>
+    ///     Initializes a new instance of <see cref="Material"/>.
+    /// </summary>
+    /// <param name="materialName">The name assigned to the new material.</param>
     /// <param name="diffuseMap">The diffuse map texture of the material.</param>
     /// <param name="specularMap">The specular map texture of the material. Defaults to the diffuse map if not provided.</param>
-    public Material(string materialName, Texture? diffuseMap = null, Texture? specularMap = null) : this(materialName)
+    public Material(string materialName, Texture? diffuseMap = null, Texture? specularMap = null)
     {
         DiffuseMap = diffuseMap;
         SpecularMap = specularMap ?? diffuseMap;
 
         Specular = new(0.5f, 0.5f, 0.5f);
         Shininess = 32.0f;
-    }
 
-    /// <summary>
-    ///     Initializes a new instance of <see cref="Material"/>.
-    /// </summary>
-    /// <param name="materialName">The name assigned to the new material.</param>
-    public Material(string materialName)
-    {
         Name = materialName;
     }
+
+    // Resolve dependency issue with GL to fix this.
+    // public Shader Shader { get; init; }
+    public Shader Shader { get; set; }
 
     /// <summary>Gets or sets the name of the material.</summary>
     public string Name { get; set; }
