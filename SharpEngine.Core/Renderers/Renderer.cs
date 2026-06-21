@@ -79,7 +79,7 @@ public class Renderer : RendererBase
             _gl.Enable(EnableCap.Blend);
             _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
-            _camera.SetShaderUniforms(_lightingShader.Shader!);
+            _camera.SetShaderUniforms(_lightingShader);
             _gl.BindVertexArray(_lightingShader.Vao);
 
             var lightRenderTasks = _scene.IterateAsync(_scene.Root.Children, RenderLight);

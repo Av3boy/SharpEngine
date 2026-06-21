@@ -5,24 +5,14 @@ using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Shaders;
 
-internal class LampShader : ShaderBase
+internal class LampShader : Shader
 {
-    private readonly GL _gl;
-
     /// <summary>
     ///     Initializes a new instance of <see cref="LampShader" /> using the provided OpenGL context.
     /// </summary>
     /// <param name="gl">The OpenGL context to use for shader and VAO creation.</param>
-    public LampShader(GL gl)
+    public LampShader(GL gl) : base(gl, Default.VertexShader, Default.LightShader, nameof(LampShader))
     {
-        _gl = gl;
-
-        Shader = ShaderService.Instance.LoadShader(_gl, Default.VertexShader, Default.LightShader, "lamp");
-
-        Vao = _gl.GenVertexArray();
-        _gl.BindVertexArray(Vao);
-
-        SetAttributes(_gl);
     }
 
     /// <inheritdoc />
@@ -31,12 +21,12 @@ internal class LampShader : ShaderBase
         if (!base.SetAttributes(gl))
             return false;
 
-        if (!Shader!.TryGetAttribLocation(ShaderAttributes.Pos, out int positionLocation))
+        if (!TryGetAttribLocation(ShaderAttributes.Pos, out int positionLocation))
             return false;
 
         var positionLocationUint = (uint)positionLocation;
-        _gl.EnableVertexAttribArray(positionLocationUint);
-        _gl.VertexAttribPointer(positionLocationUint, 3, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
+        GL.EnableVertexAttribArray(positionLocationUint);
+        GL.VertexAttribPointer(positionLocationUint, 3, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
 
         return true;
     }

@@ -25,19 +25,20 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
     /// <summary>
     ///     Initializes a new instance of <see cref="UIElement"/>.
     /// </summary>
-    public UIElement() : this("UIElement") { }
+    public UIElement(GL gl) : this(gl, "UIElement") { }
 
     /// <summary>
     ///     Initializes a new instance of <see cref="UIElement"/>.
     /// </summary>
     /// <param name="name">The name of the UI element.</param>
-    public UIElement(string name) : base(name)
+    public UIElement(GL gl, string name) : base(name)
     {
         // TODO: #5 Support custom meshes?
         Mesh = MeshService.Instance.LoadMesh(nameof(Primitives.Plane), Primitives.Plane.Mesh);
+        _uiShader = new UIShader(gl);
     }
 
-    private readonly UIShader _uiShader = new();
+    private readonly UIShader _uiShader;
     private readonly Texture _texture = TextureService.Instance.LoadTexture(Default.DebugTexture);
 
     /// <summary>Gets or sets the width of the ui element.</summary>
@@ -111,8 +112,7 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
             gl.BindBuffer(GLEnum.ArrayBuffer, sharedBuffers.Vbo);
             gl.BindBuffer(GLEnum.ElementArrayBuffer, sharedBuffers.Ebo);
 
-            _uiShader.EnsureInitialized(window);
-            _uiShader.Shader!.Use();
+            _uiShader.Use();
             _uiShader.SetAttributes(gl);
 
             state = new ContextState(vao);
@@ -131,12 +131,10 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
     {
         var gl = window.GetGL();
 
-        _uiShader.EnsureInitialized(window);
-
         var sharedBuffers = EnsureSharedBuffers(gl, window);
         var contextState = EnsureContextState(gl, window, sharedBuffers);
 
-        _uiShader.Shader!.Use();
+        _uiShader.Use();
         gl.BindVertexArray(contextState.Vao);
         _texture.Use(TextureUnit.Texture0);
 
@@ -146,14 +144,14 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
         const float screenWidth = 1280;
         const float screenHeight = 720;
 
-        _uiShader.Shader!.SetFloat("width", Width);
-        _uiShader.Shader!.SetFloat("height", Height);
-        _uiShader.Shader!.SetVector2("screenSize", new System.Numerics.Vector2(screenWidth, screenHeight));
-        _uiShader.Shader!.SetVector2("position", (System.Numerics.Vector2)Transform.Position);
-        _uiShader.Shader!.SetFloat("rotation", Math.DegreesToRadians(Transform.Rotation.Angle));
-        _uiShader.Shader!.SetInt("texture1", 0);
-        _uiShader.Shader!.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
-        _uiShader.Shader!.SetMatrix4("orthoMatrix", OrthoMatrix); // Pass the orthographic matrix to the shader
+        _uiShader.SetFloat("width", Width);
+        _uiShader.SetFloat("height", Height);
+        _uiShader.SetVector2("screenSize", new System.Numerics.Vector2(screenWidth, screenHeight));
+        _uiShader.SetVector2("position", (System.Numerics.Vector2)Transform.Position);
+        _uiShader.SetFloat("rotation", Math.DegreesToRadians(Transform.Rotation.Angle));
+        _uiShader.SetInt("texture1", 0);
+        _uiShader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
+        _uiShader.SetMatrix4("orthoMatrix", OrthoMatrix); // Pass the orthographic matrix to the shader
 
         gl.DrawElements<uint>(PrimitiveType.Triangles, (uint)sharedBuffers.IndexCount, DrawElementsType.UnsignedInt, []);
 

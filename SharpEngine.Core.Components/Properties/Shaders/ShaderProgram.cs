@@ -17,6 +17,17 @@ public abstract class ShaderProgram : IDisposable
     /// <summary>Gets the handle to the shader program.</summary>
     public uint Handle { get; protected set; }
 
+    /// <summary>Gets or sets the vertex array object.</summary>
+    public uint Vao { get; set; }
+
+    /// <summary>
+    ///    Sets the attributes for the shader.
+    /// </summary>
+    /// <returns>
+    ///     <see langword="true" /> if the attributes were set successfully; otherwise <see langword="false" />.
+    /// </returns>
+    public virtual bool SetAttributes(GL gl) => true;
+
     protected ShaderProgram(GL gl)
     {
         GL = gl;
@@ -69,6 +80,11 @@ public abstract class ShaderProgram : IDisposable
         // Querying this from the shader is very slow, so we do it once on initialization and reuse those values
         // later.
         SetUniformLocations(Handle);
+
+        Vao = GL.GenVertexArray();
+        GL.BindVertexArray(Vao);
+
+        SetAttributes(GL);
 
         return;
     }

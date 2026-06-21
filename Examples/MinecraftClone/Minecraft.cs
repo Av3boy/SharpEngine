@@ -75,21 +75,21 @@ public class Minecraft : Game
             _lightsNode = _scene.Root.AddChild("lights");
             _blocksNode = _scene.Root.AddChild("blocks");
 
-            var gridLayout = new GridLayout<UIElement>();
+            // var gridLayout = new GridLayout<UIElement>();
 
             // TODO: #89 Fix UI renderer
-            _uiElem = new UIElement("uiElement");
+            _uiElem = new UIElement(Window.GetGL(), "uiElement");
             _scene.UIElements.Add(_uiElem);
 
-            var uiElem2 = new UIElement("uiElement");
+            var uiElem2 = new UIElement(Window.GetGL(), "uiElement");
             uiElem2.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.2f, 0.2f);
             uiElem2.Transform.Position = new SharpEngine.Core.Numerics.Vector2(30, 0);
 
-            gridLayout.AddChild(_uiElem, uiElem2);
+            // gridLayout.AddChild(_uiElem, uiElem2);
             _scene.UIElements.Add(_uiElem);
             _scene.UIElements.Add(uiElem2);
 
-            _scene.UIElements.Add(gridLayout);
+            // _scene.UIElements.Add(gridLayout);
 
             InitializeWorld();
         }
