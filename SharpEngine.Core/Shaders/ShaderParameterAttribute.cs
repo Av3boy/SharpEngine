@@ -1,7 +1,7 @@
 ﻿using SharpEngine.Core.Rendering;
 using System;
 
-namespace SharpEngine.Core.Entities.UI;
+namespace SharpEngine.Core.Shaders;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
 public sealed class ShaderParameterAttribute : Attribute

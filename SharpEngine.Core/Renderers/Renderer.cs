@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Lights;
 using SharpEngine.Core.Entities.Properties;
@@ -6,10 +7,8 @@ using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
-
-using Microsoft.Extensions.Logging;
+using SharpEngine.Telemetry;
 using Silk.NET.OpenGL;
-
 using System;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -53,6 +52,12 @@ public class Renderer : RendererBase
         _scene = scene;
         _logger = logger;
     }
+
+    /// <summary>
+    ///     Initializes a new instance of <see cref="Renderer"/>.
+    /// </summary>
+    public Renderer(CameraView camera, ISettings settings, Scene scene)
+        : this(camera, settings, scene, LoggingExtensions.CreateLogger<Renderer>()) { }
 
     /// <inheritdoc />
     protected override void OnWindowAttached(Window window)

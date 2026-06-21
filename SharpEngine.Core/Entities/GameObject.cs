@@ -1,22 +1,21 @@
 using SharpEngine.Core.Attributes;
+using SharpEngine.Core.Components.Properties;
+using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.Views;
-using SharpEngine.Core.Components.Properties;
-using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
-using Shader = SharpEngine.Core.Shaders.Shader;
-using EngineTexture = SharpEngine.Core.Components.Properties.Textures.Texture;
-
 using Silk.NET.OpenGL;
-using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using EngineTexture = SharpEngine.Core.Components.Properties.Textures.Texture;
+using Shader = SharpEngine.Core.Shaders.Shader;
 
 namespace SharpEngine.Core.Entities;
 
@@ -43,6 +42,9 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     /// <param name="model">The model.</param>
     public GameObject(Model model) : this(model, shader: null!)
     {
+        // Ensure this instance is using a shader compiled for the correct context/share-group.
+        // Shader = ShaderService.Instance.LoadShader(Window.MainWindow, _shaderVertPath, _shaderFragPath, _shaderName);
+
         _shaderVertPath = _Resources.Default.VertexShader;
         _shaderFragPath = _Resources.Default.FragmentShader;
         _shaderName = "lighting";
