@@ -121,7 +121,7 @@ public class ShaderService
 
         // Create a new shader instance and add it to the cache.
         // Shader program objects are shareable across contexts *only* when those contexts share.
-        var shader = new Shader(gl, vertPath, fragPath, name).Initialize();
+        var shader = new Shader(gl, vertPath, fragPath, name);
         _shaderCache[cacheKey] = shader;
 
         HasShadersToLoad = true;

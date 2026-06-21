@@ -10,177 +10,6 @@ namespace SharpEngine.Core.Shaders;
 /// </summary>
 public partial class Shader
 {
-    /// <summary>
-    ///     Initializes and compiles vertex and fragment shaders into a shader program.
-    /// </summary>
-    /// <returns>The current instance after initialization.</returns>
-    public Shader Initialize()
-    {
-        // Load and compile shader
-        if (!LoadShader(ShaderType.VertexShader, VertPath, out uint vertexShader))
-        {
-            _logger.LogError("Unable to load vertex shader.");
-            return this;
-        }
-
-        if (!LoadShader(ShaderType.FragmentShader, FragPath, out uint fragmentShader))
-        {
-            _logger.LogError("Unable to load fragment shader.");
-            return this;
-        }
-
-        // These two shaders must then be merged into a shader program, which can then be used by OpenGL.
-        // To do this, create a program...
-
-        Handle = _gl.CreateProgram();
-
-        // Attach both shaders...
-        _gl.AttachShader(Handle, vertexShader);
-        _gl.AttachShader(Handle, fragmentShader);
-
-        // And then link them together.
-        bool shaderLinked = LinkProgram(Handle);
-
-        // When the shader program is linked, it no longer needs the individual shaders attached to it; the compiled code is copied into the shader program.
-        // Detach them, and then delete them.
-        _gl.DetachShader(Handle, vertexShader);
-        _gl.DetachShader(Handle, fragmentShader);
-        _gl.DeleteShader(fragmentShader);
-        _gl.DeleteShader(vertexShader);
-
-        if (!shaderLinked)
-        {
-            _logger.LogInformation("Unable to link shader program.");
-            return this;
-        }
-
-        // The shader is now ready to go, but first, we're going to cache all the shader uniform locations.
-        // Querying this from the shader is very slow, so we do it once on initialization and reuse those values
-        // later.
-        SetUniformLocations();
-
-        return this;
-    }
-
-    private bool LoadShader(ShaderType shaderType, string shaderPath, out uint shader)
-    {
-        if (!File.Exists(shaderPath))
-        {
-            _logger.LogInformation("Shader file not found: {Path}", shaderPath);
-
-            shader = 0;
-            return false;
-        }
-
-        string shaderSource = File.ReadAllText(shaderPath);
-        shaderSource = ProcessIncludes(shaderSource, Path.GetDirectoryName(shaderPath)!);
-
-        // GL.CreateShader will create an empty shader (obviously). The ShaderType enum denotes which type of shader will be created.
-        shader = _gl.CreateShader(shaderType);
-        _gl.ShaderSource(shader, shaderSource);
-
-        if (!CompileShader(shader))
-        {
-            _logger.LogInformation("Unable to load {Type} shader from '{Path}'.", shaderType, shaderPath);
-            return false;
-        }
-
-        return true;
-    }
-
-    private void SetUniformLocations()
-    {
-        // First, we have to get the number of active uniforms in the shader.
-        _gl.GetProgram(Handle, GLEnum.ActiveUniforms, out var numberOfUniforms);
-
-        Dictionary<string, int> uniformLocations = [];
-
-        // Loop over all the uniforms,
-        for (uint i = 0; i < numberOfUniforms; i++)
-        {
-            // get the name of this uniform,
-            var key = _gl.GetActiveUniform(Handle, i, out _, out _);
-
-            // get the location,
-            var location = _gl.GetUniformLocation(Handle, key);
-
-            // and then add it to the dictionary.
-            uniformLocations.Add(key, location);
-        }
-
-        _uniformLocations = uniformLocations;
-    }
-
-    private static string ProcessIncludes(string shaderCode, string directory)
-    {
-        const string includePattern = @"#include\s+""(.+?)""";
-        return Regex.Replace(shaderCode, includePattern, match =>
-        {
-            string includePath = Path.Combine(directory, match.Groups[1].Value);
-            string includeCode = File.ReadAllText(includePath);
-            return ProcessIncludes(includeCode, Path.GetDirectoryName(includePath)!);
-        }, RegexOptions.NonBacktracking);
-    }
-
-    private bool CompileShader(uint shader)
-    {
-        // Try to compile the shader
-        _gl.CompileShader(shader);
-
-        // Check for compilation errors
-        _gl.GetShader(shader, GLEnum.CompileStatus, out var statusCode);
-        if (statusCode != (int)GLEnum.True)
-        {
-            // We can use `GL.GetShaderInfoLog(shader)` to get information about the error.
-            var infoLog = _gl.GetShaderInfoLog(shader);
-            _logger.LogError("Error occurred whilst compiling Shader({Shader}).\n\n{Log}", shader, infoLog);
-
-            return false;
-        }
-
-        return true;
-    }
-
-    private bool LinkProgram(uint program)
-    {
-        _gl.LinkProgram(program);
-        _gl.GetProgram(program, GLEnum.LinkStatus, out var statusCode);
-        
-        if (statusCode != (int)GLEnum.True)
-        {
-            string infoLog = _gl.GetProgramInfoLog(program);
-            _logger.LogError("Error occurred whilst linking Program({Program}): {Info}", program, infoLog);
-
-            return false;
-        }
-
-        return true;
-    }
-
-    /// <summary>
-    ///     Enables the shader program.
-    /// </summary>
-    public void Use()
-        => _gl.UseProgram(Handle);
-
-    /// <summary>
-    ///     Checks if the shader attribute exists within the current shader.
-    /// </summary>
-    /// <param name="attribName">The name of the attribute that's being looked for.</param>
-    /// <param name="location">Outputs the location of the attribute in the shader if found; otherwise -1.</param>
-    /// <returns>If the attribute exists, <see langword="true"/>; otherwise, <see langword="false"/>. </returns>
-    public bool TryGetAttribLocation(string attribName, out int location)
-    {
-        location = _gl.GetAttribLocation(Handle, attribName);
-        if (location == ShaderAttributes.AttributeLocationNotFound)
-        {
-            _logger.LogWarning("Attribute '{Attribute}' not found in shader program.", attribName);
-            return false;
-        }
-
-        return true;
-    }
-
     // Uniform setters
     // Uniforms are variables that can be set by user code, instead of reading them from the VBO.
     // You use VBOs for vertex-related data, and uniforms for almost everything else.
@@ -198,8 +27,8 @@ public partial class Shader
             return false;
         }
 
-        // TODO: #95 The _gl.UseProgram should be not be called here. Rather the renderer should call it once before rendering.
-        _gl.UseProgram(Handle);
+        // TODO: #95 The GL.UseProgram should be not be called here. Rather the renderer should call it once before rendering.
+        GL.UseProgram(Handle);
         setter(location, data);
         
         return true;
@@ -211,7 +40,7 @@ public partial class Shader
     /// <param name="name">The name of the uniform.</param>
     /// <param name="data">The data to set.</param>
     public bool SetInt(string name, int data)
-        => TrySetUniform(name, data, _gl.Uniform1);
+        => TrySetUniform(name, data, GL.Uniform1);
 
     /// <summary>
     ///     Set a uniform float on this shader.
@@ -219,7 +48,7 @@ public partial class Shader
     /// <param name="name">The name of the uniform.</param>
     /// <param name="data">The data to set.</param>
     public bool SetFloat(string name, float data)
-        => TrySetUniform(name, data, _gl.Uniform1);
+        => TrySetUniform(name, data, GL.Uniform1);
 
     /// <summary>
     ///     Set a uniform Matrix4 on this shader
@@ -233,7 +62,7 @@ public partial class Shader
     ///   </para>
     /// </remarks>
     public bool SetMatrix4(string name, Matrix4x4 data, bool transpose = true)
-        => TrySetUniform(name, data, (uniform, d) => _gl.UniformMatrix4(uniform, transpose, d.ToSpan()));
+        => TrySetUniform(name, data, (uniform, d) => GL.UniformMatrix4(uniform, transpose, d.ToSpan()));
 
     /// <summary>
     ///     Set a uniform Vector2 on this shader.
@@ -241,7 +70,7 @@ public partial class Shader
     /// <param name="name">The name of the uniform.</param>
     /// <param name="data">The data to set.</param>
     public bool SetVector2(string name, Vector2 data)
-        => TrySetUniform(name, data, _gl.Uniform2);
+        => TrySetUniform(name, data, GL.Uniform2);
 
     /// <summary>
     ///     Set a uniform Vector3 on this shader.
@@ -249,7 +78,7 @@ public partial class Shader
     /// <param name="name">The name of the uniform.</param>
     /// <param name="data">The data to set.</param>
     public bool SetVector3(string name, Vector3 data)
-        => TrySetUniform(name, data, _gl.Uniform3);
+        => TrySetUniform(name, data, GL.Uniform3);
 
     /// <summary>
     ///     Set a uniform Vector3 on this shader.
@@ -257,5 +86,5 @@ public partial class Shader
     /// <param name="name">The name of the uniform.</param>
     /// <param name="data">The data to set.</param>
     public bool SetVector4(string name, Vector4 data)
-        => TrySetUniform(name, data, _gl.Uniform4);
+        => TrySetUniform(name, data, GL.Uniform4);
 }

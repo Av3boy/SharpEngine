@@ -28,31 +28,21 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     private readonly object _modelCacheLock = new();
     private readonly Dictionary<object, Model> _modelByShareGroup = [];
 
-    private readonly string _shaderVertPath;
-    private readonly string _shaderFragPath;
-    private readonly string _shaderName;
+    private string _shaderVertPath;
+    private string _shaderFragPath;
+    private string _shaderName;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="GameObject"/>.
     /// </summary>
-    public GameObject() : base(string.Empty)
-    {
-        BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
-
-        _shaderVertPath = _Resources.Default.VertexShader;
-        _shaderFragPath = _Resources.Default.FragmentShader;
-        _shaderName = "lighting";
-    }
+    public GameObject() : this(model: null!) { }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="GameObject"/> class with a model.
     /// </summary>
     /// <param name="model">The model.</param>
-    public GameObject(Model model) : base(string.Empty)
+    public GameObject(Model model) : this(model, shader: null!)
     {
-        Model = model;
-        BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
-
         _shaderVertPath = _Resources.Default.VertexShader;
         _shaderFragPath = _Resources.Default.FragmentShader;
         _shaderName = "lighting";
@@ -61,17 +51,20 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     /// <summary>
     ///     Initializes a new instance of the <see cref="GameObject"/> with specified textures and shaders.
     /// </summary>
-    /// <param name="shader">The shader to be used by the game object.</param>
     /// <param name="model">The model of the game object.</param>
-    public GameObject(Shader shader, Model model) : base(string.Empty)
+    /// <param name="shader">The shader to be used by the game object.</param>
+    public GameObject(Model model, Shader shader) : base(string.Empty)
     {
         Model = model;
         BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
         Shader = shader;
 
-        _shaderVertPath = shader.VertPath;
-        _shaderFragPath = shader.FragPath;
-        _shaderName = shader.Name;
+        if (shader is not null)
+        {
+            _shaderVertPath = shader.VertPath;
+            _shaderFragPath = shader.FragPath;
+            _shaderName = shader.Name;
+        }
     }
 
     /// <summary>

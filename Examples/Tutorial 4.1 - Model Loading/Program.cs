@@ -82,7 +82,7 @@ namespace Tutorial
 
             Gl = GL.GetApi(window);
 
-            Shader = new Shader(Gl, PathExtensions.GetAssemblyPath("shader2.vert"), Default.LightShader, "test").Initialize();
+            Shader = new Shader(Gl, PathExtensions.GetAssemblyPath("shader2.vert"), Default.LightShader, "test");
             Texture = new Texture(Gl, "silk.png");
 
             var model = ObjLoaderFactory.Load(Gl, "Untitled2.obj");
