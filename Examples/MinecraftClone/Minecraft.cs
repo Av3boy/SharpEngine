@@ -153,7 +153,6 @@ public class Minecraft : Game
         _uiElem.Height = height;
         _uiElem.Width = width;
     }
-
     /// <inheritdoc />
     public override void Update(double deltaTime, IInputContext input) 
         => _input.HandleKeyboard(input.Keyboards[0], (float)deltaTime);

@@ -79,5 +79,9 @@ namespace SharpEngine.Core.ObjLoader
         /// <inheritdoc />
         public void AddVertex(Vertex vertex)
             => Vertices.Add(vertex);
+
+        /// <inheritdoc />
+        public void AddMaterial(Material currentMaterial)
+            => Materials.Add(currentMaterial);
     }
 }

@@ -15,7 +15,7 @@ public class WavPlayer : AudioPlayerBase
     private static readonly ILogger<WavPlayer> Logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<WavPlayer>();
 
     /// <inheritdoc />
-    protected override string FileExtension => ".wav";
+    protected override string FileExtension => AudioFileExtensions.WavExtension;
 
     private static class WavConstants
     {
@@ -90,7 +90,7 @@ public class WavPlayer : AudioPlayerBase
         return true;
     }
 
-    private static void ParseFormat(ReadOnlySpan<byte> formatChunk, WavData wavData)
+    private static void ParseFormat(ReadOnlySpan<byte> formatChunk, AudioData wavData)
     {
         int index = 0;
         var audioFormat = BinaryPrimitives.ReadInt16LittleEndian(formatChunk.Slice(index, WavConstants.AudioFormatLength));

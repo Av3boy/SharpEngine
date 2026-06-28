@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Telemetry;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Scenes;
@@ -14,7 +16,7 @@ namespace SharpEngine.Core.Scenes;
 /// </summary>
 public class Scene
 {
-    private static readonly ILogger<Scene> Logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Scene>();
+    private static readonly ILogger<Scene> Logger = LoggingExtensions.CreateLogger<Scene>();
 
     /// <summary>The file extension by which saved scenes are associated with.</summary>
     public const string SceneFileExtension = "sharpscene";
@@ -22,6 +24,7 @@ public class Scene
     private string? _fileFullPath;
 
     /// <summary>Gets or sets whether the scene has unsaved changes.</summary>
+    [JsonIgnore]
     public bool HasUnsavedChanges { get; set; }
 
     /// <summary>Gets or sets the name of the scene file.</summary>
@@ -60,11 +63,13 @@ public class Scene
     ///     Adds an empty node to the scene root.
     /// </summary>
     /// <param name="name">The name of the new empty node.</param>
-    public void AddNode(string name)
+    public SceneNode AddNode(string name)
     {
         var node = new EmptyNode<Transform, SharpEngine.Core.Numerics.Vector3>(name);
         Nodes.Add(node);
         Root.Children.Add(node);
+
+        return node;
     }
 
     /// <summary>
@@ -217,18 +222,26 @@ public class Scene
     /// <summary>
     ///     Saves the scene.
     /// </summary>
+    public void SaveScene()
+        => SaveSceneAsync().GetAwaiter().GetResult();
+
+    /// <summary>
+    ///     Saves the scene.
+    /// </summary>
     /// <returns>A <see cref="Task"/> representing an asynchronous operation.</returns>
-    public async Task SaveScene()
-        => await SaveScene(_fileFullPath!);
+    public async Task SaveSceneAsync()
+        => await SaveSceneAsync(_fileFullPath!);
 
     /// <summary>
     ///     Saves the scene to the given <paramref name="fileName"/>.
     /// </summary>
     /// <param name="fileName">The name of the file to be saved.</param>
     /// <returns>A <see cref="Task"/> representing an asynchronous operation.</returns>
-    public async Task SaveScene(string fileName)
+    public async Task SaveSceneAsync(string fileName)
     {
         var json = JsonSerializer.Serialize(this);
         await System.IO.File.WriteAllTextAsync(fileName, json);
+
+        HasUnsavedChanges = false;
     }
 }

@@ -1,9 +1,9 @@
 using SharpEngine.Core._Resources;
 using SharpEngine.Core.Entities.Views;
+using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
 
-using System.Numerics;
 using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Entities.Lights;

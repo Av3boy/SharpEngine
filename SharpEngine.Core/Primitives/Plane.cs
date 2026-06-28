@@ -9,33 +9,17 @@ namespace SharpEngine.Core.Primitives;
 public static class Plane
 {
     /// <summary>The plane mesh.</summary>
-    public static Mesh Mesh { get; } = new(Window.SharedGL)
-    {
-        Vertices =
+    /// <remarks>
+    ///     Vertices are stored in interleaved format: position (x, y, z), normal (nx, ny, nz), UV (u, v).
+    /// </remarks>
+    public static Mesh Mesh { get; } = new(Window.SharedGL,
+        vertices:
         [
-             1f,  1f, 0.0f, // top right
-             1f, -1f, 0.0f, // bottom right
-            -1f, -1f, 0.0f, // bottom left
-            -1f,  1f, 0.0f, // top left
+            // pos.x,  pos.y, pos.z, norm.x, norm.y, norm.z, uv.u,  uv.v
+             1f,  1f, 0.0f,  0f, 0f, 1f,  1.0f, 0.0f, // top right
+             1f, -1f, 0.0f,  0f, 0f, 1f,  1.0f, 0.0f, // bottom right
+            -1f, -1f, 0.0f,  0f, 0f, 1f,  0.0f, 1.0f, // bottom left
+            -1f,  1f, 0.0f,  0f, 0f, 1f,  0.0f, 1.0f, // top left
         ],
-        Normals =
-        [
-            0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 1.0f,
-        ],
-        TextureCoordinates =
-        [
-            1.0f, 0.0f,
-            1.0f, 0.0f,
-            0.0f, 1.0f,
-            0.0f, 1.0f,
-        ],
-        Indices =
-        [
-           0, 1, 3, // first triangle
-           1, 2, 3, // second triangle
-        ]
-    };
+        indices: [0u, 1u, 3u, 1u, 2u, 3u]);
 }

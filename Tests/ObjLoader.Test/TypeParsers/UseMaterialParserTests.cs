@@ -1,10 +1,13 @@
 ﻿using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
+
 using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
+using SharpEngine.Core.Components.Properties;
+
+using System;
 
 namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
 {
-    [TestFixture]
     public class UseMaterialParserTests
     {
         private readonly ElementGroupSpy _elementGroupSpy;
@@ -16,7 +19,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             _parser = new UseMaterialParser(_elementGroupSpy);
         }
 
-        [Test]
+        [Fact]
         public void CanParse_returns_true_on_usemtl_line()
         {
             const string groupKeyword = "usemtl";
@@ -25,7 +28,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             canParse.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void CanParse_returns_false_on_non_usemtl_line()
         {
             const string invalidKeyword = "vt";
@@ -34,7 +37,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             canParse.Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void Parses_usemtl_line_correctly_1()
         {
             const string useMtlLine = "materialName";
@@ -46,6 +49,9 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
         private class ElementGroupSpy : IMaterialDataStore
         {
             public string MaterialName { get; private set; }
+
+            public void AddMaterial(Material currentMaterial)
+                => throw new NotImplementedException();
 
             public void SetMaterial(string materialName)
             {

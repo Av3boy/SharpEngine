@@ -1,21 +1,42 @@
+using SharpEngine.Core.Components.Properties.Meshes;
+using SharpEngine.Core.Entities.Properties.Meshes;
+using SharpEngine.Core.ObjLoader.Loader.Loaders;
+using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
+using SharpEngine.Core.ObjLoader.Loaders.MaterialLoader;
+
 using Silk.NET.OpenGL;
 
 using System;
 using System.Collections.Generic;
 using System.IO;
-
-using SharpEngine.Core.Entities.Properties.Meshes;
-using SharpEngine.Core.Components.Properties.Meshes;
-using SharpEngine.Core.ObjLoader.Loaders.MaterialLoader;
-using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
+using System.IO.Abstractions;
 
 namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
 {
+    /// <summary>
+    ///     Represents a testable wrapper for creating stream file related objects.
+    /// </summary>
+    public class FileManager : IFileManager
+    {
+        /// <inheritdoc />
+        public StreamReader StreamReader(string path)
+            => new(path);
+    }
+
     /// <summary>
     ///     Handles loading 3D models.
     /// </summary>
     public static class ObjLoaderFactory
     {
+        private static readonly FileSystem _fileSystem;
+        private static readonly FileManager _fileManager;
+
+        static ObjLoaderFactory()
+        {
+            _fileSystem = new FileSystem();
+            _fileManager = new FileManager();
+        }
+
         const string FbxExtension = ".fbx";
         const string ObjExtension = ".obj";
 
@@ -56,13 +77,13 @@ namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
             var textureParser = new TextureParser(dataStore);
             var vertexParser = new VertexParser(dataStore);
 
-            var materialLibraryLoader = new MaterialLibraryLoader(dataStore);
+            var materialLibraryLoader = new MaterialLibraryLoader(dataStore, _fileSystem.FileStream, _fileManager);
 
             var materialLoader = new MaterialLibraryLoaderFacade(materialLibraryLoader, path);
             var materialLibraryParser = new MaterialLibraryParser(materialLoader);
             var useMaterialParser = new UseMaterialParser(dataStore);
 
-            var loader = new ObjLoader(path, dataStore)
+            var loader = new ObjLoader(path, dataStore, _fileSystem.FileStream, _fileManager)
                 .SetupTypeParsers(faceParser, groupParser, normalParser, textureParser, vertexParser, materialLibraryParser, useMaterialParser);
 
             return loader.Load(gl);

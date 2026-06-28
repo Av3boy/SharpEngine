@@ -4,25 +4,13 @@ using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Shaders;
 
-internal class LightingShader : ShaderBase
+internal class LightingShader : Shader
 {
-    private readonly GL _gl;
-
     /// <summary>
     ///     Initializes a new instance of <see cref="LightingShader" />.
     /// </summary>
     /// <param name="gl">The OpenGL context used to create and configure the shader program.</param>
-    public LightingShader(GL gl)
-    {
-        _gl = gl;
-
-        Shader = ShaderService.Instance.LoadShader(_gl, Default.VertexShader, Default.FragmentShader, "lighting");
-
-        Vao = _gl.GenVertexArray();
-        _gl.BindVertexArray(Vao);
-
-        SetAttributes(_gl);
-    }
+    public LightingShader(GL gl) : base(gl, Default.VertexShader, Default.FragmentShader, nameof(LightingShader)) { }
 
     /// <inheritdoc />
     public override bool SetAttributes(GL gl)

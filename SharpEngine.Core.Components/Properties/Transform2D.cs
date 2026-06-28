@@ -19,8 +19,11 @@ public class Transform2D : ITransform<Vector2>
     public Vector2 Scale { get; set; } = new(1, 1);
 
     /// <summary>
-    ///     Gets or sets the rotation of the game object.
+    ///     Gets or sets the quaternion rotation of the game object.
     /// </summary>
+    /// <remarks>
+    ///     To get the rotation angle in degrees, use <see cref="Math.DegreesToRadians(float)"/>.
+    /// </remarks>
     public Quaternion Rotation { get; set; } = new() { Angle = 0 };
 
     /// <summary>

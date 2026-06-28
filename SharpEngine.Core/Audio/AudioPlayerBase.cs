@@ -1,4 +1,5 @@
 ﻿using SharpEngine.Core.Scenes;
+using Silk.NET.OpenAL;
 
 using System;
 using System.IO;
@@ -17,7 +18,7 @@ public abstract class AudioPlayerBase : SceneNode
     public AudioProperties AudioProperties { get; set; }
 
     /// <summary>Contains the audio data of the media file.</summary>
-    protected readonly WavData Data;
+    protected readonly AudioData Data;
 
     /// <summary>Represents a container for the <see cref="Data"/>.</summary>
     protected readonly AudioBuffer AudioBuffer;
@@ -30,9 +31,10 @@ public abstract class AudioPlayerBase : SceneNode
     /// </summary>
     protected AudioPlayerBase()
     {
-        Data = new WavData();
+        Data = new AudioData();
 
-        var audioDevice = new AudioDevice();
+        // Use the shared audio device so multiple players share the same OpenAL context
+        var audioDevice = AudioDevice.Shared;
         AudioBuffer = new AudioBuffer(audioDevice.Al);
         AudioSource = new AudioSource(audioDevice.Al);
 
@@ -61,7 +63,27 @@ public abstract class AudioPlayerBase : SceneNode
     }
 
     /// <summary>
-    ///     Stops the audio playback of the associated AudioSource.
+    ///     Stops the audio playback of the associated <see cref="AudioSource"/>.
     /// </summary>
-    public virtual void Stop() => AudioSource.Stop();
+    public virtual void Stop()
+    {
+        // Stop playback but do not delete the source here. Deleting the source
+        // in AudioSource.Stop caused subsequent players to generate new sources
+        // while buffers still referenced old sources, leading to overlapping audio.
+        AudioSource.Stop();
+
+        // Detach buffer from source so it can be reused safely
+        var al = AudioDevice.Shared.Al;
+        al.SetSourceProperty(AudioSource.Get(), SourceInteger.Buffer, 0);
+    }
+
+    /// <summary>
+    ///     Pauses the audio playback of the associated <see cref="AudioSource"/>.
+    /// </summary>
+    public virtual void Pause() => AudioSource.Pause();
+
+    /// <summary>
+    ///     Resumes the audio playback of the associated <see cref="AudioSource"/>.
+    /// </summary>
+    public virtual void Resume() => AudioSource.Resume();
 }

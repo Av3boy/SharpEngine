@@ -4,7 +4,6 @@
 
   <PropertyGroup>
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
-
   </PropertyGroup>
-  
+
 </Project>

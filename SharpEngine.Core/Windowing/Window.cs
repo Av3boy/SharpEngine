@@ -95,11 +95,17 @@ public class Window : SilkWindow
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
     /// </summary>
-    /// <param name="camera">The camera the window should render from.</param>
-    /// <param name="scene">Contains the game scene.</param>
+    /// <param name="game">The game instance.</param>
+    public Window(Game game)
+        : this(game.Scene, game.Camera.Settings, logger: null, renderers: null) { }
+
+    /// <summary>
+    ///     Initializes a new instance of <see cref="Window"/>.
+    /// </summary>
+    /// <param name="scene">The scene to be rendered.</param>
     /// <param name="settings">The settings for the window.</param>
-    public Window(CameraView camera, Scene scene, IViewSettings settings) : 
-        this(camera, scene, settings, LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Window>()) { }
+    public Window(Scene scene, IViewSettings settings)
+        : this(scene, settings, logger: null, renderers: null) { }
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
@@ -107,9 +113,18 @@ public class Window : SilkWindow
     /// <param name="camera">The camera the window should render from.</param>
     /// <param name="scene">Contains the game scene.</param>
     /// <param name="settings">The settings for the window.</param>
-    /// <param name="logger">The logger for the window.</param>
+    public Window(CameraView camera, Scene scene, IViewSettings settings)
+        : this(camera, scene, settings, logger: null, renderers: null) { }
+
+    /// <summary>
+    ///     Initializes a new instance of <see cref="Window"/>.
+    /// </summary>
+    /// <param name="camera">The camera the window should render from.</param>
+    /// <param name="scene">Contains the game scene.</param>
+    /// <param name="settings">The settings for the window.</param>
+    /// <param name="logger">The logger for the window. When <see langword="null"/>, a default logger will be used.</param>
     /// <param name="renderers">The renderers for the window.</param>
-    public Window(CameraView camera, Scene scene, IViewSettings settings, ILogger<Window> logger, IEnumerable<RendererBase>? renderers = null)
+    public Window(CameraView camera, Scene scene, IViewSettings settings, ILogger<Window>? logger = null, IEnumerable<RendererBase>? renderers = null)
     {
         // TODO:
         // Should the developer need to call for a window initialization?
@@ -119,30 +134,13 @@ public class Window : SilkWindow
         Settings = settings;
         Camera = camera;
         _registeredRenderers = renderers?.ToArray() ?? [];
-        _logger = logger;
+        _logger = logger ?? LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Window>();
 
         CheckEngineVersion();
 
-        // NOTE: Window initialization is intentionally not performed automatically
-        // here. Call InitializeWindow() explicitly when ready to create the underlying
-        // native window and load resources. See the TODO in the project for reasoning.
+        // NOTE: Window initialization is intentionally not performed automatically here.
+        // Call InitializeWindow() explicitly when ready to create the underlying native window and load resources.
     }
-
-    private void CheckEngineVersion()
-    {
-        var project = new Project();
-        var currentAssemlyVersion = typeof(Window).Assembly.GetVersion();
-
-        if (currentAssemlyVersion != project.EngineVersion)
-            _logger.LogWarning("The current engine version ({CurrentVersion}) does not match the project engine version ({ProjectVersion}). This may lead to unexpected behavior.", currentAssemlyVersion, project.EngineVersion);
-    }
-
-    /// <summary>
-    ///     Initializes a new instance of <see cref="Window"/>.
-    /// </summary>
-    /// <param name="game">The game instance.</param>
-    public Window(Game game)
-        : this(game.Scene, game.Camera.Settings, LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Window>()) { }
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
@@ -152,18 +150,27 @@ public class Window : SilkWindow
     /// </remarks>
     /// <param name="scene">Contains the game scene.</param>
     /// <param name="settings">The settings for the window.</param>
-    /// <param name="logger">The logger for the window.</param>
+    /// <param name="logger">The logger for the window. When <see langword="null"/>, a default logger will be used.</param>
     /// <param name="renderers">The renderers for the window.</param>
-    public Window(Scene scene, IViewSettings settings, ILogger<Window> logger, IEnumerable<RendererBase>? renderers = null)
+    public Window(Scene scene, IViewSettings settings, ILogger<Window>? logger = null, IEnumerable<RendererBase>? renderers = null)
     {
         Scene = scene;
         Settings = settings;
         Camera = new(Vector3.One, settings);
         _registeredRenderers = renderers?.ToArray() ?? [];
-        _logger = logger;
+        _logger = logger ?? LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Window>();
 
-        // Initialization is deferred. Call Initialize() when you want the
-        // native window to be created and resources to be loaded.
+        // NOTE: Window initialization is intentionally not performed automatically here.
+        // Call InitializeWindow() explicitly when ready to create the underlying native window and load resources.
+    }
+
+    private void CheckEngineVersion()
+    {
+        var project = new ProjectDto();
+        var currentAssemlyVersion = typeof(Window).Assembly.GetVersion();
+
+        if (currentAssemlyVersion != project.EngineVersion)
+            _logger.LogWarning("The current engine version ({CurrentVersion}) does not match the project engine version ({ProjectVersion}). This may lead to unexpected behavior.", currentAssemlyVersion, project.EngineVersion);
     }
 
     /// <inheritdoc />
@@ -180,6 +187,11 @@ public class Window : SilkWindow
         CurrentWindow.Closing += OnClosing;
 
         _windowInitialized = true;
+
+        // Ensure the underlying native window is created and initialized.
+        // SilkWindow.Initialize calls CurrentWindow.Initialize(); call it here to
+        // complete the initialization sequence (create GL context, input, etc.).
+        base.Initialize();
     }
 
     /// <inheritdoc />
@@ -248,10 +260,8 @@ public class Window : SilkWindow
     /// <param name="frame">Contains information about the previous frame.</param>
     protected void RenderFrame(Frame frame)
     {
-        while (!_initialized)
-        {
-            // Wait for the window to be initialized.
-        }
+        if (!_initialized)
+            throw new InvalidOperationException("Window has not been initialized. Call Initialize() before rendering.");
 
         try
         {
@@ -262,7 +272,14 @@ public class Window : SilkWindow
             _gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             ToggleWireFrame(Settings.UseWireFrame);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred during pre-rendering.");
+        }
 
+        try
+        {
             UseShaders();
 
             var activeRenderers = _renderers.Where(renderer => Settings.RendererFlags.HasFlag(renderer.RenderFlag))
@@ -271,14 +288,28 @@ public class Window : SilkWindow
 
             foreach (var renderer in activeRenderers)
                 renderer.Render().GetAwaiter().GetResult();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred during rendering.");
+        }
 
+        try
+        {
             AfterRender(frame);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred during post render.");
+        }
 
+        try
+        {
             _imGuiController?.Render();
         }
         catch (Exception ex)
         {
-            _logger.LogInformation("{Message}", ex.Message);
+            _logger.LogError(ex, "An error occurred while rendering ImGui interface.");
         }
     }
 

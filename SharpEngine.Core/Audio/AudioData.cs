@@ -3,9 +3,9 @@
 namespace SharpEngine.Core.Audio;
 
 /// <summary>
-///     Represents audio data in WAV format.
+///     Represents the data in a audio file.
 /// </summary>
-public class WavData
+public class AudioData
 {
     /// <summary>Gets or sets the number of channels used in the data.</summary>
     public short NumChannels { get; set; }

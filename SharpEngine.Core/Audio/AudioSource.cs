@@ -42,6 +42,29 @@ public class AudioSource
     public void Stop()
     {
         _al.SourceStop(_source);
+    }
+
+    /// <summary>
+    ///     Pauses playback of the source.
+    /// </summary>
+    public void Pause()
+    {
+        _al.SourcePause(_source);
+    }
+
+    /// <summary>
+    ///     Resumes playback of the source if it was paused.
+    /// </summary>
+    public void Resume()
+    {
+        _al.SourcePlay(_source);
+    }
+
+    /// <summary>
+    ///     Deletes the underlying OpenAL source. Call when the source will no longer be used.
+    /// </summary>
+    public void Dispose()
+    {
         _al.DeleteSource(_source);
     }
 }

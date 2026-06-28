@@ -73,7 +73,7 @@ public class ShaderService
     /// <returns>A shader with the given name.</returns>
     /// <exception cref="FileNotFoundException">Thrown when either the vertex or fragment shader is not found.</exception>
     public Shader LoadShader(Window window, string vertPath, string fragPath, string name)
-        => LoadShader(window.GetGL(), GetShareGroupKey(window), vertPath, fragPath, name);
+        => LoadShader(window.GetGL(), window.GetShareGroupKey(), vertPath, fragPath, name);
 
     /// <summary>
     ///     Loads a shader from the specified vertex and fragment paths. <br />
@@ -121,14 +121,11 @@ public class ShaderService
 
         // Create a new shader instance and add it to the cache.
         // Shader program objects are shareable across contexts *only* when those contexts share.
-        var shader = new Shader(gl, vertPath, fragPath, name).Initialize();
+        var shader = new Shader(gl, vertPath, fragPath, name);
         _shaderCache[cacheKey] = shader;
 
         HasShadersToLoad = true;
 
         return shader;
     }
-
-    private static object GetShareGroupKey(Window window)
-        => (object?)window.SharedContext ?? (object?)window.GLContext ?? (object)window;
 }

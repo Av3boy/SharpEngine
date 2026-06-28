@@ -60,54 +60,43 @@ namespace SharpEngine.Core.Components.Properties.Meshes
         }
 
         /// <summary>
-        ///     Produces a GPU-ready Mesh from the provided mesh by cloning when already processed or by expanding vertices and constructing indices, materials, and textures.
+        ///     Processes the provided mesh in place, updating its vertex data, materials, textures, and GPU buffers so it is ready for rendering.
         /// </summary>
-        /// <param name="mesh">Source mesh to process. Must not be null.</param>
+        /// <param name="mesh">The mesh to process. Must not be null.</param>
         /// <returns>
-        ///     A Mesh prepared for rendering: either a cloned processed mesh if the input already contains vertex buffer
-        ///     data, or a newly constructed Mesh with expanded vertices, generated index buffer, and associated textures
-        ///     and materials.
+        ///     The same <paramref name="mesh"/> instance with updated <see cref="Mesh.Vertices"/>, <see cref="Mesh.Indices"/>,
+        ///     <see cref="Mesh.Textures"/>, <see cref="Mesh.Materials"/>, and reinitialized GPU buffers.
+        ///     When the mesh already carries GPU-ready vertex data (<see cref="Mesh.Vertices"/> is non-empty) its
+        ///     materials and textures are refreshed in place; otherwise vertices are expanded from face groups and all
+        ///     data properties are computed and assigned.
         /// </returns>
-        /// <exception cref="ArgumentNullException">Thrown if the input mesh is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="mesh"/> is null.</exception>
         public Mesh ProcessMesh(Mesh mesh)
         {
             ArgumentNullException.ThrowIfNull(mesh);
 
-            // TODO: Instead of cloning the object, we should just update the values.
             if (mesh.Vertices.Length > 0)
-                return CloneProcessedMesh(mesh);
+            {
+                var existingMaterials = mesh.Materials.Select(CloneMaterial).ToList();
+                var existingTextures = (existingMaterials.Count > 0 ? BuildTextures(existingMaterials) : CloneTextures(mesh.Textures)).ToList();
+                mesh.Materials = existingMaterials;
+                mesh.Textures = existingTextures;
+                mesh.ReinitializeGpuBuffers();
+                return mesh;
+            }
 
             var vertices = ExpandVertices(mesh);
             var indices = Enumerable.Range(0, vertices.Count).Select(index => (uint)index).ToArray();
             var materials = BuildMaterials(mesh).ToList();
             var textures = BuildTextures(materials).ToList();
 
-            // TODO: Instead of cloning the object, we should just update the values.
-            return new Mesh(_gl, BuildVertices(vertices), indices, textures)
-            {
-                Name = mesh.Name,
-                Vertices2 = vertices,
-                Normals2 = mesh.Normals2,
-                TextureCoordinates2 = mesh.TextureCoordinates2,
-                Groups = mesh.Groups,
-                Materials = materials,
-            };
-        }
-
-        private Mesh CloneProcessedMesh(Mesh template)
-        {
-            var materials = template.Materials.Select(CloneMaterial).ToList();
-            var textures = materials.Count > 0 ? BuildTextures(materials) : CloneTextures(template.Textures);
-
-            return new Mesh(_gl, template.Vertices, template.Indices, textures.ToList())
-            {
-                Name = template.Name,
-                Vertices2 = template.Vertices2,
-                Normals2 = template.Normals2,
-                TextureCoordinates2 = template.TextureCoordinates2,
-                Groups = template.Groups,
-                Materials = materials,
-            };
+            mesh.Vertices = BuildVertices(vertices);
+            mesh.Indices = indices;
+            mesh.Textures = textures;
+            mesh.Vertices2 = vertices;
+            mesh.Materials = materials;
+            mesh.ReinitializeGpuBuffers();
+            return mesh;
         }
 
         private static List<Vertex> ExpandVertices(Mesh mesh)
@@ -187,14 +176,14 @@ namespace SharpEngine.Core.Components.Properties.Meshes
 
         private Material? CreateRuntimeMaterial(Material definition)
         {
-            if (string.IsNullOrWhiteSpace(definition.DiffuseTextureMap))
+            if (string.IsNullOrWhiteSpace(definition.DiffuseMap?.Path))
                 return null;
 
-            var diffuseTexture = new EngineTexture(_gl, ResolveAssetPath(definition.DiffuseTextureMap), EngineTextureType.Diffuse);
+            var diffuseTexture = new EngineTexture(_gl, ResolveAssetPath(definition.DiffuseMap.Path), EngineTextureType.Diffuse);
             EngineTexture? specularTexture = null;
 
-            if (!string.IsNullOrWhiteSpace(definition.SpecularTextureMap))
-                specularTexture = new EngineTexture(_gl, ResolveAssetPath(definition.SpecularTextureMap), EngineTextureType.Specular);
+            if (!string.IsNullOrWhiteSpace(definition.SpecularMap?.Path))
+                specularTexture = new EngineTexture(_gl, ResolveAssetPath(definition.SpecularMap.Path), EngineTextureType.Specular);
 
             return new Material(definition.Name, diffuseTexture, specularTexture)
             {
@@ -205,8 +194,8 @@ namespace SharpEngine.Core.Components.Properties.Meshes
                 SpecularCoefficient = definition.SpecularCoefficient,
                 Transparency = definition.Transparency,
                 IlluminationModel = definition.IlluminationModel,
-                DiffuseTextureMap = definition.DiffuseTextureMap,
-                SpecularTextureMap = definition.SpecularTextureMap,
+                DiffuseMap = definition.DiffuseMap,
+                SpecularMap = definition.SpecularMap,
                 AmbientTextureMap = definition.AmbientTextureMap,
                 SpecularHighlightTextureMap = definition.SpecularHighlightTextureMap,
                 AlphaTextureMap = definition.AlphaTextureMap,
@@ -222,12 +211,12 @@ namespace SharpEngine.Core.Components.Properties.Meshes
         private Material CloneMaterial(Material material)
         {
             EngineTexture? diffuseTexture = null;
-            if (material.DiffuseMap != null)
-                diffuseTexture = new EngineTexture(_gl, material.DiffuseMap.Path, material.DiffuseMap.Type);
-            
+            if (material.DiffuseMap?.Texture is not null)
+                diffuseTexture = new EngineTexture(_gl, material.DiffuseMap.Path, material.DiffuseMap.Texture.Type);
+
             EngineTexture? specularTexture = null;
-            if (material.UseSpecularMap)
-                specularTexture = new EngineTexture(_gl, material!.SpecularMap!.Path, material.SpecularMap.Type);
+            if (material.SpecularMap?.Texture is not null)
+                specularTexture = new EngineTexture(_gl, material.SpecularMap.Path, material.SpecularMap.Texture.Type);
 
             return new Material(material.Name, diffuseTexture, specularTexture)
             {
@@ -238,8 +227,8 @@ namespace SharpEngine.Core.Components.Properties.Meshes
                 SpecularCoefficient = material.SpecularCoefficient,
                 Transparency = material.Transparency,
                 IlluminationModel = material.IlluminationModel,
-                DiffuseTextureMap = material.DiffuseTextureMap,
-                SpecularTextureMap = material.SpecularTextureMap,
+                DiffuseMap = material.DiffuseMap,
+                SpecularMap = material.SpecularMap,
                 AmbientTextureMap = material.AmbientTextureMap,
                 SpecularHighlightTextureMap = material.SpecularHighlightTextureMap,
                 AlphaTextureMap = material.AlphaTextureMap,
@@ -260,11 +249,11 @@ namespace SharpEngine.Core.Components.Properties.Meshes
             ArgumentNullException.ThrowIfNull(material);
 
             var materials = new List<EngineTexture>();
-            if (material.UseSpecularMap)
-                materials.Add(material.SpecularMap!);
-            
-            if (material.DiffuseMap != null)
-                materials.Add(material.DiffuseMap);
+            if (material.SpecularMap?.Texture is not null)
+                materials.Add(material.SpecularMap.Texture!);
+
+            if (material.DiffuseMap?.Texture is not null)
+                materials.Add(material.DiffuseMap.Texture!);
 
             return [.. materials];
         }
@@ -280,7 +269,13 @@ namespace SharpEngine.Core.Components.Properties.Meshes
                 assetPath : System.IO.Path.Combine(directory, assetPath);
         }
 
-        private static float[] BuildVertices(IEnumerable<Vertex> vertexCollection)
+        /// <summary>
+        ///     Converts a collection of <see cref="Vertex"/> objects into an interleaved float array
+        ///     (position XYZ, normal XYZ, texture-coordinate UV per vertex) suitable for uploading to a GPU vertex buffer.
+        /// </summary>
+        /// <param name="vertexCollection">The vertices to convert.</param>
+        /// <returns>A flat <see cref="float"/> array with eight elements per vertex.</returns>
+        internal static float[] BuildVertices(IEnumerable<Vertex> vertexCollection)
         {
             var vertices = new List<float>();
 

@@ -8,6 +8,14 @@ namespace SharpEngine.Core.Audio;
 /// </summary>
 public unsafe class AudioDevice : IDisposable
 {
+    // Shared single AudioDevice instance to ensure a single OpenAL context is used
+    private static readonly AudioDevice _shared = new AudioDevice();
+
+    /// <summary>
+    ///     Gets the shared audio device instance used by the application.
+    /// </summary>
+    public static AudioDevice Shared => _shared;
+
     /// <summary>Gets the OpenAL context.</summary>
     public AL Al { get; }
 

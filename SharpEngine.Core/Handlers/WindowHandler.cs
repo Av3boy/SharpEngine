@@ -200,8 +200,10 @@ public class WindowHandler : EngineHandler
     private static void EnqueueWindow(WindowOptions options)
     {
         var window = CreateWindow(options);
-        foreach (var mouse in window!.Input!.Mice)
-            mouse.Click += Mouse_Click;
+        // Subscribe to the window's high-level mouse button event instead of
+        // attaching to the low-level Input.Mice click handlers. This centralizes
+        // input handling inside Window and avoids duplicate wiring.
+        window.OnButtonMouseDown += (mouse, button) => Mouse_Click(mouse, (Silk.NET.Input.MouseButton)button, mouse.Position);
 
         _inputContexts.Add(window.Input);
         _windows.Add(window);
@@ -217,13 +219,13 @@ public class WindowHandler : EngineHandler
         if (window is null)
             return;
 
-        if (window.Input is not null)
-        {
-            foreach (var mouse in window.Input.Mice)
-                mouse.Click += Mouse_Click;
+        // Prefer the higher-level event on the Window class for mouse button
+        // notifications rather than wiring Input.Mice click events directly.
+        if (window is Windowing.Window w)
+            w.OnButtonMouseDown += (mouse, button) => Mouse_Click(mouse, (Silk.NET.Input.MouseButton)button, mouse.Position);
 
+        if (window.Input is not null)
             _inputContexts.Add(window.Input);
-        }
 
         _windows.Add(window);
 

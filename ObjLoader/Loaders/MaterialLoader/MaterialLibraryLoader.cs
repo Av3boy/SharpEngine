@@ -1,9 +1,11 @@
-﻿using SharpEngine.Core.Components.Properties;
+﻿using SharpEngine.Core.Components.ObjLoader.DataStore;
+using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.ObjLoader.Loader.Loaders;
 using SharpEngine.Shared.Extensions;
 
 using System;
 using System.Collections.Generic;
+using System.IO.Abstractions;
 using System.Numerics;
 
 namespace SharpEngine.Core.ObjLoader.Loaders.MaterialLoader
@@ -19,7 +21,7 @@ namespace SharpEngine.Core.ObjLoader.Loaders.MaterialLoader
     /// </remarks>
     public class MaterialLibraryLoader : LoaderBase
     {
-        private readonly DataStore _dataStore;
+        private readonly IMaterialDataStore _dataStore;
         private readonly Dictionary<string, Action<string>> _parseActionDictionary = [];
         private readonly List<string> _unrecognizedLines = [];
 
@@ -35,7 +37,9 @@ namespace SharpEngine.Core.ObjLoader.Loaders.MaterialLoader
         ///     Ns, d, Tr, illum, map_*, bump, disp, decal) to populate Material instances.
         /// </remarks>
         /// <param name="dataStore">DataStore used to register and store parsed materials and texture references.</param>
-        public MaterialLibraryLoader(DataStore dataStore)
+        /// <param name="fileStreamFactory">Represents a factory for creating file streams.</param>
+        /// <param name="fileManager">Represents a manager for handling file operations.</param>
+        public MaterialLibraryLoader(IMaterialDataStore dataStore, IFileStreamFactory fileStreamFactory, IFileManager fileManager) : base(fileStreamFactory, fileManager)
         {         
             _dataStore = dataStore;
 
@@ -50,20 +54,20 @@ namespace SharpEngine.Core.ObjLoader.Loaders.MaterialLoader
 
             AddParseAction("illum", i => _currentMaterial.IlluminationModel = i.ParseInvariantInt());
 
-            AddParseAction("map_Ka", m => _currentMaterial.AmbientTextureMap = m);
-            AddParseAction("map_Kd", m => _currentMaterial.DiffuseTextureMap = m);
+            AddParseAction("map_Ka", m => _currentMaterial.AmbientTextureMap = new TextureDto(m));
+            AddParseAction("map_Kd", m => _currentMaterial.DiffuseMap = new TextureDto(m));
 
-            AddParseAction("map_Ks", m => _currentMaterial.SpecularTextureMap = m);
-            AddParseAction("map_Ns", m => _currentMaterial.SpecularHighlightTextureMap = m);
+            AddParseAction("map_Ks", m => _currentMaterial.SpecularMap = new TextureDto(m));
+            AddParseAction("map_Ns", m => _currentMaterial.SpecularHighlightTextureMap = new TextureDto(m));
 
-            AddParseAction("map_d", m => _currentMaterial.AlphaTextureMap = m);
+            AddParseAction("map_d", m => _currentMaterial.AlphaTextureMap = new TextureDto(m));
 
-            AddParseAction("map_bump", m => _currentMaterial.BumpMap = m);
-            AddParseAction("bump", m => _currentMaterial.BumpMap = m);
+            AddParseAction("map_bump", m => _currentMaterial.BumpMap = new TextureDto(m));
+            AddParseAction("bump", m => _currentMaterial.BumpMap = new TextureDto(m));
 
-            AddParseAction("disp", m => _currentMaterial.DisplacementMap = m);
+            AddParseAction("disp", m => _currentMaterial.DisplacementMap = new TextureDto(m));
 
-            AddParseAction("decal", m => _currentMaterial.StencilDecalMap = m);
+            AddParseAction("decal", m => _currentMaterial.StencilDecalMap = new TextureDto(m));
         }
 
         private void AddParseAction(string key, Action<string> action) 
@@ -92,7 +96,7 @@ namespace SharpEngine.Core.ObjLoader.Loaders.MaterialLoader
         private void PushMaterial(string materialName)
         {
             _currentMaterial = new Material(materialName);
-            _dataStore.Materials.Add(_currentMaterial);
+            _dataStore.AddMaterial(_currentMaterial);
         }
 
         private static Vector3 ParseVec3(string data)

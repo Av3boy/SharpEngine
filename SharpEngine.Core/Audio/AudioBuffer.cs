@@ -29,7 +29,7 @@ public class AudioBuffer
     /// </summary>
     /// <param name="data">The data to be loaded into the buffer.</param>
     /// <param name="wavData">Details about the data.</param>
-    public void LoadData(ReadOnlySpan<byte> data, WavData wavData)
+    public void LoadData(ReadOnlySpan<byte> data, AudioData wavData)
     {
         unsafe
         {
