@@ -1,4 +1,5 @@
-﻿using SharpEngine.Core.Renderers;
+﻿using Microsoft.Extensions.Logging;
+using SharpEngine.Core.Renderers;
 using Silk.NET.Input;
 using Silk.NET.Windowing;
 
@@ -52,4 +53,7 @@ public struct ViewSettings : IViewSettings
 
     /// <inheritdoc />
     public MouseButton SecondaryButton { get; set; } = MouseButton.Right;
+
+    /// <inheritdoc />
+    public LogLevel LogLevel { get; set; } = LogLevel.Information;
 }

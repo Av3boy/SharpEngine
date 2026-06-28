@@ -83,10 +83,12 @@ namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
                 return [];
             }
 
+            // TODO: Handle multiple meshes and objects in the OBJ file. Currently, this implementation assumes a single mesh.
             return
             [
                 new(gl)
                 {
+                    Name = _dataStore.ObjectName,
                     Vertices2 = _dataStore.Vertices,
                     TextureCoordinates2 = _dataStore.Textures,
                     Normals2 = _dataStore.Normals,

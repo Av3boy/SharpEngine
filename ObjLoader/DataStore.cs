@@ -9,14 +9,23 @@ using System.Linq;
 namespace SharpEngine.Core.ObjLoader
 {
     /// <summary>
-    ///     Stores parsed OBJ file data such as vertices, normals, texture coordinates, materials and groups.
-    ///     This type is used by the OBJ loader type parsers to collect geometry and material information.
+    ///     Represents the smoothing group information for a face group.
     /// </summary>
+    /// <param name="Enabled">Determines whether smoothing is enabled for the face group.</param>
+    /// <param name="GroupId">The ID of the smoothing group, if applicable.</param>
+    public readonly record struct SmoothingGroup(bool Enabled, int? GroupId);
+
+
     /// <summary>
     ///     Stores parsed OBJ file data such as vertices, normals, texture coordinates, materials and groups.
     ///     This type is used by the OBJ loader type parsers to collect geometry and material information.
     /// </summary>
-    public class DataStore : IGroupDataStore, IFaceGroup, ITextureDataStore, INormalDataStore, IVertexDataStore, IMaterialDataStore
+    /// <remarks>
+    ///     TODO: This is probably not implemented corretly.
+    ///     We are not handling things on a per-object basis and we are not handling smoothing groups correctly.
+    ///     We should probably have a more complex data structure that can handle multiple objects, each with their own groups, materials, and smoothing groups.
+    /// </remarks>
+    public class DataStore : IGroupDataStore, IFaceGroup, ITextureDataStore, INormalDataStore, IVertexDataStore, IMaterialDataStore, ISmoothingGroupDataStore, IObjectNameDataStore
     {
         private Group _currentGroup = null!;
 
@@ -34,6 +43,12 @@ namespace SharpEngine.Core.ObjLoader
 
         /// <summary>Gets the list of groups present in the file.</summary>
         public List<Group> Groups { get; } = [];
+
+        /// <summary>Gets the list of smoothing groups defined in the file.</summary>
+        public List<SmoothingGroup> SmoothingGroups { get; } = [];
+
+        /// <summary>Gets the name of the object defined in the file, if any.</summary>
+        public string ObjectName { get; private set; } = string.Empty;
 
         /// <summary>
         ///     Initializes a new instance of <see cref="DataStore"/> and creates a default group.
@@ -83,5 +98,17 @@ namespace SharpEngine.Core.ObjLoader
         /// <inheritdoc />
         public void AddMaterial(Material currentMaterial)
             => Materials.Add(currentMaterial);
+
+        /// <inheritdoc />
+        public void SetSmoothingGroup(int groupNumber)
+            => SmoothingGroups.Add(new SmoothingGroup(true, groupNumber));
+
+        /// <inheritdoc />
+        public void SetSmoothingGroupOff()
+            => SmoothingGroups.Add(new SmoothingGroup(false, null));
+
+        /// <inheritdoc />
+        public void SetObjectName(string name)
+            => ObjectName = name;
     }
 }

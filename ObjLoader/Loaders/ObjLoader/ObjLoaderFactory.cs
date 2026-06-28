@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Logging;
 using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Entities.Properties.Meshes;
-using SharpEngine.Core.ObjLoader.Loader.Loaders;
 using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
 using SharpEngine.Core.ObjLoader.Loaders.MaterialLoader;
+using SharpEngine.Core.ObjLoader.TypeParsers;
 using SharpEngine.Telemetry;
 using Silk.NET.OpenGL;
 
@@ -14,16 +14,6 @@ using System.IO.Abstractions;
 
 namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
 {
-    /// <summary>
-    ///     Represents a testable wrapper for creating stream file related objects.
-    /// </summary>
-    public class FileManager : IFileManager
-    {
-        /// <inheritdoc />
-        public StreamReader StreamReader(string path)
-            => new(path);
-    }
-
     /// <summary>
     ///     Handles loading 3D models.
     /// </summary>
@@ -64,6 +54,7 @@ namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
                     _ => throw new NotSupportedException($"The file extension {fileExtension} is not a supported mesh file.")
                 };
 
+                _logger.LogDebug("Successfully loaded model '{name}' from path: {path}.", model.Name, path);
                 return true;
             }
             catch (Exception ex)
@@ -100,6 +91,8 @@ namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
             var normalParser = new NormalParser(dataStore);
             var textureParser = new TextureParser(dataStore);
             var vertexParser = new VertexParser(dataStore);
+            var smoothingGroupParser = new SmoothingGroupParser(dataStore);
+            var objectNameParser = new ObjectNameParser(dataStore);
 
             var materialLibraryLoader = new MaterialLibraryLoader(dataStore, _fileSystem.FileStream, _fileManager);
 
@@ -108,7 +101,7 @@ namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
             var useMaterialParser = new UseMaterialParser(dataStore);
 
             var loader = new ObjLoader(path, dataStore, _fileSystem.FileStream, _fileManager)
-                .SetupTypeParsers(faceParser, groupParser, normalParser, textureParser, vertexParser, materialLibraryParser, useMaterialParser);
+                .SetupTypeParsers(faceParser, groupParser, normalParser, textureParser, vertexParser, materialLibraryParser, useMaterialParser, smoothingGroupParser, objectNameParser);
 
             return loader.Load(gl);
         }

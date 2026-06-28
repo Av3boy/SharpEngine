@@ -1,4 +1,5 @@
-﻿using SharpEngine.Core.Renderers;
+﻿using Microsoft.Extensions.Logging;
+using SharpEngine.Core.Renderers;
 using Silk.NET.Input;
 
 namespace SharpEngine.Core.Interfaces;
@@ -26,6 +27,11 @@ public interface ISettings
 
     /// <summary>Gets or sets the secondary mouse button.</summary>
     public MouseButton SecondaryButton { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the log level for the game engine.
+    /// </summary>
+    public LogLevel LogLevel { get; set; }
 }
 
 /// <inheritdoc cref="ISettings" />
@@ -45,4 +51,7 @@ public class DefaultSettings : ISettings
 
     /// <inheritdoc/>
     public MouseButton SecondaryButton { get; set; } = MouseButton.Right;
+
+    /// <inheritdoc/>
+    public LogLevel LogLevel { get; set; } = LogLevel.Information;
 }

@@ -23,12 +23,14 @@ namespace SharpEngine.Core.Components.Properties.Meshes
         /// <summary>Gets the list of meshes contained within the model.</summary>
         public List<Mesh> Meshes { get; set; } = [];
 
+        public string Name { get; }
+
         /// <summary>
         ///     Initializes a new instance of the Model class with the specified OpenGL context and model file path.
         /// </summary>
         /// <param name="gl">The GL context used for rendering and resource management.</param>
         /// <param name="path">The file path of the model asset.</param>
-        public Model(GL gl, string path)
+        public Model(GL gl, string path) : this(gl, path, Enumerable.Empty<Mesh>())
         {
             _gl = gl;
             Path = path;
@@ -47,7 +49,11 @@ namespace SharpEngine.Core.Components.Properties.Meshes
         {
             _gl = gl;
             Path = path;
-            Meshes = [.. meshes.Select(ProcessMesh)];
+
+            if (meshes.Any())
+                Meshes = meshes.Select(ProcessMesh).ToList();
+
+            Name = meshes.FirstOrDefault()?.Name ?? System.IO.Path.GetFileNameWithoutExtension(path) ?? "UnnamedModel";
         }
 
         /// <inheritdoc />
