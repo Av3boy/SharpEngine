@@ -1,9 +1,7 @@
-﻿using Minecraft.Block;
-
+﻿using SharpEngine.Core.Numerics;
 using System;
-using System.Numerics;
 
-namespace Minecraft
+namespace Minecraft.Terrain.Block
 {
     /// <summary>
     ///     Used to create a block objects.
@@ -18,27 +16,13 @@ namespace Minecraft
         /// <param name="name">The name of the block to be created.</param>
         /// <returns>The newly created block.</returns>
         /// <exception cref="ArgumentException"></exception>
-        public static BlockBase CreateBlock(BlockType type, Vector3 position, string name)
+        public static BlockBase CreateBlock(BlockId type, Vector3 position, string name)
             => type switch
             {
-                BlockType.Dirt => new Dirt(position, name),
-                BlockType.Stone => new Stone(position, name),
+                BlockId.Dirt => new Dirt(position, name),
+                BlockId.Stone => new Stone(position, name),
+                BlockId.Grass => new Grass(position, name),
                 _ => throw new ArgumentException("Invalid block type", nameof(type)),
             };
-    }
-
-    /// <summary>
-    ///     Represents the type of block.
-    /// </summary>
-    public enum BlockType
-    {
-        /// <summary>Represents no block type.</summary>
-        None,
-
-        /// <summary>Represents a dirt block.</summary>
-        Dirt,
-
-        /// <summary>Represents a stone block.</summary>
-        Stone
     }
 }

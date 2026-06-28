@@ -1,8 +1,8 @@
 ﻿using SharpEngine.Core._Resources;
 using SharpEngine.Core.Extensions;
-using System.Numerics;
+using SharpEngine.Core.Numerics;
 
-namespace Minecraft.Block;
+namespace Minecraft.Terrain.Block;
 
 /// <summary>
 ///    Represents a dirt block.
@@ -20,8 +20,5 @@ internal class Dirt : BlockBase
                                                                       Default.FragmentShader) { }
 
     /// <inheritdoc />
-    public override BlockType BlockType => BlockType.Dirt;
-
-    /// <inheritdoc />
-    public override bool IsSolid => true;
+    public override BlockId BlockId => BlockId.Dirt;
 }

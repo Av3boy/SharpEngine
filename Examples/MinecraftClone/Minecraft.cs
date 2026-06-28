@@ -1,24 +1,17 @@
 using ImGuiNET;
-
-using Minecraft.Block;
 using Microsoft.Extensions.Logging;
-
+using Minecraft.Terrain.Block;
+using Minecraft.Terrain.Layers;
 using SharpEngine.Core;
 using SharpEngine.Core.Entities;
-using SharpEngine.Core.Entities.Lights;
-using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.UI;
-using SharpEngine.Core.Entities.UI.Layouts;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
+using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Windowing;
-using SharpEngine.Core.ObjLoader.Loaders.ObjLoader;
-
 using Silk.NET.Input;
-
 using System;
-using System.Numerics;
 
 namespace Minecraft;
 
@@ -32,13 +25,13 @@ public class Minecraft : Game
     private readonly Scene _scene;
     private readonly ILogger<Minecraft> _logger;
 
-    private SceneNode _lightsNode;
-    private SceneNode _blocksNode;
-
     private Input _input;
     private readonly Inventory _inventory;
 
     private UIElement _uiElem;
+
+    private readonly Terrain.TerrainGenerator_New _terrain;
+    private readonly SceneNode _blocksNode;
 
     /// <summary>
     ///     Gets the main window.
@@ -60,6 +53,17 @@ public class Minecraft : Game
 
         _inventory = new Inventory();
 
+        _blocksNode = _scene.AddNode("Blocks");
+        _terrain = new Terrain.TerrainGenerator_New(_scene, _blocksNode, 
+        [
+            new HeightMapPass(),
+            new BaseTerrainPass(),
+            new CavePass(),
+            // new OrePass(),
+            // new WaterPass(),
+            // new SurfaceDecorationPass(),
+            // new FoliagePass()
+        ]);
     }
 
     /// <inheritdoc />
@@ -72,31 +76,33 @@ public class Minecraft : Game
             _input = new Input(Camera);
             _inventory.Initialize();
 
-            _lightsNode = _scene.Root.AddChild("lights");
-            _blocksNode = _scene.Root.AddChild("blocks");
+            _terrain.InitializeWorld();
 
-            // var gridLayout = new GridLayout<UIElement>();
-
-            // TODO: #89 Fix UI renderer
-            _uiElem = new UIElement(Window.GetGL(), "uiElement");
-            _scene.UIElements.Add(_uiElem);
-
-            var uiElem2 = new UIElement(Window.GetGL(), "uiElement");
-            uiElem2.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.2f, 0.2f);
-            uiElem2.Transform.Position = new SharpEngine.Core.Numerics.Vector2(30, 0);
-
-            // gridLayout.AddChild(_uiElem, uiElem2);
-            _scene.UIElements.Add(_uiElem);
-            _scene.UIElements.Add(uiElem2);
-
-            // _scene.UIElements.Add(gridLayout);
-
-            InitializeWorld();
+            InitializeUI();
         }
         catch (Exception ex)
         {
             _logger.LogInformation(ex, "{Message}", ex.Message);
         }
+    }
+
+    private void InitializeUI()
+    {
+        // var gridLayout = new GridLayout<UIElement>();
+
+        // TODO: #89 Fix UI renderer
+        _uiElem = new UIElement(Window.GetGL(), "uiElement");
+        _scene.UIElements.Add(_uiElem);
+
+        var uiElem2 = new UIElement(Window.GetGL(), "uiElement");
+        uiElem2.Transform.Scale = new Vector2(0.2f, 0.2f);
+        uiElem2.Transform.Position = new Vector2(30, 0);
+
+        // gridLayout.AddChild(_uiElem, uiElem2);
+        _scene.UIElements.Add(_uiElem);
+        _scene.UIElements.Add(uiElem2);
+
+        // _scene.UIElements.Add(gridLayout);
     }
 
     /// <summary>
@@ -133,97 +139,20 @@ public class Minecraft : Game
         ImGui.SliderFloat("rotation", ref rotation, 0, 360);
 
         ImGui.Text($"UI Element width: {_uiElem.Width}");
-        ImGui.SliderFloat("width", ref width, 0, 100);
+        ImGui.SliderFloat("width", ref width, 0, Window.Width);
 
         ImGui.Text($"UI Element height: {_uiElem.Height}");
-        ImGui.SliderFloat("height", ref height, 0, 100);
+        ImGui.SliderFloat("height", ref height, 0, Window.Height);
 
         ImGui.End();
 
-        _uiElem.Transform.Position = new SharpEngine.Core.Numerics.Vector2(x, y);
-        _uiElem.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(sx, sy);
+        _uiElem.Transform.Position = new Vector2(x, y);
+        _uiElem.Transform.Scale = new Vector2(sx, sy);
         _uiElem.Transform.Rotation.Angle = rotation;
 
         _uiElem.Height = height;
         _uiElem.Width = width;
     }
-
-    private void InitializeWorld()
-    {
-        InitializeLights();
-        InitializeChunks();
-
-        // TODO: #2 Does not work yet.
-        // var torus = MeshService.Instance.LoadMesh("torus", @"C:\Users\antti\Documents\Untitled2.obj");
-
-        var model = ObjLoaderFactory.Load(Window.GetGL(), @"C:\Users\antti\Documents\Untitled2.obj");
-        var go = new GameObject(model);
-        var go2 = new GameObject(model)
-        {
-            Transform = new Transform(new SharpEngine.Core.Numerics.Vector3(0, 0, 30))
-        };
-
-        _scene.Root.AddChild(go);
-        _scene.Root.AddChild(go2);
-    }
-
-    private void InitializeLights()
-    {
-        _lightsNode.AddChild(new DirectionalLight());
-
-        _lightsNode.AddChild(
-            new PointLight(new SharpEngine.Core.Numerics.Vector3(0.7f, 0.2f, 2.0f), 0),
-            new PointLight(new SharpEngine.Core.Numerics.Vector3(2.3f, -3.3f, -4.0f), 1),
-            new PointLight(new SharpEngine.Core.Numerics.Vector3(-4.0f, 2.0f, -12.0f), 2),
-            new PointLight(new SharpEngine.Core.Numerics.Vector3(0.0f, 0.0f, -3.0f), 3)
-        );
-
-        _lightsNode.AddChild(new SpotLight()
-        {
-            Ambient = new SharpEngine.Core.Numerics.Vector3(0.0f, 0.0f, 0.0f),
-            Diffuse = new SharpEngine.Core.Numerics.Vector3(1.0f, 1.0f, 1.0f),
-            Specular = new SharpEngine.Core.Numerics.Vector3(1.0f, 1.0f, 1.0f),
-        });
-    }
-
-    private void InitializeChunks()
-    {
-        // TODO: #88 Generate chunks when player moves
-
-        // TODO: #87 Generate chunks using 3d Perlin noise
-
-        const int chunkSize = 16;
-        const int numChunks = 1;
-        // const int numChunks = 3;
-
-        for (int i = 0; i < numChunks; i++)
-        {
-            var chunkPos = new Vector3(i * chunkSize, 0, 0);
-            GenerateChunk(chunkSize, chunkPos);
-        }
-    }
-
-    private void GenerateChunk(int chunkSize, Vector3 chunkPos)
-    {
-        for (int x = 0; x < chunkSize; x++)
-        {
-            for (int z = 0; z < chunkSize; z++)
-            {
-                var blockPos = chunkPos + new Vector3(x, 0, z);
-
-                var dirt = new Dirt(blockPos, $"Dirt ({x}{z})");
-                _blocksNode.AddChild(dirt);
-
-                for (int y = 1; y < chunkSize; y++)
-                {
-                    blockPos.Y = -y;
-                    var stone = new Stone(blockPos, $"Dirt ({x}{z}.{y})");
-                    _blocksNode.AddChild(stone);
-                }
-            }
-        }
-    }
-
     /// <inheritdoc />
     public override void Update(double deltaTime, IInputContext input) 
         => _input.HandleKeyboard(input.Keyboards[0], (float)deltaTime);
@@ -232,7 +161,7 @@ public class Minecraft : Game
     /// <inheritdoc />
     public override void HandleKeyboard(IKeyboard input, double deltaTime)
     {
-        for (int i = 0; i <= 9; i++)
+        for (int i = 1; i <= 9; i++)
         {
             if (input.IsKeyPressed(Key.Number0 + i))
             {
@@ -262,13 +191,13 @@ public class Minecraft : Game
     {
         if (button == MouseButton.Right)
         {
-            if (_inventory.SelectedSlot.Items.Type != BlockType.None && _inventory.SelectedSlot.Items.Amount > 0)
+            if (_inventory.SelectedSlot.Items.Type != BlockId.Air && _inventory.SelectedSlot.Items.Amount > 0)
             {
                 PlaceBlock();
                 _inventory.SelectedSlot.Items.Amount -= 1;
 
                 if (_inventory.SelectedSlot.Items.Amount < 0)
-                    _inventory.SelectedSlot.Items.Type = BlockType.None;
+                    _inventory.SelectedSlot.Items.Type = BlockId.Air;
             }
             else
             {
@@ -278,26 +207,26 @@ public class Minecraft : Game
 
         if (button == MouseButton.Left)
         {
-            var destroyedBlockType = DestroyBlock();
-            if (destroyedBlockType != BlockType.None)
+            var destroyedBlockId = DestroyBlock();
+            if (destroyedBlockId != BlockId.Air)
             {
                 // TODO: #86 The block should be added to the slot so that 0 is the last slot instead of 9.
                 // TODO: #86 The first block destroyed doesn't seem to be added to the inventory.
-                _logger.LogInformation("Block destroyed: {DestroyedBlockType}.", destroyedBlockType);
-                _inventory.AddToolbarItem(destroyedBlockType);
+                _logger.LogInformation("Block destroyed: {DestroyedBlockId}.", destroyedBlockId);
+                _inventory.AddToolbarItem(destroyedBlockId);
             }
         }
     }
 
-    private BlockType DestroyBlock()
+    private BlockId DestroyBlock()
     {
-        if (!Camera.IsInView(_scene, out GameObject? intersectingObject, out Vector3 _, allowedTypes: typeof(BlockBase)))
-            return BlockType.None;
+        if (!Camera.IsInView(_scene, out GameObject? intersectingObject, out _, allowedTypes: typeof(BlockBase)))
+            return BlockId.Air;
 
         var block = (BlockBase)intersectingObject!;
         _blocksNode.RemoveChild(intersectingObject!);
 
-        return block.BlockType;
+        return block.BlockId;
     }
 
     private void PlaceBlock()
@@ -318,7 +247,7 @@ public class Minecraft : Game
     private static Vector3 GetNewBlockPosition(Vector3 hitPosition, GameObject intersectingObject)
     {
         Vector3 normal = Ray.GetClosestFaceNormal(hitPosition, intersectingObject);
-        return (System.Numerics.Vector3)intersectingObject.Transform.Position + (normal * (System.Numerics.Vector3)intersectingObject.Transform.Scale);
+        return intersectingObject.Transform.Position + (normal * intersectingObject.Transform.Scale);
     }
 
     /// <inheritdoc />
