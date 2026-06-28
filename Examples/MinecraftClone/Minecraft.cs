@@ -75,21 +75,21 @@ public class Minecraft : Game
             _lightsNode = _scene.Root.AddChild("lights");
             _blocksNode = _scene.Root.AddChild("blocks");
 
-            var gridLayout = new GridLayout<UIElement>();
+            // var gridLayout = new GridLayout<UIElement>();
 
             // TODO: #89 Fix UI renderer
-            _uiElem = new UIElement("uiElement");
+            _uiElem = new UIElement(Window.GetGL(), "uiElement");
             _scene.UIElements.Add(_uiElem);
 
-            var uiElem2 = new UIElement("uiElement");
+            var uiElem2 = new UIElement(Window.GetGL(), "uiElement");
             uiElem2.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(0.2f, 0.2f);
             uiElem2.Transform.Position = new SharpEngine.Core.Numerics.Vector2(30, 0);
 
-            gridLayout.AddChild(_uiElem, uiElem2);
+            // gridLayout.AddChild(_uiElem, uiElem2);
             _scene.UIElements.Add(_uiElem);
             _scene.UIElements.Add(uiElem2);
 
-            _scene.UIElements.Add(gridLayout);
+            // _scene.UIElements.Add(gridLayout);
 
             InitializeWorld();
         }
@@ -172,17 +172,17 @@ public class Minecraft : Game
         _lightsNode.AddChild(new DirectionalLight());
 
         _lightsNode.AddChild(
-            new PointLight(new Vector3(0.7f, 0.2f, 2.0f), 0),
-            new PointLight(new Vector3(2.3f, -3.3f, -4.0f), 1),
-            new PointLight(new Vector3(-4.0f, 2.0f, -12.0f), 2),
-            new PointLight(new Vector3(0.0f, 0.0f, -3.0f), 3)
+            new PointLight(new SharpEngine.Core.Numerics.Vector3(0.7f, 0.2f, 2.0f), 0),
+            new PointLight(new SharpEngine.Core.Numerics.Vector3(2.3f, -3.3f, -4.0f), 1),
+            new PointLight(new SharpEngine.Core.Numerics.Vector3(-4.0f, 2.0f, -12.0f), 2),
+            new PointLight(new SharpEngine.Core.Numerics.Vector3(0.0f, 0.0f, -3.0f), 3)
         );
 
         _lightsNode.AddChild(new SpotLight()
         {
-            Ambient = new Vector3(0.0f, 0.0f, 0.0f),
-            Diffuse = new Vector3(1.0f, 1.0f, 1.0f),
-            Specular = new Vector3(1.0f, 1.0f, 1.0f),
+            Ambient = new SharpEngine.Core.Numerics.Vector3(0.0f, 0.0f, 0.0f),
+            Diffuse = new SharpEngine.Core.Numerics.Vector3(1.0f, 1.0f, 1.0f),
+            Specular = new SharpEngine.Core.Numerics.Vector3(1.0f, 1.0f, 1.0f),
         });
     }
 

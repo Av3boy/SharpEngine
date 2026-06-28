@@ -5,58 +5,68 @@ using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
 
 namespace SharpEngine.Core.Components.Properties;
 
+public record TextureDto
+{
+    public TextureDto(string path, Texture? texture = null)
+    {
+        Path = path;
+        Texture = texture;
+    }
+
+    public string Path { get; set; }
+    public Texture? Texture { get; set; }
+}
+
+public enum TextureUnitIndex : int
+{
+    /// <summary>The texture unit for the diffuse map.</summary>
+    DIFFUSE_UNIT = 0,
+
+    /// <summary>The texture unit for the specular map.</summary>
+    SPECULAR_UNIT = 1
+}
+
 /// <summary>
 ///     Represents the material rendered onto a game object.
 /// </summary>
-public class Material : ICloneable, IEquatable<Material>
+public class Material
 {
+    /// <summary>
+    ///     Initializes a new instance of <see cref="Material"/>.
+    /// </summary>
+    /// <param name="materialName">The name assigned to the new material.</param>
+    public Material(string materialName)
+        : this(materialName, diffuseMap: null, specularMap: null) { }
+
     /// <summary>
     ///     Initializes a new instance of <see cref="Material"/>.
     /// </summary>
     /// <param name="materialName">The name assigned to the new material.</param>
     /// <param name="diffuseMap">The diffuse map texture of the material.</param>
     /// <param name="specularMap">The specular map texture of the material. Defaults to the diffuse map if not provided.</param>
-    public Material(string materialName, Texture? diffuseMap = null, Texture? specularMap = null) : this(materialName)
+    public Material(string materialName, Texture? diffuseMap = null, Texture? specularMap = null)
     {
-        DiffuseMap = diffuseMap;
-        SpecularMap = specularMap ?? diffuseMap;
+        DiffuseMap = new TextureDto(diffuseMap?.Path ?? string.Empty, diffuseMap);
+        SpecularMap = new TextureDto(specularMap?.Path ?? string.Empty, specularMap);
 
         Specular = new(0.5f, 0.5f, 0.5f);
         Shininess = 32.0f;
-    }
 
-    /// <summary>
-    ///     Initializes a new instance of <see cref="Material"/>.
-    /// </summary>
-    /// <param name="materialName">The name assigned to the new material.</param>
-    public Material(string materialName)
-    {
         Name = materialName;
     }
+
+    // Resolve dependency issue with GL to fix this.
+    // public Shader Shader { get; init; }
+    public Shader Shader { get; set; }
 
     /// <summary>Gets or sets the name of the material.</summary>
     public string Name { get; set; }
 
     /// <summary>Gets or sets the diffuse map texture.</summary>
-    public Texture? DiffuseMap { get; set; }
-
-    /// <summary>Gets or sets the path to the diffuse texture map.</summary>
-    public string? DiffuseTextureMap { get; set; }
+    public TextureDto? DiffuseMap { get; set; }
 
     /// <summary>Gets or sets the specular map texture.</summary>
-    public Texture? SpecularMap { get; set; }
-
-    /// <summary>Gets or sets the path to the specular texture map.</summary>
-    public string? SpecularTextureMap { get; set; }
-
-    /// <summary>Gets a value indicating whether the material uses a specular map.</summary>
-    public bool UseSpecularMap => SpecularMap is not null && SpecularMap?.Handle != DiffuseMap?.Handle;
-
-    /// <summary>The texture unit for the diffuse map.</summary>
-    public const int DIFFUSE_UNIT = 0;
-
-    /// <summary>The texture unit for the specular map.</summary>
-    public const int SPECULAR_UNIT = 1;
+    public TextureDto? SpecularMap { get; set; }
 
     /// <summary>Gets or sets the specular color of the material.</summary>
     public Vector3 Specular { get; set; }
@@ -83,22 +93,22 @@ public class Material : ICloneable, IEquatable<Material>
     public int IlluminationModel { get; set; }
 
     /// <summary>Gets or sets the path to the ambient texture map.</summary>
-    public string? AmbientTextureMap { get; set; }
+    public TextureDto? AmbientTextureMap { get; set; }
 
     /// <summary>Gets or sets the path to the specular highlight texture map.</summary>
-    public string? SpecularHighlightTextureMap { get; set; }
+    public TextureDto? SpecularHighlightTextureMap { get; set; }
 
     /// <summary>Gets or sets the path to the bump map.</summary>
-    public string? BumpMap { get; set; }
+    public TextureDto? BumpMap { get; set; }
 
     /// <summary>Gets or sets the path to the displacement map.</summary>
-    public string? DisplacementMap { get; set; }
+    public TextureDto? DisplacementMap { get; set; }
 
     /// <summary>Gets or sets the path to the stencil decal map.</summary>
-    public string? StencilDecalMap { get; set; }
+    public TextureDto? StencilDecalMap { get; set; }
 
     /// <summary>Gets or sets the path to the alpha texture map.</summary>
-    public string? AlphaTextureMap { get; set; }
+    public TextureDto? AlphaTextureMap { get; set; }
 
     /// <summary>
     ///     Sets the uniform values for the material in the specified shader.
@@ -110,48 +120,19 @@ public class Material : ICloneable, IEquatable<Material>
 
         if (DiffuseMap is not null)
         {
-            DiffuseMap.Use(TextureUnit.Texture0);
-            shader.SetInt("material.diffuse", DIFFUSE_UNIT);
+            DiffuseMap.Texture?.Use(TextureUnit.Texture0);
+            shader.SetTextureUnit("material.diffuse", TextureUnitIndex.DIFFUSE_UNIT);
         }
 
         if (SpecularMap is not null)
         {
-            SpecularMap.Use(TextureUnit.Texture1);
-            shader.SetInt("material.specular", SPECULAR_UNIT);
-            shader.SetFloat("material.shininess", Shininess);
+            SpecularMap.Texture?.Use(TextureUnit.Texture1);
+            shader.SetTextureUnit("material.specular", TextureUnitIndex.SPECULAR_UNIT);
         }
         else
-        {
-            shader.SetInt("material.specular", DIFFUSE_UNIT);
-            shader.SetFloat("material.shininess", 0);
-        }
-    }
+            shader.SetTextureUnit("material.specular", TextureUnitIndex.DIFFUSE_UNIT);
 
-    /// <inheritdoc />
-    public object Clone()
-        => MemberwiseClone();
+        shader.SetFloat("material.shininess", Shininess);
 
-    /// <inheritdoc />
-    public override bool Equals(object? obj)
-    {
-        if (obj is null)
-            return false;
-
-        if (ReferenceEquals(this, obj))
-            return true;
-
-        if (GetType() != obj.GetType())
-            return false;
-
-        return true;
-    }
-
-    /// <inheritdoc />
-    public bool Equals(Material? other) => Equals(other);
-
-    /// <inheritdoc />
-    public override int GetHashCode()
-    {
-        throw new NotImplementedException();
     }
 }

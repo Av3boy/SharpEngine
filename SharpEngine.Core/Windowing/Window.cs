@@ -260,10 +260,8 @@ public class Window : SilkWindow
     /// <param name="frame">Contains information about the previous frame.</param>
     protected void RenderFrame(Frame frame)
     {
-        while (!_initialized)
-        {
-            // Wait for the window to be initialized.
-        }
+        if (!_initialized)
+            throw new InvalidOperationException("Window has not been initialized. Call Initialize() before rendering.");
 
         try
         {

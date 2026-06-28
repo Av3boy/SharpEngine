@@ -132,12 +132,41 @@ public class Mesh : IDisposable
     }
 
     /// <summary>
+    ///     Initializes a new instance of the <see cref="Mesh"/> class with the specified OpenGL context, interleaved vertices, and indices.
+    /// </summary>
+    /// <param name="gl">The OpenGL context.</param>
+    /// <param name="vertices">The interleaved vertex data (position, normal, uv per vertex).</param>
+    /// <param name="indices">The indices of the mesh.</param>
+    public Mesh(GL gl, float[] vertices, uint[] indices)
+    {
+        GL = gl;
+        Vertices = vertices;
+        Indices = indices;
+        SetupMesh();
+    }
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="Mesh"/> class with the specified OpenGL context.
     /// </summary>
     /// <param name="gl">The OpenGL context.</param>
     public Mesh(GL gl)
     {
         GL = gl;
+        SetupMesh();
+    }
+
+    /// <summary>
+    ///     Disposes the existing GPU buffers and reinitializes them using the current <see cref="Vertices"/> and <see cref="Indices"/> data.
+    /// </summary>
+    /// <remarks>
+    ///     Call this method after updating <see cref="Vertices"/> or <see cref="Indices"/> on a mesh that was already
+    ///     set up, for example after in-place processing via <see cref="SharpEngine.Core.Components.Properties.Meshes.Model.ProcessMesh"/>.
+    /// </remarks>
+    public void ReinitializeGpuBuffers()
+    {
+        VAO.Dispose();
+        VBO.Dispose();
+        EBO.Dispose();
         SetupMesh();
     }
 
@@ -165,6 +194,14 @@ public class Mesh : IDisposable
     /// </summary>
     public void Bind()
         => VAO.Bind();
+
+    public void Draw()
+    {
+        if (Indices.Length > 0)
+            GL.DrawElements<uint>(PrimitiveType.Triangles, (uint)Indices.Length, DrawElementsType.UnsignedInt, []);
+        else
+            GL.DrawArrays(PrimitiveType.Triangles, 0, (uint)(Vertices.Length / (VertexData.VerticesSize + VertexData.NormalsSize + VertexData.TexCoordsSize)));
+    }
 
     /// <inheritdoc />
     protected virtual void Dispose(bool disposing)

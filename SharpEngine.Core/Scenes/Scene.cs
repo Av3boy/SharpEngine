@@ -63,11 +63,13 @@ public class Scene
     ///     Adds an empty node to the scene root.
     /// </summary>
     /// <param name="name">The name of the new empty node.</param>
-    public void AddNode(string name)
+    public SceneNode AddNode(string name)
     {
         var node = new EmptyNode<Transform, SharpEngine.Core.Numerics.Vector3>(name);
         Nodes.Add(node);
         Root.Children.Add(node);
+
+        return node;
     }
 
     /// <summary>

@@ -7,11 +7,8 @@ namespace SharpEngine.Core.Shaders;
 /// <summary>
 ///     Represents a shader program.
 /// </summary>
-public partial class Shader : IDisposable
+public partial class Shader : ShaderProgram, IShader, IDisposable
 {
-    /// <summary>Gets the handle to the shader program.</summary>
-    public uint Handle { get; private set; }
-
     /// <summary>Gets or sets the identifying name of the shader.</summary>
     public string Name { get; set; }
 
@@ -20,12 +17,6 @@ public partial class Shader : IDisposable
 
     /// <summary>Gets or sets the path to the fragment shader file.</summary>
     public string FragPath { get; set; }
-
-    private readonly GL _gl;
-    private readonly ILogger<Shader> _logger;
-
-    private Dictionary<string, int> _uniformLocations = [];
-    private bool disposedValue;
 
     /// <summary>
     ///    Initializes a new instance of <see cref="Shader"/>.
@@ -38,12 +29,9 @@ public partial class Shader : IDisposable
     /// <param name="vertPath">The vertex shader full path.</param>
     /// <param name="fragPath">The fragment shader full path.</param>
     /// <param name="name">The identifier name of the shader.</param>
-    public Shader(GL gl, string vertPath, string fragPath, string name)
+    public Shader(GL gl, string vertPath, string fragPath, string name) : base(gl)
     {
-        _gl = gl;
         Name = name;
-
-        _logger = LoggingExtensions.CreateLogger<Shader>();
 
         // There are several different types of shaders, but the only two you need for basic rendering are the vertex and fragment shaders.
         // The vertex shader is responsible for moving around vertices, and uploading that data to the fragment shader.
@@ -59,30 +47,7 @@ public partial class Shader : IDisposable
 
         VertPath = vertPath;
         FragPath = fragPath;
-    }
 
-    /// <inheritdoc />
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposedValue)
-            return;
-        
-        if (disposing)
-        {
-            // TODO: Collect handles in a separate container with proper access to the shared GL context.
-            //_gl.DeleteProgram(Handle);
-            Handle = 0;
-            _uniformLocations.Clear();
-        }
-
-        disposedValue = true;
-    }
-
-    /// <inheritdoc />
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
+        Initialize(vertPath, fragPath);
     }
 }

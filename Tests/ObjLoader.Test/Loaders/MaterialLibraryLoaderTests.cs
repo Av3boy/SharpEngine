@@ -94,8 +94,8 @@ namespace SharpEngine.Core.ObjLoader.Tests.Loaders
             LoadMaterial();
 
             _firstMaterial.AmbientTextureMap.Should().BeEquivalentTo("lenna1.tga");
-            _firstMaterial.DiffuseTextureMap.Should().BeEquivalentTo("lenna2.tga");
-            _firstMaterial.SpecularTextureMap.Should().BeEquivalentTo("lenna3.tga");
+            _firstMaterial.DiffuseMap.Should().BeEquivalentTo("lenna2.tga");
+            _firstMaterial.SpecularMap.Should().BeEquivalentTo("lenna3.tga");
             _firstMaterial.SpecularHighlightTextureMap.Should().BeEquivalentTo("lenna_spec.tga");
             _firstMaterial.AlphaTextureMap.Should().BeEquivalentTo("lenna_alpha.tga");
             _firstMaterial.BumpMap.Should().BeEquivalentTo("lenna_bump.tga");

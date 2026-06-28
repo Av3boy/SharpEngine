@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>$(DotNetTargetFramework)</TargetFramework>
@@ -21,7 +21,6 @@
     <Folder Include="Handlers\" />
     <Folder Include="Windowing\" />
     <Folder Include="Textures\" />
-    <Folder Include="Shaders\" />
     <Folder Include="Scenes\" />
     <Folder Include="Renderers\" />
     <Folder Include="Primitives\" />

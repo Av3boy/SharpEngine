@@ -54,20 +54,20 @@ namespace SharpEngine.Core.ObjLoader.Loaders.MaterialLoader
 
             AddParseAction("illum", i => _currentMaterial.IlluminationModel = i.ParseInvariantInt());
 
-            AddParseAction("map_Ka", m => _currentMaterial.AmbientTextureMap = m);
-            AddParseAction("map_Kd", m => _currentMaterial.DiffuseTextureMap = m);
+            AddParseAction("map_Ka", m => _currentMaterial.AmbientTextureMap = new TextureDto(m));
+            AddParseAction("map_Kd", m => _currentMaterial.DiffuseMap = new TextureDto(m));
 
-            AddParseAction("map_Ks", m => _currentMaterial.SpecularTextureMap = m);
-            AddParseAction("map_Ns", m => _currentMaterial.SpecularHighlightTextureMap = m);
+            AddParseAction("map_Ks", m => _currentMaterial.SpecularMap = new TextureDto(m));
+            AddParseAction("map_Ns", m => _currentMaterial.SpecularHighlightTextureMap = new TextureDto(m));
 
-            AddParseAction("map_d", m => _currentMaterial.AlphaTextureMap = m);
+            AddParseAction("map_d", m => _currentMaterial.AlphaTextureMap = new TextureDto(m));
 
-            AddParseAction("map_bump", m => _currentMaterial.BumpMap = m);
-            AddParseAction("bump", m => _currentMaterial.BumpMap = m);
+            AddParseAction("map_bump", m => _currentMaterial.BumpMap = new TextureDto(m));
+            AddParseAction("bump", m => _currentMaterial.BumpMap = new TextureDto(m));
 
-            AddParseAction("disp", m => _currentMaterial.DisplacementMap = m);
+            AddParseAction("disp", m => _currentMaterial.DisplacementMap = new TextureDto(m));
 
-            AddParseAction("decal", m => _currentMaterial.StencilDecalMap = m);
+            AddParseAction("decal", m => _currentMaterial.StencilDecalMap = new TextureDto(m));
         }
 
         private void AddParseAction(string key, Action<string> action) 
