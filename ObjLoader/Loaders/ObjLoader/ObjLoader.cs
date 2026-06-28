@@ -1,11 +1,13 @@
-﻿using SharpEngine.Core.Entities.Properties.Meshes;
+﻿using Microsoft.Extensions.Logging;
+using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.ObjLoader.Loader.Loaders;
 using SharpEngine.Core.ObjLoader.TypeParsers;
-
+using SharpEngine.Telemetry;
 using Silk.NET.OpenGL;
 
 using System.Collections.Generic;
 using System.IO.Abstractions;
+using System.Linq;
 
 namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
 {
@@ -18,6 +20,8 @@ namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
         private readonly DataStore _dataStore;
         private readonly List<ITypeParser> _typeParsers = [];
         private readonly List<string> _unrecognizedLines = [];
+
+        private readonly ILogger<ObjLoader> _logger = LoggingExtensions.CreateLogger<ObjLoader>();
 
         /// <summary>
         ///     Initializes a new instance of <see cref="ObjLoader"/> with the specified file path and data store.
@@ -46,16 +50,25 @@ namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
         }
 
         /// <inheritdoc />
-        protected override void ParseLine(string keyword, string data)
+        protected override bool ParseLine(string keyword, string data)
         {
             foreach (var typeParser in _typeParsers)
+            {
                 if (typeParser.CanParse(keyword))
                 {
                     typeParser.Parse(data);
-                    return;
+                    return true;
                 }
+                else
+                {
+                    _logger.LogDebug("Type parser {Parser} cannot parse keyword: {Keyword}", typeParser.GetType().Name, keyword);
+                }
+            }
 
             _unrecognizedLines.Add(keyword + " " + data);
+            _logger.LogError("Unrecognized line in OBJ file: {Line}", keyword + " " + data);
+
+            return false;
         }
 
         /// <summary>
@@ -64,7 +77,11 @@ namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
         /// <param name="gl">The OpenGL context used to construct GPU resources.</param>
         public List<Mesh> Load(GL gl)
         {
-            ParseFile(_path);
+            if (!ParseFile(_path))
+            {
+                _logger.LogError("Failed to parse OBJ file: {Path}", _path);
+                return [];
+            }
 
             return
             [

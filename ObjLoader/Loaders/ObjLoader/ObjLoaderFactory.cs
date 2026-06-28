@@ -1,9 +1,10 @@
+using Microsoft.Extensions.Logging;
 using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.ObjLoader.Loader.Loaders;
 using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
 using SharpEngine.Core.ObjLoader.Loaders.MaterialLoader;
-
+using SharpEngine.Telemetry;
 using Silk.NET.OpenGL;
 
 using System;
@@ -31,6 +32,8 @@ namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
         private static readonly FileSystem _fileSystem;
         private static readonly FileManager _fileManager;
 
+        private readonly static ILogger _logger = LoggingExtensions.CreateLogger(typeof(ObjLoaderFactory));
+
         static ObjLoaderFactory()
         {
             _fileSystem = new FileSystem();
@@ -45,15 +48,32 @@ namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
         /// </summary>
         /// <param name="gl">The OpenGL context where the model should be bound.</param>
         /// <param name="path">Specifies the file path of the mesh to be loaded, which determines the loading method based on its extension.</param>
+        /// <param name="model">The model loaded from the file.</param>
         /// <returns>The model loaded from the file.</returns>
         /// <exception cref="NotSupportedException">Thrown when the file extension of the provided path is not recognized as a supported mesh format.</exception>
-        public static Model Load(GL gl, string path)
-            => Path.GetExtension(path) switch
+        /// <exception cref="InvalidOperationException">Thrown when no meshes are loaded.</exception>
+        public static bool Load(GL gl, string path, out Model? model)
+        {
+            try
             {
-                FbxExtension => LoadFbx("", path),
-                ObjExtension => LoadObj(gl, path),
-                _ => throw new NotSupportedException($"The file extension {Path.GetExtension(path)} is not a supported mesh file.")
-            };
+                string fileExtension = Path.GetExtension(path);
+                model = fileExtension switch
+                {
+                    FbxExtension => LoadFbx("", path),
+                    ObjExtension => LoadObj(gl, path),
+                    _ => throw new NotSupportedException($"The file extension {fileExtension} is not a supported mesh file.")
+                };
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to load model from path: {path}.", path);
+
+                model = null;
+                return false;
+            }
+        }
 
         // TODO: #3 Load fbx mesh from file
         private static Model LoadFbx(string identifier, string meshFilePath)
@@ -64,6 +84,10 @@ namespace SharpEngine.Core.ObjLoader.Loaders.ObjLoader
         private static Model LoadObj(GL gl, string path)
         {
             var meshes = LoadObjMeshes(gl, path);
+
+            if (meshes.Count == 0)
+                throw new InvalidOperationException("The .obj file contains no meshes.");
+
             return new Model(gl, path, meshes);
         }
 

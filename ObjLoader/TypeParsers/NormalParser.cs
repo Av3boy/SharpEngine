@@ -25,7 +25,7 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
         protected override string Keyword => "vn";
 
         /// <inheritdoc />
-        public override void Parse(string line)
+        public override bool Parse(string line)
         {
             string[] parts = line.Split(' ');
 
@@ -35,6 +35,8 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
 
             var normal = new Normal(x, y, z);
             _dataStore.AddNormal(normal);
+            
+            return true;
         }
     }
 }

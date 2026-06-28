@@ -17,6 +17,6 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
         public bool CanParse(string keyword) => keyword.EqualsOrdinalIgnoreCase(Keyword);
 
         /// <inheritdoc />
-        public abstract void Parse(string line);
+        public abstract bool Parse(string line);
     }
 }

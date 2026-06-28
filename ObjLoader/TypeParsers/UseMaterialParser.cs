@@ -1,5 +1,4 @@
-﻿using SharpEngine.Core.Components.ObjLoader.DataStore;
-using SharpEngine.Core.ObjLoader.TypeParsers;
+﻿using SharpEngine.Core.ObjLoader.TypeParsers;
 
 namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
 {
@@ -23,6 +22,10 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
         protected override string Keyword => "usemtl";
         
         /// <inheritdoc />
-        public override void Parse(string line) => _dataStore.SetMaterial(line);
+        public override bool Parse(string line)
+        {
+            _dataStore.SetMaterial(line);
+            return true;
+        }
     }
 }

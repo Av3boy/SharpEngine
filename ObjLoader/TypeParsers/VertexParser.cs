@@ -27,7 +27,7 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
         protected override string Keyword => "v";
 
         /// <inheritdoc />
-        public override void Parse(string line)
+        public override bool Parse(string line)
         {
             string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
@@ -41,6 +41,8 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
             };
 
             _dataStore.AddVertex(vertex);
+
+            return true;
         }
     }
 }
