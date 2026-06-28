@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Minecraft.Terrain.Block;
+using System;
 using System.Linq;
 
 namespace Minecraft;
@@ -31,7 +32,7 @@ public class Inventory
     public InventoryItem GetActiveSlotItems(int slotNumber)
         => Toolbar[slotNumber].Items;
 
-    /*public void AddItem(BlockType type)
+    /*public void AddItem(BlockId type)
     {
         var item = Items.FirstOrDefault(x => x.Type == type);
         if (item is not null)
@@ -43,10 +44,10 @@ public class Inventory
     /// <summary>
     ///     Adds an item to the toolbar.
     /// </summary>
-    /// <param name="blockType">The type of the block to add to the toolbar.</param>
-    public void AddToolbarItem(BlockType blockType)
+    /// <param name="BlockId">The type of the block to add to the toolbar.</param>
+    public void AddToolbarItem(BlockId BlockId)
     {
-        var slot = Toolbar.FirstOrDefault(i => i.Items.Type == blockType);
+        var slot = Toolbar.FirstOrDefault(i => i.Items.Type == BlockId);
         if (slot is not null)
         {
             slot.Items.Amount += 1;
@@ -57,18 +58,18 @@ public class Inventory
             return;
         }
 
-        if (SelectedSlot.Items.Type == BlockType.None)
+        if (SelectedSlot.Items.Type == BlockId.Air)
         {
-            SelectedSlot.Items = new InventoryItem { Type = blockType, Amount = 1 };
+            SelectedSlot.Items = new InventoryItem { Type = BlockId, Amount = 1 };
             Toolbar[SelectedSlotIndex] = SelectedSlot;
             return;
         }
 
         for (int i = 0; i < Toolbar.Length; i++)
         {
-            if (Toolbar[i].Items.Type == BlockType.None)
+            if (Toolbar[i].Items.Type == BlockId.Air)
             {
-                Toolbar[i].Items = new InventoryItem { Type = blockType, Amount = 1 };
+                Toolbar[i].Items = new InventoryItem { Type = BlockId, Amount = 1 };
                 return;
             }
         }
@@ -130,7 +131,7 @@ public class InventoryItem
     /// <summary>
     ///     Gets or sets the type of the block in the inventory.
     /// </summary>
-    public BlockType Type { get; set; } = BlockType.None;
+    public BlockId Type { get; set; } = BlockId.Air;
 
     /// <summary>Gets or sets the amount of the block.</summary>
     public int Amount { get; set; }

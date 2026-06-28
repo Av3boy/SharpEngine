@@ -1,9 +1,8 @@
 ﻿using SharpEngine.Core.Entities;
+using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Primitives;
 
-using System.Numerics;
-
-namespace Minecraft.Block;
+namespace Minecraft.Terrain.Block;
 
 /// <summary>
 ///     Represents a block in the game.
@@ -13,10 +12,10 @@ public class BlockBase : GameObject
     /// <summary>
     ///     Gets the block type.
     /// </summary>
-    public virtual BlockType BlockType { get; }
+    public virtual BlockId BlockId { get; }
 
     /// <summary>Gets a value indicating whether the block is solid.</summary>
-    public virtual bool IsSolid { get; }
+    public virtual bool IsSolid { get; } = true;
 
     /// <summary>Gets or sets the size of the block in the inventory.</summary>
     public int SizeInInventory { get; set; } = 1;
