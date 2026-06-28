@@ -5,16 +5,25 @@ namespace SharpEngine.Core.Numerics.Noise;
 /// </summary>
 public interface INoiseGenerator
 {
-    /// <summary>Gets or sets the scale factor applied to the input coordinates (higher = zoomed out).</summary>
+    /// <summary>Gets or sets the scale factor applied to the input coordinates.</summary>
+    /// <remarks>
+    ///     Higher values make the noise appear more zoomed out.
+    /// </remarks>
     float Scale { get; set; }
 
     /// <summary>Gets or sets the number of octaves (noise layers) to combine.</summary>
     int Octaves { get; set; }
 
-    /// <summary>Gets or sets the persistence, which controls how much each octave contributes relative to the previous one (amplitude decay per octave).</summary>
+    /// <summary>
+    ///     Gets or sets the persistence,
+    ///     which controls how much each octave contributes relative to the previous one (amplitude decay per octave).
+    /// </summary>
     float Persistence { get; set; }
 
-    /// <summary>Gets or sets the lacunarity, which controls how quickly the frequency increases per octave.</summary>
+    /// <summary>
+    ///     Gets or sets the lacunarity,
+    ///     which controls how quickly the frequency increases per octave.
+    /// </summary>
     float Lacunarity { get; set; }
 
     /// <summary>

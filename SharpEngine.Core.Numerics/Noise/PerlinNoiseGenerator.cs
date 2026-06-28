@@ -1,4 +1,6 @@
-﻿namespace SharpEngine.Core.Numerics.Noise;
+﻿using MathEx = SharpEngine.Core.Numerics.MathExtensions;
+
+namespace SharpEngine.Core.Numerics.Noise;
 
 /// <summary>
 ///     Deterministic Perlin noise generator with fractal octave support.
@@ -21,37 +23,28 @@ public sealed class PerlinNoiseGenerator : INoiseGenerator
         InitializePermutation(seed);
     }
 
-    /// <summary>
-    ///     Gets or sets the scale factor applied to the input coordinates.
-    ///     Higher values make the noise appear more zoomed out.
-    /// </summary>
+    /// <inheritdoc />
     public float Scale
     {
         get => _scale;
         set => _scale = value <= 0f ? 0.0001f : value;
     }
 
-    /// <summary>
-    ///     Gets or sets the number of octaves to combine.
-    /// </summary>
+    /// <inheritdoc />
     public int Octaves
     {
         get => _octaves;
         set => _octaves = Math.Max(1, value);
     }
 
-    /// <summary>
-    ///     Gets or sets the amplitude multiplier between octaves.
-    /// </summary>
+    /// <inheritdoc />
     public float Persistence
     {
         get => _persistence;
         set => _persistence = Math.Max(0f, value);
     }
 
-    /// <summary>
-    ///     Gets or sets the frequency multiplier between octaves.
-    /// </summary>
+    /// <inheritdoc />
     public float Lacunarity
     {
         get => _lacunarity;
@@ -135,85 +128,57 @@ public sealed class PerlinNoiseGenerator : INoiseGenerator
 
     private float Perlin(float x, float y, float z)
     {
-        int xi = FastFloor(x) & 255;
-        int yi = FastFloor(y) & 255;
-        int zi = FastFloor(z) & 255;
+        int xi = MathEx.FastFloor(x) & 255;
+        int yi = MathEx.FastFloor(y) & 255;
+        int zi = MathEx.FastFloor(z) & 255;
 
-        float xf = x - FastFloor(x);
-        float yf = y - FastFloor(y);
-        float zf = z - FastFloor(z);
+        float xf = x - MathEx.FastFloor(x);
+        float yf = y - MathEx.FastFloor(y);
+        float zf = z - MathEx.FastFloor(z);
 
-        float u = Fade(xf);
-        float v = Fade(yf);
-        float w = Fade(zf);
+        float u = MathEx.Fade(xf);
+        float v = MathEx.Fade(yf);
+        float w = MathEx.Fade(zf);
 
-        int aaa = _permutation[_permutation[_permutation[xi] + yi] + zi];
-        int aba = _permutation[_permutation[_permutation[xi] + yi + 1] + zi];
-        int aab = _permutation[_permutation[_permutation[xi] + yi] + zi + 1];
-        int abb = _permutation[_permutation[_permutation[xi] + yi + 1] + zi + 1];
+        var yiOffset = _permutation[xi] + yi;
 
-        int baa = _permutation[_permutation[_permutation[xi + 1] + yi] + zi];
-        int bba = _permutation[_permutation[_permutation[xi + 1] + yi + 1] + zi];
-        int bab = _permutation[_permutation[_permutation[xi + 1] + yi] + zi + 1];
-        int bbb = _permutation[_permutation[_permutation[xi + 1] + yi + 1] + zi + 1];
+        int aaa = _permutation[_permutation[yiOffset] + zi];
+        int aba = _permutation[_permutation[yiOffset + 1] + zi];
+        int aab = _permutation[_permutation[yiOffset] + zi + 1];
+        int abb = _permutation[_permutation[yiOffset + 1] + zi + 1];
 
-        float x1 = Lerp(
-            Grad(aaa, xf, yf, zf),
-            Grad(baa, xf - 1f, yf, zf),
+        var yiOffsetNext = _permutation[xi + 1] + yi;
+
+        int baa = _permutation[_permutation[yiOffsetNext] + zi];
+        int bba = _permutation[_permutation[yiOffsetNext + 1] + zi];
+        int bab = _permutation[_permutation[yiOffsetNext] + zi + 1];
+        int bbb = _permutation[_permutation[yiOffsetNext + 1] + zi + 1];
+
+        float x1 = MathEx.Lerp(
+            MathEx.Grad(aaa, xf, yf, zf),
+            MathEx.Grad(baa, xf - 1f, yf, zf),
             u);
 
-        float x2 = Lerp(
-            Grad(aba, xf, yf - 1f, zf),
-            Grad(bba, xf - 1f, yf - 1f, zf),
+        float x2 = MathEx.Lerp(
+            MathEx.Grad(aba, xf, yf - 1f, zf),
+            MathEx.Grad(bba, xf - 1f, yf - 1f, zf),
             u);
 
-        float y1 = Lerp(x1, x2, v);
+        float y1 = MathEx.Lerp(x1, x2, v);
 
-        x1 = Lerp(
-            Grad(aab, xf, yf, zf - 1f),
-            Grad(bab, xf - 1f, yf, zf - 1f),
+        x1 = MathEx.Lerp(
+            MathEx.Grad(aab, xf, yf, zf - 1f),
+            MathEx.Grad(bab, xf - 1f, yf, zf - 1f),
             u);
 
-        x2 = Lerp(
-            Grad(abb, xf, yf - 1f, zf - 1f),
-            Grad(bbb, xf - 1f, yf - 1f, zf - 1f),
+        x2 = MathEx.Lerp(
+            MathEx.Grad(abb, xf, yf - 1f, zf - 1f),
+            MathEx.Grad(bbb, xf - 1f, yf - 1f, zf - 1f),
             u);
 
-        float y2 = Lerp(x1, x2, v);
+        float y2 = MathEx.Lerp(x1, x2, v);
 
-        return Lerp(y1, y2, w);
-    }
-
-    private static int FastFloor(float value)
-    {
-        int integer = (int)value;
-
-        return value < integer ? integer - 1 : integer;
-    }
-
-    private static float Fade(float t)
-    {
-        return t * t * t * (t * (t * 6f - 15f) + 10f);
-    }
-
-    private static float Lerp(float a, float b, float t)
-    {
-        return a + t * (b - a);
-    }
-
-    private static float Grad(int hash, float x, float y, float z)
-    {
-        int h = hash & 15;
-
-        float u = h < 8 ? x : y;
-        float v = h < 4
-            ? y
-            : h is 12 or 14
-                ? x
-                : z;
-
-        return ((h & 1) == 0 ? u : -u) +
-               ((h & 2) == 0 ? v : -v);
+        return MathEx.Lerp(y1, y2, w);
     }
 
     private static float ToUnitRange(float value)
