@@ -8,6 +8,8 @@ namespace SharpEngine.Core.Audio;
 /// </summary>
 public static class Audio
 {
+    private static AudioPlayerBase? audioPlayer = null;
+
     /// <summary>
     ///     Plays an audio file if it is in the WAV format.
     /// </summary>
@@ -18,11 +20,34 @@ public static class Audio
         switch (Path.GetExtension(filePath))
         {
             case ".wav":
-                new WavPlayer().Play(filePath);
+                audioPlayer = new WavPlayer();
+                audioPlayer.Play(filePath);
+                break;
+
+            case ".mp3":
+                audioPlayer = new Mp3Player();
+                audioPlayer.Play(filePath);
                 break;
 
             default:
                 throw new NotSupportedException("Unsupported file format.");
         }
     }
+
+    /// <inheritdoc cref="AudioPlayerBase.Stop"/>
+    public static void Stop()
+    {
+        audioPlayer?.Stop();
+        audioPlayer = null;
+    }
+
+    /// <summary>
+    ///     Pauses the currently playing audio, if any.
+    /// </summary>
+    public static void Pause() => audioPlayer?.Pause();
+
+    /// <summary>
+    ///     Resumes the currently paused audio, if any.
+    /// </summary>
+    public static void Resume() => audioPlayer?.Resume();
 }

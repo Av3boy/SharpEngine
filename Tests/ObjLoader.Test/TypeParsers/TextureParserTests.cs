@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 using SharpEngine.Core.Components.ObjLoader.DataStore;
 using SharpEngine.Core.Components.Properties.Meshes.MeshData;
@@ -7,7 +7,6 @@ using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
 
 namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
 {
-    [TestFixture]
     public class TextureParserTests
     {
         private readonly TextureDataStoreMock _textureDataStoreMock;
@@ -20,7 +19,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             _textureParser = new TextureParser(_textureDataStoreMock);
         }
 
-        [Test]
+        [Fact]
         public void CanParse_returns_true_on_normal_line()
         {
             const string textureKeyword = "vt";
@@ -29,7 +28,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             canParse.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void CanParse_returns_false_on_non_normal_line()
         {
             const string invalidKeyword = "vn";
@@ -38,7 +37,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.TypeParsers
             canParse.Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void Parses_normal_line_correctly()
         {
             const string textureLine = "0.500 -1.352";

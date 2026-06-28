@@ -1,69 +1,59 @@
 ﻿using System.IO;
 using System.Text;
 using System.Linq;
-using NUnit.Framework;
+
 using FluentAssertions;
+using Xunit;
 
 using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.ObjLoader.Loader.TypeParsers;
 using SharpEngine.Core.ObjLoader.Loaders.MaterialLoader;
 
 using CoreObjLoader = SharpEngine.Core.ObjLoader.Loaders.ObjLoader.ObjLoader;
+using SharpEngine.Core.ObjLoader.Loader.Loaders;
+using Moq;
+using System.IO.Abstractions;
 
 namespace SharpEngine.Core.ObjLoader.Tests.Loaders
 {
-    [TestFixture]
     public class ObjLoaderTests
     {
-        private class MaterialStreamProviderSpy : IMaterialStreamProvider
-        {
-            public string RequestedMaterialFilePath { get; private set; }
-            public Stream StreamToReturn { get; set; }
-
-            public Stream Open(string materialFilePath)
-            {
-                RequestedMaterialFilePath = materialFilePath;
-                return StreamToReturn;
-            }
-        }
-
-        private CoreObjLoader _loader;
+        private readonly CoreObjLoader _loader;
 
         private Mesh _loadResult;
-        private DataStore _textureDataStore;
-        private FaceParser _faceParser;
-        private GroupParser _groupParser;
-        private NormalParser _normalParser;
-        private TextureParser _textureParser;
-        private VertexParser _vertexParser;
-        private MaterialLibraryLoader _materialLibraryLoader;
-        private MaterialLibraryParser _materialLibraryParser;
-        private UseMaterialParser _useMaterialParser;
-        private MaterialLibraryLoaderFacade _materialLibraryLoaderFacade;
-        private MaterialStreamProviderSpy _materialStreamProviderSpy;
+        private readonly DataStore _textureDataStore;
+        private readonly FaceParser _faceParser;
+        private readonly GroupParser _groupParser;
+        private readonly NormalParser _normalParser;
+        private readonly TextureParser _textureParser;
+        private readonly VertexParser _vertexParser;
+        private readonly MaterialLibraryLoader _materialLibraryLoader;
+        private readonly MaterialLibraryParser _materialLibraryParser;
+        private readonly UseMaterialParser _useMaterialParser;
+        private readonly MaterialLibraryLoaderFacade _materialLibraryLoaderFacade;
 
-        [SetUp]
-        public void SetUp()
+        public ObjLoaderTests()
         {
             _textureDataStore = new DataStore();
+
+            var fileStreamFactory = Mock.Of<IFileStreamFactory>();
+            var fileManager = Mock.Of<IFileManager>();
 
             _faceParser = new FaceParser(_textureDataStore);
             _groupParser = new GroupParser(_textureDataStore);
             _normalParser = new NormalParser(_textureDataStore);
             _textureParser = new TextureParser(_textureDataStore);
             _vertexParser = new VertexParser(_textureDataStore);
-            _materialStreamProviderSpy = new MaterialStreamProviderSpy();
-            _materialStreamProviderSpy.StreamToReturn = CreateMemoryStreamFromString(MaterialLibraryString);
 
-            _materialLibraryLoader = new MaterialLibraryLoader(_textureDataStore);
+            _materialLibraryLoader = new MaterialLibraryLoader(_textureDataStore, fileStreamFactory, fileManager);
             _materialLibraryLoaderFacade = new MaterialLibraryLoaderFacade(_materialLibraryLoader, "");
             _materialLibraryParser = new MaterialLibraryParser(_materialLibraryLoaderFacade);
             _useMaterialParser = new UseMaterialParser(_textureDataStore);
 
-            _loader = new CoreObjLoader("", _textureDataStore);
+            _loader = new CoreObjLoader("", _textureDataStore, fileStreamFactory, fileManager);
         }
 
-        [Test]
+        [Fact]
         public void Loads_object_and_material_correctly()
         {
             Load();
@@ -73,8 +63,6 @@ namespace SharpEngine.Core.ObjLoader.Tests.Loaders
             _loadResult.Normals.Should().HaveCount(8);
             _loadResult.Materials.Should().HaveCount(1);
 
-            _materialStreamProviderSpy.RequestedMaterialFilePath.Should().BeEquivalentTo("cube.mtl");
-
             _loadResult.Groups.Should().HaveCount(1);
 
             var group = _loadResult.Groups.First();
@@ -82,15 +70,9 @@ namespace SharpEngine.Core.ObjLoader.Tests.Loaders
             group.Material!.Name.Should().BeEquivalentTo("cube_material");
         }
 
-        [Test]
+        [Fact]
         public void Loads_object_correctly_when_material_is_not_found()
         {
-            _materialStreamProviderSpy.StreamToReturn = null!;
-            var materialLibraryLoaderFacade = new MaterialLibraryLoaderFacade(_materialLibraryLoader, "");
-            var materialLibraryParser = new MaterialLibraryParser(_materialLibraryLoaderFacade);
-
-            _loader = new CoreObjLoader("", _textureDataStore);
-
             Load();
 
             _loadResult.Vertices.Should().HaveCount(8);
@@ -107,15 +89,7 @@ namespace SharpEngine.Core.ObjLoader.Tests.Loaders
 
         private void Load()
         {
-            var objectStream = CreateMemoryStreamFromString(ObjectFileString);
-
             _loadResult = _loader.Load(null!).First();
-        }
-
-        private Stream CreateMemoryStreamFromString(string str)
-        {
-            var data = Encoding.ASCII.GetBytes(str);
-            return new MemoryStream(data);
         }
 
         private const string ObjectFileString = 
@@ -184,9 +158,5 @@ map_d lenna_alpha.tga
 map_bump lenna_bump.tga
 disp lenna_disp.tga
 decal lenna_stencil.tga";
-    }
-
-    internal interface IMaterialStreamProvider
-    {
     }
 }

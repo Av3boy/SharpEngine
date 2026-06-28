@@ -16,6 +16,7 @@ public static class Program
         var game = new Minimal();
 
         using var window = new Window(game);
+        window.Initialize();
         window.Run();
     }
 }

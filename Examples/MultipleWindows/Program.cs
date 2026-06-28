@@ -117,10 +117,13 @@ public static partial class Program
     private static void EnqueueWindow()
     {
         var window = CreateWindow();
-        foreach (var mouse in window!.Input!.Mice)
-            mouse.Click += Mouse_Click;
 
-        _inputContexts.Add(window.Input);
+        // Prefer the higher-level Window event to avoid wiring low-level input handlers.
+        window.OnButtonMouseDown += (mouse, button) => Mouse_Click(mouse, (MouseButton)button, mouse.Position);
+
+        if (window.Input is not null)
+            _inputContexts.Add(window.Input);
+
         _windows.Add(window);
     }
 

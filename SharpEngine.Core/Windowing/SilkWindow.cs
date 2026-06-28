@@ -75,6 +75,14 @@ public abstract class SilkWindow : IWindow
         set => CurrentWindow.Size = value;
     }
 
+    /// <summary>Gets the width of the window in pixels.</summary>
+    /// <remarks>Use <see cref="Size"/> to change the window size.</remarks>
+    public int Width => Size.X;
+
+    /// <summary>Gets the height of the window in pixels.</summary>
+    /// <remarks>Use <see cref="Size"/> to change the window size.</remarks>
+    public int Height => Size.Y;
+
     /// <inheritdoc />
     public string Title
     {
