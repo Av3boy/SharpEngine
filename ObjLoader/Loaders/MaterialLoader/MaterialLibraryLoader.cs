@@ -74,17 +74,18 @@ namespace SharpEngine.Core.ObjLoader.Loaders.MaterialLoader
             => _parseActionDictionary.Add(key.ToLowerInvariant(), action);
 
         /// <inheritdoc />
-        protected override void ParseLine(string keyword, string data)
+        protected override bool ParseLine(string keyword, string data)
         {
             var parseAction = GetKeywordAction(keyword, out bool found);
 
             if (!found)
             {
                 _unrecognizedLines.Add(keyword + " " + data);
-                return;
+                return false;
             }
 
             parseAction!(data);
+            return true;
         }
 
         private Action<string>? GetKeywordAction(string keyword, out bool found)

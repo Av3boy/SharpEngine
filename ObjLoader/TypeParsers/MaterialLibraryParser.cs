@@ -23,6 +23,10 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
         protected override string Keyword => "mtllib";
 
         /// <inheritdoc />
-        public override void Parse(string line) => _libraryLoaderFacade.Load(line);
+        public override bool Parse(string line)
+        {
+            _libraryLoaderFacade.Load(line);
+            return true;
+        }
     }
 }

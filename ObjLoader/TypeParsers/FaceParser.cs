@@ -27,7 +27,7 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
         protected override string Keyword => "f";
 
         /// <inheritdoc />
-        public override void Parse(string line)
+        public override bool Parse(string line)
         {
             string[] vertices = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
@@ -35,19 +35,22 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
 
             foreach (string vertexString in vertices)
             {
-                var faceVertex = ParseFaceVertex(vertexString);
-                face.AddVertex(faceVertex);
+                if (TryParseFaceVertex(vertexString, out FaceVertex faceVertex))
+                {
+                    face.AddVertex(faceVertex);
+                }
             }
 
             _faceGroup.AddFace(face);
+            return true;
         }
 
-        private static FaceVertex ParseFaceVertex(string vertexString)
+        private static bool TryParseFaceVertex(string vertexString, out FaceVertex faceVertex)
         {
             string[] fields = vertexString.Split('/', StringSplitOptions.None);
 
             int vertexIndex = fields[0].ParseInvariantInt();
-            var faceVertex = new FaceVertex(vertexIndex, 0, 0);
+            faceVertex = new FaceVertex(vertexIndex, 0, 0);
 
             if (fields.Length > 1)
             {
@@ -61,7 +64,7 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
                 faceVertex.NormalIndex = normalIndex;
             }
 
-            return faceVertex;
+            return true;
         }
     }
 }

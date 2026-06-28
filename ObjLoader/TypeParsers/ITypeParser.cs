@@ -9,13 +9,14 @@
         ///     Determines whether the specified keyword can be parsed.
         /// </summary>
         /// <param name="keyword">The keyword to check.</param>
-        /// <returns>True if the keyword can be parsed; otherwise, false.</returns>
+        /// <returns><see langword="true"/> if the keyword can be parsed; otherwise, <see langword="false"/>.</returns>
         bool CanParse(string keyword);
 
         /// <summary>
         /// Parses a single input line and updates the object's state accordingly.
         /// </summary>
         /// <param name="line">The input line to parse.</param>
-        void Parse(string line);
+        /// <returns><see langword="true"/> if the line was successfully parsed; otherwise, <see langword="false"/>.</returns>
+        bool Parse(string line);
     }
 }

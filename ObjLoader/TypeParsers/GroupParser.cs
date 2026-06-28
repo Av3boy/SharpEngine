@@ -23,7 +23,10 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
         protected override string Keyword => "g";
 
         /// <inheritdoc />
-        public override void Parse(string line)
-            => _dataStore.PushGroup(line);
+        public override bool Parse(string line)
+        {
+            _dataStore.PushGroup(line);
+            return true;
+        }
     }
 }

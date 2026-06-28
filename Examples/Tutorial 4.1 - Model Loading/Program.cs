@@ -85,10 +85,11 @@ namespace Tutorial
             Shader = new Shader(Gl, PathExtensions.GetAssemblyPath("shader2.vert"), Default.LightShader, "test");
             Texture = new Texture(Gl, "silk.png");
 
-            var model = ObjLoaderFactory.Load(Gl, "Untitled2.obj");
-
-            _models.Add(model);
-            _models.Add(model);
+            if (ObjLoaderFactory.Load(Gl, "D:\\Untitled2.obj", out var model))
+            {
+                _models.Add(model!);
+                _models.Add(model!);
+            }
         }
 
         private static void OnUpdate(double deltaTime)

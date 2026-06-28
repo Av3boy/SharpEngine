@@ -25,7 +25,7 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
         protected override string Keyword => "vt";
 
         /// <inheritdoc />
-        public override void Parse(string line)
+        public override bool Parse(string line)
         {
             string[] parts = line.Split(' ');
 
@@ -34,6 +34,8 @@ namespace SharpEngine.Core.ObjLoader.Loader.TypeParsers
 
             var texture = new TextureCoordinate(x, y);
             _dataStore.AddTexture(texture);
+
+            return true;
         }
     }
 }
