@@ -21,7 +21,6 @@
     <Folder Include="Handlers\" />
     <Folder Include="Windowing\" />
     <Folder Include="Textures\" />
-    <Folder Include="Shaders\" />
     <Folder Include="Scenes\" />
     <Folder Include="Renderers\" />
     <Folder Include="Primitives\" />

@@ -20,6 +20,9 @@ public abstract class ShaderProgram : IDisposable
     /// <summary>Gets or sets the vertex array object.</summary>
     public uint Vao { get; set; }
 
+    /// <summary>Gets the uniform name-to-location map cached at shader initialization.</summary>
+    public IReadOnlyDictionary<string, int> UniformLocations => _uniformLocations;
+
     /// <summary>
     ///    Sets the attributes for the shader.
     /// </summary>

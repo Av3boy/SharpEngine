@@ -7,10 +7,10 @@ namespace SharpEngine.Core.Shaders;
 public sealed class ShaderParameterAttribute : Attribute
 {
     public string Name { get; }
-    public ParameterType Type { get; }
-    public UpdateFrequency Frequency { get; }
+    public ShaderParameterType Type { get; }
+    public ShaderUpdateFrequency Frequency { get; }
 
-    public ShaderParameterAttribute(string name, ParameterType type = ParameterType.Unknown, UpdateFrequency frequency = UpdateFrequency.PerObject)
+    public ShaderParameterAttribute(string name, ShaderParameterType type = ShaderParameterType.Unknown, ShaderUpdateFrequency frequency = ShaderUpdateFrequency.PerObject)
     {
         Name = name;
         Type = type;

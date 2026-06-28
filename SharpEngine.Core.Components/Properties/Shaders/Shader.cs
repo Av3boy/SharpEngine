@@ -7,7 +7,7 @@ namespace SharpEngine.Core.Shaders;
 /// <summary>
 ///     Represents a shader program.
 /// </summary>
-public partial class Shader : ShaderProgram, IDisposable
+public partial class Shader : ShaderProgram, IShader, IDisposable
 {
     /// <summary>Gets or sets the identifying name of the shader.</summary>
     public string Name { get; set; }

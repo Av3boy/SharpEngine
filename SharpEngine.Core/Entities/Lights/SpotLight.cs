@@ -1,4 +1,3 @@
-using SharpEngine.Core._Resources;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
@@ -82,9 +81,9 @@ public class SpotLight : Light
     /// <inheritdoc />
     public override Task Render(CameraView camera, Window window)
     {
-        Shader = ShaderService.Instance.LoadShader(window, Default.VertexShader, Default.FragmentShader, "lighting");
+        Shader = ShaderService.Instance.LoadShader(window, _tempShaderData.shaderVertPath, _tempShaderData.shaderFragPath, _tempShaderData.shaderName);
         SetShaderUniforms(camera);
-    
+
         return Task.CompletedTask;
     }
 }

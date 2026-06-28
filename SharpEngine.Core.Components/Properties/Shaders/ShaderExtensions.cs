@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SharpEngine.Core.Components.Properties;
 using Silk.NET.OpenGL;
 using System.Numerics;
 using System.Text.RegularExpressions;
@@ -42,6 +43,9 @@ public partial class Shader
     public bool SetInt(string name, int data)
         => TrySetUniform(name, data, GL.Uniform1);
 
+    public bool SetTextureUnit(string name, TextureUnitIndex textureUnit)
+        => TrySetUniform(name, (int)textureUnit, GL.Uniform1);
+
     /// <summary>
     ///     Set a uniform float on this shader.
     /// </summary>
@@ -69,6 +73,14 @@ public partial class Shader
     /// </summary>
     /// <param name="name">The name of the uniform.</param>
     /// <param name="data">The data to set.</param>
+    public bool SetVector2(string name, SharpEngine.Core.Numerics.Vector2 data)
+        => TrySetUniform(name, (Vector2)data, GL.Uniform2);
+
+    /// <summary>
+    ///     Set a uniform Vector2 on this shader.
+    /// </summary>
+    /// <param name="name">The name of the uniform.</param>
+    /// <param name="data">The data to set.</param>
     public bool SetVector2(string name, Vector2 data)
         => TrySetUniform(name, data, GL.Uniform2);
 
@@ -79,6 +91,9 @@ public partial class Shader
     /// <param name="data">The data to set.</param>
     public bool SetVector3(string name, Vector3 data)
         => TrySetUniform(name, data, GL.Uniform3);
+
+    public bool SetVector3(string name, SharpEngine.Core.Numerics.Vector3 data)
+        => TrySetUniform(name, (Vector3)data, GL.Uniform3);
 
     /// <summary>
     ///     Set a uniform Vector3 on this shader.

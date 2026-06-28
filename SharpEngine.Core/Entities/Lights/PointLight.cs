@@ -1,10 +1,9 @@
-using SharpEngine.Core._Resources;
 using SharpEngine.Core.Entities.Views;
+using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
 
 using System;
-using System.Numerics;
 using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Entities.Lights;
@@ -59,7 +58,7 @@ public class PointLight : Light
         if (Shader == null)
             throw new NullReferenceException(nameof(Shader));
 
-        Shader.SetVector3($"pointLights[{_index}].position", (Vector3)Transform.Position);
+        Shader.SetVector3($"pointLights[{_index}].position", Transform.Position);
         Shader.SetVector3($"pointLights[{_index}].ambient", Ambient);
         Shader.SetVector3($"pointLights[{_index}].diffuse", Diffuse);
         Shader.SetVector3($"pointLights[{_index}].specular", Specular);
@@ -73,7 +72,7 @@ public class PointLight : Light
     /// <inheritdoc />
     public override Task Render(CameraView camera, Window window)
     {
-        Shader = ShaderService.Instance.LoadShader(window, Default.VertexShader, Default.FragmentShader, "lighting");
+        Shader = ShaderService.Instance.LoadShader(window, _tempShaderData.shaderVertPath, _tempShaderData.shaderFragPath, _tempShaderData.shaderName);
         SetShaderUniforms(camera);
 
         return Task.CompletedTask;

@@ -1,9 +1,8 @@
 ﻿using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Properties;
-
+using SharpEngine.Core.Numerics;
 using System;
-using System.Numerics;
 
 namespace SharpEngine.Core.Primitives;
 
@@ -42,7 +41,7 @@ public static class PrimitiveFactory
         return new GameObject()
         {
             Model = model,
-            Transform = new Transform((Numerics.Vector3)position),
+            Transform = new Transform(position),
         };
     }
 

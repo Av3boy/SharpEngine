@@ -2,18 +2,20 @@
 using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
+using SharpEngine.Core.Rendering;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Textures;
 using SharpEngine.Core.Windowing;
 using SharpEngine.Core._Resources;
+using SharpEngine.Telemetry;
 using Vector2 = SharpEngine.Core.Numerics.Vector2;
 using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
 
 using Silk.NET.OpenGL;
-using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
+using SharpEngine.Core.Components.Properties;
 
 namespace SharpEngine.Core.Entities.UI;
 
@@ -22,6 +24,22 @@ namespace SharpEngine.Core.Entities.UI;
 /// </summary>
 public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
 {
+    // TODO: #53 This should be coming from the entity component system
+    public MeshRenderer MeshRenderer { get; set; }
+
+    private readonly ShaderParameterBinder _paramBinder;
+
+    /// <summary>Gets or sets the width of the ui element.</summary>
+    [ShaderParameter("width", ShaderParameterType.Float)]
+    public float Width { get; set; } = 10;
+
+    /// <summary>Gets or sets the height of the ui element.</summary>
+    [ShaderParameter("height", ShaderParameterType.Float)]
+    public float Height { get; set; } = 10;
+
+    [ShaderParameter("orthoMatrix", ShaderParameterType.Mat4)]
+    private Matrix4x4 OrthoMatrix = Matrix4x4.CreateOrthographicOffCenter(-1, 1, -1, 1, -1, 1);
+
     /// <summary>
     ///     Initializes a new instance of <see cref="UIElement"/>.
     /// </summary>
@@ -34,126 +52,34 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
     public UIElement(GL gl, string name) : base(name)
     {
         // TODO: #5 Support custom meshes?
-        Mesh = MeshService.Instance.LoadMesh(nameof(Primitives.Plane), Primitives.Plane.Mesh);
-        _uiShader = new UIShader(gl);
+        var mesh = MeshService.Instance.LoadMesh(nameof(Primitives.Plane), Primitives.Plane.Mesh);
+        var debugTexture = TextureService.Instance.LoadTexture(Default.DebugTexture);
+        var material = new Material("defaultUiMaterial", debugTexture) { Shader = new UIShader(gl) };
+        MeshRenderer = new MeshRenderer(mesh, material);
+
+        _paramBinder = new ShaderParameterBinder(LoggingExtensions.CreateLogger<ShaderParameterBinder>());
+        _paramBinder.Bind(this, material.Shader);
     }
-
-    private readonly UIShader _uiShader;
-    private readonly Texture _texture = TextureService.Instance.LoadTexture(Default.DebugTexture);
-
-    /// <summary>Gets or sets the width of the ui element.</summary>
-    public float Width { get; set; } = 10;
-
-    /// <summary>Gets or sets the height of the ui element.</summary>
-    public float Height { get; set; } = 10;
-
-    /// <summary>Gets or sets the mesh of the UI element.</summary>
-    public Mesh Mesh { get; set; }
-
-    /// <summary>
-    ///     Gets the most recently used VAO for this element.
-    /// </summary>
-    /// <remarks>
-    ///     UIElement maintains VAOs per OpenGL context. This property is updated on render.
-    /// </remarks>
-    public uint VAO { get; private set; }
-
-    private sealed record SharedBuffers(uint Vbo, uint Ebo, int IndexCount);
-    private sealed record ContextState(uint Vao);
-
-    private readonly object _gpuLock = new();
-    private readonly Dictionary<object, SharedBuffers> _sharedBuffersByShareGroup = [];
-    private readonly Dictionary<object, ContextState> _contextStateByContext = [];
-
-    private static object GetShareGroupKey(Window window)
-        => (object?)window.SharedContext ?? (object?)window.GLContext ?? (object)window;
-
-    private static object GetContextKey(Window window)
-        => (object?)window.GLContext ?? (object)window;
-
-    private SharedBuffers EnsureSharedBuffers(GL gl, Window window)
-    {
-        var shareGroupKey = GetShareGroupKey(window);
-
-        lock (_gpuLock)
-        {
-            if (_sharedBuffersByShareGroup.TryGetValue(shareGroupKey, out var buffers))
-                return buffers;
-
-            // Buffers are shareable across contexts in the same share group.
-            var vbo = gl.GenBuffer();
-            gl.BindBuffer(GLEnum.ArrayBuffer, vbo);
-            gl.BufferData(GLEnum.ArrayBuffer, Mesh.GetVertices(), GLEnum.StaticDraw);
-
-            var ebo = gl.GenBuffer();
-            gl.BindBuffer(GLEnum.ElementArrayBuffer, ebo);
-            gl.BufferData(GLEnum.ElementArrayBuffer, Mesh.Indices, GLEnum.StaticDraw);
-
-            buffers = new SharedBuffers(vbo, ebo, Mesh.Indices.Length);
-            _sharedBuffersByShareGroup[shareGroupKey] = buffers;
-
-            return buffers;
-        }
-    }
-
-    private ContextState EnsureContextState(GL gl, Window window, SharedBuffers sharedBuffers)
-    {
-        var contextKey = GetContextKey(window);
-
-        lock (_gpuLock)
-        {
-            if (_contextStateByContext.TryGetValue(contextKey, out var state))
-                return state;
-
-            // VAOs are generally not shared between contexts.
-            var vao = gl.GenVertexArray();
-            gl.BindVertexArray(vao);
-
-            gl.BindBuffer(GLEnum.ArrayBuffer, sharedBuffers.Vbo);
-            gl.BindBuffer(GLEnum.ElementArrayBuffer, sharedBuffers.Ebo);
-
-            _uiShader.Use();
-            _uiShader.SetAttributes(gl);
-
-            state = new ContextState(vao);
-            _contextStateByContext[contextKey] = state;
-
-            return state;
-        }
-    }
-
-    Matrix4x4 OrthoMatrix = Matrix4x4.CreateOrthographicOffCenter(-1, 1, -1, 1, -1, 1);
 
     /// <summary>
     ///     Render the UI element.
     /// </summary>
+    /// <param name="camera">The camera view.</param>
+    /// <param name="window">The window where the UI element is rendered.</param>
     public override Task Render(CameraView camera, Window window)
     {
-        var gl = window.GetGL();
+        MeshRenderer.Mesh.Bind();
+        MeshRenderer.Material.Shader.Use();
+        MeshRenderer.Material.DiffuseMap!.Texture!.Use(TextureUnit.Texture0);
 
-        var sharedBuffers = EnsureSharedBuffers(gl, window);
-        var contextState = EnsureContextState(gl, window, sharedBuffers);
+        _paramBinder.Apply(this, MeshRenderer.Material.Shader);
+        MeshRenderer.Material.Shader.SetVector2("screenSize", (System.Numerics.Vector2)window.Size);
+        MeshRenderer.Material.Shader.SetVector2("position", (System.Numerics.Vector2)Transform.Position);
+        MeshRenderer.Material.Shader.SetFloat("rotation", Math.DegreesToRadians(Transform.Rotation.Angle));
+        MeshRenderer.Material.Shader.SetInt("texture1", 0);
+        MeshRenderer.Material.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
 
-        _uiShader.Use();
-        gl.BindVertexArray(contextState.Vao);
-        _texture.Use(TextureUnit.Texture0);
-
-        VAO = contextState.Vao;
-
-        // TODO: #75 These should come from somewhere else.
-        const float screenWidth = 1280;
-        const float screenHeight = 720;
-
-        _uiShader.SetFloat("width", Width);
-        _uiShader.SetFloat("height", Height);
-        _uiShader.SetVector2("screenSize", new System.Numerics.Vector2(screenWidth, screenHeight));
-        _uiShader.SetVector2("position", (System.Numerics.Vector2)Transform.Position);
-        _uiShader.SetFloat("rotation", Math.DegreesToRadians(Transform.Rotation.Angle));
-        _uiShader.SetInt("texture1", 0);
-        _uiShader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
-        _uiShader.SetMatrix4("orthoMatrix", OrthoMatrix); // Pass the orthographic matrix to the shader
-
-        gl.DrawElements<uint>(PrimitiveType.Triangles, (uint)sharedBuffers.IndexCount, DrawElementsType.UnsignedInt, []);
+        MeshRenderer.Mesh.Draw();
 
         return Task.CompletedTask;
     }
