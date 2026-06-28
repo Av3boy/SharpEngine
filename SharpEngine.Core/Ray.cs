@@ -1,10 +1,10 @@
 using SharpEngine.Core.Entities;
+using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 
 namespace SharpEngine.Core;
 

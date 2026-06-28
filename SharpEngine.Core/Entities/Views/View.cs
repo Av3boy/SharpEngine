@@ -1,9 +1,10 @@
 ﻿using SharpEngine.Core.Entities.Views.Settings;
+using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 
 using System;
-using System.Numerics;
+using Matrix4x4 = System.Numerics.Matrix4x4;
 
 namespace SharpEngine.Core.Entities.Views;
 

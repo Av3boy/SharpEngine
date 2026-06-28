@@ -1,7 +1,9 @@
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Enums;
+using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
+
 using Silk.NET.Input;
 
 namespace SharpEngine.Core.Interfaces;
@@ -21,7 +23,7 @@ public abstract class Game
     public Game()
     {
         Scene = new Scene();
-        Camera = new(new System.Numerics.Vector3(0), new DefaultViewSettings());
+        Camera = new(new Vector3(0), new DefaultViewSettings());
     }
 
     /// <summary>
@@ -33,7 +35,7 @@ public abstract class Game
     public Game(Scene scene)
     {
         Scene = scene;
-        Camera = new(new System.Numerics.Vector3(0), new DefaultViewSettings());
+        Camera = new(new Vector3(0), new DefaultViewSettings());
     }
 
     /// <summary>

@@ -146,8 +146,8 @@ public class Minecraft : Game
 
         ImGui.End();
 
-        _uiElem.Transform.Position = new SharpEngine.Core.Numerics.Vector2(x, y);
-        _uiElem.Transform.Scale = new SharpEngine.Core.Numerics.Vector2(sx, sy);
+        _uiElem.Transform.Position = new Vector2(x, y);
+        _uiElem.Transform.Scale = new Vector2(sx, sy);
         _uiElem.Transform.Rotation.Angle = rotation;
 
         _uiElem.Height = height;
@@ -231,14 +231,14 @@ public class Minecraft : Game
 
     private void PlaceBlock()
     {
-        if (!Camera.IsInView(_scene, out GameObject? intersectingObject, out System.Numerics.Vector3 hitPosition, allowedTypes: typeof(BlockBase)))
+        if (!Camera.IsInView(_scene, out GameObject? intersectingObject, out Vector3 hitPosition, allowedTypes: typeof(BlockBase)))
             return;
 
-        var newBlockPosition = (System.Numerics.Vector3)GetNewBlockPosition((Vector3)hitPosition, intersectingObject!);
+        var newBlockPosition = GetNewBlockPosition(hitPosition, intersectingObject!);
         if (newBlockPosition == Camera.Position || newBlockPosition == hitPosition)
             return;
 
-        var newBlock = BlockFactory.CreateBlock(_inventory.SelectedSlot.Items.Type, (Vector3)newBlockPosition, $"Dirt ({_blocksNode.Children.Count})");
+        var newBlock = BlockFactory.CreateBlock(_inventory.SelectedSlot.Items.Type, newBlockPosition, $"Dirt ({_blocksNode.Children.Count})");
         _blocksNode.AddChild(newBlock);
 
         _logger.LogInformation("New block created: {Pos}, block in view location: {IntersectingPos}", newBlock.Transform.Position, intersectingObject!.Transform.Position);
@@ -246,7 +246,7 @@ public class Minecraft : Game
 
     private static Vector3 GetNewBlockPosition(Vector3 hitPosition, GameObject intersectingObject)
     {
-        Vector3 normal = (Vector3)Ray.GetClosestFaceNormal(hitPosition, intersectingObject);
+        Vector3 normal = Ray.GetClosestFaceNormal(hitPosition, intersectingObject);
         return intersectingObject.Transform.Position + (normal * intersectingObject.Transform.Scale);
     }
 

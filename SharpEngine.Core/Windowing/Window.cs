@@ -22,7 +22,7 @@ using MouseButton = Silk.NET.Input.MouseButton;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
+using SharpEngine.Core.Numerics;
 
 namespace SharpEngine.Core.Windowing;
 
@@ -364,7 +364,7 @@ public class Window : SilkWindow
         var mouse = Input?.Mice[0];
         if (mouse is not null)
         {
-            Camera.UpdateMousePosition(mouse.Position);
+            Camera.UpdateMousePosition((Vector2)mouse.Position);
             OnHandleMouse?.Invoke(mouse);
         }
 
