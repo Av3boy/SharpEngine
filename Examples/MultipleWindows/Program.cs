@@ -108,7 +108,7 @@ public static partial class Program
             }
         };
             
-        var window = new Window(new(), options, _windowLogger);
+        var window = new Window(new(), options);
         window.Initialize();
 
         return window;
@@ -119,7 +119,7 @@ public static partial class Program
         var window = CreateWindow();
 
         // Prefer the higher-level Window event to avoid wiring low-level input handlers.
-        window.OnButtonMouseDown += (mouse, button) => Mouse_Click(mouse, (MouseButton)button, mouse.Position);
+        window._inputManager.OnButtonMouseDown += (mouse, button) => Mouse_Click(mouse, (MouseButton)button, mouse.Position);
 
         if (window.Input is not null)
             _inputContexts.Add(window.Input);

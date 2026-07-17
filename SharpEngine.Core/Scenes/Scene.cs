@@ -5,35 +5,28 @@ using SharpEngine.Telemetry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using SharpEngine.IO;
 
 namespace SharpEngine.Core.Scenes;
 
 /// <summary>
 ///     Represents a scene in the game.
 /// </summary>
-public class Scene
+public class Scene : SaveableFile<Scene>
 {
     private static readonly ILogger<Scene> Logger = LoggingExtensions.CreateLogger<Scene>();
 
     /// <summary>The file extension by which saved scenes are associated with.</summary>
     public const string SceneFileExtension = "sharpscene";
 
-    private string? _fileFullPath;
-
-    /// <summary>Gets or sets whether the scene has unsaved changes.</summary>
-    [JsonIgnore]
-    public bool HasUnsavedChanges { get; set; }
-
-    /// <summary>Gets or sets the name of the scene file.</summary>
-    public string Name { get; private set; } = "New Scene";
-
     /// <summary>
     ///     Initializes a new instance of <see cref="Scene"/>.
     /// </summary>
-    public Scene() { }
+    public Scene()
+    {
+        Name = "New Scene";
+    }
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Scene"/>.
@@ -182,66 +175,4 @@ public class Scene
     public IEnumerable<Task> IterateAsync(List<SceneNode> elements, Func<SceneNode, Task> action)
         => IterateAsync<SceneNode>(elements, action);
 
-    /// <summary>
-    ///    Loads a scene from the given <paramref name="sceneFile"/>.
-    /// </summary>
-    /// <param name="sceneFile">The file containing the scene.</param>
-    /// <returns>The scene from the given file. Loads an empty scene if unable to load the scene.</returns>
-    public static Scene LoadScene(string sceneFile)
-    {
-        Logger.LogDebug("Loading scene from {SceneFile}", sceneFile);
-
-        var loadedScene = JsonSerializer.Deserialize<Scene>(sceneFile);
-
-        if (loadedScene is not null)
-        {
-            loadedScene.SetFileFullPath(sceneFile);
-            return loadedScene;
-        }
-
-        return new();
     }
-
-    /// <summary>
-    ///     Sets the full path and name of the scene file.
-    /// </summary>
-    /// <param name="sceneFile">The full path of the file to be set and processed for name extraction.</param>
-    public void SetFileFullPath(string sceneFile)
-    {
-        _fileFullPath = sceneFile;
-        Name = System.IO.Path.GetFileNameWithoutExtension(sceneFile);
-    }
-
-    /// <summary>
-    ///     Determines whether the scene has been saved before and has a save file.
-    /// </summary>
-    /// <returns><see langword="true"/> if the scene has a save file; otherwise, <see langword="false"/>.</returns>
-    public bool HasSaveFile()
-        => _fileFullPath is not null;
-
-    /// <summary>
-    ///     Saves the scene.
-    /// </summary>
-    public void SaveScene()
-        => SaveSceneAsync().GetAwaiter().GetResult();
-
-    /// <summary>
-    ///     Saves the scene.
-    /// </summary>
-    /// <returns>A <see cref="Task"/> representing an asynchronous operation.</returns>
-    public async Task SaveSceneAsync()
-        => await SaveSceneAsync(_fileFullPath!);
-
-    /// <summary>
-    ///     Saves the scene to the given <paramref name="fileName"/>.
-    /// </summary>
-    /// <param name="fileName">The name of the file to be saved.</param>
-    /// <returns>A <see cref="Task"/> representing an asynchronous operation.</returns>
-    public async Task SaveSceneAsync(string fileName)
-    {
-        var json = JsonSerializer.Serialize(this);
-        await System.IO.File.WriteAllTextAsync(fileName, json);
-
-        HasUnsavedChanges = false;
-    }
-}

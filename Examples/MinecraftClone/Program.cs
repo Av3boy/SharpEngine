@@ -34,36 +34,27 @@ public static class Program
         });
 
         services.AddSingleton<Scene>();
-        services.AddSingleton<Minecraft>();
+        services.AddSingleton<Game, Minecraft>();
         services.AddSingleton<CameraView>(serviceProvider => serviceProvider.GetRequiredService<Minecraft>().Camera);
         services.AddTransient<RendererBase, Renderer>();
         services.AddTransient<RendererBase, UIRenderer>();
 
         services.AddWindow(
-            factory: serviceProvider =>
-            {
-                var game = serviceProvider.GetRequiredService<Minecraft>();
-                var scene = serviceProvider.GetRequiredService<Scene>();
-                var windowLogger = serviceProvider.GetRequiredService<ILogger<Window>>();
-                var renderers = serviceProvider.GetServices<RendererBase>();
-
-                return new Window(game.Camera, scene, game.Camera.Settings, windowLogger, renderers);
-            },
             configure: (serviceProvider, window) =>
             {
                 var game = serviceProvider.GetRequiredService<Minecraft>();
 
                 window.OnLoaded += game.Initialize;
-                window.OnHandleMouse += game.HandleMouse;
-                window.OnUpdate += game.Update;
-                window.OnHandleKeyboard += game.HandleKeyboard;
-                window.OnButtonMouseDown += game.HandleMouseDown;
-                window.HandleMouseWheel += game.HandleMouseWheel;
+                window._inputManager.OnHandleMouse += game.HandleMouse;
+                window._inputManager.OnUpdate += game.Update;
+                window._inputManager.OnHandleKeyboard += game.HandleKeyboard;
+                window._inputManager.OnButtonMouseDown += game.HandleMouseDown;
+                window._inputManager.HandleMouseWheel += game.HandleMouseWheel;
                 window.OnAfterRender += game.OnAfterRender;
 
                 Minecraft.Window = window;
             },
             name: "minecraft",
-            isDefault: true);
+            isDefaultWindow: true);
     }
 }

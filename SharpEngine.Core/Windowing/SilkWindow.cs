@@ -18,6 +18,12 @@ namespace SharpEngine.Core.Windowing;
 // TODO: The warnings produced by enabling this need to be implemented.
 #pragma warning disable CS0067 // Event is required by IWindow but not used by this implementation
 
+internal sealed class WindowNotInitializedException : Exception
+{
+    public WindowNotInitializedException(SilkWindow window) : base($"Window '{window.Title}' not initialized.") { }
+    public WindowNotInitializedException(string message) : base(message) { }
+}
+
 /// <summary>
 ///     Represents an abstraction for the <see cref="IWindow"/> interface.
 /// </summary>
@@ -36,7 +42,7 @@ public abstract class SilkWindow : IWindow
         set => CurrentWindow.Monitor = value;
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="IWindow.IsClosing" />
     public bool IsClosing
     { 
         get => CurrentWindow.IsClosing;
@@ -86,9 +92,11 @@ public abstract class SilkWindow : IWindow
     /// <inheritdoc />
     public string Title
     {
-        get => CurrentWindow.Title;
+        get => !string.IsNullOrWhiteSpace(CurrentWindow.Title) ? CurrentWindow.Title : "Untitled window";
         set => CurrentWindow.Title = value;
     }
+
+    public string IconPath { get; set; } = "_Resources/icon.png";
 
     /// <inheritdoc />
     public WindowState WindowState
@@ -252,7 +260,7 @@ public abstract class SilkWindow : IWindow
     /// <summary>Gets or sets the current window.</summary>
     public IWindow CurrentWindow
     {
-        get => _currentWindow!;
+        get => _currentWindow ?? throw new WindowNotInitializedException(this);
         set => _currentWindow = value;
     }
 

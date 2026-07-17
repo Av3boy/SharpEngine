@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SharpEngine.Core.Numerics;
+using SharpEngine.Telemetry;
 
 namespace SharpEngine.Core.Windowing;
 
@@ -31,43 +32,28 @@ namespace SharpEngine.Core.Windowing;
 /// </summary>
 public class Window : SilkWindow
 {
-    private const string _iconPath = "_Resources/icon.png";
     private bool _windowInitialized;
     private bool _initialized;
-    private readonly RendererBase[] _registeredRenderers;
     private readonly ILogger<Window> _logger;
     
     private IEnumerable<RendererBase> _renderers = [];
     private ImGuiController? _imGuiController;
+
+    public InputManager _inputManager;
+    public ShaderManager _shaderManager;
+    public RendererManager _rendererManager;
 
     /// <summary>
     ///     Gets or sets the view for the window.
     /// </summary>
     public readonly CameraView Camera;
 
-    /// <summary>The event executed when mouse events are executed.</summary>
-    public event Action<IMouse>? OnHandleMouse;
-
-    /// <summary>The event executed when keyboard events are executed.</summary>
-    public event Action<IKeyboard, double>? OnHandleKeyboard;
-
-    /// <summary>The event executed when the window is updated.</summary>
-    public event Action<double, IInputContext>? OnUpdate;
-
-    /// <summary>The event executed when the mouse wheel is scrolled.</summary>
-    public event Action<MouseWheelScrollDirection, ScrollWheel>? HandleMouseWheel;
-
-    /// <summary>The event executed when a mouse button is clicked.</summary>
-    public event Action<IMouse, MouseButton>? OnButtonMouseDown;
-
     /// <summary>
     ///     The scene that is currently being rendered.
     /// </summary>
     protected Scene Scene { get; private set; }
 
-    /// <summary>The OpenGL context.</summary>
-    private GL _gl = null!;
-
+    private GL _gl;
     private static GL? _sharedGl;
 
     /// <summary>
@@ -81,16 +67,10 @@ public class Window : SilkWindow
         => _sharedGl ?? throw new InvalidOperationException("No OpenGL context has been created yet.");
 
     /// <summary>
-    ///     Backward compatible alias for <see cref="SharedGL"/>.
-    /// </summary>
-    public static GL GL => SharedGL;
-
-    /// <summary>
     ///     Gets the current OpenGL context.
     /// </summary>
     /// <returns>The OpenGL context for this window.</returns>
     public GL GetGL() => _gl;
-    private void SetGL(GL gl) => _gl = gl;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
@@ -125,22 +105,7 @@ public class Window : SilkWindow
     /// <param name="logger">The logger for the window. When <see langword="null"/>, a default logger will be used.</param>
     /// <param name="renderers">The renderers for the window.</param>
     public Window(CameraView camera, Scene scene, IViewSettings settings, ILogger<Window>? logger = null, IEnumerable<RendererBase>? renderers = null)
-    {
-        // TODO:
-        // Should the developer need to call for a window initialization?
-        // Meaning should should we move this project loading part to a separate function?
-
-        Scene = scene;
-        Settings = settings;
-        Camera = camera;
-        _registeredRenderers = renderers?.ToArray() ?? [];
-        _logger = logger ?? LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Window>();
-
-        CheckEngineVersion();
-
-        // NOTE: Window initialization is intentionally not performed automatically here.
-        // Call InitializeWindow() explicitly when ready to create the underlying native window and load resources.
-    }
+        : this(scene, settings, camera, logger, renderers) { }
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Window"/>.
@@ -150,27 +115,26 @@ public class Window : SilkWindow
     /// </remarks>
     /// <param name="scene">Contains the game scene.</param>
     /// <param name="settings">The settings for the window.</param>
+    /// <param name="camera">The camera the window should render from. When <see langword="null"/>, a default camera will be used.</param>
     /// <param name="logger">The logger for the window. When <see langword="null"/>, a default logger will be used.</param>
     /// <param name="renderers">The renderers for the window.</param>
-    public Window(Scene scene, IViewSettings settings, ILogger<Window>? logger = null, IEnumerable<RendererBase>? renderers = null)
+    public Window(Scene scene, IViewSettings settings, CameraView? camera = null, ILogger<Window>? logger = null, IEnumerable<RendererBase>? renderers = null)
     {
         Scene = scene;
         Settings = settings;
-        Camera = new(Vector3.One, settings);
-        _registeredRenderers = renderers?.ToArray() ?? [];
-        _logger = logger ?? LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Window>();
+        Camera = camera ?? new(Vector3.One, settings);
+        _logger = logger ?? LoggingExtensions.CreateLogger<Window>();
+
+        // TODO:
+        // Should the developer need to call for a window initialization?
+        // Meaning should should we move this project loading part to a separate function?
+
+        _inputManager = new InputManager();
+        _shaderManager = new ShaderManager(LoggingExtensions.CreateLogger<ShaderManager>());
+        _rendererManager = new RendererManager(settings, renderers);
 
         // NOTE: Window initialization is intentionally not performed automatically here.
         // Call InitializeWindow() explicitly when ready to create the underlying native window and load resources.
-    }
-
-    private void CheckEngineVersion()
-    {
-        var project = new ProjectDto();
-        var currentAssemlyVersion = typeof(Window).Assembly.GetVersion();
-
-        if (currentAssemlyVersion != project.EngineVersion)
-            _logger.LogWarning("The current engine version ({CurrentVersion}) does not match the project engine version ({ProjectVersion}). This may lead to unexpected behavior.", currentAssemlyVersion, project.EngineVersion);
     }
 
     /// <inheritdoc />
@@ -217,24 +181,23 @@ public class Window : SilkWindow
         try
         {
             var context = CurrentWindow.CreateOpenGL();
-            SetGL(context);
+            _gl = context;
 
-            // Capture the first created GL as the shared GL. This enables resource caches to work across windows
+            // Capture the first created GL as the shared GL.
+            // This enables resource caches to work across windows
             // when those windows are created with a shared OpenGL context.
             _sharedGl ??= context;
 
             Input = CurrentWindow.CreateInput();
-
-            // TODO: Skip calling this for secondary windows?
             CurrentWindow.MakeCurrent();
 
-            SetWindowIcon(PathExtensions.GetAssemblyPath(_iconPath));
+            SetWindowIcon(PathExtensions.GetAssemblyPath(IconPath));
 
-            AssignInputEvents();
+            _inputManager.AssignInputEvents();
 
             _gl.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-            _renderers = CreateRenderers();
+            _renderers = _rendererManager.CreateRenderers(Camera, Scene);
 
             foreach (var renderer in _renderers)
             {
@@ -280,14 +243,8 @@ public class Window : SilkWindow
 
         try
         {
-            UseShaders();
-
-            var activeRenderers = _renderers.Where(renderer => Settings.RendererFlags.HasFlag(renderer.RenderFlag))
-                                            .OrderBy(renderer => renderer.RenderFlag)
-                                            .ToList();
-
-            foreach (var renderer in activeRenderers)
-                renderer.Render().GetAwaiter().GetResult();
+            _shaderManager.UseShaders();
+            _rendererManager.Run();
         }
         catch (Exception ex)
         {
@@ -313,25 +270,6 @@ public class Window : SilkWindow
         }
     }
 
-    private RendererBase[] CreateRenderers()
-    {
-        // Return the renderers that have been registered
-        if (_registeredRenderers.Length > 0)
-            return _registeredRenderers;
-
-        // When no renderers have been registered, fall back to use all that are discoverable.
-        var rendererTypes = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(assembly => assembly.GetTypes())
-            .Where(type => type.IsSubclassOf(typeof(RendererBase)) && !type.IsAbstract);
-
-        return [.. rendererTypes
-            .Select(type =>
-            {
-                var requiredArguments = new object[] { Camera, Settings, Scene };
-                return (RendererBase)Activator.CreateInstance(type, requiredArguments)!;
-            })];
-    }
-
     /// <summary>
     ///     Toggles the renderer between wireframe and fill mode.
     /// </summary>
@@ -339,17 +277,10 @@ public class Window : SilkWindow
     private void ToggleWireFrame(bool useWireFrame)
         => _gl.PolygonMode(GLEnum.FrontAndBack, useWireFrame ? PolygonMode.Line : PolygonMode.Fill);
 
-    private List<Shader> _shaders = [];
-
-    private void UseShaders()
-    {
-        if (ShaderService.Instance.HasShadersToLoad)
-            _shaders = ShaderService.Instance.GetAll();
-
-        _shaders.ForEach(shader => shader.Use());
-    }
-
-    /// <inheritdoc />
+    /// <summary>
+    ///     Called when a window frame is rendered.
+    /// </summary>
+    /// <param name="frame">The frame information.</param>
     protected void OnUpdateFrame(Frame frame)
     {
         while (!_initialized)
@@ -360,89 +291,26 @@ public class Window : SilkWindow
         if (Settings.PrintFrameRate)
             _logger.LogInformation("FPS: {FrameRate}", frame.FrameRate);
 
-        // TODO: #21 Handle multiple mice?
-        var mouse = Input?.Mice[0];
-        if (mouse is not null)
-        {
-            Camera.UpdateMousePosition((Vector2)mouse.Position);
-            OnHandleMouse?.Invoke(mouse);
-        }
-
-        var keyboard = Input?.Keyboards[0];
-        if (keyboard is not null)
-        {
-            if (keyboard.IsKeyPressed(Key.Escape))
-                CurrentWindow.Close();
-
-            OnHandleKeyboard?.Invoke(keyboard, frame.FrameTime);
-        }
-
-        if (Input is not null)
-            OnUpdate?.Invoke(frame.FrameTime, Input);
+        _inputManager.Update(frame);
     }
 
-    // TODO: #21 Input system
-    private void AssignInputEvents()
-    {
-        if (Input is null)
-        {
-            _logger.LogInformation("Input is null. No input events will be assigned.");
-            return;
-        }
-
-        foreach (var keyboard in Input.Keyboards)
-          keyboard.KeyDown += KeyDown;
-
-        foreach (var mouse in Input.Mice)
-        {
-            mouse.Scroll += OnMouseWheel;
-            mouse.Click += OnMouseClick;
-            mouse.MouseDown += OnMouseDown;
-
-            if (IsFocused)
-                mouse.Cursor.CursorMode = CursorMode.Raw;
-        }
-    }
-
-    /// <inheritdoc />
-    protected void KeyDown(IKeyboard keyboard, Key key, int keyCode)
-    {
-        if (key == Key.Escape)
-            CurrentWindow.Close();
-    }
-
-    /// <inheritdoc />
-    protected void OnMouseWheel(IMouse mouse, ScrollWheel sw)
-    {
-        var direction = sw.Y switch
-        {
-            > 0 => MouseWheelScrollDirection.Up,
-            < 0 => MouseWheelScrollDirection.Down,
-            _ => throw new NotImplementedException()
-        };
-
-        HandleMouseWheel?.Invoke(direction, sw);
-        Camera.Fov -= sw.Y;
-    }
-
-    /// <inheritdoc />
-    protected void OnResize(Vector2D<int> size)
+    /// <summary>
+    ///     Called when the window is resized.
+    /// </summary>
+    /// <param name="size">The new size of the window.</param>
+    protected virtual void OnResize(Vector2D<int> size)
     {
         _gl.Viewport(size);
-        
+
         if (size != Vector2D<int>.Zero)
             Camera.AspectRatio = (float)size.X / size.Y;
     }
-
-    /// <inheritdoc />
-    protected override void OnMouseDown(IMouse mouse, MouseButton button)
-        => OnButtonMouseDown?.Invoke(mouse, button);
 
     /// <summary>
     ///     Sets the current scene.
     /// </summary>
     /// <param name="scene">The contents of the new scene.</param>
-    protected void SetScene(Scene scene)
+    protected virtual void SetScene(Scene scene)
     {
         // TODO: #92 Do we need to clear anything from e.g. the GPU when we change change the scene?
         Scene = scene;

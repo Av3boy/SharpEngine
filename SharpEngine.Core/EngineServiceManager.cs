@@ -14,7 +14,7 @@ namespace SharpEngine.Core;
 /// </summary>
 public class EngineServiceManager
 {
-    private readonly List<EngineHandler> handlers = [];
+    public readonly List<EngineHandler> Handlers = [];
     private readonly ILogger<EngineServiceManager> _logger;
 
     /// <summary>
@@ -34,10 +34,15 @@ public class EngineServiceManager
     {
         _logger.LogDebug("Registering handler: '{Handler}'.", handler.GetType().Name);
 
-        handlers.Add(handler);
-        handler.Start();
+        Handlers.Add(handler);
 
         _logger.LogDebug("Handler '{Handler}' registered successfully.", handler.GetType().Name);
+    }
+
+    public void StartHandlers()
+    {
+        foreach (var engineHandler in Handlers)
+            engineHandler.Start();
     }
 
     /// <summary>
@@ -46,7 +51,7 @@ public class EngineServiceManager
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task StopAllAsync()
     {
-        var stopTasks = handlers.Select(handler => handler.StopAsync());
+        var stopTasks = Handlers.Select(handler => handler.StopAsync());
         await Task.WhenAll(stopTasks);
     }
 }

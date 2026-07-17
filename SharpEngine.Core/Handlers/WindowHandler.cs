@@ -187,7 +187,7 @@ public class WindowHandler : EngineHandler
             }
         };
 
-        var window = new Windowing.Window(new(), viewSettings, LoggingExtensions.CreateLogger<Windowing.Window>());
+        var window = new Windowing.Window(new(), viewSettings);
         window.Initialize();
 
         return window;
@@ -200,10 +200,11 @@ public class WindowHandler : EngineHandler
     private static void EnqueueWindow(WindowOptions options)
     {
         var window = CreateWindow(options);
+
         // Subscribe to the window's high-level mouse button event instead of
         // attaching to the low-level Input.Mice click handlers. This centralizes
         // input handling inside Window and avoids duplicate wiring.
-        window.OnButtonMouseDown += (mouse, button) => Mouse_Click(mouse, (Silk.NET.Input.MouseButton)button, mouse.Position);
+        window._inputManager.OnButtonMouseDown += (mouse, button) => Mouse_Click(mouse, (Silk.NET.Input.MouseButton)button, mouse.Position);
 
         _inputContexts.Add(window.Input);
         _windows.Add(window);
@@ -222,7 +223,7 @@ public class WindowHandler : EngineHandler
         // Prefer the higher-level event on the Window class for mouse button
         // notifications rather than wiring Input.Mice click events directly.
         if (window is Windowing.Window w)
-            w.OnButtonMouseDown += (mouse, button) => Mouse_Click(mouse, (Silk.NET.Input.MouseButton)button, mouse.Position);
+            w._inputManager.OnButtonMouseDown += (mouse, button) => Mouse_Click(mouse, (Silk.NET.Input.MouseButton)button, mouse.Position);
 
         if (window.Input is not null)
             _inputContexts.Add(window.Input);

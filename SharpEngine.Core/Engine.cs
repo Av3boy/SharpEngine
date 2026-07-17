@@ -3,43 +3,44 @@
 using SharpEngine.Core.Handlers;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Windowing;
+using SharpEngine.Shared.Dto;
 using SharpEngine.Telemetry;
 
 using System.Threading.Tasks;
+using SharpEngine.Core.Extensions;
 
 namespace SharpEngine.Core;
 
 /// <summary>
 ///     Manages the engine's services and provides methods to initialize, register handlers, and shut down asynchronously.
 /// </summary>
-public static class Engine
+public class Engine
 {
     /// <summary>
     ///     Gets the manager responsible for handling engine services.
     /// </summary>
-    public static EngineServiceManager Services { get; private set; } = new();
+    public EngineServiceManager ServicesManager { get; private set; } = new();
 
-    private static bool _initialized = false;
+    private bool _initialized = false;
+    private readonly ILogger _logger;
 
-    private readonly static ILogger _logger;
-
-    static Engine()
+    public Engine()
     {
-        Initialize();
         _logger = LoggingExtensions.CreateLogger(typeof(Engine));
+        Initialize();
     }
 
     /// <summary>
     ///     Initializes the engine for use.
     /// </summary>
-    public static void Initialize()
+    public void Initialize()
     {
         _logger.LogDebug("Initializing engine...");
 
         if (_initialized)
         {
             _logger.LogWarning("Reinitializing engine.");
-            Services.StopAllAsync().Wait();
+            ServicesManager.StopAllAsync().Wait();
         }
 
         _initialized = true;
@@ -51,12 +52,12 @@ public static class Engine
     /// </summary>
     /// <param name="game">The game context provides access to the current scene and camera settings for window initialization.</param>
     /// <returns>Returns the newly created <see cref="Window"/> instance.</returns>
-    public static Window Initialize(Game game)
+    public Window Initialize(Game game)
     {
         var window = new Window(game);
 
         Initialize();
-        Services.RegisterHandler(new WindowHandler(window));
+        ServicesManager.RegisterHandler(new WindowHandler(window));
 
         return window;
     }
@@ -65,16 +66,23 @@ public static class Engine
     ///     Stops all engine services and shuts down the engine asynchronously.
     /// </summary>
     /// <returns>A <see cref="Task"/> that completes when shutdown finishes.</returns>
-    public static async Task ShutdownAsync()
+    public async Task ShutdownAsync()
     {
-        if (Services == null)
+        if (ServicesManager == null)
             return;
 
         _logger.LogDebug("Shutting down engine...");
 
-        await Services.StopAllAsync();
+        await ServicesManager.StopAllAsync();
 
         _initialized = false;
         _logger.LogDebug("Engine successfully shut down.");
+    }
+
+    public void CheckEngineVersion(ProjectDto project)
+    {
+        var currentAssemblyVersion = typeof(Window).Assembly.GetVersion();
+        if (currentAssemblyVersion != project.EngineVersion.Version)
+            _logger.LogWarning("The current engine version ({CurrentVersion}) does not match the project engine version ({ProjectVersion}). This may lead to unexpected behavior.", currentAssemblyVersion, project.EngineVersion);
     }
 }
