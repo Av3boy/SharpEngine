@@ -90,10 +90,9 @@ public class WindowHandler : EngineHandler
             if (options is not null)
                 _windowQueue.Enqueue(options.Value);
 
-            while (!_cancellationTokenSource.IsCancellationRequested)
+            while (_cancellationTokenSource.IsCancellationRequested)
             {
-                await Task.Delay(1000);
-                _logger.LogDebug("Running loop on background thread...");
+                return;
             }
         });
     }
@@ -206,7 +205,7 @@ public class WindowHandler : EngineHandler
         // input handling inside Window and avoids duplicate wiring.
         window._inputManager.OnButtonMouseDown += (mouse, button) => Mouse_Click(mouse, (Silk.NET.Input.MouseButton)button, mouse.Position);
 
-        _inputContexts.Add(window.Input);
+        _inputContexts.Add(window._inputManager.Context);
         _windows.Add(window);
     }
 
@@ -223,10 +222,12 @@ public class WindowHandler : EngineHandler
         // Prefer the higher-level event on the Window class for mouse button
         // notifications rather than wiring Input.Mice click events directly.
         if (window is Windowing.Window w)
+        {
             w._inputManager.OnButtonMouseDown += (mouse, button) => Mouse_Click(mouse, (Silk.NET.Input.MouseButton)button, mouse.Position);
-
-        if (window.Input is not null)
-            _inputContexts.Add(window.Input);
+            
+            if (w._inputManager.Context is not null)
+                _inputContexts.Add(w._inputManager.Context);
+        }
 
         _windows.Add(window);
 

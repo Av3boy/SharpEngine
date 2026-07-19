@@ -51,15 +51,14 @@ public class Engine
     ///     Creates and initializes a new window using the provided <see cref="Game"/> context and registers the window handler.
     /// </summary>
     /// <param name="game">The game context provides access to the current scene and camera settings for window initialization.</param>
-    /// <returns>Returns the newly created <see cref="Window"/> instance.</returns>
-    public Window Initialize(Game game)
+    public void Initialize(Game game)
     {
-        var window = new Window(game);
+        //var window = new Window(game);
 
         Initialize();
-        ServicesManager.RegisterHandler(new WindowHandler(window));
+        ServicesManager.RegisterHandler(new WindowHandler());
 
-        return window;
+        //return window;
     }
 
     /// <summary>

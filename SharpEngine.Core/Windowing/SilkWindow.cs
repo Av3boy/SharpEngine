@@ -54,8 +54,7 @@ public abstract class SilkWindow : IWindow
     /// </summary>
     public IViewSettings Settings { get; protected set; } = ViewSettings.Default;
 
-    /// <summary>Gets or sets the input context for the window.</summary>
-    public IInputContext? Input { get; protected set; }
+    public Silk.NET.Maths.Vector4D<float> BackgroundColor { get; set; } = new Silk.NET.Maths.Vector4D<float>(0.2f, 0.3f, 0.3f, 1.0f);
 
     /// <inheritdoc />
     public virtual Rectangle<int> BorderSize => CurrentWindow.BorderSize;
@@ -92,8 +91,14 @@ public abstract class SilkWindow : IWindow
     /// <inheritdoc />
     public string Title
     {
-        get => !string.IsNullOrWhiteSpace(CurrentWindow.Title) ? CurrentWindow.Title : "Untitled window";
-        set => CurrentWindow.Title = value;
+        get => !string.IsNullOrWhiteSpace(CurrentWindow?.Title) ? CurrentWindow.Title : "Untitled window";
+        set
+        {
+            if (CurrentWindow != null)
+            {
+                CurrentWindow.Title = value;
+            }
+        }
     }
 
     public string IconPath { get; set; } = "_Resources/icon.png";
@@ -245,6 +250,7 @@ public abstract class SilkWindow : IWindow
 
     /// <summary>Raised after the scene has been rendered.</summary>
     public event Action<Frame>? OnAfterRender;
+    public event Action<Frame>? OnPreRender;
 
     /// <summary>An event executed when the window has loaded.</summary>
     public event Action? OnLoaded;
@@ -258,9 +264,9 @@ public abstract class SilkWindow : IWindow
     private IWindow? _currentWindow;
     
     /// <summary>Gets or sets the current window.</summary>
-    public IWindow CurrentWindow
+    public IWindow? CurrentWindow
     {
-        get => _currentWindow ?? throw new WindowNotInitializedException(this);
+        get => _currentWindow; // ?? throw new WindowNotInitializedException(this);
         set => _currentWindow = value;
     }
 
@@ -371,7 +377,7 @@ public abstract class SilkWindow : IWindow
     ///     Handles operations needed to be executed before the renderers are executed.
     /// </summary>
     /// <param name="frame">Contains information about the previous frame.</param>
-    protected virtual void PreRender(Frame frame) { }
+    protected virtual void PreRender(Frame frame) => OnPreRender?.Invoke(frame);
 
     /// <summary>
     ///     Handles closing the application.

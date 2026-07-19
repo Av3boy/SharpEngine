@@ -64,20 +64,20 @@ public class App
             var windowHandler = _engine.ServicesManager.Handlers;
             var a = windowHandler.First(h => h.GetType() == typeof(WindowHandler));
 
-            // foreach (var window in windowFactory.CreateAllWindows())
-            // {
-            //     logger.LogInformation("Starting window '{windowName}'.", window.Title);
-            // 
-            //     // TODO: We might need to use the window handler instead to keep the execution of the window on a separate thread.
-            //     window.Initialize();
-            //     window.Run();
-            // }
+            foreach (var window in windowFactory.CreateAllWindows())
+            {
+                logger.LogInformation("Starting window '{windowName}'.", window.Title);
+            
+                // TODO: We might need to use the window handler instead to keep the execution of the window on a separate thread.
+                window.Initialize();
+                window.Run();
+            }
 
             logger.LogInformation("Starting engine handlers.");
 
             foreach (var handler in _engine.ServicesManager.Handlers)
             {
-                handler.Start();
+                //handler.Start();
             }
 
             while (true)

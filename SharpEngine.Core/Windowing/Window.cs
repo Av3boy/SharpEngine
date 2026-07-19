@@ -178,24 +178,20 @@ public class Window : SilkWindow
     /// <inheritdoc />
     public override void OnLoad()
     {
+        ArgumentNullException.ThrowIfNull(CurrentWindow, nameof(CurrentWindow));
+
         try
         {
-            var context = CurrentWindow.CreateOpenGL();
-            _gl = context;
+            SetGL();
 
-            // Capture the first created GL as the shared GL.
-            // This enables resource caches to work across windows
-            // when those windows are created with a shared OpenGL context.
-            _sharedGl ??= context;
+            var context = CurrentWindow.CreateInput();
+            _inputManager.Set(context);
 
-            Input = CurrentWindow.CreateInput();
             CurrentWindow.MakeCurrent();
 
             SetWindowIcon(PathExtensions.GetAssemblyPath(IconPath));
 
-            _inputManager.AssignInputEvents();
-
-            _gl.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            _gl.ClearColor(BackgroundColor.X, BackgroundColor.Y, BackgroundColor.Z, BackgroundColor.W);
 
             _renderers = _rendererManager.CreateRenderers(Camera, Scene);
 
@@ -205,7 +201,7 @@ public class Window : SilkWindow
                 renderer.Initialize();
             }
 
-            _imGuiController = new ImGuiController(_gl, CurrentWindow, Input);
+            _imGuiController = new ImGuiController(_gl, CurrentWindow, _inputManager.Context);
 
             _initialized = true;
         }
@@ -215,6 +211,17 @@ public class Window : SilkWindow
         }
 
         base.OnLoad();
+    }
+
+    private void SetGL()
+    {
+        var context = CurrentWindow.CreateOpenGL();
+        _gl = context;
+
+        // Capture the first created GL as the shared GL.
+        // This enables resource caches to work across windows
+        // when those windows are created with a shared OpenGL context.
+        _sharedGl ??= context;
     }
 
     /// <summary>

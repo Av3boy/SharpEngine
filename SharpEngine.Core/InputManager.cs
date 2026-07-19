@@ -16,7 +16,7 @@ public class InputManager : EngineHandler
     private readonly ILogger<InputManager> _logger;
 
     /// <summary>Gets or sets the input context for the window.</summary>
-    public IInputContext? InputContext { get; protected set; }
+    public IInputContext? Context { get; protected set; }
 
     /// <summary>The event executed when mouse events are executed.</summary>
     public event Action<IMouse>? OnHandleMouse;
@@ -42,18 +42,24 @@ public class InputManager : EngineHandler
         _logger = logger ?? LoggingExtensions.CreateLogger<InputManager>();
     }
 
+    public virtual void Set(IInputContext context)
+    {
+        Context = context;
+        AssignInputEvents();
+    }
+
     public virtual void Update(Frame frame)
     {
         UpdateMice();
         UpdateKeyboards(frame);
     
-        if (InputContext is not null)
-            OnUpdate?.Invoke(frame.FrameTime, InputContext);
+        if (Context is not null)
+            OnUpdate?.Invoke(frame.FrameTime, Context);
     }
 
     protected virtual void UpdateKeyboards(Frame frame)
     {
-        var keyboard = InputContext?.Keyboards[0];
+        var keyboard = Context?.Keyboards[0];
         if (keyboard is not null)
         {
             // if (keyboard.IsKeyPressed(Key.Escape))
@@ -66,7 +72,7 @@ public class InputManager : EngineHandler
     public virtual void UpdateMice()
     {
         // TODO: #21 Handle multiple mice?
-        var mouse = InputContext?.Mice[0];
+        var mouse = Context?.Mice[0];
         if (mouse is not null)
         {
             // Camera.UpdateMousePosition((Vector2)mouse.Position);
@@ -77,16 +83,16 @@ public class InputManager : EngineHandler
     // TODO: #21 Input system
     public virtual void AssignInputEvents()
     {
-        if (InputContext is null)
+        if (Context is null)
         {
             _logger.LogInformation("Input is null. No input events will be assigned.");
             return;
         }
 
-        foreach (var keyboard in InputContext.Keyboards)
+        foreach (var keyboard in Context.Keyboards)
             keyboard.KeyDown += KeyDown;
 
-        foreach (var mouse in InputContext.Mice)
+        foreach (var mouse in Context.Mice)
         {
             mouse.Scroll += OnMouseWheel;
             mouse.Click += OnMouseClick;

@@ -35,14 +35,14 @@ public static class Program
 
         services.AddSingleton<Scene>();
         services.AddSingleton<Game, Minecraft>();
-        services.AddSingleton<CameraView>(serviceProvider => serviceProvider.GetRequiredService<Minecraft>().Camera);
+        services.AddSingleton<CameraView>(serviceProvider => serviceProvider.GetRequiredService<Game>().Camera);
         services.AddTransient<RendererBase, Renderer>();
         services.AddTransient<RendererBase, UIRenderer>();
 
         services.AddWindow(
             configure: (serviceProvider, window) =>
             {
-                var game = serviceProvider.GetRequiredService<Minecraft>();
+                var game = serviceProvider.GetRequiredService<Game>();
 
                 window.OnLoaded += game.Initialize;
                 window._inputManager.OnHandleMouse += game.HandleMouse;

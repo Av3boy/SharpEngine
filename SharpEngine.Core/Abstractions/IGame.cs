@@ -3,8 +3,9 @@ using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
-
+using SharpEngine.Core.Windowing;
 using Silk.NET.Input;
+using System;
 
 namespace SharpEngine.Core.Interfaces;
 
@@ -96,4 +97,6 @@ public abstract class Game
     ///    Executed each frame.
     /// </summary>
     public virtual void Update(double deltaTime, IInputContext input) { }
+
+    public virtual void OnAfterRender(Frame frame) { }
 }

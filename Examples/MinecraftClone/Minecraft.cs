@@ -109,7 +109,7 @@ public class Minecraft : Game
     ///     Handles rendering after the frame is drawn.
     /// </summary>
     /// <param name="frame">Information about the frame.</param>
-    public void OnAfterRender(Frame frame)
+    public override void OnAfterRender(Frame frame)
     {
         var x = _uiElem.Transform.Position.X;
         var y = _uiElem.Transform.Position.Y;
