@@ -88,6 +88,7 @@ public abstract class SilkWindow : IWindow
     /// <remarks>Use <see cref="Size"/> to change the window size.</remarks>
     public int Height => Size.Y;
 
+    // TODO: This doesn't seem to work
     /// <inheritdoc />
     public string Title
     {
@@ -97,6 +98,7 @@ public abstract class SilkWindow : IWindow
             if (CurrentWindow != null)
             {
                 CurrentWindow.Title = value;
+                Settings.WindowOptions = Settings.WindowOptions with { Title = value };
             }
         }
     }

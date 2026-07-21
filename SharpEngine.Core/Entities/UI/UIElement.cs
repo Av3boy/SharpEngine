@@ -38,7 +38,7 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
     public float Height { get; set; } = 10;
 
     [ShaderParameter("orthoMatrix", ShaderParameterType.Mat4)]
-    private Matrix4x4 OrthoMatrix = Matrix4x4.CreateOrthographicOffCenter(-1, 1, -1, 1, -1, 1);
+    private Matrix4x4 OrthoMatrix = Matrix4x4.Identity;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="UIElement"/>.
@@ -72,8 +72,15 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
         MeshRenderer.Material.Shader.Use();
         MeshRenderer.Material.DiffuseMap!.Texture!.Use(TextureUnit.Texture0);
 
+        OrthoMatrix = Matrix4x4.CreateOrthographicOffCenter(
+            -window.Width / 2f,
+            window.Width / 2f,
+            -window.Height / 2f,
+            window.Height / 2f,
+            -1,
+            1);
+
         _paramBinder.Apply(this, MeshRenderer.Material.Shader);
-        MeshRenderer.Material.Shader.SetVector2("screenSize", (System.Numerics.Vector2)window.Size);
         MeshRenderer.Material.Shader.SetVector2("position", (System.Numerics.Vector2)Transform.Position);
         MeshRenderer.Material.Shader.SetFloat("rotation", Math.DegreesToRadians(Transform.Rotation.Angle));
         MeshRenderer.Material.Shader.SetInt("texture1", 0);
