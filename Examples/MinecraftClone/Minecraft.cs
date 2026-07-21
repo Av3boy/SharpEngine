@@ -80,29 +80,32 @@ public class Minecraft : Game
 
     private void InitializeUI()
     {
-        const uint numElements = 10;
+        var numElements = 10;
         const float elementSpacing = 50;
         const float elementSize = 50;
 
-        var initialPosition = new Vector2(Window.Bottom + elementSpacing, Window.Bottom + elementSpacing);
-        var gridLayout = new GridLayout<UIElement>(initialPosition)
+        var initialPositionY = Window.Bottom + elementSpacing;
+        var totalWidth = (numElements * elementSize) + ((numElements - 1) * elementSpacing);
+        var firstElementX = -(totalWidth / 2f) + (elementSize / 2f);
+
+        var gridLayout = new GridLayout<UIElement>(new Vector2(firstElementX, initialPositionY))
         {
             Rows = 1,
-            Columns = numElements,
+            Columns = (uint)numElements,
             Spacing = new Vector2(elementSpacing, elementSpacing)
         };
 
         for (int i = 0; i < numElements; i++)
         {
-            _uiElem = new UIElement(Window.GetGL(), "uiElement " + i)
-            {
-                Width = elementSize,
-                Height = elementSize,
-            };
+            var uiElem = new UIElement(Window.GetGL(), "uiElement " + i);
+            uiElem.Width = elementSize; 
+            uiElem.Height = elementSize;
+
+            _uiElem = uiElem;
 
             gridLayout.AddChild(_uiElem);
         }
-
+        
         _scene.UIElements.Add(gridLayout);
     }
 
@@ -112,9 +115,6 @@ public class Minecraft : Game
     /// <param name="frame">Information about the frame.</param>
     public override void OnAfterRender(Frame frame)
     {
-        if (_uiElem == null)
-            return;
-
         var x = _uiElem.Transform.Position.X;
         var y = _uiElem.Transform.Position.Y;
 

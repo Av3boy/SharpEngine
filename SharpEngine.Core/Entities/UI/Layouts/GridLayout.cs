@@ -18,9 +18,8 @@ public class GridLayout<TItem> : LayoutBase<TItem> where TItem : UIElement
     public GridLayout() : this("GridLayout") { }
     
     public GridLayout(Vector2 position) : this("GridLayout") 
-    {
-        var firstElementX = -(TotalWidth / 2f) + (_elementSize / 2f);
-        Transform.Position = new Vector2(position.X + firstElementX, position.Y);
+    { 
+        Transform.Position = position;
     }
 
     public GridLayout(string name) : base(name) { }
@@ -35,10 +34,8 @@ public class GridLayout<TItem> : LayoutBase<TItem> where TItem : UIElement
     /// <remarks>The item size is taken from each UI element's width and height.</remarks>
     public new Vector2 Spacing { get; set; }
 
-    private float _elementSize => Items.Count > 0 ? Items[0].Width : 0;
-
     // TODO: This calculation assumes all components are of the same size. This should be changed to support different sizes in the future.
-    private float TotalWidth => (Columns * _elementSize) + ((Columns - 1) * Spacing.X);
+    private float TotalWidth => (Columns * (Items.Count > 0 ? Items[0].Width : 0)) + ((Columns - 1) * Spacing.X);
 
     /// <summary>
     ///     Retrieves the item at [<paramref name="row"/>, <paramref name="column"/>].
