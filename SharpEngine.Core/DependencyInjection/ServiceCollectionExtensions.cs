@@ -51,6 +51,24 @@ public static class ServiceCollectionExtensions
             return window;
         };
 
+        if (configure == null)
+        {
+            configure = (serviceProvider, window) =>
+            {
+                var game = serviceProvider.GetRequiredService<Game>();
+
+                window.OnLoaded += game.Initialize;
+                window._inputManager.OnHandleMouse += game.HandleMouse;
+                window._inputManager.OnUpdate += game.Update;
+                window._inputManager.OnHandleKeyboard += game.HandleKeyboard;
+                window._inputManager.OnButtonMouseDown += game.HandleMouseDown;
+                window._inputManager.HandleMouseWheel += game.HandleMouseWheel;
+                window.OnAfterRender += game.OnAfterRender;
+
+                game.Window = window;
+            };
+        }
+
         services.TryAddSingleton<IWindowFactory, WindowFactory>();
 
         var registrationName = name ?? $"window-{services.Count(service => service.ServiceType == typeof(WindowRegistration))}";

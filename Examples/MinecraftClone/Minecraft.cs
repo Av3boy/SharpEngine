@@ -5,6 +5,7 @@ using Minecraft.Terrain.Layers;
 using SharpEngine.Core;
 using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.UI;
+using SharpEngine.Core.Entities.UI.Layouts;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Numerics;
@@ -32,15 +33,6 @@ public class Minecraft : Game
 
     private readonly Terrain.TerrainGenerator_New _terrain;
     private readonly SceneNode _blocksNode;
-
-    /// <summary>
-    ///     Gets the main window.
-    /// </summary>
-    public static Window Window
-    {
-        get => field ?? throw new InvalidOperationException("The game window has not been assigned yet.");
-        set;
-    }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Minecraft"/>.
@@ -76,7 +68,7 @@ public class Minecraft : Game
             _input = new Input(Camera);
             _inventory.Initialize();
 
-            _terrain.InitializeWorld();
+            // _terrain.InitializeWorld();
 
             InitializeUI();
         }
@@ -88,21 +80,30 @@ public class Minecraft : Game
 
     private void InitializeUI()
     {
-        // var gridLayout = new GridLayout<UIElement>();
+        const uint numElements = 10;
+        const float elementSpacing = 50;
+        const float elementSize = 50;
 
-        // TODO: #89 Fix UI renderer
-        _uiElem = new UIElement(Window.GetGL(), "uiElement");
-        _scene.UIElements.Add(_uiElem);
+        var initialPosition = new Vector2(Window.Bottom + elementSpacing, Window.Bottom + elementSpacing);
+        var gridLayout = new GridLayout<UIElement>(initialPosition)
+        {
+            Rows = 1,
+            Columns = numElements,
+            Spacing = new Vector2(elementSpacing, elementSpacing)
+        };
 
-        var uiElem2 = new UIElement(Window.GetGL(), "uiElement");
-        uiElem2.Transform.Scale = new Vector2(0.2f, 0.2f);
-        uiElem2.Transform.Position = new Vector2(30, 0);
+        for (int i = 0; i < numElements; i++)
+        {
+            _uiElem = new UIElement(Window.GetGL(), "uiElement " + i)
+            {
+                Width = elementSize,
+                Height = elementSize,
+            };
 
-        // gridLayout.AddChild(_uiElem, uiElem2);
-        _scene.UIElements.Add(_uiElem);
-        _scene.UIElements.Add(uiElem2);
+            gridLayout.AddChild(_uiElem);
+        }
 
-        // _scene.UIElements.Add(gridLayout);
+        _scene.UIElements.Add(gridLayout);
     }
 
     /// <summary>
@@ -111,6 +112,9 @@ public class Minecraft : Game
     /// <param name="frame">Information about the frame.</param>
     public override void OnAfterRender(Frame frame)
     {
+        if (_uiElem == null)
+            return;
+
         var x = _uiElem.Transform.Position.X;
         var y = _uiElem.Transform.Position.Y;
 

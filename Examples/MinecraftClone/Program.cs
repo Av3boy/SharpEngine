@@ -39,22 +39,6 @@ public static class Program
         services.AddTransient<RendererBase, Renderer>();
         services.AddTransient<RendererBase, UIRenderer>();
 
-        services.AddWindow(
-            configure: (serviceProvider, window) =>
-            {
-                var game = serviceProvider.GetRequiredService<Game>();
-
-                window.OnLoaded += game.Initialize;
-                window._inputManager.OnHandleMouse += game.HandleMouse;
-                window._inputManager.OnUpdate += game.Update;
-                window._inputManager.OnHandleKeyboard += game.HandleKeyboard;
-                window._inputManager.OnButtonMouseDown += game.HandleMouseDown;
-                window._inputManager.HandleMouseWheel += game.HandleMouseWheel;
-                window.OnAfterRender += game.OnAfterRender;
-
-                Minecraft.Window = window;
-            },
-            name: "minecraft",
-            isDefaultWindow: true);
+        services.AddWindow(name: "minecraft");
     }
 }

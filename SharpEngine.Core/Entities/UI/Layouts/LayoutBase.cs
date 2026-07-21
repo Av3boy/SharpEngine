@@ -1,4 +1,6 @@
-﻿using SharpEngine.Core.Scenes;
+﻿using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Numerics;
+using SharpEngine.Core.Scenes;
 using System.Collections.Generic;
 
 namespace SharpEngine.Core.Entities.UI.Layouts;
@@ -7,10 +9,17 @@ namespace SharpEngine.Core.Entities.UI.Layouts;
 ///     Represents the base class for all layout types.
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-public abstract class LayoutBase<TItem> : SceneNode where TItem : SceneNode, new()
+public abstract class LayoutBase<TItem> : EmptyNode<Transform2D, Vector2> where TItem : SceneNode
 {
+    protected LayoutBase() : this($"{typeof(TItem).Name} Layout") { }
+    protected LayoutBase(string name) : base(name) { }
+
+    // TODO: This probably needs to be overridden with the 'new' keyword so that we save a bit of memory.
     /// <summary>Represents the items in the layout.</summary>
     public List<TItem> Items { get; set; } = [];
+
+    /// <summary>Gets or sets the distance between items in the grid.</summary>
+    public Vector2 Spacing { get; set; } = new(30, 30);
 
     /// <summary>
     ///     Adds a new item to the layout.

@@ -64,6 +64,14 @@ public abstract class Game
     public Scene Scene { get; init; }
 
     /// <summary>
+    ///     Gets the main window.
+    /// </summary>
+    public Window Window
+    {
+        get => field ?? throw new InvalidOperationException("The game window has not been assigned yet.");
+        set;
+    }
+    /// <summary>
     ///     Executed when a mouse button is pressed.
     /// </summary>
     public virtual void HandleMouseDown(IMouse mouse, MouseButton button) { }

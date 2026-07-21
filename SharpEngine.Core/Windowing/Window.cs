@@ -230,7 +230,7 @@ public class Window : SilkWindow
     /// <param name="frame">Contains information about the previous frame.</param>
     protected void RenderFrame(Frame frame)
     {
-        if (!_initialized)
+        if (!_initialized || CurrentWindow == null)
             throw new InvalidOperationException("Window has not been initialized. Call Initialize() before rendering.");
 
         try
