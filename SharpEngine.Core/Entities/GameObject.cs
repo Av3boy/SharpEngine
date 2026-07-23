@@ -103,6 +103,24 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     [Inspector(DisplayInInspector = false)]
     public BoundingBox BoundingBox { get; set; }
 
+    public static T Create<T>(T instance) where T : GameObject
+    {
+        instance.OnCreated();
+        return instance;
+    }
+
+    public static T Create<T>(Action<T>? configure = null) where T : GameObject, new()
+    {
+        var instance = new T();
+        configure?.Invoke(instance);
+        instance.OnCreated();
+        return instance;
+    }
+
+    protected virtual void OnCreated() { }
+    protected virtual void Update(float deltaTime) { }
+    protected virtual void OnDeleted() { }
+
     /// <summary>
     ///     Sets shader uniforms for model, view, and projection matrices.
     /// </summary>
