@@ -5,6 +5,7 @@ using SharpEngine.Telemetry;
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SharpEngine.Core;
@@ -30,19 +31,19 @@ public class EngineServiceManager
     ///     Registers a new engine handler and starts its operation.
     /// </summary>
     /// <param name="handler">The handler to register.</param>
-    public void RegisterHandler(EngineHandler handler)
+    public THandler RegisterHandler<THandler>(THandler handler) where THandler : EngineHandler
     {
         _logger.LogDebug("Registering handler: '{Handler}'.", handler.GetType().Name);
-
         Handlers.Add(handler);
 
         _logger.LogDebug("Handler '{Handler}' registered successfully.", handler.GetType().Name);
+        return handler;
     }
 
-    public void StartHandlers()
+    public void StartHandlers(CancellationTokenSource source)
     {
         foreach (var engineHandler in Handlers)
-            engineHandler.Start();
+            engineHandler.Start(source);
     }
 
     /// <summary>

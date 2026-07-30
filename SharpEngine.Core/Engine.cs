@@ -8,6 +8,7 @@ using SharpEngine.Telemetry;
 
 using System.Threading.Tasks;
 using SharpEngine.Core.Extensions;
+using System.Threading;
 
 namespace SharpEngine.Core;
 
@@ -23,11 +24,11 @@ public class Engine
 
     private bool _initialized = false;
     private readonly ILogger _logger;
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
 
     public Engine()
     {
         _logger = LoggingExtensions.CreateLogger(typeof(Engine));
-        Initialize();
     }
 
     /// <summary>
@@ -45,20 +46,13 @@ public class Engine
 
         _initialized = true;
         _logger.LogDebug("Engine successfully initialized.");
-    }
 
-    /// <summary>
-    ///     Creates and initializes a new window using the provided <see cref="Game"/> context and registers the window handler.
-    /// </summary>
-    /// <param name="game">The game context provides access to the current scene and camera settings for window initialization.</param>
-    public void Initialize(Game game)
-    {
-        //var window = new Window(game);
+        ServicesManager.StartHandlers(_cancellationTokenSource);
 
-        Initialize();
-        ServicesManager.RegisterHandler(new WindowHandler());
+        while (!_cancellationTokenSource.Token.IsCancellationRequested)
+        {
 
-        //return window;
+        }
     }
 
     /// <summary>

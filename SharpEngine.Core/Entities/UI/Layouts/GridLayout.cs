@@ -15,6 +15,9 @@ namespace SharpEngine.Core.Entities.UI.Layouts;
 /// <typeparam name="TItem">The type of items that can be stored and retrieved within the grid.</typeparam>
 public class GridLayout<TItem> : LayoutBase<TItem> where TItem : UIElement
 {
+    private readonly bool _useBounds;
+    private readonly Vector2 _endPosition;
+
     public GridLayout() : this("GridLayout") { }
     
     public GridLayout(Vector2 position) : this("GridLayout") 
@@ -22,20 +25,41 @@ public class GridLayout<TItem> : LayoutBase<TItem> where TItem : UIElement
         Transform.Position = position;
     }
 
+    public GridLayout(Vector2 startPosition, Vector2 endPosition) : this("GridLayout")
+    {
+        Transform.Position = startPosition;
+        _endPosition = endPosition;
+        _useBounds = true;
+    }
+
     public GridLayout(string name) : base(name) { }
 
     /// <summary>Gets or sets the amount of rows in the grid.</summary>
+    /// <remarks>
+    ///     If <see cref="AutoRows"/> is enabled, this value will be overridden and calculated based on the number of items and columns.
+    /// </remarks>
     public uint Rows { get; set; } = 1;
 
     /// <summary>Gets or sets the amount of columns in the grid.</summary>
+    /// <remarks>
+    ///     If <see cref="AutoColumns"/> is enabled, this value will be overridden and calculated based on the number of items and rows.
+    /// </remarks>
     public uint Columns { get; set; } = 1;
+
+    /// <summary>Gets or sets a value indicating whether the number of columns should be automatically calculated.</summary>
+    public bool AutoColumns { get; set; } = false;
+
+    /// <summary>Gets or sets a value indicating whether the number of rows should be automatically calculated.</summary>
+    public bool AutoRows { get; set; } = false;
+
+    public float Padding { get; set; }
 
     /// <summary>Gets or sets the spacing between items in the grid.</summary>
     /// <remarks>The item size is taken from each UI element's width and height.</remarks>
     public new Vector2 Spacing { get; set; }
 
     // TODO: This calculation assumes all components are of the same size. This should be changed to support different sizes in the future.
-    private float TotalWidth => (Columns * (Items.Count > 0 ? Items[0].Width : 0)) + ((Columns - 1) * Spacing.X);
+    public float TotalWidth => (Columns * (Items.Count > 0 ? Items[0].Width : 0)) + ((Columns - 1) * Spacing.X);
 
     /// <summary>
     ///     Retrieves the item at [<paramref name="row"/>, <paramref name="column"/>].
@@ -70,14 +94,36 @@ public class GridLayout<TItem> : LayoutBase<TItem> where TItem : UIElement
         if (Columns == 0)
             return;
 
+        if (Items.Count == 0)
+            return;
+
+        var item = Items[0];
+        var itemWidth = item.Width;
+        var itemHeight = item.Height;
+
+        var position = Transform.Position;
+        var baseX = position.X;
+        var baseY = position.Y;
+
+        if (_useBounds)
+        {
+            var startX = MathF.Min(Transform.Position.X, _endPosition.X);
+            var endX = MathF.Max(Transform.Position.X, _endPosition.X);
+            var availableWidth = endX - startX;
+            var horizontalOffset = MathF.Max(0, (availableWidth - TotalWidth) / 2f);
+
+            baseX = startX + horizontalOffset + (itemWidth / 2f);
+            baseY = Transform.Position.Y + Spacing.Y + (itemHeight / 2f);
+        }
+
         for (var index = 0; index < Items.Count; index++)
         {
             var row = index / (int)Columns;
             var column = index % (int)Columns;
-            var item = Items[index];
-            var position = new Vector2(
-                Transform.Position.X + (column * (item.Width + Spacing.X)),
-                Transform.Position.Y + (row * (item.Height + Spacing.Y)));
+            item = Items[index];
+            position = new Vector2(
+                baseX + (column * (itemWidth + Spacing.X)),
+                baseY + (row * (itemHeight + Spacing.Y)));
 
             item.Transform.Position = position;
         }

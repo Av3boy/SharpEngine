@@ -17,10 +17,9 @@ namespace SharpEngine.Core.DependencyInjection;
 /// </summary>
 public class App
 {
-    private static IConfiguration? _configuration;
+    private readonly IConfiguration? _configuration;
     private readonly IServiceProvider _serviceProvider;
-
-    private readonly Engine _engine;
+    private Engine _engine;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="App"/> class.
@@ -31,8 +30,6 @@ public class App
     {
         _serviceProvider = serviceProvider;
         _configuration = configuration;
-
-        _engine = new Engine();
     }
 
     /// <summary>
@@ -43,48 +40,23 @@ public class App
     {
         var logger = _serviceProvider.GetService<ILogger<App>>()!;
 
+        var game = _serviceProvider.GetService<Game>();
+        if (game is null)
+            throw new InvalidOperationException("A service for the type 'Game' could not be found. One must be registered before running the application with the dependency Injection apporach.");
+
+        _engine = _serviceProvider.GetRequiredService<Engine>();
+        if (_engine is null)
+            throw new InvalidOperationException("A service for the type 'Engine' could not be found. One must be registered before running the application with the dependency Injection apporach.");
+
         try
         {
-
             logger.LogInformation("App started. Resolving services.");
 
             if (cancellationToken.IsCancellationRequested)
                 return;
 
-            var windowFactory = _serviceProvider.GetService<IWindowFactory>();
-            if (windowFactory is null || windowFactory.RegisteredWindows.Count <= 0)
-            {
-                logger.LogInformation("No registered windows found. Engine shutting down.");
-                return;
-            }
-
-            var game = _serviceProvider.GetRequiredService<Game>();
-
-            _engine.Initialize(game);
-            var windowHandler = _engine.ServicesManager.Handlers;
-            var a = windowHandler.First(h => h.GetType() == typeof(WindowHandler));
-
-            foreach (var window in windowFactory.CreateAllWindows())
-            {
-                logger.LogInformation("Starting window '{windowName}'.", window.Title);
-            
-                // TODO: We might need to use the window handler instead to keep the execution of the window on a separate thread.
-                window.Initialize();
-                window.Run();
-            }
-
             logger.LogInformation("Starting engine handlers.");
-
-            foreach (var handler in _engine.ServicesManager.Handlers)
-            {
-                //handler.Start();
-            }
-
-            while (true)
-            {
-                
-            }
-
+            _engine.Initialize();
         }
         catch (Exception ex)
         {

@@ -7,6 +7,7 @@
     </PropertyGroup>
   
     <ItemGroup>
+        <ProjectReference Include="..\..\..\SharpEngine.Core.DependencyInjection\SharpEngine.Core.DependencyInjection.csproj" />
         <ProjectReference Include="..\..\ObjLoader\SharpEngine.Core.ObjLoader.csproj" />
         <ProjectReference Include="..\..\SharpEngine.Core\SharpEngine.Core.csproj" />
     </ItemGroup>

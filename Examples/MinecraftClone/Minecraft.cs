@@ -84,11 +84,9 @@ public class Minecraft : Game
         const float elementSpacing = 50;
         const float elementSize = 50;
 
-        var initialPositionY = Window.Bottom + elementSpacing;
-        var totalWidth = (numElements * elementSize) + ((numElements - 1) * elementSpacing);
-        var firstElementX = -(totalWidth / 2f) + (elementSize / 2f);
-
-        var gridLayout = new GridLayout<UIElement>(new Vector2(firstElementX, initialPositionY))
+        var gridLayout = new GridLayout<UIElement>(
+            new Vector2(Window.Left, Window.Bottom),
+            new Vector2(Window.Right, Window.Bottom))
         {
             Rows = 1,
             Columns = (uint)numElements,

@@ -88,7 +88,13 @@ public abstract class SilkWindow : IWindow
     /// <remarks>Use <see cref="Size"/> to change the window size.</remarks>
     public int Height => Size.Y;
 
-    public float Bottom => -(Height / 2);
+    public float Top => Height / 2f;
+
+    public float Bottom => -(Height / 2f);
+
+    public float Left => -(Width / 2f);
+
+    public float Right => Width / 2f;
 
     // TODO: This doesn't seem to work
     /// <inheritdoc />
