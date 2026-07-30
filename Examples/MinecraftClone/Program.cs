@@ -9,6 +9,7 @@ using SharpEngine.Core.Renderers;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Windowing;
 using System;
+using System.Reflection;
 
 namespace Minecraft;
 
@@ -20,7 +21,7 @@ public static class Program
     private static void Main()
     {
         var builder = new AppBuilder()
-            .ConfigureServices(ConfigureServices);
+            .RegisterServices(ConfigureServices);
 
         var app = builder.Build();
         app.Run();
@@ -43,7 +44,11 @@ public static class Program
 
         services.AddEngine(engine =>
         {
-            engine.AddHandler<WindowHandler>().AddWindow();
+            var title = Assembly.GetExecutingAssembly().GetName().Name;
+
+            engine.AddHandler<WindowHandler>()
+                  .AddWindow(name: title)
+                  .AddWindow(name: title + " 2");
         });
     }
 }

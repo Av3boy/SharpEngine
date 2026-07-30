@@ -41,7 +41,7 @@ public class AppBuilder
     /// </summary>
     /// <param name="configure">The configuration action to apply to the service collection.</param>
     /// <returns>The current <see cref="AppBuilder"/> instance for method chaining.</returns>
-    public AppBuilder ConfigureServices(Action<IServiceCollection> configure)
+    public AppBuilder RegisterServices(Action<IServiceCollection> configure)
     {
         configure(_services);
         return this;

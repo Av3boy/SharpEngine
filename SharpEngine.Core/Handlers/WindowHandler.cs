@@ -6,7 +6,6 @@ using SharpEngine.Core.Windowing;
 
 using Silk.NET.Input;
 using Silk.NET.Maths;
-// using Silk.NET.Windowing;
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -66,6 +65,8 @@ public class WindowHandler : EngineHandler
             DequeueWindows();
         }
 
+        Logger.LogInformation("Cancellation requested. Closing all windows and stopping the handler.");
+
         foreach (var window in _windows)
             window.Close();
 
@@ -85,8 +86,11 @@ public class WindowHandler : EngineHandler
     private void UpdateWindow(ref int i)
     {
         var window = _windows[i];
-        if (window is null)
+        if (window is null || window.CurrentWindow is null || !window.IsInitialized || window.IsClosing)
+        {
+            NewMethod();
             return;
+        }
 
         window.DoEvents();
         window.DoUpdate();
@@ -94,15 +98,22 @@ public class WindowHandler : EngineHandler
 
         if (window.IsClosing)
         {
+            Logger.LogInformation("Window '{WindowTitle}' is closing. Disposing and removing from managed list.", window.CurrentWindow.Title);
+
             window.Reset();
             window.Dispose();
 
             _windows.RemoveAt(i);
             i--; // Adjust the index to account for the removed item
 
-            if (_windows.Count == 0)
-                _cancellationTokenSource.Cancel();
+            NewMethod();
         }
+    }
+
+    private void NewMethod()
+    {
+        if (_windows.Count == 0)
+            _cancellationTokenSource.Cancel();
     }
 
     /// <summary>
@@ -116,14 +127,23 @@ public class WindowHandler : EngineHandler
 
         while (_windowQueue.TryDequeue(out var window))
         {
-            window.Initialize();
-            window.Run();
+            try
+            {
 
-            _windows.Add(window);
+                Logger.LogInformation("Dequeued window '{WindowTitle}' for management.", window.CurrentWindow?.Title ?? "Unnamed Window");
+
+                window.Initialize();
+                window.Run();
+
+                _windows.Add(window);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to initialize and run window '{WindowTitle}'. Exception: {ExceptionMessage}", window.CurrentWindow?.Title ?? "Unnamed Window", ex.Message);
+            }
         }
     }
 
-    // TODO: Instead of enqueing the options, the entire window object should be added to the queue.
     /// <summary>
     ///     Registers an existing window instance with the handler and optionally marks it as the main window.
     /// </summary>

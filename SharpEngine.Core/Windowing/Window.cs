@@ -189,7 +189,7 @@ public class Window : SilkWindow
 
             CurrentWindow.MakeCurrent();
 
-            SetWindowIcon(PathExtensions.GetAssemblyPath(IconPath));
+            SetWindowIcon();
 
             _gl.ClearColor(BackgroundColor.X, BackgroundColor.Y, BackgroundColor.Z, BackgroundColor.W);
 

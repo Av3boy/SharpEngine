@@ -1,17 +1,15 @@
 using SharpEngine.Core.Entities.Views.Settings;
-
+using SharpEngine.Core.Extensions;
 using Silk.NET.Core;
 using Silk.NET.Core.Contexts;
 using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
-using MouseButton = Silk.NET.Input.MouseButton;
-
 using StbImageSharp;
-
 using System;
 using System.IO;
 using System.Numerics;
+using MouseButton = Silk.NET.Input.MouseButton;
 
 namespace SharpEngine.Core.Windowing;
 
@@ -32,6 +30,8 @@ internal sealed class WindowNotInitializedException : Exception
 /// </remarks>
 public abstract class SilkWindow : IWindow
 {
+    #region Properties
+
     /// <inheritdoc />
     public virtual IWindowHost? Parent => CurrentWindow.Parent;
 
@@ -88,12 +88,36 @@ public abstract class SilkWindow : IWindow
     /// <remarks>Use <see cref="Size"/> to change the window size.</remarks>
     public int Height => Size.Y;
 
+    /// <summary>
+    ///     Gets the top edge of the window in pixels.
+    /// </summary>
+    /// <remarks>
+    ///     This value is relative to the center of the window (0,0).
+    /// </remarks>
     public float Top => Height / 2f;
 
+    /// <summary>
+    ///     Gets the bottom edge of the window in pixels.
+    /// </summary>
+    /// <remarks>
+    ///     This value is relative to the center of the window (0,0).
+    /// </remarks>
     public float Bottom => -(Height / 2f);
 
+    /// <summary>
+    ///     Gets the left edge of the window in pixels.
+    /// </summary>
+    /// <remarks>
+    ///     This value is relative to the center of the window (0,0).
+    /// </remarks>
     public float Left => -(Width / 2f);
 
+    /// <summary>
+    ///     Gets the right edge of the window in pixels.
+    /// </summary>
+    /// <remarks>
+    ///     This value is relative to the center of the window (0,0).
+    /// </remarks>
     public float Right => Width / 2f;
 
     // TODO: This doesn't seem to work
@@ -111,7 +135,23 @@ public abstract class SilkWindow : IWindow
         }
     }
 
-    public string IconPath { get; set; } = "_Resources/icon.png";
+    private string _iconPath = "_Resources/icon.png";
+
+    /// <summary>
+    ///     Gets or sets the path to the window icon image file.
+    /// </summary>
+    public string IconPath 
+    { 
+        get => _iconPath;
+        set
+        {
+            if (File.Exists(value))
+            {
+                _iconPath = value;
+                SetWindowIcon();
+            }
+        }
+    }
 
     /// <inheritdoc />
     public WindowState WindowState
@@ -260,19 +300,15 @@ public abstract class SilkWindow : IWindow
 
     /// <summary>Raised after the scene has been rendered.</summary>
     public event Action<Frame>? OnAfterRender;
+
+    /// <summary>Raised before the scene is rendered.</summary>
     public event Action<Frame>? OnPreRender;
 
     /// <summary>An event executed when the window has loaded.</summary>
     public event Action? OnLoaded;
 
-    /// <inheritdoc />
-    public virtual void Close() => CurrentWindow.Close();
-
-    /// <inheritdoc />
-    public virtual void ContinueEvents() => CurrentWindow.ContinueEvents();
-
     private IWindow? _currentWindow;
-    
+
     /// <summary>Gets or sets the current window.</summary>
     public IWindow? CurrentWindow
     {
@@ -280,8 +316,17 @@ public abstract class SilkWindow : IWindow
         set => _currentWindow = value;
     }
 
+    #endregion Properties
+
+    #region Methods
+
     /// <inheritdoc />
-    // [Obsolete("Use the 'Create<T>' implementation instead.")]
+    public virtual void Close() => CurrentWindow.Close();
+
+    /// <inheritdoc />
+    public virtual void ContinueEvents() => CurrentWindow.ContinueEvents();
+
+    /// <inheritdoc />
     public IWindow CreateWindow(WindowOptions opts)
     {
         if (CurrentWindow is not null)
@@ -290,15 +335,6 @@ public abstract class SilkWindow : IWindow
         CurrentWindow = Silk.NET.Windowing.Window.Create(opts);
         return CurrentWindow;
     }
-
-    // public static T Create<T>(WindowOptions opts) where T : SilkWindow, new()
-    // {
-    //     var instance = new T();
-    //     var window = instance.CreateWindow(opts);
-    // 
-    //     instance.CurrentWindow = window;
-    //     return instance;
-    // }
 
     /// <inheritdoc />
     protected virtual void Dispose(bool disposing) { }
@@ -340,13 +376,19 @@ public abstract class SilkWindow : IWindow
     /// <inheritdoc />
     public virtual void Reset() => CurrentWindow.Reset();
 
-    /// <summary>
-    ///     Starts the window.
-    /// </summary>
+    /// <inheritdoc cref="IView.Run"/>
     public void Run() => CurrentWindow.Run();
 
     /// <inheritdoc />
     public virtual void Run(Action onFrame) => onFrame();
+
+    /// <summary>
+    ///     Sets the window icon using the default icon path.
+    /// </summary>
+    /// <remarks>
+    ///     NOTE: This method calls <see cref="SetWindowIcon(ReadOnlySpan{RawImage})"/> internally and that method can be overridden.
+    /// </remarks>
+    public void SetWindowIcon() => SetWindowIcon(PathExtensions.GetAssemblyPath(IconPath));
 
     /// <inheritdoc />
     public virtual void SetWindowIcon(ReadOnlySpan<RawImage> icons) => CurrentWindow.SetWindowIcon(icons);
@@ -374,7 +416,14 @@ public abstract class SilkWindow : IWindow
     /// <remarks>Called when the window is initialized.</remarks>
     public virtual void OnLoad()
     {
-        OnLoaded?.Invoke();
+        try
+        {
+            OnLoaded?.Invoke();
+        }
+        catch (Exception ex)
+        {
+            // TODO: Handle logging in this class
+        }
     }
 
     /// <summary>
@@ -393,4 +442,6 @@ public abstract class SilkWindow : IWindow
     ///     Handles closing the application.
     /// </summary>
     public virtual void OnClosing() { }
+
+    #endregion Methods
 }

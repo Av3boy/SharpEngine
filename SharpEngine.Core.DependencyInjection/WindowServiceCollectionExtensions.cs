@@ -43,6 +43,13 @@ public static class WindowServiceCollectionExtensions
         handler.Configure((serviceProvider, windowHandler, engine) =>
         {
             var window = factory(serviceProvider);
+            var game = serviceProvider.GetRequiredService<Game>();
+
+            game.AttachWindow(window);
+
+            if (isDefaultWindow)
+                game.UseWindow(window);
+
             configure(serviceProvider, window);
 
             windowHandler.AddWindow(window, isDefaultWindow);
@@ -55,15 +62,47 @@ public static class WindowServiceCollectionExtensions
     {
         var game = serviceProvider.GetRequiredService<Game>();
 
-        window.OnLoaded += game.Initialize;
-        window._inputManager.OnHandleMouse += game.HandleMouse;
-        window._inputManager.OnUpdate += game.Update;
-        window._inputManager.OnHandleKeyboard += game.HandleKeyboard;
-        window._inputManager.OnButtonMouseDown += game.HandleMouseDown;
-        window._inputManager.HandleMouseWheel += game.HandleMouseWheel;
-        window.OnAfterRender += game.OnAfterRender;
+        window.OnLoaded += () =>
+        {
+            game.UseWindow(window);
+            game.Initialize();
+        };
 
-        game.Window = window;
+        window._inputManager.OnHandleMouse += mouse =>
+        {
+            game.UseWindow(window);
+            game.HandleMouse(mouse);
+        };
+
+        window._inputManager.OnUpdate += (deltaTime, input) =>
+        {
+            game.UseWindow(window);
+            game.Update(deltaTime, input);
+        };
+
+        window._inputManager.OnHandleKeyboard += (input, deltaTime) =>
+        {
+            game.UseWindow(window);
+            game.HandleKeyboard(input, deltaTime);
+        };
+
+        window._inputManager.OnButtonMouseDown += (mouse, button) =>
+        {
+            game.UseWindow(window);
+            game.HandleMouseDown(mouse, button);
+        };
+
+        window._inputManager.HandleMouseWheel += (direction, scrollWheel) =>
+        {
+            game.UseWindow(window);
+            game.HandleMouseWheel(direction, scrollWheel);
+        };
+
+        window.OnAfterRender += frame =>
+        {
+            game.UseWindow(window);
+            game.OnAfterRender(frame);
+        };
     }
 
     private static Window CreateWindow(IServiceProvider serviceProvider)
