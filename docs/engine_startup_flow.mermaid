@@ -1,0 +1,97 @@
+flowchart TD
+
+    A{Engine Running?}
+
+    A -->|No| Z[Shutdown]
+
+    A -->|Yes| B[Begin Engine Iteration]
+
+    %% =========================================================
+    %% ENGINE COMMANDS
+    %% =========================================================
+
+    B --> C[Process Engine Command Queue]
+
+    C --> C1[Window Commands]
+    C1 --> C2[Asset Commands]
+    C2 --> C3[Scene Commands]
+    C3 --> C4[Other Cross-Thread Commands]
+
+    %% =========================================================
+    %% WINDOW MANAGEMENT
+    %% =========================================================
+
+    C4 --> D[WindowHandler.ProcessPending]
+
+    D --> D1{Pending Window Command?}
+
+    D1 -->|Add| DA[Dequeue AddWindow]
+    DA --> DA1[Create Silk.NET Window]
+    DA1 --> DA2[Register Window Callbacks]
+    DA2 --> DA3[Start Window Loop]
+    DA3 --> D1
+
+    D1 -->|Remove| DR[Dequeue CloseWindow]
+    DR --> DR1[Request Silk Window Close]
+    DR1 --> D1
+
+    D1 -->|None| E[Update Engine Timing]
+
+    %% =========================================================
+    %% FIXED SIMULATION
+    %% =========================================================
+
+    E --> F{Fixed Update Required?}
+
+    F -->|Yes| F1[Run ECS Fixed Systems]
+    F1 --> F2[Character Controllers]
+    F2 --> F3[Physics Pre-Step]
+    F3 --> F4[Physics Simulation]
+    F4 --> F5[Collision Detection / Resolution]
+    F5 --> F6[Dispatch Collision Events]
+    F6 --> F7[Apply Deferred ECS Changes]
+    F7 --> F8[Consume Fixed Time]
+    F8 --> F
+
+    %% =========================================================
+    %% VARIABLE UPDATE
+    %% =========================================================
+
+    F -->|No| G[Consume Input Snapshot]
+
+    G --> G1[Run Gameplay ECS Systems]
+    G1 --> G2[AI / Navigation]
+    G2 --> G3[State Machines]
+    G3 --> G4[Animation Systems]
+    G4 --> G5[Transform Systems]
+    G5 --> G6[Audio Systems]
+    G6 --> G7[Apply Deferred ECS Changes]
+
+    %% =========================================================
+    %% RENDER SNAPSHOT
+    %% =========================================================
+
+    G7 --> H[Build Render Snapshot]
+
+    H --> H1[Copy World Transforms]
+    H1 --> H2[Collect Mesh / Material Handles]
+    H2 --> H3[Collect Bone Matrices]
+    H3 --> H4[Collect Lights]
+    H4 --> H5[Collect Camera Data]
+    H5 --> H6[Collect Renderable ECS State]
+
+    H6 --> I[Publish Render Snapshot]
+
+    %% =========================================================
+    %% ASYNC COMPLETION
+    %% =========================================================
+
+    I --> J[Process Completed Async Work]
+
+    J --> J1[Asset Load Completions]
+    J1 --> J2[Background Job Completions]
+    J2 --> J3[Deferred Resource Cleanup]
+
+    J3 --> K[End Engine Iteration]
+
+    K --> A
