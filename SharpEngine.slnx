@@ -42,7 +42,7 @@
   </Folder>
   <Folder Name="/Tests/IntegrationTests/" />
   <Folder Name="/Tests/UnitTests/">
-    <Project Path="Tests/ObjLoader.Test/SharpEngine.Core.ObjLoader.Tests.csproj">
+    <Project Path="Tests/SharpEngine.Core.ObjLoader.Test/SharpEngine.Core.ObjLoader.Tests.csproj">
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
     <Project Path="Tests/SharpEngine.Core.Components.Tests/SharpEngine.Core.Components.Tests.csproj" Id="98a6ad4c-b5dd-4408-8266-652e4f0e51d3">
@@ -70,7 +70,7 @@
   <Project Path="../SharpEngine-Shared/SharpEngine.Telemetry/SharpEngine.Telemetry.csproj" Id="bfb0783a-67b6-442a-bb39-b9d6267f1e1b">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
-  <Project Path="ObjLoader/SharpEngine.Core.ObjLoader.csproj">
+  <Project Path="SharpEngine.Core.ObjLoader/SharpEngine.Core.ObjLoader.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
   <Project Path="SharpEngine.Core.Components/SharpEngine.Core.Components.csproj">

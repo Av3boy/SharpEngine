@@ -23,10 +23,10 @@ namespace SharpEngine.Core.Handlers;
 ///     and runs the per-frame update/render loop for all active windows until cancellation is requested.
 /// </summary>
 /// <remarks>
-///     Windows are created and enqueued on a background task. 
-///     
-///     The handler will call DoEvents, DoUpdate and DoRender on each managed window every loop iteration.
-///     When a window is closing it will be disposed and removed from the managed list.
+/// <list type="bullet">
+///     <item>Windows are created and enqueued on a background task.</item>
+///     <item>When a window is closing it will be disposed and removed from the managed list.</item>
+/// </list>
 /// </remarks>
 public class WindowHandler : EngineHandler
 {
