@@ -32,7 +32,7 @@ internal class TerrainGenerator_Old
     internal TerrainGenerator_Old(Scene scene, SceneNode blocksNode)
     {
         _scene = scene;
-        _lightsNode = _scene.AddNode("Lights");
+        _lightsNode = _scene.Root.AddChild("Lights");
         _blocksNode = blocksNode;
     }
 

@@ -45,7 +45,7 @@ public class Minecraft : Game
 
         _inventory = new Inventory();
 
-        _blocksNode = _scene.AddNode("Blocks");
+        _blocksNode = _scene.Root.AddChild("Blocks");
         _terrain = new Terrain.TerrainGenerator_New(_scene, _blocksNode, 
         [
             new HeightMapPass(),

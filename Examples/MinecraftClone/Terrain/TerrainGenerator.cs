@@ -56,7 +56,7 @@ public sealed class TerrainGenerator_New
     internal TerrainGenerator_New(Scene scene, SceneNode blocksNode, IEnumerable<IChunkGenerationLayer>? layers = null)
     {
         _scene = scene;
-        _lightsNode = _scene.AddNode("Lights");
+        _lightsNode = _scene.Root.AddChild("Lights");
         _blocksNode = blocksNode;
         _layers = layers?.ToArray() ?? Array.Empty<IChunkGenerationLayer>();
     }

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Reflection;
 
-namespace SharpEngine.Core.Rendering;
+namespace SharpEngine.Core.Shaders.Rendering;
 
 /// <summary>
 ///     Binds C# properties and fields decorated with <see cref="ShaderParameterAttribute"/> to their

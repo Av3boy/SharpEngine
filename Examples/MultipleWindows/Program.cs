@@ -34,7 +34,7 @@ public static partial class Program
     public static async Task Main(string[] _)
     {
         Core.Handlers.WindowHandler windowHandler = new();
-        windowHandler.Start();
+        windowHandler.Start(_cancellationTokenSource);
 
         Console.WriteLine("end");
         Console.ReadLine();
@@ -121,8 +121,8 @@ public static partial class Program
         // Prefer the higher-level Window event to avoid wiring low-level input handlers.
         window._inputManager.OnButtonMouseDown += (mouse, button) => Mouse_Click(mouse, (MouseButton)button, mouse.Position);
 
-        if (window.Input is not null)
-            _inputContexts.Add(window.Input);
+        if (window._inputManager.Context is not null)
+            _inputContexts.Add(window._inputManager.Context);
 
         _windows.Add(window);
     }

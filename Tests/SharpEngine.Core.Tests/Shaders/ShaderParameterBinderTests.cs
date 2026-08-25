@@ -1,8 +1,8 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using SharpEngine.Core.Rendering;
 using SharpEngine.Core.Shaders;
+using SharpEngine.Core.Shaders.Rendering;
 using System.Collections.Generic;
 using System.Numerics;
 using Xunit;
