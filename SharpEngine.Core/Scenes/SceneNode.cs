@@ -5,6 +5,7 @@ using SharpEngine.Core.Windowing;
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Scenes;
 
@@ -25,6 +26,8 @@ public abstract class SceneNode
     ///     Gets or sets the children of the node.
     /// </summary>
     public List<SceneNode> Children { get; set; } = [];
+
+    private bool _initialized;
 
     /// <summary>
     ///     Initializes a new empty <see cref="SceneNode"/>.
@@ -99,7 +102,13 @@ public abstract class SceneNode
     ///     NOTE: This function does not load child nodes. <br />
     ///     It is the responsibility of the scene to call <see cref="OnInitialized"/> on all child nodes.
     /// </remarks>
-    public virtual void OnInitialized() { }
+    public virtual void OnInitialized(GL gl)
+    {
+        if (_initialized)
+            return;
+
+        _initialized = true;
+    }
 
     public virtual void OnCreated() { }
     public virtual void Update(float deltaTime) { }

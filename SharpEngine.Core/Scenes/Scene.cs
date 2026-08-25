@@ -138,7 +138,7 @@ public class Scene : SaveableFile<Scene>
     {
         foreach (var entity in elements)
         {
-            action(entity);
+            action.Invoke(entity);
 
             var children = entity.Children.OfType<TEntityType>().ToList();
             if (children.Count != 0)

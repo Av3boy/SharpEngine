@@ -6,17 +6,12 @@ using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Rendering;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
-using SharpEngine.Core.Textures;
 using SharpEngine.Core.Windowing;
-using SharpEngine.Core._Resources;
-using SharpEngine.Telemetry;
 using Vector2 = SharpEngine.Core.Numerics.Vector2;
-using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;
 
 using Silk.NET.OpenGL;
 using System.Numerics;
 using System.Threading.Tasks;
-using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Entities.Interfaces;
 
 namespace SharpEngine.Core.Entities.UI;
@@ -26,10 +21,9 @@ namespace SharpEngine.Core.Entities.UI;
 /// </summary>
 public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
 {
-    public List<IComponent> Components { get; } = new List<IComponent>();
+    public List<IComponent> Components { get; } = [];
     private MeshRenderer _renderer;
-
-    private readonly ShaderParameterBinder _paramBinder;
+    private ShaderParameterBinder _paramBinder;
 
     /// <summary>Gets or sets the width of the ui element.</summary>
     [ShaderParameter("width", ShaderParameterType.Float)]
@@ -45,18 +39,23 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
     /// <summary>
     ///     Initializes a new instance of <see cref="UIElement"/>.
     /// </summary>
-    public UIElement(GL gl) : this(gl, "UIElement") { }
+    public UIElement() : this("UIElement") { }
 
     /// <summary>
     ///     Initializes a new instance of <see cref="UIElement"/>.
     /// </summary>
     /// <param name="name">The name of the UI element.</param>
-    public UIElement(GL gl, string name) : base(name)
+    public UIElement(string name) : base(name) { }
+
+    /// <inheritdoc />
+    public override void OnInitialized(GL gl)
     {
+        base.OnInitialized(gl);
+
         // TODO: #5 Support custom meshes?
         var mesh = MeshService.Instance.LoadMesh(nameof(Primitives.Plane), Primitives.Plane.Mesh);
         var material = MaterialExtensions.Default(new UIShader(gl));
-        
+
         _renderer = new MeshRenderer(mesh, material);
         Components.Add(_renderer);
 

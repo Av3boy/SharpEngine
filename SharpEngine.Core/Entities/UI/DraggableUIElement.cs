@@ -9,11 +9,7 @@ namespace SharpEngine.Core.Entities.UI;
 
 public class DraggableUIElement : UIElement
 {
-    public DraggableUIElement(GL gl) : base(gl)
-    {
-    }
-
-    public DraggableUIElement(GL gl, string name) : base(gl, name)
+    public DraggableUIElement(string name) : base(name)
     {
     }
 }

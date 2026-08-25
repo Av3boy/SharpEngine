@@ -9,6 +9,7 @@ using Silk.NET.OpenGL;
 
 using System;
 using System.Threading.Tasks;
+using SharpEngine.Telemetry;
 
 namespace SharpEngine.Core.Renderers;
 
@@ -30,9 +31,7 @@ public class UIRenderer : RendererBase
     ///     Initializes a new instance of <see cref="UIRenderer"/>.
     /// </summary>
     public UIRenderer(CameraView camera, ISettings settings, Scene scene)
-        : this(camera, settings, scene, LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<UIRenderer>())
-    {
-    }
+        : this(camera, settings, scene, LoggingExtensions.CreateLogger<UIRenderer>()) { }
 
     /// <summary>
     ///     Initializes a new instance of <see cref="UIRenderer"/>.
@@ -48,6 +47,8 @@ public class UIRenderer : RendererBase
     protected override void OnWindowAttached(Window window)
     {
         _gl = window.GetGL();
+
+        _scene.GetObjectsOfType<UIElement>();
     }
 
     /// <inheritdoc />

@@ -95,9 +95,11 @@ public class Minecraft : Game
 
         for (int i = 0; i < numElements; i++)
         {
-            var uiElem = new UIElement(Window.GetGL(), "uiElement " + i);
-            uiElem.Width = elementSize; 
-            uiElem.Height = elementSize;
+            var uiElem = new UIElement("uiElement " + i)
+            {
+                Width = elementSize,
+                Height = elementSize
+            };
 
             _uiElem = uiElem;
 

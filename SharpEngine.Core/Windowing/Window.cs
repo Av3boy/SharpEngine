@@ -179,7 +179,7 @@ public class Window : SilkWindow
     /// <inheritdoc />
     public override void OnLoad()
     {
-        ArgumentNullException.ThrowIfNull(CurrentWindow, nameof(CurrentWindow));
+        ArgumentNullException.ThrowIfNull(CurrentWindow);
 
         try
         {
@@ -236,6 +236,9 @@ public class Window : SilkWindow
 
         try
         {
+            // TODO: Figure out a better place for this check so we are able to reduce the time a frame takes to execute
+            Scene.Iterate(Scene.Root.Children, node => node.OnInitialized(_gl));
+
             PreRender(frame);
 
             _imGuiController?.Update((float)frame.FrameTime);
