@@ -22,8 +22,9 @@ using MouseButton = Silk.NET.Input.MouseButton;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SharpEngine.Core.Numerics;
+using System.Numerics;
 using SharpEngine.Telemetry;
+using Vector3 = SharpEngine.Core.Numerics.Vector3;
 
 namespace SharpEngine.Core.Windowing;
 
@@ -322,4 +323,8 @@ public class Window : SilkWindow
         // TODO: #92 Do we need to clear anything from e.g. the GPU when we change change the scene?
         Scene = scene;
     }
+
+    /// <inheritdoc cref="Matrix4x4.CreateOrthographicOffCenter" />
+    public Matrix4x4 CreateOrthographicOffCenter()
+        => Matrix4x4.CreateOrthographicOffCenter(Left, Right, Bottom, Top, -1, 1);
 }

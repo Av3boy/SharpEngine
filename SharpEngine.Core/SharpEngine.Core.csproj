@@ -65,4 +65,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\NewFolder\" />
+  </ItemGroup>
+
 </Project>

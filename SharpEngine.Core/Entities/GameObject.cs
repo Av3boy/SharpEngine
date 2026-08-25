@@ -1,6 +1,7 @@
 using SharpEngine.Core.Attributes;
 using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Components.Properties.Meshes;
+using SharpEngine.Core.Entities.Interfaces;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.UI;
@@ -15,6 +16,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SharpEngine.Core._Resources;
+using SharpEngine.Core.Textures;
 using EngineTexture = SharpEngine.Core.Components.Properties.Textures.Texture;
 using Shader = SharpEngine.Core.Shaders.Shader;
 
@@ -29,8 +32,40 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     protected record struct TempShaderDataContainer(string shaderVertPath, string shaderFragPath, string shaderName);
     protected readonly TempShaderDataContainer _tempShaderData;
 
-    private readonly object _modelCacheLock = new();
-    private readonly Dictionary<object, Model> _modelByShareGroup = [];
+    public List<IComponent> Components { get; } = new List<IComponent>();
+
+    private MeshRenderer _renderer;
+
+    /// <summary>
+    ///     Gets or sets the shader of the game object.
+    /// </summary>
+    public Shader? Shader { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the mesh of the game object.
+    /// </summary>
+    public Model? Model { get; set; }
+
+    /// <summary>
+    ///    Gets or sets the transform of the game object.
+    /// </summary>
+    public override Transform Transform
+    {
+        get => _transform;
+        set
+        {
+            _transform = value;
+            BoundingBox = BoundingBox.CalculateBoundingBox(_transform);
+        }
+    }
+
+    private Transform _transform = new();
+
+    /// <summary>
+    ///     Gets the bounding box of the game object.
+    /// </summary>
+    [Inspector(DisplayInInspector = false)]
+    public BoundingBox BoundingBox { get; set; }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="GameObject"/>.
@@ -54,72 +89,17 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
     public GameObject(Model model, Shader shader) : base(string.Empty)
     {
         Model = model;
-        BoundingBox = BoundingBox.CalculateBoundingBox(Transform);
         Shader = shader;
+
+        var material = MaterialExtensions.Default(shader);
+        _renderer = new MeshRenderer(model, material);
+        Components.Add(_renderer);
 
         if (shader is not null)
             _tempShaderData = new TempShaderDataContainer(shader.VertPath, shader.FragPath, shader.Name);
         else
             _tempShaderData = new TempShaderDataContainer(_Resources.Default.VertexShader, _Resources.Default.FragmentShader, "lighting");
     }
-
-    /// <summary>
-    ///     Gets or sets the mesh renderer for this game object.
-    /// </summary>
-    /// <remarks>
-    ///     When set, <see cref="MeshRenderer.Model"/> takes precedence over the <see cref="Model"/> property during rendering.
-    ///     TODO: #53 This should be coming from the entity component system.
-    /// </remarks>
-    public MeshRenderer MeshRenderer { get; set; }
-
-    /// <summary>
-    ///     Gets or sets the shader of the game object.
-    /// </summary>
-    public Shader? Shader { get; set; }
-
-    /// <summary>
-    ///     Gets or sets the mesh of the game object.
-    /// </summary>
-    public Model? Model { get; set; }
-
-    /// <summary>
-    ///    Gets or sets the transform of the game object.
-    /// </summary>
-    public override Transform Transform 
-    {
-        get => _transform;
-        set
-        {
-            _transform = value;
-            BoundingBox = BoundingBox.CalculateBoundingBox(_transform);
-        }
-    }
-    
-    private Transform _transform = new();
-
-    /// <summary>
-    ///     Gets the bounding box of the game object.
-    /// </summary>
-    [Inspector(DisplayInInspector = false)]
-    public BoundingBox BoundingBox { get; set; }
-
-    public static T Create<T>(T instance) where T : GameObject
-    {
-        instance.OnCreated();
-        return instance;
-    }
-
-    public static T Create<T>(Action<T>? configure = null) where T : GameObject, new()
-    {
-        var instance = new T();
-        configure?.Invoke(instance);
-        instance.OnCreated();
-        return instance;
-    }
-
-    protected virtual void OnCreated() { }
-    protected virtual void Update(float deltaTime) { }
-    protected virtual void OnDeleted() { }
 
     /// <summary>
     ///     Sets shader uniforms for model, view, and projection matrices.
@@ -164,5 +144,15 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
         }
 
         return Task.CompletedTask;
+    }
+}
+
+public static class MaterialExtensions
+{
+    public static Material Default(Shader shader)
+    {
+        var debugTexture = TextureService.Instance.LoadTexture(SharpEngine.Core._Resources.Default.DebugTexture);
+        var material = new Material("defaultMaterial", debugTexture) { Shader = shader };
+        return material;
     }
 }

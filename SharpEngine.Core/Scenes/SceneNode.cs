@@ -9,25 +9,6 @@ using System.Threading.Tasks;
 namespace SharpEngine.Core.Scenes;
 
 /// <summary>
-///     Represents a empty node in a scene.
-/// </summary>
-/// <typeparam name="TTransform">Specifies the type used for transformations.</typeparam>
-/// <typeparam name="TVector">Defines vector used by the transform.</typeparam>
-public class EmptyNode<TTransform, TVector> : SceneNode where TTransform : ITransform<TVector>, new() where TVector : IVector, new()
-{
-    /// <summary>
-    ///     Initializes a new instance of <see cref="EmptyNode{TTransform, TVector}"/>.
-    /// </summary>
-    /// <param name="name"></param>
-    public EmptyNode(string name) : base(name) { }
-
-    /// <summary>
-    ///     Gets or sets the transform of the node.
-    /// </summary>
-    public virtual TTransform Transform { get; set; } = new();
-}
-
-/// <summary>
 ///     Represents a node in the scene.
 /// </summary>
 public abstract class SceneNode
@@ -48,13 +29,13 @@ public abstract class SceneNode
     /// <summary>
     ///     Initializes a new empty <see cref="SceneNode"/>.
     /// </summary>
-    public SceneNode() { }
+    protected SceneNode() { }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="SceneNode"/> with the specified <paramref name="name"/>.
     /// </summary>
     /// <param name="name">The name of the new empty node.</param>
-    public SceneNode(string name)
+    protected SceneNode(string name)
     {
         Name = name;
     }
@@ -74,10 +55,10 @@ public abstract class SceneNode
     /// <returns>The created node.</returns>
     public virtual SceneNode AddChild<TTransform, TVector>(string name) where TTransform : ITransform<TVector>, new() where TVector : IVector, new()
     {
-        var node = new EmptyNode<TTransform, TVector>(name) as SceneNode;
-        Children.Add(node!);
+        var node = new EmptyNode<TTransform, TVector>(name);
+        Children.Add(node);
 
-        return node!;
+        return node;
     }
 
     /// <summary>
@@ -99,6 +80,8 @@ public abstract class SceneNode
     /// <param name="node">The node to be removed.</param>
     public void RemoveChild(SceneNode node)
     {
+        // TODO: All children should be removed recursively, and all resources should be disposed of properly.
+
         Children.Remove(node);
     }
 
@@ -106,5 +89,19 @@ public abstract class SceneNode
     ///     Renders the current object to the screen.
     /// </summary>
     /// <returns>A <see cref="Task"/> representing an asynchronous operation.</returns>
-    public virtual Task Render(CameraView camera, Window window) => Task.CompletedTask;
+    public virtual Task Render(CameraView camera, Window window) 
+        => Task.CompletedTask;
+
+    /// <summary>
+    ///     Initializes the component when a scene is loaded.
+    /// </summary>
+    /// <remarks>
+    ///     NOTE: This function does not load child nodes. <br />
+    ///     It is the responsibility of the scene to call <see cref="OnInitialized"/> on all child nodes.
+    /// </remarks>
+    public virtual void OnInitialized() { }
+
+    public virtual void OnCreated() { }
+    public virtual void Update(float deltaTime) { }
+    public virtual void OnDeleted() { }
 }
