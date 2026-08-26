@@ -237,7 +237,7 @@ public class Window : SilkWindow
         try
         {
             // TODO: Figure out a better place for this check so we are able to reduce the time a frame takes to execute
-            Scene.Iterate(Scene.Root.Children, node => node.OnInitialized(_gl));
+            // Scene.Root.Children.Iterate(node => node.OnInitialized(_gl));
 
             PreRender(frame);
 

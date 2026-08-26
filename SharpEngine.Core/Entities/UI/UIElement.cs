@@ -3,7 +3,6 @@ using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
-using SharpEngine.Core.Rendering;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
@@ -13,6 +12,7 @@ using Silk.NET.OpenGL;
 using System.Numerics;
 using System.Threading.Tasks;
 using SharpEngine.Core.Entities.Interfaces;
+using SharpEngine.Core.Shaders.Rendering;
 
 namespace SharpEngine.Core.Entities.UI;
 
@@ -21,7 +21,7 @@ namespace SharpEngine.Core.Entities.UI;
 /// </summary>
 public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
 {
-    public List<IComponent> Components { get; } = [];
+    public List<IComponent> Components { get; } = new List<IComponent>();
     private MeshRenderer _renderer;
     private ShaderParameterBinder _paramBinder;
 
@@ -72,7 +72,7 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
     {
         _renderer.Mesh.Bind();
         _renderer.Material.Shader.Use();
-        _renderer.Material.DiffuseMap!.Texture!.Use(TextureUnit.Texture0);
+        _renderer.Material.DiffuseMap.Texture.Use(TextureUnit.Texture0);
 
         OrthoMatrix = window.CreateOrthographicOffCenter();
 

@@ -59,7 +59,7 @@ public class GridLayout<TItem> : LayoutBase<TItem> where TItem : UIElement
     public new Vector2 Spacing { get; set; }
 
     // TODO: This calculation assumes all components are of the same size. This should be changed to support different sizes in the future.
-    public float TotalWidth => (Columns * (Items.Count > 0 ? Items[0].Width : 0)) + ((Columns - 1) * Spacing.X);
+    public float TotalWidth => (Columns * (Children.Count > 0 ? ((TItem)Children[0]).Width : 0)) + ((Columns - 1) * Spacing.X);
 
     /// <summary>
     ///     Retrieves the item at [<paramref name="row"/>, <paramref name="column"/>].
@@ -72,21 +72,22 @@ public class GridLayout<TItem> : LayoutBase<TItem> where TItem : UIElement
         get
         {
             uint index = GetIndex(row, column);
-            return Items[(int)index];
+            return (TItem)Children[(int)index];
         }
         set
         {
             uint index = GetIndex(row, column);
-            Items[(int)index] = value;
+            Children[(int)index] = value;
         }
     }
 
     /// <inheritdoc />
-    public override void AddItem(TItem item)
+    public override SceneNode AddChild(SceneNode item)
     {
-        base.AddItem(item);
-
+        base.AddChild(item);
         UpdateItemTransforms();
+
+        return item;
     }
 
     private void UpdateItemTransforms()
@@ -94,10 +95,10 @@ public class GridLayout<TItem> : LayoutBase<TItem> where TItem : UIElement
         if (Columns == 0)
             return;
 
-        if (Items.Count == 0)
+        if (Children.Count == 0)
             return;
 
-        var item = Items[0];
+        var item = (TItem)Children[0];
         var itemWidth = item.Width;
         var itemHeight = item.Height;
 
@@ -116,11 +117,11 @@ public class GridLayout<TItem> : LayoutBase<TItem> where TItem : UIElement
             baseY = Transform.Position.Y + Spacing.Y + (itemHeight / 2f);
         }
 
-        for (var index = 0; index < Items.Count; index++)
+        for (var index = 0; index < Children.Count; index++)
         {
             var row = index / (int)Columns;
             var column = index % (int)Columns;
-            item = Items[index];
+            item = (TItem)Children[index];
             position = new Vector2(
                 baseX + (column * (itemWidth + Spacing.X)),
                 baseY + (row * (itemHeight + Spacing.Y)));
@@ -142,7 +143,7 @@ public class GridLayout<TItem> : LayoutBase<TItem> where TItem : UIElement
             throw new ArgumentOutOfRangeException(nameof(row), "Invalid row or column index.");
 
         var index = row * Columns + column;
-        if (index >= Items.Count)
+        if (index >= Children.Count)
             throw new ArgumentOutOfRangeException(nameof(row), "Index exceeds the number of items.");
 
         return index;

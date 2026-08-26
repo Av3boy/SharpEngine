@@ -14,6 +14,8 @@ Coding style and change guidance
 - Favor composition over inheritance, and follow SOLID principles for maintainability and testability.
 - When referencing system libraries (System.IO, System.Net.Http, etc.), prefer abstractions or interfaces to enable easier testing and mocking.
 
+- Exception handling rule: do not use empty catch blocks. Every catch block must handle the exception appropriately; at minimum it must log the caught exception (including exception type and message). Swallowing exceptions silently is forbidden. Prefer catching specific exception types and rethrowing or wrapping as needed. For library code, include context in the log message to aid debugging.
+
 Issue and repository inquiries
 - When a user asks about an issue, the agent should check the repository's GitHub Issues list first and reference any relevant issues.
 - If the agent cannot access GitHub Issues (network restrictions, lack of permissions, or API limits), clearly inform the user that Issues could not be checked and that the agent will fall back to local code inspection only after notifying the user.

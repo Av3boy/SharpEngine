@@ -4,6 +4,7 @@ using Minecraft.Terrain.Block;
 using Minecraft.Terrain.Layers;
 using SharpEngine.Core;
 using SharpEngine.Core.Entities;
+using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Entities.UI.Layouts;
 using SharpEngine.Core.Enums;
@@ -45,7 +46,7 @@ public class Minecraft : Game
 
         _inventory = new Inventory();
 
-        _blocksNode = _scene.Root.AddChild("Blocks");
+        _blocksNode = _scene.Root.AddChild<Transform, Vector3>("Blocks");
         _terrain = new Terrain.TerrainGenerator_New(_scene, _blocksNode, 
         [
             new HeightMapPass(),
@@ -68,7 +69,7 @@ public class Minecraft : Game
             _input = new Input(Camera);
             _inventory.Initialize();
 
-            // _terrain.InitializeWorld();
+            _terrain.InitializeWorld();
 
             InitializeUI();
         }
@@ -106,7 +107,8 @@ public class Minecraft : Game
             gridLayout.AddChild(_uiElem);
         }
         
-        _scene.UIElements.Add(gridLayout);
+        // Attach the layout into the scene graph so traversal finds the UI elements
+        _scene.Root.AddChild(gridLayout);
     }
 
     /// <summary>

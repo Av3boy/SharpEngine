@@ -3,6 +3,8 @@
 # IDE0290: Use primary constructor
 csharp_style_prefer_primary_constructors = false
 
-# IDE0130: Namespace does not match folder structure, Justification = "Either one is fine, depending on the sittuation you might want to use block type but file scoped is default."
-dotnet_diagnostic.IDE0130.severity = silent
+# IDE0130: Namespace does not match folder structure, Justification = "Either one is fine, depending on the sittuation you might want to use block type but file scoped is default."dotnet_diagnostic.IDE0130.severity = silent
 csharp_style_namespace_declarations = file_scoped:silent
+
+# Project convention: do not leave catch blocks empty. Every catch should at minimum log the caught exception (type, message, stacktrace) so failures are observable.
+# Note: No analyzer rule is currently configured for empty catch blocks; enforce via code review or add an analyzer (e.g., Roslyn) if desired.

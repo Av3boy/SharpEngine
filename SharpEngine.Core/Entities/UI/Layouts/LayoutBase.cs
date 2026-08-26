@@ -8,15 +8,11 @@ namespace SharpEngine.Core.Entities.UI.Layouts;
 /// <summary>
 ///     Represents the base class for all layout types.
 /// </summary>
-/// <typeparam name="TItem"></typeparam>
-public abstract class LayoutBase<TItem> : EmptyNode<Transform2D, Vector2> where TItem : SceneNode
+/// <typeparam name="TItem">The type of the items in the layout.</typeparam>
+public abstract class LayoutBase<TItem> : EmptyNode<Transform2D, Vector2> where TItem : UIElement
 {
     protected LayoutBase() : this($"{typeof(TItem).Name} Layout") { }
     protected LayoutBase(string name) : base(name) { }
-
-    // TODO: This probably needs to be overridden with the 'new' keyword so that we save a bit of memory.
-    /// <summary>Represents the items in the layout.</summary>
-    public List<TItem> Items { get; set; } = [];
 
     /// <summary>Gets or sets the distance between items in the grid.</summary>
     public Vector2 Spacing { get; set; } = new(30, 30);
@@ -31,18 +27,9 @@ public abstract class LayoutBase<TItem> : EmptyNode<Transform2D, Vector2> where 
         base.AddChild(nodes);
 
         foreach (var node in nodes)
-            AddItem((TItem)node);
+            AddChild(node);
 
         return this;
-    }
-
-    /// <summary>
-    ///     Adds and item to the container.
-    /// </summary>
-    /// <param name="item">The item to be added.</param>
-    public virtual void AddItem(TItem item)
-    {
-        Items.Add(item);
     }
 
     /// <summary>

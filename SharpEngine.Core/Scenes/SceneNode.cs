@@ -1,11 +1,18 @@
+using Microsoft.Extensions.Logging;
+
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Windowing;
+using SharpEngine.Telemetry;
 
+using Silk.NET.Core;
+using Silk.NET.OpenGL;
+
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Silk.NET.OpenGL;
+using System.Xml.Linq;
 
 namespace SharpEngine.Core.Scenes;
 
@@ -25,9 +32,24 @@ public abstract class SceneNode
     /// <summary>
     ///     Gets or sets the children of the node.
     /// </summary>
-    public List<SceneNode> Children { get; set; } = [];
+    public List<SceneNode> Children { get; set; } = new List<SceneNode>();
+
+    /// <summary>
+    ///     The parent node in the scene graph. Null for the root.
+    /// </summary>
+    public SceneNode? Parent { get; private set; }
+
+    // TODO: This has to be redundant.
+    // This was a part of a AI vibe code but wasn't able to figure out how to make things work without it.
+    // Need to investigate if this is really needed or not.
+    /// <summary>
+    ///     The scene this node belongs to. May be null for detached nodes.
+    /// </summary>
+    public Scene? Scene { get; internal set; }
 
     private bool _initialized;
+
+    private static readonly ILogger<SceneNode> logger = LoggingExtensions.CreateLogger<SceneNode>();
 
     /// <summary>
     ///     Initializes a new empty <see cref="SceneNode"/>.
@@ -46,35 +68,59 @@ public abstract class SceneNode
     /// <summary>
     ///     Adds an empty child node to this node by the given <paramref name="name"/>.
     /// </summary>
-    /// <param name="name">The name of the empty node to be added.</param>
-    /// <returns>The created node.</returns>
-    public virtual SceneNode AddChild(string name)
-        => AddChild<Transform, Vector3>(name);
-
-    /// <summary>
-    ///     Adds an empty child node to this node by the given <paramref name="name"/>.
-    /// </summary>
-    /// <param name="name">The name of the empty node to be added.</param>
-    /// <returns>The created node.</returns>
+    /// <typeparam name="TTransform">The type of the transform. This is usually either a 2D (<see cref="Transform2D"/>) or 3D transform (<see cref="Transform"/>).</typeparam>
+    /// <typeparam name="TVector">The type of the vector.</typeparam>
+    /// <param name="name">The name of the new child node.</param>
+    /// <returns>The current node where the child is added to.</returns>
     public virtual SceneNode AddChild<TTransform, TVector>(string name) where TTransform : ITransform<TVector>, new() where TVector : IVector, new()
     {
         var node = new EmptyNode<TTransform, TVector>(name);
-        Children.Add(node);
+        AddChildInternal(node);
 
-        return node;
+        return this;
     }
 
-    /// <summary>
-    ///     Adds a child node to this node.
-    /// </summary>
+    /// <inheritdoc cref="AddChild{TTransform, TVector}(string)" />
+    /// <param name="node">The node to be added.</param>
+    public virtual SceneNode AddChild(SceneNode node)
+    {
+        AddChildInternal(node);
+        return this;
+    }
+
+    /// <inheritdoc cref="AddChild{TTransform, TVector}(string)" />
     /// <param name="nodes">The nodes to be added.</param>
-    /// <returns>The current node.</returns>
     public virtual SceneNode AddChild(params SceneNode[] nodes)
     {
         foreach (var node in nodes)
-            Children.Add(node);
+        {
+            AddChildInternal(node);
+        }
 
         return this;
+    }
+
+    private SceneNode AddChildInternal(SceneNode node)
+    {
+        node.Parent = this;
+        // propagate scene reference so node knows which scene it belongs to
+        node.SetSceneRecursive(this.Scene);
+        Children.Add(node);
+
+        // Ensure lifecycle hook runs for newly added nodes
+        try
+        {
+            node.OnCreated();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "{Message}", ex.Message);
+        }
+
+        // Notify the scene that structure changed
+        this.Scene?.IncrementRevision();
+
+        return node;
     }
 
     /// <summary>
@@ -83,9 +129,26 @@ public abstract class SceneNode
     /// <param name="node">The node to be removed.</param>
     public void RemoveChild(SceneNode node)
     {
-        // TODO: All children should be removed recursively, and all resources should be disposed of properly.
+        if (node is null || !Children.Remove(node))
+            return;
 
-        Children.Remove(node);
+        RemoveSubtree(node);
+    }
+
+    private static void RemoveSubtree(SceneNode node)
+    {
+        foreach (var child in node.Children.ToArray())
+            RemoveSubtree(child);
+
+        // Detach children
+        foreach (var child in node.Children)
+        {
+            child.Parent = null;
+            child.SetSceneRecursive(null);
+        }
+
+        node.Children.Clear();
+        node.OnDeleted();
     }
 
     /// <summary>
@@ -110,7 +173,29 @@ public abstract class SceneNode
         _initialized = true;
     }
 
+    /// <summary>
+    ///     Called when the node is created and added to the scene.
+    /// </summary>
     public virtual void OnCreated() { }
+
+    /// <summary>
+    ///    Called every frame to update the node's state.
+    /// </summary>
+    /// <param name="deltaTime"></param>
     public virtual void Update(float deltaTime) { }
+
+    /// <summary>
+    ///     Called when the node is deleted and removed from the scene.
+    /// </summary>
     public virtual void OnDeleted() { }
+
+    /// <summary>
+    ///     Set the Scene reference for this node and all descendants.
+    /// </summary>
+    internal void SetSceneRecursive(Scene? scene)
+    {
+        this.Scene = scene;
+        foreach (var child in Children)
+            child.SetSceneRecursive(scene);
+    }
 }

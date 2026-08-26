@@ -1,5 +1,6 @@
 ﻿using Minecraft.Terrain.Block;
 using SharpEngine.Core.Entities.Lights;
+using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Numerics.Noise;
 using SharpEngine.Core.Scenes;
@@ -32,7 +33,7 @@ internal class TerrainGenerator_Old
     internal TerrainGenerator_Old(Scene scene, SceneNode blocksNode)
     {
         _scene = scene;
-        _lightsNode = _scene.Root.AddChild("Lights");
+        _lightsNode = _scene.Root.AddChild<Transform, Vector3>("Lights");
         _blocksNode = blocksNode;
     }
 

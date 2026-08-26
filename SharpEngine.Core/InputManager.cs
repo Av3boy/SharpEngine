@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 
 namespace SharpEngine.Core;
 
+/// <summary>
+///     Handles input events for the application, including mouse and keyboard input. 
+///     This class is responsible for managing input contexts and dispatching input events to registered handlers.
+/// </summary>
 public class InputManager : EngineHandler
 {
     private readonly ILogger<InputManager> _logger;
@@ -42,12 +46,20 @@ public class InputManager : EngineHandler
         _logger = logger ?? LoggingExtensions.CreateLogger<InputManager>();
     }
 
+    /// <summary>
+    ///    Sets the input <see cref="Context" /> for the window and assigns input events.
+    /// </summary>
+    /// <param name="context">The input <see cref="Context" /> to set.</param>
     public virtual void Set(IInputContext context)
     {
         Context = context;
         AssignInputEvents();
     }
 
+    /// <summary>
+    ///     Updates the input manager, processing mouse and keyboard events, and invoking the update event.
+    /// </summary>
+    /// <param name="frame">The current frame information.</param>
     public virtual void Update(Frame frame)
     {
         UpdateMice();
@@ -57,6 +69,10 @@ public class InputManager : EngineHandler
             OnUpdate?.Invoke(frame.FrameTime, Context);
     }
 
+    /// <summary>
+    ///    Updates the keyboard input, checking for key presses and invoking the keyboard event handler.
+    /// </summary>
+    /// <param name="frame">The current frame information.</param>
     protected virtual void UpdateKeyboards(Frame frame)
     {
         var keyboard = Context?.Keyboards[0];
@@ -69,6 +85,9 @@ public class InputManager : EngineHandler
         }
     }
     
+    /// <summary>
+    ///     Updates the mouse input, checking for mouse movements and button presses, and invoking the mouse event handler.
+    /// </summary>
     public virtual void UpdateMice()
     {
         // TODO: #21 Handle multiple mice?
@@ -80,7 +99,13 @@ public class InputManager : EngineHandler
         }
     }
 
-    // TODO: #21 Input system
+    /// <summary>
+    ///     Assigns input events to the keyboards and mice in the current input <see cref="Context" />.
+    /// </summary>
+    /// <remarks>
+    ///     This method attaches event handlers to the keyboards and mice in the current input <see cref="Context" />.
+    ///     If the input <see cref="Context" /> is null, no events will be assigned.
+    /// </remarks>
     public virtual void AssignInputEvents()
     {
         if (Context is null)
@@ -103,14 +128,32 @@ public class InputManager : EngineHandler
         }
     }
 
+    /// <summary>
+    ///     Handles mouse click events, invoked when a mouse button is clicked.
+    /// </summary>
+    /// <param name="mouse">The mouse that triggered the event.</param>
+    /// <param name="button">The mouse button that was clicked.</param>
+    /// <param name="vector">The position of the mouse when the button was clicked.</param>
     public virtual void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) { }
 
+    /// <summary>
+    ///     Handles key down events, invoked when a key is pressed on the keyboard.
+    /// </summary>
+    /// <param name="keyboard"></param>
+    /// <param name="key"></param>
+    /// <param name="keyCode"></param>
     public virtual void KeyDown(IKeyboard keyboard, Key key, int keyCode)
     {
         // if (key == Key.Escape)
         //     CurrentWindow.Close();
     }
 
+    /// <summary>
+    ///    Handles mouse wheel events, invoked when the mouse wheel is scrolled.
+    /// </summary>
+    /// <param name="mouse">The mouse that triggered the event.</param>
+    /// <param name="sw">The scroll wheel event data.</param>
+    /// <exception cref="NotImplementedException"></exception>
     public virtual void OnMouseWheel(IMouse mouse, ScrollWheel sw)
     {
         var direction = sw.Y switch
@@ -124,6 +167,11 @@ public class InputManager : EngineHandler
         // Camera.Fov -= sw.Y;
     }
 
+    /// <summary>
+    ///   Handles mouse down events, invoked when a mouse button is pressed down.
+    /// </summary>
+    /// <param name="mouse"></param>
+    /// <param name="button"></param>
     public virtual void OnMouseDown(IMouse mouse, MouseButton button)
         => OnButtonMouseDown?.Invoke(mouse, button);
 
