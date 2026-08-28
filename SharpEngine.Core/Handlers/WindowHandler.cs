@@ -6,7 +6,6 @@ using SharpEngine.Core.Windowing;
 
 using Silk.NET.Input;
 using Silk.NET.Maths;
-// using Silk.NET.Windowing;
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;

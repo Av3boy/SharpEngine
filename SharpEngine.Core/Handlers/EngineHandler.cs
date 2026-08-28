@@ -72,7 +72,7 @@ namespace SharpEngine.Core.Handlers
         /// <remarks>
         ///     If the handler has not been started or is already stopped, this method returns immediately.
         /// </remarks>
-        public async Task StopAsync()
+        public async Task StopAsync(CancellationToken cancellationToken = default)
         {
             if (_cancellationTokenSource == null || _runner == null || State == EngineHandlerState.Stopped)
             {
@@ -84,7 +84,7 @@ namespace SharpEngine.Core.Handlers
 
             try
             {
-                await _runner;
+                await _runner.WaitAsync(cancellationToken);
             }
             catch (OperationCanceledException)
             {

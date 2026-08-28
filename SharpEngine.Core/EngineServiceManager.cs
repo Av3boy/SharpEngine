@@ -50,9 +50,9 @@ public class EngineServiceManager
     ///     Stops all active handlers asynchronously by calling their StopAsync method.
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public async Task StopAllAsync()
+    public async Task StopAllAsync(CancellationToken cancellationToken = default)
     {
-        var stopTasks = Handlers.Select(handler => handler.StopAsync());
+        var stopTasks = Handlers.Select(handler => handler.StopAsync(cancellationToken));
         await Task.WhenAll(stopTasks);
     }
 }

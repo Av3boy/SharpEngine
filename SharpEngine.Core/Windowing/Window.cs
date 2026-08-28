@@ -40,9 +40,14 @@ public class Window : SilkWindow
     private IEnumerable<RendererBase> _renderers = [];
     private ImGuiController? _imGuiController;
 
-    public InputManager _inputManager;
-    public ShaderManager _shaderManager;
-    public RendererManager _rendererManager;
+    /// <summary>Gets the input manager for the window.</summary>
+    public InputManager InputManager { get; private set; }
+
+    /// <summary>Gets the shader manager for the window.</summary>
+    public ShaderManager ShaderManager { get; private set; }
+    
+    /// <summary>Gets the renderer manager for the window.</summary>
+    public RendererManager RendererManager { get; private set; }
 
     /// <summary>
     ///     Gets or sets the view for the window.
@@ -130,9 +135,9 @@ public class Window : SilkWindow
         // Should the developer need to call for a window initialization?
         // Meaning should should we move this project loading part to a separate function?
 
-        _inputManager = new InputManager();
-        _shaderManager = new ShaderManager(LoggingExtensions.CreateLogger<ShaderManager>());
-        _rendererManager = new RendererManager(settings, renderers);
+        InputManager = new InputManager();
+        ShaderManager = new ShaderManager(LoggingExtensions.CreateLogger<ShaderManager>());
+        RendererManager = new RendererManager(settings, renderers);
 
         // NOTE: Window initialization is intentionally not performed automatically here.
         // Call InitializeWindow() explicitly when ready to create the underlying native window and load resources.
@@ -186,7 +191,7 @@ public class Window : SilkWindow
             SetGL();
 
             var context = CurrentWindow.CreateInput();
-            _inputManager.Set(context);
+            InputManager.Set(context);
 
             CurrentWindow.MakeCurrent();
 
@@ -194,7 +199,7 @@ public class Window : SilkWindow
 
             _gl.ClearColor(BackgroundColor.X, BackgroundColor.Y, BackgroundColor.Z, BackgroundColor.W);
 
-            _renderers = _rendererManager.CreateRenderers(Camera, Scene);
+            _renderers = RendererManager.CreateRenderers(Camera, Scene);
 
             foreach (var renderer in _renderers)
             {
@@ -202,7 +207,7 @@ public class Window : SilkWindow
                 renderer.Initialize();
             }
 
-            _imGuiController = new ImGuiController(_gl, CurrentWindow, _inputManager.Context);
+            _imGuiController = new ImGuiController(_gl, CurrentWindow, InputManager.Context);
 
             _initialized = true;
         }
@@ -254,8 +259,8 @@ public class Window : SilkWindow
 
         try
         {
-            _shaderManager.UseShaders();
-            _rendererManager.Run();
+            ShaderManager.UseShaders();
+            RendererManager.Run();
         }
         catch (Exception ex)
         {
@@ -302,7 +307,7 @@ public class Window : SilkWindow
         if (Settings.PrintFrameRate)
             _logger.LogInformation("FPS: {FrameRate}", frame.FrameRate);
 
-        _inputManager.Update(frame);
+        InputManager.Update(frame);
     }
 
     /// <summary>
