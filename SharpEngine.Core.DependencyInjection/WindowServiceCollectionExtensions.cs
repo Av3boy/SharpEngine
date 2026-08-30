@@ -56,11 +56,11 @@ public static class WindowServiceCollectionExtensions
         var game = serviceProvider.GetRequiredService<Game>();
 
         window.OnLoaded += game.Initialize;
-        window._inputManager.OnHandleMouse += game.HandleMouse;
-        window._inputManager.OnUpdate += game.Update;
-        window._inputManager.OnHandleKeyboard += game.HandleKeyboard;
-        window._inputManager.OnButtonMouseDown += game.HandleMouseDown;
-        window._inputManager.HandleMouseWheel += game.HandleMouseWheel;
+        window.InputManager.OnHandleMouse += game.HandleMouse;
+        window.InputManager.OnUpdate += game.Update;
+        window.InputManager.OnHandleKeyboard += game.HandleKeyboard;
+        window.InputManager.OnButtonMouseDown += game.HandleMouseDown;
+        window.InputManager.HandleMouseWheel += game.HandleMouseWheel;
         window.OnAfterRender += game.OnAfterRender;
 
         game.Window = window;

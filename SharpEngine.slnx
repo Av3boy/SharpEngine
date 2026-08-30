@@ -62,6 +62,9 @@
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
   </Folder>
+  <Project Path="../SharpEngine-Shared/SharpEngine.IO/SharpEngine.IO.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
   <Project Path="../SharpEngine-Shared/SharpEngine.Rest/SharpEngine.Rest.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
@@ -72,6 +75,9 @@
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
   <Project Path="SharpEngine.Core.Components/SharpEngine.Core.Components.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
+  <Project Path="SharpEngine.Core.DependencyInjection/SharpEngine.Core.DependencyInjection.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
   <Project Path="SharpEngine.Core.Numerics/SharpEngine.Core.Numerics.csproj">
