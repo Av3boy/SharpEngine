@@ -5,6 +5,7 @@ using Minecraft.Terrain.Layers;
 using SharpEngine.Core;
 using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Entities.Text;
 using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Entities.UI.Layouts;
 using SharpEngine.Core.Enums;
@@ -69,9 +70,19 @@ public class Minecraft : Game
             _input = new Input(Camera);
             _inventory.Initialize();
 
-            _terrain.InitializeWorld();
+            // _terrain.InitializeWorld();
 
             InitializeUI();
+
+            // Test text renderer
+            var _textElem = new TextElement("text element")
+            {
+                Text = "Hello, World!",
+                Height = 200,
+                Color = new System.Numerics.Vector4(1, 1, 1, 1),
+            };
+
+            _uiElem.AddChild(_textElem);
         }
         catch (Exception ex)
         {
