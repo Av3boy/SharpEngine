@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.Views;
@@ -77,8 +77,10 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
         OrthoMatrix = window.CreateOrthographicOffCenter();
 
         _paramBinder.Apply(this, _renderer.Material.Shader);
+        // ModelMatrix now contains translation and rotation for 2D transforms.
+        // Avoid double-applying rotation/position via shader uniforms by clearing them here.
         _renderer.Material.Shader.SetVector2("position", (System.Numerics.Vector2)Transform.Position);
-        _renderer.Material.Shader.SetFloat("rotation", Math.DegreesToRadians(Transform.Rotation.Angle));
+        _renderer.Material.Shader.SetFloat("rotation", 0f);
         _renderer.Material.Shader.SetInt("texture1", 0);
         _renderer.Material.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
 
