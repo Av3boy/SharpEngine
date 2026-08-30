@@ -1,9 +1,9 @@
 using SharpEngine.Core.Entities.Views;
+using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
 
 using System;
-using System.Numerics;
 using System.Threading.Tasks;
 
 namespace SharpEngine.Core.Entities.Lights;
@@ -64,7 +64,7 @@ public class SpotLight : Light
         if (Shader == null)
             throw new NullReferenceException(nameof(Shader));
 
-        Shader.SetVector3("spotLight.position", (Vector3)Transform.Position);
+        Shader.SetVector3("spotLight.position", Transform.Position);
         Shader.SetVector3("spotLight.direction", Direction);
         Shader.SetVector3("spotLight.ambient", Ambient);
         Shader.SetVector3("spotLight.diffuse", Diffuse);

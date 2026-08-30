@@ -1,6 +1,6 @@
-﻿using SharpEngine.Core.Components.Properties.Meshes;
+﻿using SharpEngine.Core.Components.Properties;
+using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Entities;
-using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Numerics;
 using System;
 
@@ -33,7 +33,7 @@ public static class PrimitiveFactory
         Model model = primitiveType switch
         {
             PrimitiveType.Cube => Cube.CreateModel(diffuseMapFile, specularMapFile),
-            // PrimitiveType.Plane => [Plane.Mesh],
+            PrimitiveType.Plane => Plane.CreateModel(diffuseMapFile, specularMapFile),
             _ => throw new InvalidOperationException($"A primitive of type {primitiveType} does not exist.")
         };
 
@@ -44,5 +44,4 @@ public static class PrimitiveFactory
             Transform = new Transform(position),
         };
     }
-
 }

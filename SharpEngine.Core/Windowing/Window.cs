@@ -1,14 +1,12 @@
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Entities.Views.Settings;
-using SharpEngine.Core.Enums;
 using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Renderers;
 using SharpEngine.Core.Scenes;
-using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Interfaces;
-using Shader = SharpEngine.Core.Shaders.Shader;
-
-using SharpEngine.Shared.Dto;
+using SharpEngine.Telemetry;
+using SharpEngine.Core.Managers;
+using SharpEngine.Core.Numerics;
 
 using Microsoft.Extensions.Logging;
 
@@ -17,14 +15,9 @@ using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
-using MouseButton = Silk.NET.Input.MouseButton;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using SharpEngine.Telemetry;
-using Vector3 = SharpEngine.Core.Numerics.Vector3;
 
 namespace SharpEngine.Core.Windowing;
 

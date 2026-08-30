@@ -1,7 +1,6 @@
 ﻿using SharpEngine.Core.Numerics;
-using System.Numerics;
 
-namespace SharpEngine.Core.Entities.Properties;
+namespace SharpEngine.Core.Components.Properties;
 
 /// <summary>
 ///     Represents the transform of an object in <typeparamref name="TVector"/> dimensions.

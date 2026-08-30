@@ -21,21 +21,30 @@
 
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Entities\NewFolder\**" />
-    <EmbeddedResource Remove="Entities\NewFolder\**" />
-    <None Remove="Entities\NewFolder\**" />
-  </ItemGroup>
+  <!-- Placeholders for compiler directives -->
+  <PropertyGroup>
+    <DeliverBuiltInLogging>false</DeliverBuiltInLogging>
+  </PropertyGroup>
+
+  <!-- Assign directives if a specific DLL can be found. --> 
+  <Target Name="DetectTelemetryDll" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <DeliverBuiltInLogging Condition="Exists('$(SolutionDir)..\SharpEngine-Shared\SharpEngine.Telemetry\bin\$(Configuration)\$(TargetFramework)\SharpEngine.Telemetry.dll')">
+        true
+      </DeliverBuiltInLogging>
+    </PropertyGroup>
+  </Target>
   
+  <!-- Required NuGet packages -->
   <ItemGroup>    
     <PackageReference Include="Silk.NET.OpenAL" Version="2.23.0" />
     <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.23.0" />
     <PackageReference Include="Silk.NET.Input" Version="2.23.0" />
     <PackageReference Include="Silk.NET.OpenGL" Version="2.23.0" />
     <PackageReference Include="Silk.NET.Windowing" Version="2.23.0" />
-    <PackageReference Include="NLayer" Version="1.1.1" />
+    <PackageReference Include="NLayer" Version="3.0.0" />
     
-    <PackageReference Include="StbImageSharp" Version="2.30.15" />
+    <PackageReference Include="StbImageSharp" Version="2.30.16" />
     <PackageReference Include="System.Text.Json" Version="9.0.9" />
   </ItemGroup>
 
@@ -47,6 +56,7 @@
     <ProjectReference Include="..\SharpEngine.Core.Numerics\SharpEngine.Core.Numerics.csproj" />
   </ItemGroup>
 
+  <!-- TODO: #144 These files should be moved to a more appropriate project or delivered through a different mechanism -->
   <ItemGroup>
     <None Update="_Resources\Shaders\lighting.frag" CopyToOutputDirectory="PreserveNewest" />
     <None Update="_Resources\Shaders\Light\DirectionalLight.glsl" CopyToOutputDirectory="PreserveNewest" />
@@ -69,6 +79,10 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Engine\" />
   </ItemGroup>
 
 </Project>

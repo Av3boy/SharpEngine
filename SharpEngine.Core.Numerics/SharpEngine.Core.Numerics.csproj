@@ -4,11 +4,7 @@
     <TargetFramework>$(DotNetTargetFramework)</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <GeneratePackageOnBuild>$(GenerateNuGetPackages)</GeneratePackageOnBuild>
   </PropertyGroup>
-
 
 </Project>

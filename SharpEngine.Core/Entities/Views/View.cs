@@ -1,10 +1,10 @@
 ﻿using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Numerics;
+using SharpEngine.Core.Physics;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 
 using System;
-using Matrix4x4 = System.Numerics.Matrix4x4;
 
 namespace SharpEngine.Core.Entities.Views;
 
@@ -40,7 +40,7 @@ public class View
     /// <summary>Gets the right vector of the camera.</summary>
     public Vector3 Right => _right;
 
-        /// <summary>Gets or sets the position of the camera.</summary>
+    /// <summary>Gets or sets the position of the camera.</summary>
     public Vector3 Position { get; set; }
 
     /// <summary>Gets or sets the settings for the view.</summary>
@@ -72,7 +72,7 @@ public class View
     {
         shader.SetMatrix4("view", GetViewMatrix());
         shader.SetMatrix4("projection", GetProjectionMatrix());
-        shader.SetVector3("viewPos", Position);
+        shader.SetVector3("viewPos", (Vector3)Position);
     }
 
     /// <summary>

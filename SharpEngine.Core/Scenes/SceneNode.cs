@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
-
-using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Windowing;
@@ -49,12 +48,12 @@ public abstract class SceneNode
 
     private bool _initialized;
 
-    private static readonly ILogger<SceneNode> logger = LoggingExtensions.CreateLogger<SceneNode>();
+    private readonly ILogger<SceneNode> _logger;
 
     /// <summary>
     ///     Initializes a new empty <see cref="SceneNode"/>.
     /// </summary>
-    protected SceneNode() { }
+    protected SceneNode() : this("New Object") { }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="SceneNode"/> with the specified <paramref name="name"/>.
@@ -63,6 +62,7 @@ public abstract class SceneNode
     protected SceneNode(string name)
     {
         Name = name;
+        _logger = LoggingExtensions.CreateLogger<SceneNode>();
     }
 
     /// <summary>
@@ -104,7 +104,7 @@ public abstract class SceneNode
     {
         node.Parent = this;
         // propagate scene reference so node knows which scene it belongs to
-        node.SetSceneRecursive(this.Scene);
+        node.SetSceneRecursive(Scene);
         Children.Add(node);
 
         // Ensure lifecycle hook runs for newly added nodes
@@ -114,11 +114,11 @@ public abstract class SceneNode
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "{Message}", ex.Message);
+            _logger.LogError(ex, "{Message}", ex.Message);
         }
 
         // Notify the scene that structure changed
-        this.Scene?.IncrementRevision();
+        Scene?.IncrementRevision();
 
         return node;
     }
@@ -194,7 +194,7 @@ public abstract class SceneNode
     /// </summary>
     internal void SetSceneRecursive(Scene? scene)
     {
-        this.Scene = scene;
+        Scene = scene;
         foreach (var child in Children)
             child.SetSceneRecursive(scene);
     }

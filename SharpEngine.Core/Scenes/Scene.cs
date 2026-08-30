@@ -1,6 +1,4 @@
 using Microsoft.Extensions.Logging;
-
-using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Telemetry;
 using SharpEngine.IO;
 
@@ -8,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SharpEngine.Core.Components.Properties;
 
 namespace SharpEngine.Core.Scenes;
 

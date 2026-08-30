@@ -3,7 +3,6 @@ using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Shaders;
 
 using Plane = System.Numerics.Plane;
-using Matrix4x4 = System.Numerics.Matrix4x4;
 
 namespace SharpEngine.Core.Entities.Views;
 
@@ -105,7 +104,7 @@ public class CameraView : View
     /// </summary>
     /// <returns>The view matrix.</returns>
     public override Matrix4x4 GetViewMatrix()
-        => Matrix4x4.CreateLookAt((System.Numerics.Vector3)Position, (System.Numerics.Vector3)(Position + _front), (System.Numerics.Vector3)_up);
+        => Matrix4x4.CreateLookAt(Position, Position + _front, _up);
 
     /// <summary>
     ///     Gets the projection matrix of the camera.

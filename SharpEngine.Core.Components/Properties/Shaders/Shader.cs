@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using SharpEngine.Telemetry;
+using SharpEngine.Core.Components.Properties.Shaders;
 using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Shaders;
@@ -40,10 +40,10 @@ public partial class Shader : ShaderProgram, IShader, IDisposable
         //   The fragment shader is what we'll be using the most here.
 
         if (!vertPath.EndsWith(".vert"))
-            _logger.LogWarning("Vertex shaders should have the file extension '.vert' for easier manageability.");
+            Logger.LogWarning("Vertex shaders should have the file extension '.vert' for easier manageability.");
 
         if (!fragPath.EndsWith(".frag"))
-            _logger.LogWarning("Fragment shaders should have the file extension '.frag' for easier manageability.");
+            Logger.LogWarning("Fragment shaders should have the file extension '.frag' for easier manageability.");
 
         VertPath = vertPath;
         FragPath = fragPath;

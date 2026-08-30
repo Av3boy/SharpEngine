@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SharpEngine.Core;
+namespace SharpEngine.Core.Physics;
 
 /// <summary>
 ///     Represents a ray in 3D space.

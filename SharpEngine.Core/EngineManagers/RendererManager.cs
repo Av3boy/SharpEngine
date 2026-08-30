@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SharpEngine.Core;
+namespace SharpEngine.Core.Managers;
 
 public class RendererManager : EngineHandler
 {

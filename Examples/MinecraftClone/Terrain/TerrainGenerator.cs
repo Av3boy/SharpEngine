@@ -1,7 +1,7 @@
 ﻿using Minecraft.Terrain.Block;
+using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Lights;
-using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Numerics.Noise;
 using SharpEngine.Core.Scenes;

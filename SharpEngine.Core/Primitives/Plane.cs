@@ -1,5 +1,7 @@
-﻿using SharpEngine.Core.Entities.Properties.Meshes;
+﻿using SharpEngine.Core.Components.Properties.Meshes;
+using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Windowing;
+using System;
 
 namespace SharpEngine.Core.Primitives;
 
@@ -22,4 +24,6 @@ public static class Plane
             -1f,  1f, 0.0f,  0f, 0f, 1f,  0.0f, 1.0f, // top left
         ],
         indices: [0u, 1u, 3u, 1u, 2u, 3u]);
+
+    internal static Model CreateModel(string diffuseMapFile, string? specularMapFile) => throw new NotImplementedException();
 }

@@ -1,10 +1,12 @@
 using Microsoft.Extensions.Logging;
-using SharpEngine.Core.Shaders;
+
+using SharpEngine.Core.Components.Properties.Shaders;
+using SharpEngine.Core.Numerics;
 using SharpEngine.Telemetry;
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Reflection;
 
 namespace SharpEngine.Core.Shaders.Rendering;
@@ -112,19 +114,19 @@ public class ShaderParameterBinder
             if (value is null)
                 continue;
 
-            var uploaded = binding.ResolvedType switch
+            Action updateAction = binding.ResolvedType switch
             {
-                ShaderParameterType.Int when value is int i => shader.SetInt(binding.Attribute.Name, i),
-                ShaderParameterType.Float when value is float f => shader.SetFloat(binding.Attribute.Name, f),
-                ShaderParameterType.Vec2 when value is Vector2 v2 => shader.SetVector2(binding.Attribute.Name, v2),
-                ShaderParameterType.Vec3 when value is Vector3 v3 => shader.SetVector3(binding.Attribute.Name, v3),
-                ShaderParameterType.Vec4 when value is Vector4 v4 => shader.SetVector4(binding.Attribute.Name, v4),
-                ShaderParameterType.Mat4 when value is Matrix4x4 m => shader.SetMatrix4(binding.Attribute.Name, m),
-                ShaderParameterType.Texture when value is int slot => shader.SetInt(binding.Attribute.Name, slot),
-                _ => LogTypeMismatch(binding, value)
+                ShaderParameterType.Int when value is int i => () => shader.SetInt(binding.Attribute.Name, i),
+                ShaderParameterType.Float when value is float f => () => shader.SetFloat(binding.Attribute.Name, f),
+                ShaderParameterType.Vec2 when value is Vector2 v2 => () => shader.SetVector2(binding.Attribute.Name, v2),
+                ShaderParameterType.Vec3 when value is Vector3 v3 => () => shader.SetVector3(binding.Attribute.Name, v3),
+                ShaderParameterType.Vec4 when value is Vector4 v4 => () => shader.SetVector4(binding.Attribute.Name, v4),
+                ShaderParameterType.Mat4 when value is Matrix4x4 m => () => shader.SetMatrix4(binding.Attribute.Name, m),
+                ShaderParameterType.Texture when value is int slot => () => shader.SetInt(binding.Attribute.Name, slot),
+                _ => () => LogTypeMismatch(binding, value)
             };
 
-            _ = uploaded; // result intentionally unused; Set* implementations log their own failures
+            updateAction();
         }
     }
 

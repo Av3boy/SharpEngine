@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
-using SharpEngine.Core.Entities.Properties;
+using System.Threading.Tasks;
+
 using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
-using Vector2 = SharpEngine.Core.Numerics.Vector2;
-
-using Silk.NET.OpenGL;
-using System.Numerics;
-using System.Threading.Tasks;
 using SharpEngine.Core.Entities.Interfaces;
 using SharpEngine.Core.Shaders.Rendering;
+using SharpEngine.Core.Components.Properties;
+using SharpEngine.Core.Numerics;
+
+using Silk.NET.OpenGL;
 
 namespace SharpEngine.Core.Entities.UI;
 
@@ -21,7 +21,6 @@ namespace SharpEngine.Core.Entities.UI;
 /// </summary>
 public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
 {
-    public List<IComponent> Components { get; } = new List<IComponent>();
     private MeshRenderer _renderer;
     private ShaderParameterBinder _paramBinder;
 
@@ -33,8 +32,16 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
     [ShaderParameter("height", ShaderParameterType.Float)]
     public float Height { get; set; } = 10;
 
+    /// <summary>
+    ///     Gets or sets the orthographic projection matrix for the UI element.
+    /// </summary>
     [ShaderParameter("orthoMatrix", ShaderParameterType.Mat4)]
     public Matrix4x4 OrthoMatrix = Matrix4x4.Identity;
+
+    /// <summary>
+    ///     Gets the list of components attached to the UI element.
+    /// </summary>
+    public List<IComponent> Components { get; } = new List<IComponent>();
 
     /// <summary>
     ///     Initializes a new instance of <see cref="UIElement"/>.
@@ -77,7 +84,7 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
         OrthoMatrix = window.CreateOrthographicOffCenter();
 
         _paramBinder.Apply(this, _renderer.Material.Shader);
-        _renderer.Material.Shader.SetVector2("position", (System.Numerics.Vector2)Transform.Position);
+        _renderer.Material.Shader.SetVector2("position", Transform.Position);
         _renderer.Material.Shader.SetFloat("rotation", Math.DegreesToRadians(Transform.Rotation.Angle));
         _renderer.Material.Shader.SetInt("texture1", 0);
         _renderer.Material.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);

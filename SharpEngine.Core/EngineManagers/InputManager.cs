@@ -9,7 +9,7 @@ using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SharpEngine.Core;
+namespace SharpEngine.Core.Managers;
 
 /// <summary>
 ///     Handles input events for the application, including mouse and keyboard input. 

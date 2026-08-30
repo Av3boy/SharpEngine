@@ -59,8 +59,10 @@ public class WindowHandler : EngineHandler
     {
         while (!token.IsCancellationRequested)
         {
+            // TODO: This loop needs to be iterated asynchronusly for all windows to be updated in parallel.
+            // There is no need to wait for one window to update and is actually.
             for (int i = 0; i < _windows.Count; i++)
-                UpdateWindow(ref i);
+                UpdateWindow(ref i); 
 
             DequeueWindows();
         }
@@ -68,7 +70,7 @@ public class WindowHandler : EngineHandler
         foreach (var window in _windows)
             window.Close();
 
-        await StopAsync();
+        await StopAsync(token);
     }
 
     /// <summary>
@@ -84,24 +86,25 @@ public class WindowHandler : EngineHandler
     private void UpdateWindow(ref int i)
     {
         var window = _windows[i];
-        if (window is null)
-            return;
-
-        window.DoEvents();
-        window.DoUpdate();
-        window.DoRender();
-
-        if (window.IsClosing)
+        if (window is null || window.Disposed || window.CurrentWindow == null || window.Handle == IntPtr.Zero || !window.IsVisible || window.GLContext == null)
         {
-            window.Reset();
-            window.Dispose();
+            //window.Reset();
+            window?.Dispose();
 
             _windows.RemoveAt(i);
             i--; // Adjust the index to account for the removed item
 
             if (_windows.Count == 0)
+            {
                 _cancellationTokenSource.Cancel();
+                return;
+            }
         }
+
+        // TOOD: We should centralize these events to live in a the Window class since here we don't need to know about this order of operations.
+        window.DoEvents();
+        window.DoUpdate();
+        window.DoRender();
     }
 
     /// <summary>
@@ -116,7 +119,7 @@ public class WindowHandler : EngineHandler
         while (_windowQueue.TryDequeue(out var window))
         {
             window.Initialize();
-            window.Run();
+            window.Run(); // The silk window needs to be run on the main thread, so we call Run() here to start the window's event loop.
 
             _windows.Add(window);
         }

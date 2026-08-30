@@ -1,13 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 
-using SharpEngine.Core.Handlers;
-using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Windowing;
 using SharpEngine.Shared.Dto;
 using SharpEngine.Telemetry;
+using SharpEngine.Core.Extensions;
+using SharpEngine.Core.Managers;
 
 using System.Threading.Tasks;
-using SharpEngine.Core.Extensions;
 using System.Threading;
 using System;
 

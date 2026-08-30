@@ -1,24 +1,38 @@
 ﻿using Microsoft.Extensions.Logging;
+
+using SharpEngine.Core.Shaders;
 using SharpEngine.Telemetry;
+
 using Silk.NET.OpenGL;
 using System.Text.RegularExpressions;
 
-namespace SharpEngine.Core.Shaders;
+namespace SharpEngine.Core.Components.Properties.Shaders;
 
+/// <summary>
+///     Represents a shader program that can be used for rendering in an OpenGL context.
+/// </summary>
 public abstract class ShaderProgram : IDisposable
 {
-    protected readonly ILogger<ShaderProgram> _logger;
-
-    protected readonly GL GL;
-
-    protected Dictionary<string, int> _uniformLocations = [];
     private bool disposedValue;
 
+    /// <summary>
+    ///     Gets the logger instance for logging shader program events and errors.
+    /// </summary>
+    protected readonly ILogger<ShaderProgram> Logger;
+
+    /// <summary>
+    ///     Gets the OpenGL context used for this shader's operations.
+    /// </summary>
+    protected readonly GL GL;
+
     /// <summary>Gets the handle to the shader program.</summary>
-    public uint Handle { get; protected set; }
+    public uint ProgramHandle { get; protected set; }
 
     /// <summary>Gets or sets the vertex array object.</summary>
     public uint Vao { get; set; }
+
+    /// <inheritdoc cref="UniformLocations" />
+    protected Dictionary<string, int> _uniformLocations = [];
 
     /// <summary>Gets the uniform name-to-location map cached at shader initialization.</summary>
     public IReadOnlyDictionary<string, int> UniformLocations => _uniformLocations;
@@ -31,10 +45,15 @@ public abstract class ShaderProgram : IDisposable
     /// </returns>
     public virtual bool SetAttributes(GL gl) => true;
 
-    protected ShaderProgram(GL gl)
+    /// <summary>
+    ///     Initializes a new instance of <see cref="ShaderProgram"/>.
+    /// </summary>
+    /// <param name="gl">The OpenGL context where the shader program will be created and attached to.</param>
+    /// <param name="logger">The logger instance.</param>
+    protected ShaderProgram(GL gl, ILogger<ShaderProgram>? logger = null)
     {
         GL = gl;
-        _logger = LoggingExtensions.CreateLogger<ShaderProgram>();
+        Logger = logger ?? LoggingExtensions.CreateLogger<ShaderProgram>();
     }
 
     /// <summary>
@@ -45,49 +64,53 @@ public abstract class ShaderProgram : IDisposable
         // Load and compile shader
         if (!LoadShader(ShaderType.VertexShader, vertPath, out uint vertexShader))
         {
-            _logger.LogError("Unable to load vertex shader.");
+            Logger.LogError("Unable to load vertex shader.");
             return;
         }
 
         if (!LoadShader(ShaderType.FragmentShader, fragPath, out uint fragmentShader))
         {
-            _logger.LogError("Unable to load fragment shader.");
+            Logger.LogError("Unable to load fragment shader.");
             return;
         }
         // These two shaders must then be merged into a shader program, which can then be used by OpenGL.
         // To do this, create a program...
 
-        Handle = GL.CreateProgram();
+        ProgramHandle = GL.CreateProgram();
 
         // Attach both shaders...
-        GL.AttachShader(Handle, vertexShader);
-        GL.AttachShader(Handle, fragmentShader);
+        GL.AttachShader(ProgramHandle, vertexShader);
+        GL.AttachShader(ProgramHandle, fragmentShader);
 
         // And then link them together.
-        bool shaderLinked = LinkProgram(Handle);
+        bool shaderLinked = LinkProgram(ProgramHandle);
 
         // When the shader program is linked, it no longer needs the individual shaders attached to it; the compiled code is copied into the shader program.
         // Detach them, and then delete them.
-        GL.DetachShader(Handle, vertexShader);
-        GL.DetachShader(Handle, fragmentShader);
+        GL.DetachShader(ProgramHandle, vertexShader);
+        GL.DetachShader(ProgramHandle, fragmentShader);
         GL.DeleteShader(fragmentShader);
         GL.DeleteShader(vertexShader);
 
         if (!shaderLinked)
         {
-            _logger.LogInformation("Unable to link shader program.");
+            Logger.LogInformation("Unable to link shader program.");
             return;
         }
 
         // The shader is now ready to go, but first, we're going to cache all the shader uniform locations.
         // Querying this from the shader is very slow, so we do it once on initialization and reuse those values
         // later.
-        SetUniformLocations(Handle);
+        SetUniformLocations(ProgramHandle);
 
         Vao = GL.GenVertexArray();
         GL.BindVertexArray(Vao);
 
-        SetAttributes(GL);
+        if (!SetAttributes(GL))
+        {
+            Logger.LogInformation("Unable to set shader attributes.");
+            return;
+        }
 
         return;
     }
@@ -96,7 +119,7 @@ public abstract class ShaderProgram : IDisposable
     {
         if (!File.Exists(shaderPath))
         {
-            _logger.LogInformation("Shader file not found: {Path}", shaderPath);
+            Logger.LogInformation("Shader file not found: {Path}", shaderPath);
 
             shaderProgram = 0;
             return false;
@@ -111,7 +134,7 @@ public abstract class ShaderProgram : IDisposable
 
         if (!CompileShader(shaderProgram))
         {
-            _logger.LogInformation("Unable to load {Type} shader from '{Path}'.", shaderType, shaderPath);
+            Logger.LogInformation("Unable to load {Type} shader from '{Path}'.", shaderType, shaderPath);
             return false;
         }
 
@@ -163,7 +186,7 @@ public abstract class ShaderProgram : IDisposable
         {
             // We can use `GL.GetShaderInfoLog(shader)` to get information about the error.
             var infoLog = GL.GetShaderInfoLog(shaderProgram);
-            _logger.LogError("Error occurred whilst compiling Shader({Shader}).\n\n{Log}", shaderProgram, infoLog);
+            Logger.LogError("Error occurred whilst compiling Shader({Shader}).\n\n{Log}", shaderProgram, infoLog);
 
             return false;
         }
@@ -179,7 +202,7 @@ public abstract class ShaderProgram : IDisposable
         if (statusCode != (int)GLEnum.True)
         {
             string infoLog = GL.GetProgramInfoLog(program);
-            _logger.LogError("Error occurred whilst linking Program({Program}): {Info}", program, infoLog);
+            Logger.LogError("Error occurred whilst linking Program({Program}): {Info}", program, infoLog);
 
             return false;
         }
@@ -191,7 +214,7 @@ public abstract class ShaderProgram : IDisposable
     ///     Enables the shader program.
     /// </summary>
     public void Use()
-        => GL.UseProgram(Handle);
+        => GL.UseProgram(ProgramHandle);
 
     /// <summary>
     ///     Checks if the shader attribute exists within the current shader.
@@ -201,10 +224,10 @@ public abstract class ShaderProgram : IDisposable
     /// <returns>If the attribute exists, <see langword="true"/>; otherwise, <see langword="false"/>. </returns>
     public bool TryGetAttribLocation(string attribName, out int location)
     {
-        location = GL.GetAttribLocation(Handle, attribName);
+        location = GL.GetAttribLocation(ProgramHandle, attribName);
         if (location == ShaderAttributes.AttributeLocationNotFound)
         {
-            _logger.LogWarning("Attribute '{Attribute}' not found in shader program.", attribName);
+            Logger.LogWarning("Attribute '{Attribute}' not found in shader program.", attribName);
             return false;
         }
 
@@ -221,7 +244,7 @@ public abstract class ShaderProgram : IDisposable
         {
             // TODO: Collect handles in a separate container with proper access to the shared GL context.
             //_gl.DeleteProgram(Handle);
-            Handle = 0;
+            ProgramHandle = 0;
             _uniformLocations.Clear();
         }
 

@@ -301,7 +301,15 @@ public abstract class SilkWindow : IWindow
     // }
 
     /// <inheritdoc />
-    protected virtual void Dispose(bool disposing) { }
+    protected virtual void Dispose(bool disposing) 
+    {
+        if (Disposed)
+            return;
+
+        Disposed = true;
+    }
+
+    public bool Disposed { get; private set; }
 
     /// <inheritdoc />
     public void Dispose()

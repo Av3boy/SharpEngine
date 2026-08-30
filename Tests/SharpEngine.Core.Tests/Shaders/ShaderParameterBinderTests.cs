@@ -1,10 +1,10 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using SharpEngine.Core.Components.Properties.Shaders;
+using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Shaders.Rendering;
-using System.Collections.Generic;
-using System.Numerics;
 using Xunit;
 
 namespace SharpEngine.Core.Tests.Shaders;
@@ -25,13 +25,13 @@ public class ShaderParameterBinderTests
             dict[uniformNames[i]] = i;
 
         var mock = new Mock<IShader>();
-        mock.Setup(s => s.UniformLocations).Returns(dict);
-        mock.Setup(s => s.SetFloat(It.IsAny<string>(), It.IsAny<float>())).Returns(true);
-        mock.Setup(s => s.SetInt(It.IsAny<string>(), It.IsAny<int>())).Returns(true);
-        mock.Setup(s => s.SetVector2(It.IsAny<string>(), It.IsAny<Vector2>())).Returns(true);
-        mock.Setup(s => s.SetVector3(It.IsAny<string>(), It.IsAny<Vector3>())).Returns(true);
-        mock.Setup(s => s.SetVector4(It.IsAny<string>(), It.IsAny<Vector4>())).Returns(true);
-        mock.Setup(s => s.SetMatrix4(It.IsAny<string>(), It.IsAny<Matrix4x4>(), It.IsAny<bool>())).Returns(true);
+        mock.Setup(s => s.UniformLocations);
+        mock.Setup(s => s.SetFloat(It.IsAny<string>(), It.IsAny<float>()));
+        mock.Setup(s => s.SetInt(It.IsAny<string>(), It.IsAny<int>()));
+        mock.Setup(s => s.SetVector2(It.IsAny<string>(), It.IsAny<Vector2>()));
+        mock.Setup(s => s.SetVector3(It.IsAny<string>(), It.IsAny<Vector3>()));
+        mock.Setup(s => s.SetVector4(It.IsAny<string>(), It.IsAny<Vector4>()));
+        mock.Setup(s => s.SetMatrix4(It.IsAny<string>(), It.IsAny<Matrix4x4>(), It.IsAny<bool>()));
         return mock;
     }
 

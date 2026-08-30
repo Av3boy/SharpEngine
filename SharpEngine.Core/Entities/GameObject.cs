@@ -2,8 +2,6 @@ using SharpEngine.Core.Attributes;
 using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Entities.Interfaces;
-using SharpEngine.Core.Entities.Properties;
-using SharpEngine.Core.Entities.Properties.Meshes;
 using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
@@ -11,15 +9,13 @@ using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
-using Silk.NET.OpenGL;
+using SharpEngine.Core.Textures;
+using Shader = SharpEngine.Core.Shaders.Shader;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SharpEngine.Core._Resources;
-using SharpEngine.Core.Textures;
-using EngineTexture = SharpEngine.Core.Components.Properties.Textures.Texture;
-using Shader = SharpEngine.Core.Shaders.Shader;
 
 namespace SharpEngine.Core.Entities;
 
@@ -34,7 +30,7 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
 
     public List<IComponent> Components { get; } = new List<IComponent>();
 
-    private MeshRenderer _renderer;
+    private readonly MeshRenderer _renderer;
 
     /// <summary>
     ///     Gets or sets the shader of the game object.
@@ -151,7 +147,7 @@ public static class MaterialExtensions
 {
     public static Material Default(Shader shader)
     {
-        var debugTexture = TextureService.Instance.LoadTexture(SharpEngine.Core._Resources.Default.DebugTexture);
+        var debugTexture = TextureService.Instance.LoadTexture(_Resources.Default.DebugTexture);
         var material = new Material("defaultMaterial", debugTexture) { Shader = shader };
         return material;
     }

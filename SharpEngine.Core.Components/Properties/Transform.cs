@@ -1,7 +1,6 @@
 ﻿using SharpEngine.Core.Numerics;
-using Matrix4x4 = System.Numerics.Matrix4x4;
 
-namespace SharpEngine.Core.Entities.Properties;
+namespace SharpEngine.Core.Components.Properties;
 
 /// <summary>
 ///     Represents a game object transformation in 3D space.
@@ -40,7 +39,7 @@ public class Transform : ITransform<Vector3>
     /// <summary>
     ///     Gets the transformation of the game object as a model matrix.
     /// </summary>
-    public Matrix4x4 ModelMatrix => Matrix4x4.CreateScale(new System.Numerics.Vector3(Scale.X, Scale.Y, Scale.Z)) *
+    public Matrix4x4 ModelMatrix => Matrix4x4.CreateScale(new Vector3(Scale.X, Scale.Y, Scale.Z)) *
                                   Matrix4x4.CreateFromAxisAngle(Rotation.Axis, Math.DegreesToRadians(Rotation.Angle)) *
-                                  Matrix4x4.CreateTranslation(new System.Numerics.Vector3(Position.X, Position.Y, Position.Z));
+                                  Matrix4x4.CreateTranslation(new Vector3(Position.X, Position.Y, Position.Z));
 }

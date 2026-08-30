@@ -1,7 +1,6 @@
-﻿using SharpEngine.Core.Entities.Properties;
+﻿using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
-using System.Collections.Generic;
 
 namespace SharpEngine.Core.Entities.UI.Layouts;
 
@@ -11,7 +10,15 @@ namespace SharpEngine.Core.Entities.UI.Layouts;
 /// <typeparam name="TItem">The type of the items in the layout.</typeparam>
 public abstract class LayoutBase<TItem> : EmptyNode<Transform2D, Vector2> where TItem : UIElement
 {
+    /// <summary>
+    ///     Initializes a new instance of <see cref="LayoutBase{TItem}"/>.
+    /// </summary>
     protected LayoutBase() : this($"{typeof(TItem).Name} Layout") { }
+
+    /// <summary>
+    ///    Initializes a new instance of <see cref="LayoutBase{TItem}"/> with the specified <paramref name="name"/>.
+    /// </summary>
+    /// <param name="name">The name of the layout.</param>
     protected LayoutBase(string name) : base(name) { }
 
     /// <summary>Gets or sets the distance between items in the grid.</summary>

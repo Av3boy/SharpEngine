@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-
 using SharpEngine.Core.Handlers;
 using SharpEngine.Telemetry;
 
@@ -8,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SharpEngine.Core;
+namespace SharpEngine.Core.Managers;
 
 /// <summary>
 ///     Contains all the engine handlers and manages their lifecycle.

@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using System.Numerics;
+using SharpEngine.Core.Numerics;
+using Silk.NET.OpenGL;
 
-namespace SharpEngine.Core.Shaders;
+namespace SharpEngine.Core.Components.Properties.Shaders;
 
 /// <summary>
 ///     Defines the contract for setting shader uniform parameters and querying their locations.
@@ -11,40 +11,65 @@ public interface IShader
     /// <summary>Gets the uniform name-to-location map cached at shader initialization.</summary>
     IReadOnlyDictionary<string, int> UniformLocations { get; }
 
-    /// <summary>Sets a uniform <see langword="int"/> on this shader.</summary>
+    /// <summary>
+    ///     Set a uniform int on this shader.
+    /// </summary>
     /// <param name="name">The name of the uniform.</param>
-    /// <param name="data">The value to set.</param>
-    /// <returns><see langword="true"/> if the uniform was found and set; otherwise <see langword="false"/>.</returns>
-    bool SetInt(string name, int data);
+    /// <param name="data">The data to set.</param>
+    /// <exception cref="ArgumentException">Thrown if the uniform with the specified name is not found in the shader or if the shader program handle is null.</exception>
+    public void SetInt(string name, int data);
 
-    /// <summary>Sets a uniform <see langword="float"/> on this shader.</summary>
+    /// <summary>
+    ///     Set a uniform TextureUnit on this shader.
+    /// </summary>
     /// <param name="name">The name of the uniform.</param>
-    /// <param name="data">The value to set.</param>
-    /// <returns><see langword="true"/> if the uniform was found and set; otherwise <see langword="false"/>.</returns>
-    bool SetFloat(string name, float data);
+    /// <param name="textureUnit">The texture unit to set.</param>
+    /// <exception cref="ArgumentException">Thrown if the uniform with the specified name is not found in the shader or if the shader program handle is null.</exception>
+    public void SetTextureUnit(string name, TextureUnitIndex textureUnit);
 
-    /// <summary>Sets a uniform <see cref="Matrix4x4"/> on this shader.</summary>
+    /// <summary>
+    ///     Set a uniform float on this shader.
+    /// </summary>
     /// <param name="name">The name of the uniform.</param>
-    /// <param name="data">The value to set.</param>
-    /// <param name="transpose">Whether to transpose the matrix before uploading. Defaults to <see langword="true"/>.</param>
-    /// <returns><see langword="true"/> if the uniform was found and set; otherwise <see langword="false"/>.</returns>
-    bool SetMatrix4(string name, Matrix4x4 data, bool transpose = true);
+    /// <param name="data">The data to set.</param>
+    /// <exception cref="ArgumentException">Thrown if the uniform with the specified name is not found in the shader or if the shader program handle is null.</exception>
+    public void SetFloat(string name, float data);
 
-    /// <summary>Sets a uniform <see cref="Vector2"/> on this shader.</summary>
+    /// <summary>
+    ///     Set a uniform Matrix4 on this shader
+    /// </summary>
+    /// <remarks>
+    ///   <para>
+    ///   The matrix is transposed before being sent to the shader unless <paramref name="transpose"/> is set to <see langword="false"/>.
+    ///   </para>
+    /// </remarks>
     /// <param name="name">The name of the uniform.</param>
-    /// <param name="data">The value to set.</param>
-    /// <returns><see langword="true"/> if the uniform was found and set; otherwise <see langword="false"/>.</returns>
-    bool SetVector2(string name, Vector2 data);
+    /// <param name="data">The data to set.</param>
+    /// <param name="transpose">Determines whether or not the matrix should be transposed. Defaults to <see langword="true"/>.</param>
+    /// <exception cref="ArgumentException">Thrown if the uniform with the specified name is not found in the shader or if the shader program handle is null.</exception>
+    public void SetMatrix4(string name, Matrix4x4 data, bool transpose = true);
 
-    /// <summary>Sets a uniform <see cref="Vector3"/> on this shader.</summary>
+    /// <summary>
+    ///     Set a uniform Vector2 on this shader.
+    /// </summary>
     /// <param name="name">The name of the uniform.</param>
-    /// <param name="data">The value to set.</param>
-    /// <returns><see langword="true"/> if the uniform was found and set; otherwise <see langword="false"/>.</returns>
-    bool SetVector3(string name, Vector3 data);
+    /// <param name="data">The data to set.</param>
+    /// <exception cref="ArgumentException">Thrown if the uniform with the specified name is not found in the shader or if the shader program handle is null.</exception>
+    public void SetVector2(string name, Vector2 data);
 
-    /// <summary>Sets a uniform <see cref="Vector4"/> on this shader.</summary>
+    /// <summary>
+    ///     Set a uniform Vector3 on this shader.
+    /// </summary>
     /// <param name="name">The name of the uniform.</param>
-    /// <param name="data">The value to set.</param>
-    /// <returns><see langword="true"/> if the uniform was found and set; otherwise <see langword="false"/>.</returns>
-    bool SetVector4(string name, Vector4 data);
+    /// <param name="data">The data to set.</param>
+    /// <exception cref="ArgumentException">Thrown if the uniform with the specified name is not found in the shader or if the shader program handle is null.</exception>
+    public void SetVector3(string name, Vector3 data);
+
+    /// <summary>
+    ///     Set a uniform Vector4 on this shader.
+    /// </summary>
+    /// <param name="name">The name of the uniform.</param>
+    /// <param name="data">The data to set.</param>
+    /// <exception cref="ArgumentException">Thrown if the uniform with the specified name is not found in the shader or if the shader program handle is null.</exception>
+    public void SetVector4(string name, Vector4 data);
 }

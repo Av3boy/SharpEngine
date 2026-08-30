@@ -1,6 +1,6 @@
-﻿using System.Numerics;
+﻿using SharpEngine.Core.Numerics;
 
-namespace SharpEngine.Core.Entities.Properties;
+namespace SharpEngine.Core.Components.Properties;
 
 /// <summary>
 ///     Represents a bounding box of a game object.
@@ -33,10 +33,10 @@ public class BoundingBox
     ///     Calculates the bounding box of the game object.
     /// </summary>
     /// <returns>The bounding box of the game object.</returns>
-    public static BoundingBox CalculateBoundingBox(ITransform<Numerics.Vector3> transform)
+    public static BoundingBox CalculateBoundingBox(ITransform<Vector3> transform)
     {
         var min = transform.Position - (transform.Scale / 2);
         var max = transform.Position + (transform.Scale / 2);
-        return new BoundingBox((Vector3)min, (Vector3)max);
+        return new BoundingBox(min, max);
     }
 }
