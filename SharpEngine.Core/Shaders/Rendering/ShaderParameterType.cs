@@ -1,4 +1,4 @@
-namespace SharpEngine.Core.Rendering
+namespace SharpEngine.Core.Shaders.Rendering
 {
     public enum ShaderParameterType
     {

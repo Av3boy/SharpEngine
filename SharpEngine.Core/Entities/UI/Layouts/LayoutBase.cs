@@ -1,4 +1,6 @@
-﻿using SharpEngine.Core.Scenes;
+﻿using SharpEngine.Core.Entities.Properties;
+using SharpEngine.Core.Numerics;
+using SharpEngine.Core.Scenes;
 using System.Collections.Generic;
 
 namespace SharpEngine.Core.Entities.UI.Layouts;
@@ -6,11 +8,14 @@ namespace SharpEngine.Core.Entities.UI.Layouts;
 /// <summary>
 ///     Represents the base class for all layout types.
 /// </summary>
-/// <typeparam name="TItem"></typeparam>
-public abstract class LayoutBase<TItem> : SceneNode where TItem : SceneNode, new()
+/// <typeparam name="TItem">The type of the items in the layout.</typeparam>
+public abstract class LayoutBase<TItem> : EmptyNode<Transform2D, Vector2> where TItem : UIElement
 {
-    /// <summary>Represents the items in the layout.</summary>
-    public List<TItem> Items { get; set; } = [];
+    protected LayoutBase() : this($"{typeof(TItem).Name} Layout") { }
+    protected LayoutBase(string name) : base(name) { }
+
+    /// <summary>Gets or sets the distance between items in the grid.</summary>
+    public Vector2 Spacing { get; set; } = new(30, 30);
 
     /// <summary>
     ///     Adds a new item to the layout.
@@ -22,18 +27,9 @@ public abstract class LayoutBase<TItem> : SceneNode where TItem : SceneNode, new
         base.AddChild(nodes);
 
         foreach (var node in nodes)
-            AddItem((TItem)node);
+            AddChild(node);
 
         return this;
-    }
-
-    /// <summary>
-    ///     Adds and item to the container.
-    /// </summary>
-    /// <param name="item">The item to be added.</param>
-    public virtual void AddItem(TItem item)
-    {
-        Items.Add(item);
     }
 
     /// <summary>

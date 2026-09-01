@@ -1,4 +1,4 @@
-﻿using SharpEngine.Core.Rendering;
+﻿using SharpEngine.Core.Shaders.Rendering;
 using System;
 
 namespace SharpEngine.Core.Shaders;

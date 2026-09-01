@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SharpEngine.Telemetry;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace SharpEngine.Core.Handlers
     public abstract class EngineHandler : IAsyncDisposable
     {
         private Task? _runner;
-        private CancellationTokenSource? _cts;
+        protected static CancellationTokenSource _cancellationTokenSource;
         private readonly TaskCompletionSource _completionSource = new();
         private DateTime _startTime;
 
@@ -34,9 +35,9 @@ namespace SharpEngine.Core.Handlers
         ///     Initializes a new instance of <see cref="EngineHandler"/>.
         /// </summary>
         /// <param name="logger">A logger for logging handler events.</param>
-        protected EngineHandler(ILogger<EngineHandler> logger)
+        protected EngineHandler(ILogger<EngineHandler>? logger = null)
         {
-            Logger = logger;
+            Logger = logger ?? LoggingExtensions.CreateLogger<EngineHandler>();
         }
 
         /// <summary>
@@ -55,14 +56,14 @@ namespace SharpEngine.Core.Handlers
         /// Starts the handler and begins executing <see cref="ExecuteAsync"/> on a background task.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown if the handler has already been started.</exception>
-        public void Start()
+        public void Start(CancellationTokenSource cancellationTokenSource)
         {
             if (State != EngineHandlerState.NotStarted)
                 throw new InvalidOperationException("Handler already started.");
 
-            _cts = new CancellationTokenSource();
             _startTime = DateTime.UtcNow;
-            _runner = Task.Run(() => RunInternalAsync(_cts.Token));
+            _cancellationTokenSource = cancellationTokenSource;
+            _runner = Task.Run(async () => await RunInternalAsync());
         }
 
         /// <summary>
@@ -71,19 +72,19 @@ namespace SharpEngine.Core.Handlers
         /// <remarks>
         ///     If the handler has not been started or is already stopped, this method returns immediately.
         /// </remarks>
-        public async Task StopAsync()
+        public async Task StopAsync(CancellationToken cancellationToken = default)
         {
-            if (_cts == null || _runner == null || State == EngineHandlerState.Stopped)
+            if (_cancellationTokenSource == null || _runner == null || State == EngineHandlerState.Stopped)
             {
                 Logger.LogDebug("[EngineHandler] '{Name}' is not running.", GetType().Name);
                 return;
             }
 
-            await _cts.CancelAsync();
+            await _cancellationTokenSource.CancelAsync();
 
             try
             {
-                await _runner;
+                await _runner.WaitAsync(cancellationToken);
             }
             catch (OperationCanceledException)
             {
@@ -120,13 +121,13 @@ namespace SharpEngine.Core.Handlers
         /// </summary>
         protected virtual Task OnStopAsync() => Task.CompletedTask;
 
-        private async Task RunInternalAsync(CancellationToken token)
+        private async Task RunInternalAsync()
         {
             try
             {
                 State = EngineHandlerState.Running;
                 await OnInitializedAsync();
-                await ExecuteAsync(token);
+                await ExecuteAsync(_cancellationTokenSource.Token);
                 State = EngineHandlerState.Stopped;
             }
             catch (OperationCanceledException)
@@ -152,7 +153,7 @@ namespace SharpEngine.Core.Handlers
         /// </remarks>
         public virtual ValueTask DisposeAsync()
         {
-            _cts?.Dispose();
+            _cancellationTokenSource?.Dispose();
             GC.SuppressFinalize(this);
             return ValueTask.CompletedTask;
         }

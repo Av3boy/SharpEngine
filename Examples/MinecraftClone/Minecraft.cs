@@ -4,7 +4,9 @@ using Minecraft.Terrain.Block;
 using Minecraft.Terrain.Layers;
 using SharpEngine.Core;
 using SharpEngine.Core.Entities;
+using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Entities.UI;
+using SharpEngine.Core.Entities.UI.Layouts;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Numerics;
@@ -34,15 +36,6 @@ public class Minecraft : Game
     private readonly SceneNode _blocksNode;
 
     /// <summary>
-    ///     Gets the main window.
-    /// </summary>
-    public static Window Window
-    {
-        get => field ?? throw new InvalidOperationException("The game window has not been assigned yet.");
-        set;
-    }
-
-    /// <summary>
     ///     Initializes a new instance of the <see cref="Minecraft"/>.
     /// </summary>
     public Minecraft(Scene scene, ISettings settings, ILogger<Minecraft> logger)
@@ -53,7 +46,7 @@ public class Minecraft : Game
 
         _inventory = new Inventory();
 
-        _blocksNode = _scene.AddNode("Blocks");
+        _blocksNode = _scene.Root.AddChild<Transform, Vector3>("Blocks");
         _terrain = new Terrain.TerrainGenerator_New(_scene, _blocksNode, 
         [
             new HeightMapPass(),
@@ -88,28 +81,41 @@ public class Minecraft : Game
 
     private void InitializeUI()
     {
-        // var gridLayout = new GridLayout<UIElement>();
+        var numElements = 10;
+        const float elementSpacing = 50;
+        const float elementSize = 50;
 
-        // TODO: #89 Fix UI renderer
-        _uiElem = new UIElement(Window.GetGL(), "uiElement");
-        _scene.UIElements.Add(_uiElem);
+        var gridLayout = new GridLayout<UIElement>(
+            new Vector2(Window.Left, Window.Bottom),
+            new Vector2(Window.Right, Window.Bottom))
+        {
+            Rows = 1,
+            Columns = (uint)numElements,
+            Spacing = new Vector2(elementSpacing, elementSpacing)
+        };
 
-        var uiElem2 = new UIElement(Window.GetGL(), "uiElement");
-        uiElem2.Transform.Scale = new Vector2(0.2f, 0.2f);
-        uiElem2.Transform.Position = new Vector2(30, 0);
+        for (int i = 0; i < numElements; i++)
+        {
+            var uiElem = new UIElement("uiElement " + i)
+            {
+                Width = elementSize,
+                Height = elementSize
+            };
 
-        // gridLayout.AddChild(_uiElem, uiElem2);
-        _scene.UIElements.Add(_uiElem);
-        _scene.UIElements.Add(uiElem2);
+            _uiElem = uiElem;
 
-        // _scene.UIElements.Add(gridLayout);
+            gridLayout.AddChild(_uiElem);
+        }
+        
+        // Attach the layout into the scene graph so traversal finds the UI elements
+        _scene.Root.AddChild(gridLayout);
     }
 
     /// <summary>
     ///     Handles rendering after the frame is drawn.
     /// </summary>
     /// <param name="frame">Information about the frame.</param>
-    public void OnAfterRender(Frame frame)
+    public override void OnAfterRender(Frame frame)
     {
         var x = _uiElem.Transform.Position.X;
         var y = _uiElem.Transform.Position.Y;

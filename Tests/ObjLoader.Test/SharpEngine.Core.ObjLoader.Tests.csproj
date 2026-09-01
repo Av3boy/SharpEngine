@@ -19,5 +19,6 @@
   
   <ItemGroup>
     <ProjectReference Include="..\..\ObjLoader\SharpEngine.Core.ObjLoader.csproj" />
+    <ProjectReference Include="..\..\SharpEngine.Core.ObjLoader\SharpEngine.Core.ObjLoader.csproj" />
   </ItemGroup>
 </Project>

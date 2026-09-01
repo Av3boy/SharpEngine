@@ -1,12 +1,13 @@
 using Microsoft.Extensions.Logging;
 using SharpEngine.Core.Shaders;
+using SharpEngine.Telemetry;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Reflection;
 
-namespace SharpEngine.Core.Rendering;
+namespace SharpEngine.Core.Shaders.Rendering;
 
 /// <summary>
 ///     Binds C# properties and fields decorated with <see cref="ShaderParameterAttribute"/> to their
@@ -37,9 +38,9 @@ public class ShaderParameterBinder
     ///     Initializes a new instance of <see cref="ShaderParameterBinder"/>.
     /// </summary>
     /// <param name="logger">Logger used to report validation results and dispatch warnings.</param>
-    public ShaderParameterBinder(ILogger<ShaderParameterBinder> logger)
+    public ShaderParameterBinder(ILogger<ShaderParameterBinder>? logger = null)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _logger = logger ?? LoggingExtensions.CreateLogger<ShaderParameterBinder>();
     }
 
     /// <summary>
