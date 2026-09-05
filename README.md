@@ -11,6 +11,8 @@
 [![NuGet Version](https://img.shields.io/nuget/v/SharpEngine.Core.NET)](https://www.nuget.org/packages/SharpEngine.Core.NET)
 ![NuGet Downloads](https://img.shields.io/nuget/dt/PACKAGE_NAME)
 
+[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=Av3boy_SharpEngine&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Av3boy_SharpEngine)
+
 <!--
 ![Build](https://img.shields.io/github/actions/workflow/status/Av3boy/SharpEngine/build.yml)
 ![Coverage](https://img.shields.io/codecov/c/github/Av3boy/SharpEngine)
@@ -98,17 +100,7 @@ The launcher is an interface for easily accessing your projects and managing the
 
 ## Roadmap and plans
 
-The engine is still in it's infant phase where we are just barely hitting all required components working so that we can say the MVP version is done. The current plan is just to use the issues board and execute on that using the "waterfall" method where stuff is just thrown into the engine.
-
-The long-term plan is to all the crucial functionalities we are still missing like:
-- [#3](https://github.com/Av3boy/SharpEngine/issues/3) & [#2](https://github.com/Av3boy/SharpEngine/issues/2) Loading meshes from files 
-- [#40](https://github.com/Av3boy/SharpEngine/issues/40) UI 
-- [#17](https://github.com/Av3boy/SharpEngine/issues/17) Audio 
-- [#15](https://github.com/Av3boy/SharpEngine/issues/15) Text renderer 
-- [#13](https://github.com/Av3boy/SharpEngine/issues/13) Ray tracing 
-- [#12](https://github.com/Av3boy/SharpEngine/issues/12) Particle system 
-
-This is just a few among many known issues / missing features from the engine and these will be implemented whenever time permits and we apologize for any inconvenience for now :'D 
+Currently the issues view in this repo is a shared place for all user reported issues and features planned to be added into the engine.
 
 For more information about the future of the engine, see <i>[A Sharp Plan](https://github.com/users/Av3boy/projects/5)</i>.
 

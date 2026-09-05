@@ -30,25 +30,26 @@
     <File Path=".github/copilot-instructions.md" />
     <File Path="Directory.Build.props" />
     <File Path="README.md" />
+    <File Path="SharpEngine.Core/Architecture.cd" />
   </Folder>
 
   <Folder Name="/Tests/">
     <File Path="Tests/Directory.Build.props" />
   </Folder>
   <Folder Name="/Tests/ArchitectureTests/">
-    <Project Path="SharpEngine.Core.ArchitectureTests/SharpEngine.Core.ArchitectureTests.csproj" Id="e4f1185d-2a6e-40cf-8095-bfaaa6cab123">
+    <Project Path="Tests/SharpEngine.Core.ArchitectureTests/SharpEngine.Core.ArchitectureTests.csproj" Id="e4f1185d-2a6e-40cf-8095-bfaaa6cab123">
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
   </Folder>
   <Folder Name="/Tests/IntegrationTests/" />
   <Folder Name="/Tests/UnitTests/">
-    <Project Path="Tests/ObjLoader.Test/SharpEngine.Core.ObjLoader.Tests.csproj">
-      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-    </Project>
     <Project Path="Tests/SharpEngine.Core.Components.Tests/SharpEngine.Core.Components.Tests.csproj" Id="98a6ad4c-b5dd-4408-8266-652e4f0e51d3">
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
     <Project Path="Tests/SharpEngine.Core.Numerics.Tests/SharpEngine.Core.Numerics.Tests.csproj" Id="35366be2-38ad-4321-9036-b010de526027">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="Tests/SharpEngine.Core.ObjLoader.Test/SharpEngine.Core.ObjLoader.Tests.csproj">
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
     <Project Path="Tests/SharpEngine.Core.Tests/SharpEngine.Core.Tests.csproj">
@@ -61,6 +62,9 @@
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
   </Folder>
+  <Project Path="../SharpEngine-Shared/SharpEngine.IO/SharpEngine.IO.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
   <Project Path="../SharpEngine-Shared/SharpEngine.Rest/SharpEngine.Rest.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
@@ -70,15 +74,21 @@
   <Project Path="../SharpEngine-Shared/SharpEngine.Telemetry/SharpEngine.Telemetry.csproj" Id="bfb0783a-67b6-442a-bb39-b9d6267f1e1b">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
-  <Project Path="ObjLoader/SharpEngine.Core.ObjLoader.csproj">
+  <Project Path="SharpEngine.Core.Components/SharpEngine.Core.Components.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
-  <Project Path="SharpEngine.Core.Components/SharpEngine.Core.Components.csproj">
+  <Project Path="SharpEngine.Core.DependencyInjection/SharpEngine.Core.DependencyInjection.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
   <Project Path="SharpEngine.Core.Numerics/SharpEngine.Core.Numerics.csproj">
     <BuildType Solution="LauncherNonWindows|*" Project="Release" />
   </Project>
+  <Project Path="SharpEngine.Core.ObjLoader/SharpEngine.Core.ObjLoader.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
   <Project Path="SharpEngine.Core/SharpEngine.Core.csproj" />
+  <Project Path="SharpEngine.Dto/SharpEngine.Core.Dto.csproj">
+    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+  </Project>
   
 </Solution>

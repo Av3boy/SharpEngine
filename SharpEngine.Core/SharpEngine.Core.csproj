@@ -20,6 +20,12 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Entities\NewFolder\**" />
+    <EmbeddedResource Remove="Entities\NewFolder\**" />
+    <None Remove="Entities\NewFolder\**" />
+  </ItemGroup>
   
   <ItemGroup>    
     <PackageReference Include="Silk.NET.OpenAL" Version="2.23.0" />
@@ -30,13 +36,13 @@
     <PackageReference Include="NLayer" Version="1.1.1" />
     
     <PackageReference Include="StbImageSharp" Version="2.30.15" />
+    
+    <PackageReference Include="System.Drawing.Common" Version="8.0.30" />
     <PackageReference Include="System.Text.Json" Version="9.0.9" />
-
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.IO\SharpEngine.IO.csproj" />
     <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
     <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Telemetry\SharpEngine.Telemetry.csproj" />
     <ProjectReference Include="..\SharpEngine.Core.Components\SharpEngine.Core.Components.csproj" />

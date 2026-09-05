@@ -1,17 +1,36 @@
-When adding new public members or editing existing ones, please ensure that you update the XML documentation comments for those members.
-This helps maintain code readability and provides useful information for other developers who may use or maintain the code in the future.
+Copilot/Agent Guidance (canonical: .github/copilot-instructions.md)
 
-Additionally, if you are adding new features or making significant changes, consider updating any relevant unit tests to cover the new functionality and ensure that existing tests still pass.
+Canonical location
+- This file is the authoritative Copilot/automation guidance for this repository. Keep only this file as the canonical Copilot instruction source (remove any duplicate copies at repository root or elsewhere after review and approval).
 
-All changes need to be unit testable. Favor composition over inheritance when designing new classes or features, and ensure that your code adheres to SOLID principles for maintainability and scalability.
-When referencing classes like System.IO, System.Net.Http or similar, try to use a abstraction layer or interface to allow for easier testing and flexibility in the future.
-This will help decouple your code from specific implementations and make it easier to mock dependencies in unit tests.
+Commit and automation policy
+- Agents MUST NOT create, amend, or push commits without explicit human approval. Present diffs and allow the user to explicitly approve (e.g., "Approve commit") before any commit is made.
+- Include the required Co-authored-by trailer in commits made after explicit approval.
 
-Give me a brief summary of the changes you are making, including the purpose and any relevant details, so that I can provide more specific guidance or suggestions if needed.
+Coding style and change guidance
+- When making changes to the codebase, follow existing styles, naming, formatting, and conventions used in the repository. When in doubt, examine the dominant pattern in the affected area and mimic it, or ask the user for guidance.
+- Update XML documentation for any new or changed public members.
+- Ensure changes are unit testable. Add or update unit tests to cover new behavior and run existing tests locally when possible.
+- Favor composition over inheritance, and follow SOLID principles for maintainability and testability.
+- When referencing system libraries (System.IO, System.Net.Http, etc.), prefer abstractions or interfaces to enable easier testing and mocking.
 
-If you see any areas of the codebase that could benefit from refactoring or improvement, please feel free to suggest those changes as well.
-This could include improving code readability, reducing complexity, or enhancing performance.
-All suggestions should be accompanied by a clear rationale and, if possible, examples of how the changes would improve the codebase.
-Suggestions need to be manually approved, so do not implement those by yourself without prior discussion and approval.
+- Exception handling rule: do not use empty catch blocks. Every catch block must handle the exception appropriately; at minimum it must log the caught exception (including exception type and message). Swallowing exceptions silently is forbidden. Prefer catching specific exception types and rethrowing or wrapping as needed. For library code, include context in the log message to aid debugging.
 
-Finally, please make sure to run all existing tests and any new tests you create to verify that your changes do not introduce any regressions or issues in the codebase.
+Issue and repository inquiries
+- When a user asks about an issue, the agent should check the repository's GitHub Issues list first and reference any relevant issues.
+- If the agent cannot access GitHub Issues (network restrictions, lack of permissions, or API limits), clearly inform the user that Issues could not be checked and that the agent will fall back to local code inspection only after notifying the user.
+
+External access and transparency
+- If any external service (GitHub, CI, package registries) cannot be reached from the execution environment, explicitly state which checks or steps were skipped and why.
+
+Safety and secrets
+- Never create or commit secrets, credentials, or private tokens. If code seems to include secrets, raise an alert and ask the user how to proceed.
+
+PR / branch guidance (recommended)
+- Use descriptive PR titles and reference related issue numbers. If this repository has branch naming conventions, follow them; otherwise, ask the user for preferred branch naming.
+
+What to present to the user
+- For any set of changes: present a concise diff or list of changed files, a short explanation of the change's purpose, and which tests were run (or which could not be run due to limitations).
+- Ask for explicit approval before making commits.
+
+If you have additional preferences (tone, level of detail, or where this file should live), provide guidance and this file will be adjusted accordingly.

@@ -1,6 +1,6 @@
 using System;
 
-namespace SharpEngine.Core.Rendering
+namespace SharpEngine.Core.Shaders.Rendering
 {
     public sealed class ParameterInstance
     {

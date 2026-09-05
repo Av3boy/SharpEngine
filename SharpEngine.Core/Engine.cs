@@ -3,78 +3,93 @@
 using SharpEngine.Core.Handlers;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Windowing;
+using SharpEngine.Shared.Dto;
 using SharpEngine.Telemetry;
 
 using System.Threading.Tasks;
+using SharpEngine.Core.Extensions;
+using System.Threading;
+using System;
 
 namespace SharpEngine.Core;
 
 /// <summary>
 ///     Manages the engine's services and provides methods to initialize, register handlers, and shut down asynchronously.
 /// </summary>
-public static class Engine
+public class Engine
 {
     /// <summary>
     ///     Gets the manager responsible for handling engine services.
     /// </summary>
-    public static EngineServiceManager Services { get; private set; } = new();
+    public EngineServiceManager ServicesManager { get; private set; } = new();
 
-    private static bool _initialized = false;
+    private bool _initialized = false;
+    private readonly ILogger _logger;
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-    private readonly static ILogger _logger;
-
-    static Engine()
+    /// <summary>
+    ///     Initializes a new instance of <see cref="Engine"/>.
+    /// </summary>
+    public Engine()
     {
-        Initialize();
         _logger = LoggingExtensions.CreateLogger(typeof(Engine));
     }
 
     /// <summary>
     ///     Initializes the engine for use.
     /// </summary>
-    public static void Initialize()
+    public void Initialize()
     {
         _logger.LogDebug("Initializing engine...");
 
         if (_initialized)
-        {
-            _logger.LogWarning("Reinitializing engine.");
-            Services.StopAllAsync().Wait();
-        }
+            throw new InvalidOperationException("Engine is already initialized.");
 
         _initialized = true;
         _logger.LogDebug("Engine successfully initialized.");
-    }
 
-    /// <summary>
-    ///     Creates and initializes a new window using the provided <see cref="Game"/> context and registers the window handler.
-    /// </summary>
-    /// <param name="game">The game context provides access to the current scene and camera settings for window initialization.</param>
-    /// <returns>Returns the newly created <see cref="Window"/> instance.</returns>
-    public static Window Initialize(Game game)
-    {
-        var window = new Window(game);
+        ServicesManager.StartHandlers(_cancellationTokenSource);
 
-        Initialize();
-        Services.RegisterHandler(new WindowHandler(window));
+        while (!_cancellationTokenSource.Token.IsCancellationRequested)
+        {
 
-        return window;
+        }
     }
 
     /// <summary>
     ///     Stops all engine services and shuts down the engine asynchronously.
     /// </summary>
     /// <returns>A <see cref="Task"/> that completes when shutdown finishes.</returns>
-    public static async Task ShutdownAsync()
+    public async Task ShutdownAsync()
     {
-        if (Services == null)
+        if (ServicesManager == null)
             return;
 
         _logger.LogDebug("Shutting down engine...");
 
-        await Services.StopAllAsync();
+        _cancellationTokenSource.Cancel();
+        await ServicesManager.StopAllAsync(_cancellationTokenSource.Token);
 
         _initialized = false;
         _logger.LogDebug("Engine successfully shut down.");
+    }
+
+    /// <summary>
+    ///     Checks if the current engine version matches the version specified in the provided project.
+    /// </summary>
+    /// <param name="project">The project to check the engine version against.</param>
+    /// <returns>
+    ///     <see langword="true"/> if the current engine version matches the project engine version; otherwise, <see langword="false"/>.
+    /// </returns>
+    public bool CheckEngineVersion(ProjectDto project)
+    {
+        var currentAssemblyVersion = typeof(Window).Assembly.GetVersion();
+        if (currentAssemblyVersion != project.EngineVersion.Version)
+        {
+            _logger.LogWarning("The current engine version ({CurrentVersion}) does not match the project engine version ({ProjectVersion}). This may lead to unexpected behavior.", currentAssemblyVersion, project.EngineVersion);
+            return false;
+        }
+
+        return true;
     }
 }

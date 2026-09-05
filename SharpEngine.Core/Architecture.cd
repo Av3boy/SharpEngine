@@ -1,0 +1,476 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SharpEngine.Core.Engine" Collapsed="true">
+    <Position X="11.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAACAAAQABQAAAAAAAIAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Engine.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.EngineServiceManager" Collapsed="true">
+    <Position X="13.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAQAAAEAAAAAAIEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>EngineServiceManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.InputManager" Collapsed="true">
+    <Position X="15" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAwAAAAAAoAAhACAAAAIEAIAIAAABAAAIgBAAAEAAEA=</HashCode>
+      <FileName>InputManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Ray" Collapsed="true">
+    <Position X="11.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAQACAAAAAAAAAAAAAAAAAAAQgAAAA=</HashCode>
+      <FileName>Ray.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.RendererManager" Collapsed="true">
+    <Position X="13.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAgAAgAAAAAAAAAAAAAAAAAAAAAAAAEI=</HashCode>
+      <FileName>RendererManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.ShaderManager" Collapsed="true">
+    <Position X="15" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIEAAAAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>ShaderManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Windowing.Frame" Collapsed="true">
+    <Position X="14.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAACAAAAAAAAA=</HashCode>
+      <FileName>Windowing\Frame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Windowing.WindowNotInitializedException" Collapsed="true">
+    <Position X="14.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windowing\SilkWindow.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Windowing.SilkWindow" Collapsed="true">
+    <Position X="11.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACQMoxAETuBd1UAwSADU0EAqHIgMxEIgqhiEBAOACyI=</HashCode>
+      <FileName>Windowing\SilkWindow.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SharpEngine.Core.Windowing.Window" Collapsed="true">
+    <Position X="11.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAADAAAgACAQAQQAwEAAABBCIAACQAAAIACAIAAAADI=</HashCode>
+      <FileName>Windowing\Window.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Windowing.WindowExtensions" Collapsed="true">
+    <Position X="16" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Windowing\WindowExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Windowing.WindowFactory" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAJAAAgAAAAAAAAAAgAAAIAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Windowing\WindowFactory.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SharpEngine.Core.Windowing.WindowRegistration" Collapsed="true">
+    <Position X="16" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAAAIABAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windowing\WindowRegistration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Textures.TextureService" Collapsed="true">
+    <Position X="18.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAAAAAIAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Textures\TextureService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Shaders.Rendering.ParameterDescriptor" Collapsed="true">
+    <Position X="36.25" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAIAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Shaders\Rendering\ParameterDescriptor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Shaders.Rendering.ParameterInstance" Collapsed="true">
+    <Position X="38" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAEQAAgBAAAAAAAAAAAAAAAAAAAAgAAAAABA=</HashCode>
+      <FileName>Shaders\Rendering\ShaderParameter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Shaders.Rendering.ShaderParameterBinder" Collapsed="true">
+    <Position X="36.25" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgCgAAAABAAAAAAAAAAAABAKAAAAAAAAAAAYAAAAAA=</HashCode>
+      <FileName>Shaders\Rendering\ShaderParameterBinder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Shaders.DefaultShader" Collapsed="true">
+    <Position X="36.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Shaders\DefaultShader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Shaders.LampShader" Collapsed="true">
+    <Position X="38" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Shaders\LampShader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Shaders.LightingShader" Collapsed="true">
+    <Position X="39.75" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Shaders\LightingShader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Shaders.ShaderParameterAttribute" Collapsed="true">
+    <Position X="39.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAIAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Shaders\ShaderParameterAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Shaders.ShaderService" Collapsed="true">
+    <Position X="38" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAIAAAAIAAAAAAAAAAAAAAAAwgAAAAAAAAg=</HashCode>
+      <FileName>Shaders\ShaderService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Shaders.UIShader" Collapsed="true">
+    <Position X="39.75" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Shaders\UIShader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Scenes.EmptyNode&lt;TTransform, TVector&gt;" Collapsed="true">
+    <Position X="13.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Scenes\EmptyNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Scenes.Scene" Collapsed="true">
+    <Position X="15.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAoAAAAAAIAACAAAAAAAAAAAEQAAAAGAAAAAAAABAA=</HashCode>
+      <FileName>Scenes\Scene.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Scenes.SceneExtensions" Collapsed="true">
+    <Position X="17.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAJAAAAAAAACAAAAAgAAAA=</HashCode>
+      <FileName>Scenes\SceneExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Scenes.SceneNode" Collapsed="true">
+    <Position X="13.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAACAACAAEAACoAIEQAQCACIAAAAACFAAAAAAAAA=</HashCode>
+      <FileName>Scenes\SceneNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Renderers.ParticleRenderer" Collapsed="true">
+    <Position X="21.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAABAAAAAAAAA=</HashCode>
+      <FileName>Renderers\ParticleRenderer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Renderers.Renderer" Collapsed="true">
+    <Position X="23.75" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAABCAMAAAABCABDIAACAACAA=</HashCode>
+      <FileName>Renderers\Renderer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Renderers.RendererBase" Collapsed="true">
+    <Position X="24.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAACAAAQAAIAAAAAAAAAAAAACAgBAACAAAAAA=</HashCode>
+      <FileName>Renderers\RendererBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SharpEngine.Core.Renderers.TextRenderer" Collapsed="true">
+    <Position X="26" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAABAAAAAAAAA=</HashCode>
+      <FileName>Renderers\TextRenderer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Renderers.UIRenderer" Collapsed="true">
+    <Position X="28.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAACCAAAAAAYAwAABQAIAACAACAABIAACAAAAA=</HashCode>
+      <FileName>Renderers\UIRenderer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Primitives.Cube" Collapsed="true">
+    <Position X="29.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgEEAAAAAAAAAAIAEAAgAAAAAAEQgAAAAAAAA=</HashCode>
+      <FileName>Primitives\Cube.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Primitives.Plane" Collapsed="true">
+    <Position X="31" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Primitives\Plane.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Primitives.PrimitiveFactory" Collapsed="true">
+    <Position X="29.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Primitives\PrimitiveFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Handlers.EngineHandler" Collapsed="true">
+    <Position X="15.75" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAICIIAIABAAgAAAAAIAIAAAACAAAAJAgAAEA=</HashCode>
+      <FileName>Handlers\EngineHandler.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SharpEngine.Core.Handlers.ParticleEmitter" Collapsed="true">
+    <Position X="18.25" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABgAAIAAAAAAAgCAAIAAAAAAAAAAAAIAACgAAgCAEA=</HashCode>
+      <FileName>Handlers\ParticleEmitter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Handlers.WindowHandler" Collapsed="true">
+    <Position X="18.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAADAAAAACAAAAAAAEAAAAAAAAAAAAAAIAAEEAAEA=</HashCode>
+      <FileName>Handlers\WindowHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.Lights.DirectionalLight" Collapsed="true">
+    <Position X="14.75" Y="21.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>Entities\Lights\DirectionalLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.Lights.Light" Collapsed="true">
+    <Position X="17" Y="20.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Entities\Lights\Light.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.Lights.PointLight" Collapsed="true">
+    <Position X="19.25" Y="21.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAACgAAAAAAAAAAgAYBAAAAAAAAA=</HashCode>
+      <FileName>Entities\Lights\PointLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.Lights.SpotLight" Collapsed="true">
+    <Position X="17" Y="21.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAgAAAAAAAAACAAAAAAAAAAAIgAYBAAAAAAAAA=</HashCode>
+      <FileName>Entities\Lights\SpotLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.Interfaces.PointerClickEvent" Collapsed="true">
+    <Position X="25" Y="20.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Interfaces\IClickable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.Interfaces.ClickableComponent" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="25" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAIAAA=</HashCode>
+      <FileName>Entities\Interfaces\IClickable.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.Interfaces.GameObjectExtensions" Collapsed="true">
+    <Position X="26.75" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Interfaces\IComponent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.UI.Layouts.FlexLayout&lt;TItem, TVector&gt;" Collapsed="true">
+    <Position X="3" Y="19.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAYAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\UI\Layouts\FlexLayout.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.UI.Layouts.GridLayout&lt;TItem&gt;" Collapsed="true">
+    <Position X="5.25" Y="19.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQCAAIAAAEEAYCAAAAABAAEAAAAAAAAIAAAgABgA=</HashCode>
+      <FileName>Entities\UI\Layouts\GridLayout.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.UI.Layouts.LayoutBase&lt;TItem&gt;" Collapsed="true">
+    <Position X="4.25" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAIAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\UI\Layouts\LayoutBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.UI.DraggableUIElement" Collapsed="true">
+    <Position X="0.5" Y="19.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\UI\DraggableUIElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.UI.MeshRenderer" Collapsed="true">
+    <Position X="13.5" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQgAAAAAAAA=</HashCode>
+      <FileName>Entities\UI\MeshRenderer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.UI.UIElement" Collapsed="true">
+    <Position X="0.5" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAABAAAQIAAAAAAAEAAEAAAAAAACBAAAAAAAAA=</HashCode>
+      <FileName>Entities\UI\UIElement.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.Views.CameraView" Collapsed="true">
+    <Position X="28" Y="15.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAEAAAAAAAGIICAAAAgAYABAAIAAABA=</HashCode>
+      <FileName>Entities\Views\CameraView.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.Views.View" Collapsed="true">
+    <Position X="28" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAEAAAAAAABAAgAgAAAACAACBAAQgAwECAAAAAQAI=</HashCode>
+      <FileName>Entities\Views\View.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.GameObject" Collapsed="true">
+    <Position X="18.75" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAIAAAQAAAAQAECAAAAAAQBgAAgAAAAA=</HashCode>
+      <FileName>Entities\GameObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SharpEngine.Core.Entities.MaterialExtensions" Collapsed="true">
+    <Position X="29" Y="18.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\GameObject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="SharpEngine.Core.Entities.Views.Settings.DefaultViewSettings" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="30.5" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAhAAAAAgAAAAAAAAIAACAAAAEAKAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Views\Settings\DefaultViewSettings.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="SharpEngine.Core.Entities.Views.Settings.ViewSettings" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="32.25" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAhAAAAAgAAAAAAAAIAACAAAAEAKAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Views\Settings\ViewSettings.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Interface Name="SharpEngine.Core.Windowing.IWindowFactory" Collapsed="true">
+    <Position X="14.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAgAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windowing\IWindowFactory.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SharpEngine.Core.Entities.Interfaces.IClickable" Collapsed="true">
+    <Position X="25" Y="22" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Interfaces\IClickable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SharpEngine.Core.Entities.Interfaces.IComponent" Collapsed="true">
+    <Position X="26.75" Y="22" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Interfaces\IComponent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SharpEngine.Core.Entities.Views.Settings.IViewSettings" Collapsed="true">
+    <Position X="30.5" Y="15.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Views\Settings\IViewSettings.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="SharpEngine.Core.Shaders.Rendering.ShaderParameterType" Collapsed="true">
+    <Position X="36.25" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAIAggEgADA=</HashCode>
+      <FileName>Shaders\Rendering\ShaderParameterType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SharpEngine.Core.Shaders.Rendering.ShaderUpdateFrequency" Collapsed="true">
+    <Position X="38" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAEAAAAAAAAAgA=</HashCode>
+      <FileName>Shaders\Rendering\ShaderUpdateFrequency.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SharpEngine.Core.Renderers.RenderFlags" Collapsed="true">
+    <Position X="30.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAIAACAFAAAA=</HashCode>
+      <FileName>Renderers\RenderFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SharpEngine.Core.Primitives.PrimitiveType" Collapsed="true">
+    <Position X="29.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>Primitives\PrimitiveType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="EngineHandlerState" Collapsed="true">
+    <Position X="28.75" Y="20.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAIAAAAIAAAAAAAAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Handlers\EngineHandlerState.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

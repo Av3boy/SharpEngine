@@ -3,8 +3,9 @@ using SharpEngine.Core.Entities.Views.Settings;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
-
+using SharpEngine.Core.Windowing;
 using Silk.NET.Input;
+using System;
 
 namespace SharpEngine.Core.Interfaces;
 
@@ -63,6 +64,14 @@ public abstract class Game
     public Scene Scene { get; init; }
 
     /// <summary>
+    ///     Gets the main window.
+    /// </summary>
+    public Window Window
+    {
+        get => field ?? throw new InvalidOperationException("The game window has not been assigned yet.");
+        set;
+    }
+    /// <summary>
     ///     Executed when a mouse button is pressed.
     /// </summary>
     public virtual void HandleMouseDown(IMouse mouse, MouseButton button) { }
@@ -96,4 +105,6 @@ public abstract class Game
     ///    Executed each frame.
     /// </summary>
     public virtual void Update(double deltaTime, IInputContext input) { }
+
+    public virtual void OnAfterRender(Frame frame) { }
 }

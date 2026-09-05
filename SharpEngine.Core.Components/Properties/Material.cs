@@ -1,4 +1,5 @@
-﻿using Silk.NET.OpenGL;
+﻿using SharpEngine.Core.Shaders;
+using Silk.NET.OpenGL;
 using System.Numerics;
 using Shader = SharpEngine.Core.Shaders.Shader;
 using Texture = SharpEngine.Core.Components.Properties.Textures.Texture;

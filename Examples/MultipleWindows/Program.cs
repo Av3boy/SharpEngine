@@ -34,7 +34,7 @@ public static partial class Program
     public static async Task Main(string[] _)
     {
         Core.Handlers.WindowHandler windowHandler = new();
-        windowHandler.Start();
+        windowHandler.Start(_cancellationTokenSource);
 
         Console.WriteLine("end");
         Console.ReadLine();
@@ -108,7 +108,7 @@ public static partial class Program
             }
         };
             
-        var window = new Window(new(), options, _windowLogger);
+        var window = new Window(new(), options);
         window.Initialize();
 
         return window;
@@ -119,10 +119,10 @@ public static partial class Program
         var window = CreateWindow();
 
         // Prefer the higher-level Window event to avoid wiring low-level input handlers.
-        window.OnButtonMouseDown += (mouse, button) => Mouse_Click(mouse, (MouseButton)button, mouse.Position);
+        window.InputManager.OnButtonMouseDown += (mouse, button) => Mouse_Click(mouse, (MouseButton)button, mouse.Position);
 
-        if (window.Input is not null)
-            _inputContexts.Add(window.Input);
+        if (window.InputManager.Context is not null)
+            _inputContexts.Add(window.InputManager.Context);
 
         _windows.Add(window);
     }
