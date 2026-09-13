@@ -86,7 +86,7 @@ public partial class Shader
     public void SetMatrix4(string name, Matrix4x4 data, bool transpose = true)
     {
         SetUniformInternal(name, out int location);
-        GL.UniformMatrix4(location, transpose, data.ToSpan());
+        GL.UniformMatrix4(location, transpose, ((System.Numerics.Matrix4x4)data).ToSpan());
     }
 
     /// <summary>
