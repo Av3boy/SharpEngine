@@ -9,7 +9,6 @@ uniform float height;
 
 uniform vec2 position;
 uniform float rotation;
-uniform vec2 screenSize;
 uniform mat4 orthoMatrix;
 
 uniform mat4 uModel;
@@ -20,11 +19,6 @@ out vec2 TexCoords;
 
 void main()
 {
-    float reciprScaleOnscreen = 0.005f;
-
-    // Calculate the aspect ratio
-    float aspectRatio = screenSize.x / screenSize.y;
-
     // Create the rotation matrix for the z-axis
     mat4 rotationMatrix = mat4(
         cos(rotation), -sin(rotation), 0.0, 0.0,
@@ -33,26 +27,27 @@ void main()
         0.0,            0.0,           0.0, 1.0
     );
 
-    // Scale the vertex position using width and height
-    vec3 scaledPos = vec3(
-        aPos.x * width * reciprScaleOnscreen,
-        aPos.y * height * reciprScaleOnscreen,
-        aPos.z
+    // Scale the vertex position using pixel-space width and height.
+    vec4 scaledPos = vec4(
+        aPos.x * width * 0.5,
+        aPos.y * height * 0.5,
+        aPos.z,
+        1.0
     );
 
-    // Calculate the model-view-projection matrix using the orthographic projection matrix
-    mat4 mvp = orthoMatrix * rotationMatrix * uModel;
+    // Apply the model scale and rotation before translating in pixel space.
+    vec4 transformedPos = rotationMatrix * uModel * scaledPos;
 
-    // Apply the MVP matrix to the scaled vertex position with aspect ratio
-    gl_Position = mvp * vec4(
-        (scaledPos.x + (position.x * reciprScaleOnscreen)) * aspectRatio,
-        scaledPos.y + (position.y * reciprScaleOnscreen),
-        scaledPos.z,
-        1
+    // Project directly using the window-sized orthographic matrix.
+    gl_Position = orthoMatrix * vec4(
+        transformedPos.x + position.x,
+        transformedPos.y + position.y,
+        transformedPos.z,
+        1.0
     );
 
     // Pass through other attributes
-    Normal = mat3(uModel) * aNormal; // Transform the normal
-    FragPos = vec3(uModel * vec4(aPos, 1.0)); // Transform the fragment position
+    Normal = mat3(rotationMatrix * uModel) * aNormal; // Transform the normal
+    FragPos = vec3(transformedPos.x + position.x, transformedPos.y + position.y, transformedPos.z);
     TexCoords = aTexCoords;
 }

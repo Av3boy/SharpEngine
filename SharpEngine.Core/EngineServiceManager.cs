@@ -5,6 +5,7 @@ using SharpEngine.Telemetry;
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SharpEngine.Core;
@@ -14,7 +15,7 @@ namespace SharpEngine.Core;
 /// </summary>
 public class EngineServiceManager
 {
-    private readonly List<EngineHandler> handlers = [];
+    public readonly List<EngineHandler> Handlers = [];
     private readonly ILogger<EngineServiceManager> _logger;
 
     /// <summary>
@@ -30,23 +31,28 @@ public class EngineServiceManager
     ///     Registers a new engine handler and starts its operation.
     /// </summary>
     /// <param name="handler">The handler to register.</param>
-    public void RegisterHandler(EngineHandler handler)
+    public THandler RegisterHandler<THandler>(THandler handler) where THandler : EngineHandler
     {
         _logger.LogDebug("Registering handler: '{Handler}'.", handler.GetType().Name);
-
-        handlers.Add(handler);
-        handler.Start();
+        Handlers.Add(handler);
 
         _logger.LogDebug("Handler '{Handler}' registered successfully.", handler.GetType().Name);
+        return handler;
+    }
+
+    public void StartHandlers(CancellationTokenSource source)
+    {
+        foreach (var engineHandler in Handlers)
+            engineHandler.Start(source);
     }
 
     /// <summary>
     ///     Stops all active handlers asynchronously by calling their StopAsync method.
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public async Task StopAllAsync()
+    public async Task StopAllAsync(CancellationToken cancellationToken = default)
     {
-        var stopTasks = handlers.Select(handler => handler.StopAsync());
+        var stopTasks = Handlers.Select(handler => handler.StopAsync(cancellationToken));
         await Task.WhenAll(stopTasks);
     }
 }

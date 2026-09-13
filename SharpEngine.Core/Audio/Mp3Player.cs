@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Buffers.Binary;
 using System.IO;
 using NLayer;
 using Silk.NET.OpenAL;
@@ -14,9 +13,10 @@ internal class Mp3Player : AudioPlayerBase
     /// <inheritdoc />
     protected override string FileExtension => AudioFileExtensions.Mp3Extension;
 
-    public Mp3Player()
-    {
-    }
+    /// <summary>
+    ///     Initializes a new instance of <see cref="Mp3Player" />
+    /// </summary>
+    public Mp3Player() { }
 
     /// <inheritdoc />
     /// <exception cref="InvalidOperationException">Thrown if the audio data contains more than 2 channels.</exception>
@@ -45,9 +45,14 @@ internal class Mp3Player : AudioPlayerBase
                 float f = floatBuffer[i];
                 // clamp and convert
                 int intVal = (int)MathF.Round(f * 32767f);
-                if (intVal > short.MaxValue) intVal = short.MaxValue;
-                else if (intVal < short.MinValue) intVal = short.MinValue;
+                if (intVal > short.MaxValue) 
+                    intVal = short.MaxValue;
+
+                else if (intVal < short.MinValue) 
+                    intVal = short.MinValue;
+
                 short s = (short)intVal;
+
                 bytes[i * 2] = (byte)(s & 0xFF);
                 bytes[i * 2 + 1] = (byte)((s >> 8) & 0xFF);
             }

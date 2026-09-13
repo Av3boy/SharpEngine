@@ -24,4 +24,15 @@ public static class Default
 
     /// <summary>Gets the path to the default fragment shader used for rendering UI elements.</summary>
     public static string UIFragmentShader => PathExtensions.GetAssemblyPath("_Resources\\Shaders\\uiShader.frag");
+
+    /// <summary>Gets the path to the fragment shader used for SDF UI rendering.</summary>
+    public static string UIFragmentShaderSdf => PathExtensions.GetAssemblyPath("_Resources\\Shaders\\ui_sdf.frag");
+
+    /// <summary>
+    ///     Gets the default fonts directory where bundled or project fonts may be located.
+    /// </summary>
+    public static string FontsDirectory => PathExtensions.GetAssemblyPath("Assets\\Fonts");
+
+    /// <summary>Gets the default font family name used by TextElement when no font is specified.</summary>
+    public const string Font = "Segoe UI";
 }

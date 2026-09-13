@@ -1,10 +1,11 @@
 ﻿using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Components.Properties.Meshes;
+using SharpEngine.Core.Entities.Interfaces;
 using SharpEngine.Core.Entities.Properties.Meshes;
 
 namespace SharpEngine.Core.Entities.UI;
 
-public class MeshRenderer
+public class MeshRenderer : IComponent
 {
     public MeshRenderer(Mesh mesh, Material material)
     {
