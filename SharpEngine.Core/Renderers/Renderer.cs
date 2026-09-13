@@ -45,6 +45,17 @@ public class Renderer : RendererBase
     /// <param name="camera">The game the renderer is being used for.</param>
     /// <param name="settings">The settings for the renderer.</param>
     /// <param name="scene">The game scene to be rendered.</param>
+    public Renderer(CameraView camera, ISettings settings, Scene scene)
+        : this(camera, settings, scene, LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Renderer>())
+    {
+    }
+
+    /// <summary>
+    ///     Initializes a new instance of <see cref="Renderer"/>.
+    /// </summary>
+    /// <param name="camera">The game the renderer is being used for.</param>
+    /// <param name="settings">The settings for the renderer.</param>
+    /// <param name="scene">The game scene to be rendered.</param>
     /// <param name="logger">The logger for the renderer.</param>
     public Renderer(CameraView camera, ISettings settings, Scene scene, ILogger<Renderer> logger) : base(settings)
     {
