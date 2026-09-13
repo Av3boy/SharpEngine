@@ -1,4 +1,5 @@
 ﻿using Minecraft.Terrain.Block;
+using SharpEngine.Core.Numerics;
 
 namespace Minecraft.Terrain;
 
@@ -7,16 +8,16 @@ public sealed class ChunkData
     private readonly BlockId[,,] _blocks;
     private readonly int[,] _heightMap;
 
-    public ChunkData(int size, int height)
+    public ChunkData(Vector3 size)
     {
         Size = size;
-        Height = height;
+        Height = (int)size.Y;
 
-        _blocks = new BlockId[size, height, size];
-        _heightMap = new int[size, size];
+        _blocks = new BlockId[(int)size.X, Height, (int)size.Z];
+        _heightMap = new int[(int)size.X, (int)size.Z];
     }
 
-    public int Size { get; }
+    public Vector3 Size { get; }
 
     public int Height { get; }
 
@@ -45,9 +46,9 @@ public sealed class ChunkData
         return x >= 0 &&
                y >= 0 &&
                z >= 0 &&
-               x < Size &&
+               x < Size.X &&
                y < Height &&
-               z < Size;
+               z < Size.Z;
     }
 
     public bool IsAir(int x, int y, int z)

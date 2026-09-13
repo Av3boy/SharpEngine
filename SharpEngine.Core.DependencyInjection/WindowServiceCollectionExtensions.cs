@@ -38,15 +38,59 @@ public static class WindowServiceCollectionExtensions
 
         factory ??= CreateWindow;
 
-        configure ??= ConfigureWindow;
-
+        // We'll always invoke any user-provided configure callback, then wire game handlers.
         handler.Configure((serviceProvider, windowHandler, engine) =>
         {
-            var window = factory(serviceProvider);
-            configure(serviceProvider, window);
+            // Register a factory that will create and configure the window later on the handler thread.
+            windowHandler.AddWindowFactory(() =>
+            {
+                var window = factory(serviceProvider);
 
-            windowHandler.AddWindow(window, isDefaultWindow);
+                // Apply optional user configuration and wire up game callbacks for this window.
+                configure?.Invoke(serviceProvider, window);
+
+                var game = serviceProvider.GetRequiredService<Game>();
+
+                window.InputManager.OnHandleMouse += game.HandleMouse;
+                window.InputManager.OnUpdate += game.Update;
+                window.InputManager.OnHandleKeyboard += game.HandleKeyboard;
+                window.InputManager.OnButtonMouseDown += game.HandleMouseDown;
+                window.InputManager.HandleMouseWheel += game.HandleMouseWheel;
+                window.OnAfterRender += game.OnAfterRender;
+
+                if (isDefaultWindow)
+                {
+                    var initialized = false;
+                    var initLock = new object();
+                    window.OnLoaded += () =>
+                    {
+                        lock (initLock)
+                        {
+                            if (initialized)
+                                return;
+
+                            initialized = true;
+                        }
+
+                        try
+                        {
+                            game.Initialize();
+                        }
+                        catch (Exception ex)
+                        {
+                            var logger = serviceProvider.GetService<Microsoft.Extensions.Logging.ILogger<Game>>();
+                            logger?.LogError(ex, "Error during game initialization.");
+                        }
+                    };
+
+                    game.Window = window;
+                }
+
+                return window;
+            }, isDefaultWindow);
         });
+
+        return handler;
 
         return handler;
     }

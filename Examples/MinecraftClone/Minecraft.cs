@@ -38,6 +38,10 @@ public class Minecraft : Game
     private readonly Terrain.TerrainGenerator_New _terrain;
     private readonly SceneNode _blocksNode;
 
+    private bool _renderTerrain = true;
+    private bool _renderUI = true;
+    private bool _minimaldebugSetup = true;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="Minecraft"/>.
     /// </summary>
@@ -59,7 +63,7 @@ public class Minecraft : Game
             // new WaterPass(),
             // new SurfaceDecorationPass(),
             // new FoliagePass()
-        ]);
+        ], _minimaldebugSetup);
     }
 
     /// <inheritdoc />
@@ -72,9 +76,11 @@ public class Minecraft : Game
             _input = new Input(Camera);
             _inventory.Initialize();
 
-            // _terrain.InitializeWorld();
+            if (_renderTerrain)
+                _terrain.InitializeWorld();
 
-            InitializeUI();
+            if (_renderUI)
+                InitializeUI();
         }
         catch (Exception ex)
         {
@@ -120,8 +126,21 @@ public class Minecraft : Game
     /// <param name="frame">Information about the frame.</param>
     public override void OnAfterRender(Frame frame)
     {
+        ImGui.Begin("Debug");
+        ImGui.Text($"FPS: {frame.FrameRate}");
+        ImGui.Text($"Camera position: {Camera.Position}");
+
+        if (!_renderUI)
+        {
+            ImGui.End();
+            return;
+        }
+
         var x = _uiElem.Transform.Position.X;
         var y = _uiElem.Transform.Position.Y;
+
+        ImGui.SliderFloat("X", ref x, -2000, 2000);
+        ImGui.SliderFloat("Y", ref y, -2000, 2000);
 
         var sx = _uiElem.Transform.Scale.X;
         var sy = _uiElem.Transform.Scale.Y;
@@ -131,14 +150,7 @@ public class Minecraft : Game
         var height = _uiElem.Height;
         var width = _uiElem.Width;
 
-        ImGui.Begin("Debug");
-        ImGui.Text($"FPS: {frame.FrameRate}");
-        ImGui.Text($"Camera position: {Camera.Position}");
         ImGui.Text($"UI Element position: {_uiElem.Transform.Position}");
-
-        ImGui.SliderFloat("X", ref x, -2000, 2000);
-        ImGui.SliderFloat("Y", ref y, -2000, 2000);
-
         ImGui.Text($"UI Element scale: {_uiElem.Transform.Scale}");
 
         ImGui.SliderFloat("sX", ref sx, 0, 1);

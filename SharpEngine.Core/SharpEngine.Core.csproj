@@ -81,8 +81,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Engine\" />
-  </ItemGroup>
-
 </Project>

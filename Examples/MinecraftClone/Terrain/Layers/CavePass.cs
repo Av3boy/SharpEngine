@@ -8,11 +8,11 @@ public sealed class CavePass : IChunkGenerationLayer
 
     public void Generate(ChunkGenerationContext context, ChunkData chunk)
     {
-        for (int x = 0; x < chunk.Size; x++)
+        for (int x = 0; x < chunk.Size.X; x++)
         {
             for (int y = 0; y < chunk.Height; y++)
             {
-                for (int z = 0; z < chunk.Size; z++)
+                for (int z = 0; z < chunk.Size.Z; z++)
                 {
                     TryCarveBlock(context, chunk, x, y, z);
                 }

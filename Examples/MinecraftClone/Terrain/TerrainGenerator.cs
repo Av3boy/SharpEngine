@@ -53,13 +53,15 @@ public sealed class TerrainGenerator_New
 
     private SceneNode _lightsNode;
     private SceneNode _blocksNode;
+    private readonly bool _minimalDebugSetup;
 
-    internal TerrainGenerator_New(Scene scene, SceneNode blocksNode, IEnumerable<IChunkGenerationLayer>? layers = null)
+    internal TerrainGenerator_New(Scene scene, SceneNode blocksNode, IEnumerable<IChunkGenerationLayer>? layers = null, bool minimalDebugSetup = false)
     {
         _scene = scene;
         _lightsNode = _scene.Root.AddChild<Transform, Vector3>("Lights");
         _blocksNode = blocksNode;
         _layers = layers?.ToArray() ?? Array.Empty<IChunkGenerationLayer>();
+        _minimalDebugSetup = minimalDebugSetup;
     }
 
     internal void InitializeWorld()
@@ -89,8 +91,12 @@ public sealed class TerrainGenerator_New
 
     private void InitializeChunks()
     {
-        const int chunkSize = 16;
-        const int numChunks = 5;
+        int chunkSize = _minimalDebugSetup ? 1 : 16;
+        int numChunks = _minimalDebugSetup ? 1 : 5;
+
+        const int seed = 1234;
+        const int minY = -16;
+        const int maxY = 16;
 
         for (int chunkZ = 0; chunkZ < numChunks; chunkZ++)
         {
@@ -100,11 +106,11 @@ public sealed class TerrainGenerator_New
 
                 var context = new ChunkGenerationContext
                 {
-                    Seed = 1234,
+                    Seed = seed,
                     ChunkPosition = chunkPos,
-                    ChunkSize = chunkSize,
-                    MinY = -16,
-                    MaxY = 16,
+                    ChunkSize = new Vector3(chunkSize, maxY - minY + 1, chunkSize),
+                    MinY = minY,
+                    MaxY = maxY,
                     WaterLevel = 0,
 
                     TerrainNoise = _terrainNoise,
@@ -122,9 +128,7 @@ public sealed class TerrainGenerator_New
 
     public ChunkData GenerateChunk(ChunkGenerationContext context)
     {
-        int height = context.MaxY - context.MinY + 1;
-
-        var chunk = new ChunkData(context.ChunkSize, height);
+        var chunk = new ChunkData(context.ChunkSize);
 
         foreach (IChunkGenerationLayer layer in _layers)
         {
@@ -136,11 +140,11 @@ public sealed class TerrainGenerator_New
 
     private void CreateBlocksFromChunkData(ChunkData chunk, Vector3 chunkPos)
     {
-        for (int x = 0; x < chunk.Size; x++)
+        for (int x = 0; x < chunk.Size.X; x++)
         {
             for (int y = 0; y < chunk.Height; y++)
             {
-                for (int z = 0; z < chunk.Size; z++)
+                for (int z = 0; z < chunk.Size.Z; z++)
                 {
                     BlockId block = chunk.GetBlock(x, y, z);
 

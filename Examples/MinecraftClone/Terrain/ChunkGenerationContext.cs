@@ -9,7 +9,7 @@ public sealed class ChunkGenerationContext
 
     public required Vector3 ChunkPosition { get; init; }
 
-    public required int ChunkSize { get; init; }
+    public required Vector3 ChunkSize { get; init; }
 
     public required int MinY { get; init; }
 

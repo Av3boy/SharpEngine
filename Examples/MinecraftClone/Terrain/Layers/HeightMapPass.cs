@@ -4,9 +4,9 @@ internal class HeightMapPass : IChunkGenerationLayer
 {
     public void Generate(ChunkGenerationContext context, ChunkData chunk)
     {
-        for (int x = 0; x < chunk.Size; x++)
+        for (int x = 0; x < chunk.Size.X; x++)
         {
-            for (int z = 0; z < chunk.Size; z++)
+            for (int z = 0; z < chunk.Size.Z; z++)
             {
                 float worldX = context.ChunkPosition.X + x;
                 float worldZ = context.ChunkPosition.Z + z;

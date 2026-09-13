@@ -14,5 +14,5 @@ public static class RendererExtensions
     /// <param name="services">The service collection to add the renderer to.</param>
     /// <returns>The updated service collection.</returns>
     public static IServiceCollection AddRenderer<TRenderer>(this IServiceCollection services) where TRenderer : RendererBase 
-        => services.AddSingleton<RendererBase, TRenderer>();
+        => services.AddTransient<RendererBase, TRenderer>();
 }

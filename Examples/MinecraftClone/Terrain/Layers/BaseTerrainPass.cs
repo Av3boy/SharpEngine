@@ -1,6 +1,4 @@
-﻿using Minecraft.Terrain;
-using Minecraft.Terrain.Block;
-using System;
+﻿using Minecraft.Terrain.Block;
 
 namespace Minecraft.Terrain.Layers;
 
@@ -10,9 +8,9 @@ public sealed class BaseTerrainPass : IChunkGenerationLayer
 
     public void Generate(ChunkGenerationContext context, ChunkData chunk)
     {
-        for (int x = 0; x < chunk.Size; x++)
+        for (int x = 0; x < chunk.Size.X; x++)
         {
-            for (int z = 0; z < chunk.Size; z++)
+            for (int z = 0; z < chunk.Size.Z; z++)
             {
                 int surfaceWorldY = chunk.GetHeight(x, z);
                 int surfaceLocalY = WorldYToLocalY(context, surfaceWorldY);
