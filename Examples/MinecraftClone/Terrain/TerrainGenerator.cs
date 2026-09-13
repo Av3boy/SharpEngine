@@ -5,13 +5,14 @@ using SharpEngine.Core.Entities.Lights;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Numerics.Noise;
 using SharpEngine.Core.Scenes;
+using Silk.NET.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Minecraft.Terrain;
 
-public sealed class TerrainGenerator_New
+public sealed class TerrainGenerator
 {
     private readonly INoiseGenerator _terrainNoise = new PerlinNoiseGenerator(seed: 1234)
     {
@@ -55,7 +56,9 @@ public sealed class TerrainGenerator_New
     private SceneNode _blocksNode;
     private readonly bool _minimalDebugSetup;
 
-    internal TerrainGenerator_New(Scene scene, SceneNode blocksNode, IEnumerable<IChunkGenerationLayer>? layers = null, bool minimalDebugSetup = false)
+    private GL _gl;
+
+    internal TerrainGenerator(Scene scene, SceneNode blocksNode, IEnumerable<IChunkGenerationLayer>? layers = null, bool minimalDebugSetup = false)
     {
         _scene = scene;
         _lightsNode = _scene.Root.AddChild<Transform, Vector3>("Lights");
@@ -64,8 +67,9 @@ public sealed class TerrainGenerator_New
         _minimalDebugSetup = minimalDebugSetup;
     }
 
-    internal void InitializeWorld()
+    internal void InitializeWorld(GL gl)
     {
+        _gl = gl;
         InitializeLights();
         InitializeChunks();
     }
@@ -153,7 +157,7 @@ public sealed class TerrainGenerator_New
 
                     var blockPos = chunkPos + new Vector3(x, y, z);
 
-                    var blockObject = BlockFactory.CreateBlock(block, blockPos, $"Block_{blockPos.X}_{blockPos.Y}_{blockPos.Z}");
+                    var blockObject = BlockFactory.CreateBlock(_gl, block, blockPos, $"Block_{blockPos.X}_{blockPos.Y}_{blockPos.Z}");
 
                     _blocksNode.AddChild(blockObject);
                 }

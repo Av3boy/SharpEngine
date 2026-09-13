@@ -16,8 +16,8 @@ public static class PrimitiveFactory
     /// </summary>
     /// <param name="primitiveType">The type of primitive to create.</param>
     /// <param name="position">Where the game object should be placed.</param>
-    public static GameObject Create(PrimitiveType primitiveType, Vector3 position)
-        => Create(primitiveType, position, _Resources.Default.DebugTexture);
+    public static GameObject Create(Silk.NET.OpenGL.GL gl, PrimitiveType primitiveType, Vector3 position)
+        => Create(gl, primitiveType, position, _Resources.Default.DebugTexture);
 
     /// <inheritdoc cref="Create(PrimitiveType, Vector3)"/>
     /// <param name="primitiveType">The type of primitive to be created.</param>
@@ -28,12 +28,12 @@ public static class PrimitiveFactory
     /// <param name="fragShaderFile">The fragment shader file full path.</param>
     /// <returns>A new game object.</returns>
     /// <exception cref="InvalidOperationException">Thrown when the specified primitive type does not exist.</exception>
-    public static GameObject Create(PrimitiveType primitiveType, Vector3 position, string diffuseMapFile, string? specularMapFile = null, string? vertShaderFile = null, string? fragShaderFile = null)
+    public static GameObject Create(Silk.NET.OpenGL.GL gl, PrimitiveType primitiveType, Vector3 position, string diffuseMapFile, string? specularMapFile = null, string? vertShaderFile = null, string? fragShaderFile = null)
     {
         Model model = primitiveType switch
         {
-            PrimitiveType.Cube => Cube.CreateModel(diffuseMapFile, specularMapFile),
-            PrimitiveType.Plane => Plane.CreateModel(diffuseMapFile, specularMapFile),
+            PrimitiveType.Cube => Cube.CreateModel(gl, diffuseMapFile, specularMapFile),
+            PrimitiveType.Plane => Plane.CreateModel(gl, diffuseMapFile, specularMapFile),
             _ => throw new InvalidOperationException($"A primitive of type {primitiveType} does not exist.")
         };
 

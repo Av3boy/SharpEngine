@@ -15,37 +15,8 @@ namespace SharpEngine.Core.Primitives;
 /// </summary>
 public static class Cube
 {
-    static Cube()
-    {
-        if (_loaded)
-            return;
-
-        var defaultTexture = TextureService.Instance.LoadTexture(Default.DebugTexture);
-
-        var mesh = new Mesh(Window.SharedGL)
-        {
-            Vertices = [.. Vertices],
-            Normals = [.. Normals],
-            TextureCoordinates = [.. TextureCoordinates],
-            Indices = [.. Indices],
-            Textures = [defaultTexture],
-            // Materials = [MaterialService.Instance.LoadMaterial(Default.DebugMaterial)],
-            Materials = [new("Debug", defaultTexture)]
-        };
-
-        Mesh = MeshService.Instance.LoadMesh(nameof(Cube), mesh);
-        Model = new(Window.SharedGL, string.Empty, [Mesh]);
-
-        _loaded = true;
-    }
-
-    private readonly static bool _loaded;
-
-    /// <summary>The loaded model of the cube.</summary>
-    public static Model Model { get; private set; } = null!;
-
     /// <summary>The cube mesh.</summary>
-    public static readonly Mesh Mesh = null!;
+    public static Mesh Mesh = null!;
 
     private static readonly float[] Vertices =
     [
@@ -215,8 +186,28 @@ public static class Cube
     /// <param name="diffuseMapFile">The file path to the diffuse texture map.</param>
     /// <param name="specularMapFile">The file path to the specular texture map, or <see langword="null"/> to omit specular mapping.</param>
     /// <returns>A new model instance containing a mesh with the specified texture maps.</returns>
-    public static Model CreateModel(string diffuseMapFile, string? specularMapFile = null)
+    public static Model CreateModel(Silk.NET.OpenGL.GL gl ,string diffuseMapFile, string? specularMapFile = null)
     {
+        // TODO: This method now contains some duplication as the constructor was removed and it's content was moved here.
+
+        var defaultTexture = TextureService.Instance.LoadTexture(Default.DebugTexture);
+
+        var mesh = new Mesh(gl)
+        {
+            Vertices = [.. Vertices],
+            Normals = [.. Normals],
+            TextureCoordinates = [.. TextureCoordinates],
+            Indices = [.. Indices],
+            Textures = [defaultTexture],
+            // Materials = [MaterialService.Instance.LoadMaterial(Default.DebugMaterial)],
+            Materials = [new("Debug", defaultTexture)]
+        };
+
+        Mesh = MeshService.Instance.LoadMesh(nameof(Cube), mesh);
+        // Model = new(Window.SharedGL, string.Empty, [Mesh]);
+
+        // ------
+
         var diffuseTexture = TextureService.Instance.LoadTexture(diffuseMapFile, TextureType.Diffuse);
         var specularTexture = string.IsNullOrWhiteSpace(specularMapFile) ? 
             null : TextureService.Instance.LoadTexture(specularMapFile, TextureType.Specular);
@@ -227,13 +218,13 @@ public static class Cube
         if (specularTexture is not null && specularTexture.Handle != diffuseTexture.Handle)
             textures.Add(specularTexture);
 
-        var mesh = new Mesh(Window.SharedGL, BuildVertices(), [], textures)
+        mesh = new Mesh(gl, BuildVertices(), [], textures)
         {
             Name = Mesh.Name,
             Materials = [material]
         };
 
-        var model = new Model(Window.SharedGL, string.Empty);
+        var model = new Model(gl, string.Empty);
         model.Meshes.Add(mesh);
 
         return model;

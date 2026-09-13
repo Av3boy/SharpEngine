@@ -35,10 +35,10 @@ public class Minecraft : Game
 
     private UIElement _uiElem;
 
-    private readonly Terrain.TerrainGenerator_New _terrain;
+    private readonly Terrain.TerrainGenerator _terrain;
     private readonly SceneNode _blocksNode;
 
-    private bool _renderTerrain = false;
+    private bool _renderTerrain = true;
     private bool _renderUI = true;
     private bool _minimaldebugSetup = true;
 
@@ -54,7 +54,7 @@ public class Minecraft : Game
         _inventory = new Inventory();
 
         _blocksNode = _scene.Root.AddChild<Transform, Vector3>("Blocks");
-        _terrain = new Terrain.TerrainGenerator_New(_scene, _blocksNode, 
+        _terrain = new Terrain.TerrainGenerator(_scene, _blocksNode, 
         [
             new HeightMapPass(),
             new BaseTerrainPass(),
@@ -77,7 +77,7 @@ public class Minecraft : Game
             _inventory.Initialize();
 
             if (_renderTerrain)
-                _terrain.InitializeWorld();
+                _terrain.InitializeWorld(Window.GetGL());
 
             if (_renderUI)
                 InitializeUI();
@@ -262,7 +262,7 @@ public class Minecraft : Game
         if (newBlockPosition == Camera.Position || newBlockPosition == hitPosition)
             return;
 
-        var newBlock = BlockFactory.CreateBlock(_inventory.SelectedSlot.Items.Type, newBlockPosition, $"Dirt ({_blocksNode.Children.Count})");
+        var newBlock = BlockFactory.CreateBlock(Window.GetGL(), _inventory.SelectedSlot.Items.Type, newBlockPosition, $"Dirt ({_blocksNode.Children.Count})");
         _blocksNode.AddChild(newBlock);
 
         _logger.LogInformation("New block created: {Pos}, block in view location: {IntersectingPos}", newBlock.Transform.Position, intersectingObject!.Transform.Position);

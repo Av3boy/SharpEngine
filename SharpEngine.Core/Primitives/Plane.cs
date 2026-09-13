@@ -29,5 +29,5 @@ public static class Plane
     /// </summary>
     public static Mesh CreateMesh(GL gl) => new Mesh(gl, Vertices, Indices);
 
-    internal static Model CreateModel(string diffuseMapFile, string? specularMapFile) => throw new NotImplementedException();
+    internal static Model CreateModel(GL gl, string diffuseMapFile, string? specularMapFile) => throw new NotImplementedException();
 }

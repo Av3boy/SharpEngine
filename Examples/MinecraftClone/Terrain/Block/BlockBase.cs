@@ -34,14 +34,14 @@ public class BlockBase : GameObject
     /// <param name="specularMapFile">The full path of the specular map texture.</param>
     /// <param name="vertShaderFile">The full path of the vertex shader.</param>
     /// <param name="fragShaderFile">The full path of the fragment shader.</param>
-    protected BlockBase(Vector3 position, string name, string diffuseMapFile, string specularMapFile, string vertShaderFile, string fragShaderFile)
+    protected BlockBase(Silk.NET.OpenGL.GL gl, Vector3 position, string name, string diffuseMapFile, string specularMapFile, string vertShaderFile, string fragShaderFile)
     {
-        Initialize(position, name, diffuseMapFile, specularMapFile, vertShaderFile, fragShaderFile);
+        Initialize(gl, position, name, diffuseMapFile, specularMapFile, vertShaderFile, fragShaderFile);
     }
 
-    private void Initialize(Vector3 position, string name, string diffuseMapFile, string specularMapFile, string vertShaderFile, string fragShaderFile)
+    private void Initialize(Silk.NET.OpenGL.GL gl, Vector3 position, string name, string diffuseMapFile, string specularMapFile, string vertShaderFile, string fragShaderFile)
     {
-        var cube = PrimitiveFactory.Create(PrimitiveType.Cube, (SharpEngine.Core.Numerics.Vector3)position, diffuseMapFile, specularMapFile, vertShaderFile, fragShaderFile);
+        var cube = PrimitiveFactory.Create(gl, PrimitiveType.Cube, (SharpEngine.Core.Numerics.Vector3)position, diffuseMapFile, specularMapFile, vertShaderFile, fragShaderFile);
         AssignProperties(cube, name);
     }
 

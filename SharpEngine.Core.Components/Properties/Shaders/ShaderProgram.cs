@@ -78,6 +78,8 @@ public abstract class ShaderProgram : IDisposable
 
         ProgramHandle = GL.CreateProgram();
 
+        Logger.LogInformation("Created program handle {Program} on thread {ThreadId} (GL: {GLObj})", ProgramHandle, System.Threading.Thread.CurrentThread.ManagedThreadId, GL.ToString());
+
         // Attach both shaders...
         GL.AttachShader(ProgramHandle, vertexShader);
         GL.AttachShader(ProgramHandle, fragmentShader);
@@ -105,6 +107,8 @@ public abstract class ShaderProgram : IDisposable
 
         Vao = GL.GenVertexArray();
         GL.BindVertexArray(Vao);
+
+        Logger.LogInformation("Created VAO {Vao} for program {Program} on thread {ThreadId}", Vao, ProgramHandle, System.Threading.Thread.CurrentThread.ManagedThreadId);
 
         if (!SetAttributes(GL))
         {
@@ -214,7 +218,10 @@ public abstract class ShaderProgram : IDisposable
     ///     Enables the shader program.
     /// </summary>
     public void Use()
-        => GL.UseProgram(ProgramHandle);
+    {
+        Logger.LogDebug("Using shader program {Program} on thread {ThreadId}", ProgramHandle, System.Threading.Thread.CurrentThread.ManagedThreadId);
+        GL.UseProgram(ProgramHandle);
+    }
 
     /// <summary>
     ///     Checks if the shader attribute exists within the current shader.
