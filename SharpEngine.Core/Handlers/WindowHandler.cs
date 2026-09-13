@@ -29,9 +29,9 @@ namespace SharpEngine.Core.Handlers;
 /// </remarks>
 public class WindowHandler : EngineHandler
 {
-    private readonly List<SilkWindow> _windows = [];
-    private readonly List<IInputContext> _inputContexts = [];
-    private readonly ConcurrentQueue<SilkWindow> _windowQueue = [];
+    private readonly List<SilkWindow> _windows = new();
+    private readonly List<IInputContext> _inputContexts = new();
+    private readonly ConcurrentQueue<SilkWindow> _windowQueue = new();
 
     /// <summary>
     ///     Gets the main window registered with this handler, if any.
@@ -86,6 +86,8 @@ public class WindowHandler : EngineHandler
     private void UpdateWindow(ref int i)
     {
         var window = _windows[i];
+
+
         if (window is null || window.Disposed || window.CurrentWindow == null || window.Handle == IntPtr.Zero || !window.IsVisible || window.GLContext == null)
         {
             //window.Reset();
@@ -119,8 +121,6 @@ public class WindowHandler : EngineHandler
         while (_windowQueue.TryDequeue(out var window))
         {
             window.Initialize();
-            window.Run(); // The silk window needs to be run on the main thread, so we call Run() here to start the window's event loop.
-
             _windows.Add(window);
         }
     }
