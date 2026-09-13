@@ -43,7 +43,25 @@ public static class Program
 
         services.AddEngine(engine =>
         {
-            engine.AddHandler<WindowHandler>().AddWindow();
+            engine.AddHandler<WindowHandler>()
+                  .AddWindow()
+                  .AddWindow((sp) => {
+                      // create second window with offset position
+                      var game = sp.GetRequiredService<Game>();
+                      var scene = sp.GetRequiredService<Scene>();
+                      var logger = sp.GetRequiredService<Microsoft.Extensions.Logging.ILogger<SharpEngine.Core.Windowing.Window>>();
+                      var renderers = sp.GetServices<SharpEngine.Core.Renderers.RendererBase>();
+                      var settings = new SharpEngine.Core.Entities.Views.Settings.DefaultViewSettings() with
+                      {
+                          WindowOptions = Silk.NET.Windowing.WindowOptions.Default with
+                          {
+                              Title = "Second Window",
+                              Position = new Silk.NET.Maths.Vector2D<int>(700, 200)
+                          }
+                      };
+
+                      return new SharpEngine.Core.Windowing.Window(game.Camera, scene, settings, logger, renderers);
+                  }, isDefaultWindow: false);
         });
     }
 }

@@ -33,6 +33,10 @@ public class WindowHandler : EngineHandler
     private readonly List<IInputContext> _inputContexts = new();
     private readonly ConcurrentQueue<SilkWindow> _windowQueue = new();
 
+    // Factories for windows registered via DI. Factories are executed on the handler thread
+    // to serialize native window creation and avoid GLFW/GL context races.
+    private readonly ConcurrentQueue<(Func<SilkWindow> Factory, bool IsMain)> _windowFactoryQueue = new();
+
     /// <summary>
     ///     Gets the main window registered with this handler, if any.
     /// </summary>
@@ -118,6 +122,29 @@ public class WindowHandler : EngineHandler
         if (_cancellationTokenSource.IsCancellationRequested)
             return;
 
+        // First, process any registered factories. These are executed on the handler thread
+        // so that native window creation happens sequentially and safely.
+        while (_windowFactoryQueue.TryDequeue(out var entry))
+        {
+            try
+            {
+                var window = entry.Factory();
+                if (window is null)
+                    continue;
+
+                window.Initialize();
+                _windows.Add(window);
+
+                if (entry.IsMain)
+                    MainWindow = window;
+            }
+            catch (Exception ex)
+            {
+                Logger?.LogError(ex, "Error creating window from factory: {Message}", ex.Message);
+            }
+        }
+
+        // Then process any already-created windows that were enqueued directly.
         while (_windowQueue.TryDequeue(out var window))
         {
             window.Initialize();
@@ -139,5 +166,20 @@ public class WindowHandler : EngineHandler
 
         if (isMain)
             MainWindow = window;
+    }
+
+    /// <summary>
+    ///     Registers a factory that will be executed on the handler thread to create and enqueue a window.
+    ///     This serializes native window creation and prevents GLFW/GL concurrency issues when multiple
+    ///     windows are registered via dependency injection.
+    /// </summary>
+    /// <param name="factory">A factory that creates a <see cref="SilkWindow"/> instance.</param>
+    /// <param name="isMain">Whether the created window should be treated as the main window.</param>
+    public void AddWindowFactory(Func<SilkWindow> factory, bool isMain = false)
+    {
+        if (factory is null)
+            throw new ArgumentNullException(nameof(factory));
+
+        _windowFactoryQueue.Enqueue((factory, isMain));
     }
 }

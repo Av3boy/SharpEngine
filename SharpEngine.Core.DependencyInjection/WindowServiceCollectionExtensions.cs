@@ -41,53 +41,53 @@ public static class WindowServiceCollectionExtensions
         // We'll always invoke any user-provided configure callback, then wire game handlers.
         handler.Configure((serviceProvider, windowHandler, engine) =>
         {
-            var window = factory(serviceProvider);
-
-            // Apply optional user configuration.
-            configure?.Invoke(serviceProvider, window);
-
-            // Wire common game events and only initialize the game once for the default window.
-            var game = serviceProvider.GetRequiredService<Game>();
-
-            // Always wire input and render callbacks so the window participates in the game loop.
-            window.InputManager.OnHandleMouse += game.HandleMouse;
-            window.InputManager.OnUpdate += game.Update;
-            window.InputManager.OnHandleKeyboard += game.HandleKeyboard;
-            window.InputManager.OnButtonMouseDown += game.HandleMouseDown;
-            window.InputManager.HandleMouseWheel += game.HandleMouseWheel;
-            window.OnAfterRender += game.OnAfterRender;
-
-            if (isDefaultWindow)
+            // Register a factory that will create and configure the window later on the handler thread.
+            windowHandler.AddWindowFactory(() =>
             {
-                // Ensure the game initialization runs only once and only after the window has fully loaded.
-                var initialized = false;
-                var initLock = new object();
-                window.OnLoaded += () =>
+                var window = factory(serviceProvider);
+
+                // Apply optional user configuration and wire up game callbacks for this window.
+                configure?.Invoke(serviceProvider, window);
+
+                var game = serviceProvider.GetRequiredService<Game>();
+
+                window.InputManager.OnHandleMouse += game.HandleMouse;
+                window.InputManager.OnUpdate += game.Update;
+                window.InputManager.OnHandleKeyboard += game.HandleKeyboard;
+                window.InputManager.OnButtonMouseDown += game.HandleMouseDown;
+                window.InputManager.HandleMouseWheel += game.HandleMouseWheel;
+                window.OnAfterRender += game.OnAfterRender;
+
+                if (isDefaultWindow)
                 {
-                    lock (initLock)
+                    var initialized = false;
+                    var initLock = new object();
+                    window.OnLoaded += () =>
                     {
-                        if (initialized)
-                            return;
+                        lock (initLock)
+                        {
+                            if (initialized)
+                                return;
 
-                        initialized = true;
-                    }
+                            initialized = true;
+                        }
 
-                    try
-                    {
-                        game.Initialize();
-                    }
-                    catch (Exception ex)
-                    {
-                        // Swallow initialization exceptions to avoid bringing down the engine during startup.
-                        var logger = serviceProvider.GetService<Microsoft.Extensions.Logging.ILogger<Game>>();
-                        logger?.LogError(ex, "Error during game initialization.");
-                    }
-                };
+                        try
+                        {
+                            game.Initialize();
+                        }
+                        catch (Exception ex)
+                        {
+                            var logger = serviceProvider.GetService<Microsoft.Extensions.Logging.ILogger<Game>>();
+                            logger?.LogError(ex, "Error during game initialization.");
+                        }
+                    };
 
-                game.Window = window;
-            }
+                    game.Window = window;
+                }
 
-            windowHandler.AddWindow(window, isDefaultWindow);
+                return window;
+            }, isDefaultWindow);
         });
 
         return handler;
