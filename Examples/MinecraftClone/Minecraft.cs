@@ -5,7 +5,6 @@ using Minecraft.Terrain.Layers;
 using SharpEngine.Core;
 using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Properties;
-using SharpEngine.Core.Entities.Text;
 using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Entities.UI.Layouts;
 using SharpEngine.Core.Enums;

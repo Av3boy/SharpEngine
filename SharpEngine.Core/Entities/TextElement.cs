@@ -1,13 +1,17 @@
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Windowing;
 using SharpEngine.Core.Entities.UI;
+using SharpEngine.Core.Fonts;
 
+using Microsoft.Extensions.Logging;
 using Silk.NET.OpenGL;
-using System.Numerics;
+
 using System.Threading.Tasks;
 using System.Linq;
-using System.Drawing;
-using System.Drawing.Imaging;
+using System.Collections.Generic;
+using System.Numerics;
+using System;
+using SharpEngine.Core.Rendering;
 
 namespace SharpEngine.Core.Entities;
 
@@ -31,6 +35,13 @@ public class TextElement : UIElement
     public Vector4 Color { get; set; } = new Vector4(1, 1, 1, 1);
 
     private bool _textureCreated = false;
+
+    /// <summary>
+    /// When true, attempt to render the glyph as vector geometry (triangulated) rather than rasterizing to a bitmap.
+    /// </summary>
+    public bool UseVectorRendering { get; set; } = true;
+
+    private readonly ILogger? _logger;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="TextElement"/>.
@@ -58,18 +69,27 @@ public class TextElement : UIElement
             if (_textureCreated)
                 return;
 
-            // Render the text into a System.Drawing bitmap
-            using var bmp = RenderTextToBitmap(Text, FontFamily, (int)FontSize, out var measuredWidth, out var measuredHeight);
+            if (UseVectorRendering)
+            {
+                A(gl);
+            }
+
+            // Rasterization fallback: only use System.Drawing on Windows where it's supported.
+            if (!OperatingSystem.IsWindows())
+            {
+                // On non-Windows platforms, skip the System.Drawing raster path.
+                // The vector path or other rendering approaches (SDF, external renderer) should be used instead.
+                return;
+            }
+
+            using var bmp = BitMapExtensions.RenderTextToBitmap(Text, FontFamily, (int)FontSize, out var measuredWidth, out var measuredHeight);
             if (bmp is null)
                 return;
 
-            // Convert bitmap to RGBA bytes
-            var rgba = BitmapToRgba(bmp);
+            var rgba = BitMapExtensions.BitmapToRgba(bmp);
+            var key = GetTextTextureCacheKey();
+            var tex = TextTextureCache.GetOrCreate(gl, key, rgba, bmp.Width, bmp.Height, path: $"<text:{Name}>");
 
-            // Create a runtime texture from the bytes
-            var tex = new Components.Properties.Textures.Texture(gl, rgba, bmp.Width, bmp.Height, path: $"<text:{Name}>");
-
-            // Assign texture to material
             var meshRenderer = Components.OfType<MeshRenderer>().FirstOrDefault();
             if (meshRenderer is not null)
             {
@@ -77,92 +97,149 @@ public class TextElement : UIElement
                 meshRenderer.Material.DiffuseMap.Path = tex.Path;
             }
 
-            // Update element dimensions to match measured size (in UI units)
             Width = measuredWidth;
             Height = measuredHeight;
 
             _textureCreated = true;
         }
-        catch
+        catch (Exception ex)
         {
-            // swallow for now
+            _logger?.LogError(ex, "Error initializing text element: {ex}", ex);
         }
     }
 
-    public override Task Render(CameraView camera, Window window)
+    private void A(GL gl)
     {
-        // Defer to UIElement.Render which draws the textured quad
-        return base.Render(camera, window);
-    }
-
-    private static Bitmap RenderTextToBitmap(string text, string fontFamily, int fontSize, out int width, out int height)
-    {
-        if (string.IsNullOrEmpty(text))
-        {
-            width = 1;
-            height = 1;
-            return new Bitmap(1, 1);
-        }
-
-        using var tmp = new Bitmap(1, 1);
-        using var gtmp = Graphics.FromImage(tmp);
-        var font = new Font(fontFamily, fontSize, System.Drawing.FontStyle.Regular, GraphicsUnit.Pixel);
-        var size = gtmp.MeasureString(text, font);
-        width = System.Math.Max(1, (int)System.Math.Ceiling(size.Width));
-        height = System.Math.Max(1, (int)System.Math.Ceiling(size.Height));
-
-        var bmp = new Bitmap(width, height);
-        using var g = Graphics.FromImage(bmp);
-        g.Clear(System.Drawing.Color.Transparent);
-        g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
-        using var brush = new SolidBrush(System.Drawing.Color.FromArgb((int)(255 * 1.0f), System.Drawing.Color.White));
-        g.DrawString(text, font, brush, 0, 0);
-        g.Flush();
-
-        return bmp;
-    }
-
-    private static byte[] BitmapToRgba(Bitmap bmp)
-    {
-        var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-        var data = bmp.LockBits(rect, ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
         try
         {
-            var length = System.Math.Abs(data.Stride) * bmp.Height;
-            var bytes = new byte[length];
-            System.Runtime.InteropServices.Marshal.Copy(data.Scan0, bytes, 0, length);
+            // Layout per-glyph using metrics extractor and triangulate each glyph into a single mesh.
+            float penX = 0f;
+            var allVerts = new List<float>();
+            var allIndices = new List<uint>();
+            var vertCount = 0u;
 
-            // Convert ARGB -> RGBA
-            for (int i = 0; i < bytes.Length; i += 4)
+            // Determine font file path if available
+            Fonts.Font? fontFile = null;
+            if (FontManager.Instance.TryGetFont(FontFamily, out var f))
+                fontFile = f;
+
+            for (int i = 0; i < Text.Length; i++)
             {
-                var a = bytes[i + 3];
-                var r = bytes[i + 2];
-                var g = bytes[i + 1];
-                var b = bytes[i + 0];
+                var ch = Text[i];
+                var glyphKey = $"{fontFile?.FilePath ?? "<system>"}|{FontFamily}|{ch}|{FontSize}";
 
-                bytes[i + 0] = r;
-                bytes[i + 1] = g;
-                bytes[i + 2] = b;
-                bytes[i + 3] = a;
+                if (!GlyphMeshCache.TryGet(glyphKey, out var cachedMesh, out var cachedAdvance, out var gwidth, out var gheight))
+                {
+                    var (glyph, advance) = GlyphMetricsExtractor.GetGlyphAndAdvance(fontFile?.FilePath, FontFamily, ch, FontSize);
+                    var tris = glyph.Triangulate().ToList();
+                    if (tris.Count < 3)
+                        continue;
+
+                    // Build vertices for this glyph and store as cache
+                    var verts = new List<float>(tris.Count * 8);
+                    var indices = new List<uint>(tris.Count);
+                    for (int t = 0; t < tris.Count; t++)
+                    {
+                        var v = tris[t];
+                        verts.Add(v.X);
+                        verts.Add(v.Y);
+                        verts.Add(0f);
+
+                        verts.Add(0f); 
+                        verts.Add(0f); 
+                        verts.Add(1f);
+                        
+                        verts.Add(0f); 
+                        verts.Add(0f);
+                        
+                        indices.Add((uint)t);
+                    }
+
+                    var mesh = GlyphMeshCache.GetOrCreate(gl, glyphKey, verts.ToArray(), indices.ToArray(), advance, 0, 0);
+                    cachedAdvance = advance;
+                }
+
+                // Kerning with next char
+                float kern = 0f;
+                if (i + 1 < Text.Length)
+                {
+                    kern = GlyphMetricsExtractor.GetKerning(fontFile?.FilePath, FontFamily, ch, Text[i + 1], FontSize);
+                }
+
+                // Fetch cached mesh vertices by re-obtaining the mesh (we stored verts earlier in cache as mesh only)
+                if (GlyphMeshCache.TryGet(glyphKey, out var meshObj, out var adv, out var w, out var h))
+                {
+                    // Read mesh vertices by reflecting internal Mesh buffers is complex; instead, regenerate triangles for placement.
+                    var (glyph2, advance2) = GlyphMetricsExtractor.GetGlyphAndAdvance(fontFile?.FilePath, FontFamily, ch, FontSize);
+                    var tris2 = glyph2.Triangulate().ToList();
+                    for (int t = 0; t < tris2.Count; t++)
+                    {
+                        var vx = tris2[t].X + penX;
+                        var vy = tris2[t].Y;
+
+                        allVerts.Add(vx);
+                        allVerts.Add(vy);
+                        allVerts.Add(0f);
+
+                        allVerts.Add(0f);
+                        allVerts.Add(0f);
+                        allVerts.Add(1f);
+
+                        allVerts.Add(0f);
+                        allVerts.Add(0f);
+
+                        allIndices.Add(vertCount++);
+                    }
+
+                    penX += adv + kern;
+                }
             }
 
-            // Bitmaps are stored top-to-bottom. OpenGL expects pixel data with the origin at the lower-left.
-            // Flip the image rows vertically so the uploaded texture appears right-side-up.
-            var stride = System.Math.Abs(data.Stride);
-            var flipped = new byte[bytes.Length];
-            var height = bmp.Height;
-            for (int row = 0; row < height; row++)
+            // Evil Artifact Detector: if the total triangle count is excessive or font size is very large, fallback to bitmap/SDF path.
+            var triCount = allIndices.Count / 3;
+            if (triCount > 2000 || FontSize > 128)
             {
-                var srcOffset = row * stride;
-                var dstOffset = (height - 1 - row) * stride;
-                System.Buffer.BlockCopy(bytes, srcOffset, flipped, dstOffset, stride);
+                // Abort vector path and let bitmap fallback handle this element for better performance and memory usage.
+                return;
             }
 
-            return flipped;
+            if (allVerts.Count >= 8 && allIndices.Count >= 3)
+            {
+                var mesh = new Properties.Meshes.Mesh(gl, allVerts.ToArray(), allIndices.ToArray());
+                var white = new byte[] { 255, 255, 255, 255 };
+                var whiteTex = new Components.Properties.Textures.Texture(gl, white, 1, 1, path: $"<white:{Name}>");
+                var mat = new Components.Properties.Material($"text-vector-{Name}", whiteTex);
+
+                _ = Components.RemoveAll(c => c is MeshRenderer);
+                Components.Add(new MeshRenderer(mesh, mat));
+
+                // Width is penX
+                Width = penX;
+                Height = FontSize;
+
+                _textureCreated = true;
+                return;
+            }
         }
-        finally
+        catch (Exception ex)
         {
-            bmp.UnlockBits(data);
+            // On any failure, fall through to bitmap raster fallback
+            _logger?.LogError(ex, "Error initializing text element: {ex}", ex);
         }
     }
+
+    private string GetTextTextureCacheKey()
+    {
+        var x = Color.X.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var y = Color.Y.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var z = Color.Z.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var w = Color.W.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        
+        return $"{Text}|{FontFamily}|{FontSize}|{x}|{y}|{z}|{w}";
+    }
+
+    // Defer to UIElement.Render which draws the textured quad
+    /// <inheritdoc />
+    public override Task Render(CameraView camera, Window window)
+        => base.Render(camera, window);
 }

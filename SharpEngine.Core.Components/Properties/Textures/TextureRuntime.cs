@@ -17,8 +17,18 @@ public partial class Texture
 
         Use();
 
-        // Upload the pixel data
-        _gl.TexImage2D<byte>(TextureTarget.Texture2D, 0, InternalFormat.Rgba, (uint)width, (uint)height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, rgbaData);
+        // Flip the rows because System.Drawing bitmaps are top-left origin while OpenGL expects bottom-left.
+        var flipped = new byte[rgbaData.Length];
+        int rowBytes = width * 4;
+        for (int y = 0; y < height; y++)
+        {
+            int srcRow = y * rowBytes;
+            int dstRow = (height - 1 - y) * rowBytes;
+            System.Buffer.BlockCopy(rgbaData, srcRow, flipped, dstRow, rowBytes);
+        }
+
+        // Upload the pixel data (flipped vertically)
+        _gl.TexImage2D<byte>(TextureTarget.Texture2D, 0, InternalFormat.Rgba, (uint)width, (uint)height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, flipped);
 
         SetParameters();
         _gl.GenerateMipmap(GLEnum.Texture2D);
