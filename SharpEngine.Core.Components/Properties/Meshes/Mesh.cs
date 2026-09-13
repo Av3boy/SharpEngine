@@ -198,7 +198,7 @@ public class Mesh : IDisposable
     public void Draw()
     {
         if (Indices.Length > 0)
-            GL.DrawElements<uint>(PrimitiveType.Triangles, (uint)Indices.Length, DrawElementsType.UnsignedInt, []);
+            GL.DrawElements(PrimitiveType.Triangles, (uint)Indices.Length, DrawElementsType.UnsignedInt, (nint)0);
         else
             GL.DrawArrays(PrimitiveType.Triangles, 0, (uint)(Vertices.Length / (VertexData.VerticesSize + VertexData.NormalsSize + VertexData.TexCoordsSize)));
     }
