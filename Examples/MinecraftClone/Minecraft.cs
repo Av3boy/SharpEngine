@@ -126,6 +126,9 @@ public class Minecraft : Game
     /// <param name="frame">Information about the frame.</param>
     public override void OnAfterRender(Frame frame)
     {
+        // TODO: There seems to be a race condition where this method is called before the UI is initialized.
+        // This should be fixed in the future.
+
         ImGui.Begin("Debug");
         ImGui.Text($"FPS: {frame.FrameRate}");
         ImGui.Text($"Camera position: {Camera.Position}");

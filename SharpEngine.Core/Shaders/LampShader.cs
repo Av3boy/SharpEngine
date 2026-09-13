@@ -26,7 +26,7 @@ internal class LampShader : Shader
 
         var positionLocationUint = (uint)positionLocation;
         GL.EnableVertexAttribArray(positionLocationUint);
-        GL.VertexAttribPointer(positionLocationUint, 3, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
+        GL.VertexAttribPointer(positionLocationUint, 3, VertexAttribPointerType.Float, false, VertexData.Stride * sizeof(float), 0);
 
         return true;
     }

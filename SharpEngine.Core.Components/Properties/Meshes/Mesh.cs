@@ -160,7 +160,7 @@ public class Mesh : IDisposable
     /// </summary>
     /// <remarks>
     ///     Call this method after updating <see cref="Vertices"/> or <see cref="Indices"/> on a mesh that was already
-    ///     set up, for example after in-place processing via <see cref="SharpEngine.Core.Components.Properties.Meshes.Model.ProcessMesh"/>.
+    ///     set up, for example after in-place processing via <see cref="Model.ProcessMesh"/>.
     /// </remarks>
     public void ReinitializeGpuBuffers()
     {
@@ -180,13 +180,9 @@ public class Mesh : IDisposable
         VBO = new BufferObject<float>(GL, Vertices, BufferTargetARB.ArrayBuffer);
         VAO = new VertexArrayObject<float, uint>(GL, VBO, EBO);
 
-        VAO.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 8, 0);
-        VAO.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, 8, 3);
-        VAO.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, 8, 6);
-
-        // VAO.VertexAttributePointer(0, VertexData.VerticesSize, VertexAttribPointerType.Float, VertexData.Stride, VertexData.VerticesOffset);
-        // VAO.VertexAttributePointer(1, VertexData.NormalsSize, VertexAttribPointerType.Float, VertexData.Stride, VertexData.NormalsOffset);
-        // VAO.VertexAttributePointer(2, VertexData.TexCoordsSize, VertexAttribPointerType.Float, VertexData.Stride, VertexData.TexCoordsOffset);
+        VAO.VertexAttributePointer(VertexData.VertexIndex, VertexData.VertexCount, VertexAttribPointerType.Float, VertexData.Stride, VertexData.VerticesOffset);
+        VAO.VertexAttributePointer(VertexData.NormalIndex, VertexData.NormalCount, VertexAttribPointerType.Float, VertexData.Stride, VertexData.NormalsOffset);
+        VAO.VertexAttributePointer(VertexData.TexCoordIndex, VertexData.TexCoordCount, VertexAttribPointerType.Float, VertexData.Stride, VertexData.TexCoordsOffset);
     }
 
     /// <summary>
@@ -195,12 +191,18 @@ public class Mesh : IDisposable
     public void Bind()
         => VAO.Bind();
 
+    /// <summary>
+    ///     Draws the mesh using the current OpenGL context. 
+    /// </summary>
+    /// <remarks>
+    ///     If indices are provided, it uses indexed drawing; otherwise, it uses array drawing.
+    /// </remarks>
     public void Draw()
     {
         if (Indices.Length > 0)
             GL.DrawElements<uint>(PrimitiveType.Triangles, (uint)Indices.Length, DrawElementsType.UnsignedInt, []);
         else
-            GL.DrawArrays(PrimitiveType.Triangles, 0, (uint)(Vertices.Length / (VertexData.VerticesSize + VertexData.NormalsSize + VertexData.TexCoordsSize)));
+            GL.DrawArrays(PrimitiveType.Triangles, 0, (uint)(Vertices.Length / (VertexData.VertexCount + VertexData.NormalCount + VertexData.TexCoordCount)));
     }
 
     /// <inheritdoc />

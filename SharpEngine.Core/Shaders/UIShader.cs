@@ -23,14 +23,14 @@ internal class UIShader : Shader
         if (!base.SetAttributes(gl))
             return false;
 
-        gl.EnableVertexAttribArray(0);
-        gl.VertexAttribPointer(0, VertexData.VerticesSize, VertexAttribPointerType.Float, false, VertexData.Stride, 0);
-
-        gl.EnableVertexAttribArray(1);
-        gl.VertexAttribPointer(1, VertexData.NormalsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.NormalsOffset);
-
-        gl.EnableVertexAttribArray(2);
-        gl.VertexAttribPointer(2, VertexData.TexCoordsSize, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.TexCoordsOffset);
+        // gl.EnableVertexAttribArray(VertexData.VertexIndex);
+        // gl.VertexAttribPointer(VertexData.VertexIndex, VertexData.VertexCount, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.VerticesOffset * sizeof(float));
+        // 
+        // gl.EnableVertexAttribArray(VertexData.NormalIndex);
+        // gl.VertexAttribPointer(VertexData.NormalIndex, VertexData.NormalCount, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.NormalsOffset * sizeof(float));
+        // 
+        // gl.EnableVertexAttribArray(VertexData.TexCoordIndex);
+        // gl.VertexAttribPointer(VertexData.TexCoordIndex, VertexData.TexCoordCount, VertexAttribPointerType.Float, false, VertexData.Stride, VertexData.TexCoordsOffset * sizeof(float));
 
         return true;
     }
