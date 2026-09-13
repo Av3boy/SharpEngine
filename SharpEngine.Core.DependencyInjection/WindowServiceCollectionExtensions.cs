@@ -21,7 +21,6 @@ public static class WindowServiceCollectionExtensions
     ///     When creating multiple windows the last one created will act as the default window.
     ///     To specify a different default window, try tweaking the <paramref name="isDefaultWindow"/> parameter.
     /// </remarks>
-    /// <param name="services">The service collection.</param>
     /// <param name="factory">Creates the window instance.</param>
     /// <param name="configure">Configures the created window.</param>
     /// <param name="name">The optional registration name.</param>
@@ -78,7 +77,7 @@ public static class WindowServiceCollectionExtensions
                         }
                         catch (Exception ex)
                         {
-                            var logger = serviceProvider.GetService<Microsoft.Extensions.Logging.ILogger<Game>>();
+                            var logger = serviceProvider.GetService<ILogger<Game>>();
                             logger?.LogError(ex, "Error during game initialization.");
                         }
                     };
@@ -89,8 +88,6 @@ public static class WindowServiceCollectionExtensions
                 return window;
             }, isDefaultWindow);
         });
-
-        return handler;
 
         return handler;
     }

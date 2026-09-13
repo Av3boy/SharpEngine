@@ -60,7 +60,8 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
         base.OnInitialized(gl);
 
         // TODO: #5 Support custom meshes?
-        var mesh = MeshService.Instance.LoadMesh(nameof(Primitives.Plane), Primitives.Plane.Mesh);
+        // var mesh = MeshService.Instance.LoadMesh(nameof(Primitives.Plane), Primitives.Plane.Mesh);
+        var mesh = Primitives.Plane.CreateMesh(gl);
         var material = MaterialExtensions.Default(new UIShader(gl));
 
         _renderer = new MeshRenderer(mesh, material);

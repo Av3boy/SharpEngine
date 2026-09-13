@@ -38,7 +38,7 @@ public class Minecraft : Game
     private readonly Terrain.TerrainGenerator_New _terrain;
     private readonly SceneNode _blocksNode;
 
-    private bool _renderTerrain = true;
+    private bool _renderTerrain = false;
     private bool _renderUI = true;
     private bool _minimaldebugSetup = true;
 

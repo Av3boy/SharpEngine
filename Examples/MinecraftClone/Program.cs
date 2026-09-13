@@ -44,8 +44,8 @@ public static class Program
         services.AddEngine(engine =>
         {
             engine.AddHandler<WindowHandler>()
-                  .AddWindow();
-                  //.AddWindow(name: "Second Window");
+                  .AddWindow()
+                  .AddWindow(name: "Second Window");
         });
     }
 }

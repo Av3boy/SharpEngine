@@ -37,7 +37,6 @@ public static class PrimitiveFactory
             _ => throw new InvalidOperationException($"A primitive of type {primitiveType} does not exist.")
         };
 
-        // Shader compilation is context-dependent; the GameObject will acquire the correct shader per-window during rendering.
         return new GameObject()
         {
             Model = model,

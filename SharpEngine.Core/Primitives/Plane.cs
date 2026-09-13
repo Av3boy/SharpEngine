@@ -1,6 +1,6 @@
 ﻿using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Entities.Properties.Meshes;
-using SharpEngine.Core.Windowing;
+using Silk.NET.OpenGL;
 using System;
 
 namespace SharpEngine.Core.Primitives;
@@ -10,20 +10,24 @@ namespace SharpEngine.Core.Primitives;
 /// </summary>
 public static class Plane
 {
-    /// <summary>The plane mesh.</summary>
-    /// <remarks>
-    ///     Vertices are stored in interleaved format: position (x, y, z), normal (nx, ny, nz), UV (u, v).
-    /// </remarks>
-    public static Mesh Mesh { get; } = new(Window.SharedGL,
-        vertices:
-        [
-            // pos.x,  pos.y, pos.z, norm.x, norm.y, norm.z, uv.u,  uv.v
-             1f,  1f, 0.0f,  0f, 0f, 1f,  1.0f, 0.0f, // top right
-             1f, -1f, 0.0f,  0f, 0f, 1f,  1.0f, 0.0f, // bottom right
-            -1f, -1f, 0.0f,  0f, 0f, 1f,  0.0f, 1.0f, // bottom left
-            -1f,  1f, 0.0f,  0f, 0f, 1f,  0.0f, 1.0f, // top left
-        ],
-        indices: [0u, 1u, 3u, 1u, 2u, 3u]);
+    /// <summary>Interleaved vertex data for the plane (position XYZ, normal XYZ, UV UV).</summary>
+    public static readonly float[] Vertices =
+    [
+        // pos.x,  pos.y, pos.z, norm.x, norm.y, norm.z, uv.u,  uv.v
+         1f,  1f, 0.0f,  0f, 0f, 1f,  1.0f, 0.0f, // top right
+         1f, -1f, 0.0f,  0f, 0f, 1f,  1.0f, 0.0f, // bottom right
+        -1f, -1f, 0.0f,  0f, 0f, 1f,  0.0f, 1.0f, // bottom left
+        -1f,  1f, 0.0f,  0f, 0f, 1f,  0.0f, 1.0f, // top left
+    ];
+
+    /// <summary>Index buffer for the plane.</summary>
+    public static readonly uint[] Indices = [0u, 1u, 3u, 1u, 2u, 3u];
+
+    /// <summary>
+    ///     Creates a GL-bound Mesh instance for the provided GL context.
+    ///     This factory avoids creating a single global Mesh bound to SharedGL.
+    /// </summary>
+    public static Mesh CreateMesh(GL gl) => new Mesh(gl, Vertices, Indices);
 
     internal static Model CreateModel(string diffuseMapFile, string? specularMapFile) => throw new NotImplementedException();
 }
