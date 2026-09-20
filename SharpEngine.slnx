@@ -43,13 +43,13 @@
   </Folder>
   <Folder Name="/Tests/IntegrationTests/" />
   <Folder Name="/Tests/UnitTests/">
+    <Project Path="Tests/ObjLoader.Test/SharpEngine.Core.ObjLoader.Tests.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
     <Project Path="Tests/SharpEngine.Core.Components.Tests/SharpEngine.Core.Components.Tests.csproj" Id="98a6ad4c-b5dd-4408-8266-652e4f0e51d3">
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
     <Project Path="Tests/SharpEngine.Core.Numerics.Tests/SharpEngine.Core.Numerics.Tests.csproj" Id="35366be2-38ad-4321-9036-b010de526027">
-      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-    </Project>
-    <Project Path="Tests/SharpEngine.Core.ObjLoader.Test/SharpEngine.Core.ObjLoader.Tests.csproj">
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
     <Project Path="Tests/SharpEngine.Core.Tests/SharpEngine.Core.Tests.csproj">
