@@ -1,6 +1,6 @@
-﻿using SharpEngine.Core._Resources;
-using SharpEngine.Core.Extensions;
+﻿using SharpEngine.Core.Defaults;
 using SharpEngine.Core.Numerics;
+using SharpEngine.IO.Extensions;
 
 namespace Minecraft.Terrain.Block;
 
@@ -15,7 +15,7 @@ internal class Stone : BlockBase
     /// <param name="position">The position where the block is created.</param>
     /// <param name="name">The name of the object in the scene.</param>
     public Stone(Vector3 position, string name) 
-        : base(position, name, DiffuseMap(), SpecularMap(), Default.VertexShader, Default.FragmentShader) { }
+        : base(position, name, DiffuseMap(), SpecularMap(), Defaults.VertexShader, Defaults.FragmentShader) { }
 
     private static string DiffuseMap() => PathExtensions.GetAssemblyPath("Resources\\container2.png");
     private static string SpecularMap() => PathExtensions.GetAssemblyPath("Resources\\container2_specular.png");

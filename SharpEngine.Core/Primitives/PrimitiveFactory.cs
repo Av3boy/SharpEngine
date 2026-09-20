@@ -17,7 +17,7 @@ public static class PrimitiveFactory
     /// <param name="primitiveType">The type of primitive to create.</param>
     /// <param name="position">Where the game object should be placed.</param>
     public static GameObject Create(PrimitiveType primitiveType, Vector3 position)
-        => Create(primitiveType, position, _Resources.Default.DebugTexture);
+        => Create(primitiveType, position, Defaults.Defaults.DebugTexture);
 
     /// <inheritdoc cref="Create(PrimitiveType, Vector3)"/>
     /// <param name="primitiveType">The type of primitive to be created.</param>

@@ -119,7 +119,7 @@ public static partial class Program
         var window = CreateWindow();
 
         // Prefer the higher-level Window event to avoid wiring low-level input handlers.
-        window.InputManager.OnButtonMouseDown += (mouse, button) => Mouse_Click(mouse, (MouseButton)button, mouse.Position);
+        window.InputManager.OnButtonMouseDown += (mouse, button) => Mouse_Click(mouse, button, (SharpEngine.Core.Numerics.Vector2)mouse.Position);
 
         if (window.InputManager.Context is not null)
             _inputContexts.Add(window.InputManager.Context);
@@ -127,6 +127,6 @@ public static partial class Program
         _windows.Add(window);
     }
 
-    private static void Mouse_Click(IMouse args1, MouseButton arg2, System.Numerics.Vector2 arg3)
+    private static void Mouse_Click(IMouse args1, MouseButton arg2, SharpEngine.Core.Numerics.Vector2 arg3)
         => _windowQueue.Enqueue(WindowOptions.Default);
 }
