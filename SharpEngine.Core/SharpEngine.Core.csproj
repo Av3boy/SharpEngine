@@ -1,6 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <LangVersion>preview</LangVersion>
     <TargetFramework>$(DotNetTargetFramework)</TargetFramework>
 
     <Description>Everything needed to build games using a purely C# game engine.</Description>
@@ -12,10 +13,8 @@
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 
     <!-- Required, atleast for now since another NuGet package with the SharpEngine.Core name already exists. -->
+    <!-- TODO: This will be resolved once we start hosting the nuget packages in GitHub -->
     <PackageId>$(AssemblyName).NET</PackageId>
-    
-    <!-- TODO: This required by the AudioDevice class. -->
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
@@ -37,22 +36,24 @@
   
   <!-- Required NuGet packages -->
   <ItemGroup>    
-    <PackageReference Include="Silk.NET.OpenAL" Version="2.23.0" />
     <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.23.0" />
     <PackageReference Include="Silk.NET.Input" Version="2.23.0" />
     <PackageReference Include="Silk.NET.OpenGL" Version="2.23.0" />
     <PackageReference Include="Silk.NET.Windowing" Version="2.23.0" />
+
     <PackageReference Include="NLayer" Version="3.0.0" />
-    
-    <PackageReference Include="StbImageSharp" Version="2.30.16" />
+
     <PackageReference Include="System.Text.Json" Version="9.0.9" />
+    <PackageReference Include="System.IO.Abstractions" Version="22.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.IO\SharpEngine.IO.csproj" />
     <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
     <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Telemetry\SharpEngine.Telemetry.csproj" />
+
     <ProjectReference Include="..\SharpEngine.Core.Components\SharpEngine.Core.Components.csproj" />
+    <ProjectReference Include="..\SharpEngine.Core.Defaults\SharpEngine.Core.Defaults.csproj" />
     <ProjectReference Include="..\SharpEngine.Core.Numerics\SharpEngine.Core.Numerics.csproj" />
   </ItemGroup>
 
@@ -69,6 +70,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="_Resources\Shaders\uiShader.frag" CopyToOutputDirectory="Always" />
+    <None Update="_Resources\Shaders\text-curve.vert" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\text-curve.frag" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\text-sdf.vert" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\text-sdf.frag" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\text-bitmap.vert" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\text-bitmap.frag" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\ui_sdf.frag" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="_Resources\Shaders\ui_sdf.vert" CopyToOutputDirectory="PreserveNewest" />
     <None Update="_Resources\Shaders\uiShader.vert" CopyToOutputDirectory="PreserveNewest" />
     <None Update="_Resources\Textures\debug.jpg" CopyToOutputDirectory="Always" />
     <None Update="_Resources\icon.png" CopyToOutputDirectory="PreserveNewest" />

@@ -1,6 +1,6 @@
-﻿using SharpEngine.Core._Resources;
-using SharpEngine.Core.Extensions;
+﻿using SharpEngine.Core.Defaults;
 using SharpEngine.Core.Numerics;
+using SharpEngine.IO.Extensions;
 
 namespace Minecraft.Terrain.Block;
 
@@ -16,8 +16,8 @@ internal class Dirt : BlockBase
     /// <param name="name">The name of the block to initialize.</param>
     public Dirt(Silk.NET.OpenGL.GL gl, Vector3 position, string name) : base(gl, position, name, PathExtensions.GetAssemblyPath("Resources\\grass.jpg"), 
                                                                       PathExtensions.GetAssemblyPath("Resources\\container2_specular.png"),
-                                                                      Default.VertexShader, 
-                                                                      Default.FragmentShader) { }
+                                                                      Defaults.VertexShader, 
+                                                                      Defaults.FragmentShader) { }
 
     /// <inheritdoc />
     public override BlockId BlockId => BlockId.Dirt;

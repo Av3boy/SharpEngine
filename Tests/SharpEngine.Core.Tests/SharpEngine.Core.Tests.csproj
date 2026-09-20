@@ -12,18 +12,7 @@
     <PackageReference Include="Moq" Version="4.20.72" />
 
     <PackageReference Include="xunit.v3" Version="3.2.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Audio\" />
-    <Folder Include="Entities\" />
-    <Folder Include="Enums\" />
-    <Folder Include="Handlers\" />
-    <Folder Include="Windowing\" />
-    <Folder Include="Textures\" />
-    <Folder Include="Scenes\" />
-    <Folder Include="Renderers\" />
-    <Folder Include="Primitives\" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>

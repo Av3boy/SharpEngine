@@ -19,6 +19,11 @@ using Silk.NET.Windowing;
 using System;
 using System.Collections.Generic;
 using SharpEngine.Core.EngineManagers;
+using System.Linq;
+using System.Numerics;
+using SharpEngine.Telemetry;
+using Vector3 = SharpEngine.Core.Numerics.Vector3;
+using SharpEngine.IO.Extensions;
 
 namespace SharpEngine.Core.Windowing;
 

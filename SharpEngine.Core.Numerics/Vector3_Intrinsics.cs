@@ -1,7 +1,8 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Runtime.CompilerServices;
+using SysMath = System.Math;
 
 namespace SharpEngine.Core.Numerics;
 
@@ -275,9 +276,9 @@ public partial struct Vector3 : IVector
     [JitIntrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(Vector3 left, Vector3 right)
-        => Math.Abs(left.X - right.X) < Float.Tolerance &&
-           Math.Abs(left.Y - right.Y) < Float.Tolerance &&
-           Math.Abs(left.Z - right.Z) < Float.Tolerance;
+        => SysMath.Abs(left.X - right.X) < Float.Tolerance &&
+           SysMath.Abs(left.Y - right.Y) < Float.Tolerance &&
+           SysMath.Abs(left.Z - right.Z) < Float.Tolerance;
 
     /// <summary>
     ///     Returns a boolean indicating whether the two given vectors are not equal.

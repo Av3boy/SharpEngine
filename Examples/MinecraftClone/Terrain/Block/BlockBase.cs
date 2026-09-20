@@ -1,4 +1,4 @@
-﻿using SharpEngine.Core.Entities;
+using SharpEngine.Core.Entities;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Primitives;
 

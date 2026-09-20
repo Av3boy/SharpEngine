@@ -4,15 +4,17 @@ using Microsoft.Extensions.Logging;
 
 using Minecraft.Terrain.Block;
 using Minecraft.Terrain.Layers;
-using SharpEngine.Core.Components.Properties;
+
+using SharpEngine.Core;
 using SharpEngine.Core.Entities;
-using SharpEngine.Core.Entities.UI;
-using SharpEngine.Core.Entities.UI.Layouts;
+using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Physics;
 using SharpEngine.Core.Scenes;
+using SharpEngine.Core.UI.Entities;
+using SharpEngine.Core.UI.Entities.Layouts;
 using SharpEngine.Core.Windowing;
 
 using Silk.NET.Input;
@@ -54,7 +56,7 @@ public class Minecraft : Game
         _inventory = new Inventory();
 
         _blocksNode = _scene.Root.AddChild<Transform, Vector3>("Blocks");
-        _terrain = new Terrain.TerrainGenerator(_scene, _blocksNode, 
+        _terrain = new Terrain.TerrainGenerator_New(_scene, _blocksNode, 
         [
             new HeightMapPass(),
             new BaseTerrainPass(),
@@ -81,6 +83,16 @@ public class Minecraft : Game
 
             if (_renderUI)
                 InitializeUI();
+
+            // Test text renderer
+            var _textElem = new TextElement("text element")
+            {
+                Text = "Hello, World!",
+                Height = 200,
+                Color = new System.Numerics.Vector4(1, 1, 1, 1),
+            };
+
+            _uiElem.AddChild(_textElem);
         }
         catch (Exception ex)
         {

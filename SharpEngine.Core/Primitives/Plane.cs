@@ -1,4 +1,4 @@
-﻿using SharpEngine.Core.Components.Properties.Meshes;
+using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Entities.Properties.Meshes;
 using Silk.NET.OpenGL;
 using System;

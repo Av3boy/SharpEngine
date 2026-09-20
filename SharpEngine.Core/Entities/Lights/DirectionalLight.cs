@@ -1,4 +1,3 @@
-using SharpEngine.Core._Resources;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Shaders;
@@ -30,7 +29,7 @@ public class DirectionalLight : Light
     /// <inheritdoc />
     public override Task Render(CameraView camera, Window window)
     {
-        Shader = ShaderService.Instance.LoadShader(window, Default.VertexShader, Default.FragmentShader, "lighting");
+        Shader = ShaderService.Instance.LoadShader(window, Defaults.Defaults.VertexShader, Defaults.Defaults.FragmentShader, "lighting");
         Shader.SetVector3("dirLight.direction", Direction);
         Shader.SetVector3("dirLight.ambient", Ambient);
         Shader.SetVector3("dirLight.diffuse", Diffuse);

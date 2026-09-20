@@ -1,6 +1,6 @@
-﻿using SharpEngine.Core._Resources;
-using SharpEngine.Core.Extensions;
+using SharpEngine.Core.Defaults;
 using SharpEngine.Core.Numerics;
+using SharpEngine.IO.Extensions;
 
 namespace Minecraft.Terrain.Block;
 

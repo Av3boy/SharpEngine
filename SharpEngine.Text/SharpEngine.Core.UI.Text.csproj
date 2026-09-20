@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(DotNetTargetFramework)</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- TODO: This needs to be refactored out support cross platform. -->
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+
+    <PackageReference Include="System.IO.Abstractions" Version="22.2.0" />
+
+    <PackageReference Include="LibTessDotNet" Version="1.1.15" />
+
+    <!-- TODO: These packages rely on System.Numerics so they overlap with the definitions in SharpEngine.Numerics. -->
+    <PackageReference Include="Typography.OpenFont" Version="1.0.0">
+      <Aliases>typography</Aliases>
+    </PackageReference>
+    <PackageReference Include="Typography.GlyphLayout" Version="1.0.0">
+      <Aliases>typography</Aliases>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Telemetry\SharpEngine.Telemetry.csproj" />
+    <ProjectReference Include="..\SharpEngine.Core.Components\SharpEngine.Core.Components.csproj" />
+    <ProjectReference Include="..\SharpEngine.Core.Defaults\SharpEngine.Core.Defaults.csproj" />
+    <ProjectReference Include="..\SharpEngine.Core.UI\SharpEngine.Core.UI.csproj" />
+    <ProjectReference Include="..\SharpEngine.Core\SharpEngine.Core.csproj" />
+  </ItemGroup>
+
+</Project>

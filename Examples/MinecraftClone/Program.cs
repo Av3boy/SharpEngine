@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using SharpEngine.Core.DependencyInjection;
@@ -8,6 +8,7 @@ using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Renderers;
 using SharpEngine.Core.Renderers.DependencyInjection;
 using SharpEngine.Core.Scenes;
+using SharpEngine.Core.UI.Renderers;
 
 namespace Minecraft;
 

@@ -1,5 +1,4 @@
 using SharpEngine.Core.Attributes;
-using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Entities.Interfaces;
 using SharpEngine.Core.Entities.UI;
@@ -16,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SharpEngine.Core.UI.Entities;
 
 namespace SharpEngine.Core.Entities;
 
@@ -94,7 +94,7 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
         if (shader is not null)
             _tempShaderData = new TempShaderDataContainer(shader.VertPath, shader.FragPath, shader.Name);
         else
-            _tempShaderData = new TempShaderDataContainer(_Resources.Default.VertexShader, _Resources.Default.FragmentShader, "lighting");
+            _tempShaderData = new TempShaderDataContainer(Defaults.Defaults.VertexShader, Defaults.Defaults.FragmentShader, "lighting");
     }
 
     /// <summary>

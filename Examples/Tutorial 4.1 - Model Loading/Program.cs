@@ -1,5 +1,3 @@
-using SharpEngine.Core._Resources;
-using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.ObjLoader.Loaders.ObjLoader;
 using SharpEngine.Core.Numerics;
@@ -13,6 +11,9 @@ using Silk.NET.Windowing;
 
 using System;
 using System.Collections.Generic;
+using System.Numerics;
+using SharpEngine.IO.Extensions;
+using SharpEngine.Core.Defaults;
 
 namespace Tutorial;
 

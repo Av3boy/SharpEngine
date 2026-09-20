@@ -1,4 +1,6 @@
 using Microsoft.Extensions.Logging;
+
+using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Telemetry;
 using SharpEngine.IO;
 

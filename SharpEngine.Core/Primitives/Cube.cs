@@ -1,4 +1,3 @@
-using SharpEngine.Core._Resources;
 using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Components.Properties.Textures;

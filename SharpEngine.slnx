@@ -5,6 +5,41 @@
     <BuildType Name="LauncherNonWindows" />
     <BuildType Name="Release" />
   </Configurations>
+  <Folder Name="/Core/">
+    <Project Path="SharpEngine.Core.Audio/SharpEngine.Core.Audio.csproj" Id="60338ca9-6f87-45dc-bb95-08d1bdbd6341">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="SharpEngine.Core.Components/SharpEngine.Core.Components.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="SharpEngine.Core.Defaults/SharpEngine.Core.Defaults.csproj" Id="a142e2a9-d8cf-41eb-910f-af5f24180edb">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="SharpEngine.Core.DependencyInjection/SharpEngine.Core.DependencyInjection.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="SharpEngine.Core.Numerics/SharpEngine.Core.Numerics.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="SharpEngine.Core.ObjLoader/SharpEngine.Core.ObjLoader.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="SharpEngine.Core.Physics/SharpEngine.Core.Physics.csproj" Id="45d4ea93-7673-4103-9d60-6403844c982c">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="SharpEngine.Core/SharpEngine.Core.csproj" />
+    <Project Path="SharpEngine.Dto/SharpEngine.Core.Dto.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Core/UI/">
+    <Project Path="SharpEngine.Core.UI/SharpEngine.Core.UI.csproj" Id="3d4cca8d-c714-4e69-9ab8-d299d364af1d">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="SharpEngine.Text/SharpEngine.Core.UI.Text.csproj" Id="f7b652cd-7df8-4cd1-8ada-0cd550dbb4f8">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+  </Folder>
   <Folder Name="/Docs/">
     <File Path="ATAM.md" />
     <File Path="README.md" />
@@ -21,6 +56,20 @@
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
     <Project Path="Examples/Tutorial 4.1 - Model Loading/Tutorial 4.1 - Model Loading.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Shared/">
+    <Project Path="../SharpEngine-Shared/SharpEngine.IO/SharpEngine.IO.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="../SharpEngine-Shared/SharpEngine.Rest/SharpEngine.Rest.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="../SharpEngine-Shared/SharpEngine.Shared/SharpEngine.Shared.csproj">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
+    <Project Path="../SharpEngine-Shared/SharpEngine.Telemetry/SharpEngine.Telemetry.csproj" Id="bfb0783a-67b6-442a-bb39-b9d6267f1e1b">
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
   </Folder>
@@ -55,6 +104,9 @@
     <Project Path="Tests/SharpEngine.Core.Tests/SharpEngine.Core.Tests.csproj">
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
+    <Project Path="Tests/SharpEngine.Core.UI.Text.Tests/SharpEngine.Core.UI.Text.Tests.csproj" Id="e68a2592-dbe0-41f8-8dc2-89ac71936219">
+      <BuildType Solution="LauncherNonWindows|*" Project="Release" />
+    </Project>
     <Project Path="Tests/SharpEngine.Editor.Tests/SharpEngine.Editor.Tests.csproj">
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
@@ -62,33 +114,5 @@
       <BuildType Solution="LauncherNonWindows|*" Project="Release" />
     </Project>
   </Folder>
-  <Project Path="../SharpEngine-Shared/SharpEngine.IO/SharpEngine.IO.csproj">
-    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-  </Project>
-  <Project Path="../SharpEngine-Shared/SharpEngine.Rest/SharpEngine.Rest.csproj">
-    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-  </Project>
-  <Project Path="../SharpEngine-Shared/SharpEngine.Shared/SharpEngine.Shared.csproj">
-    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-  </Project>
-  <Project Path="../SharpEngine-Shared/SharpEngine.Telemetry/SharpEngine.Telemetry.csproj" Id="bfb0783a-67b6-442a-bb39-b9d6267f1e1b">
-    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-  </Project>
-  <Project Path="SharpEngine.Core.Components/SharpEngine.Core.Components.csproj">
-    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-  </Project>
-  <Project Path="SharpEngine.Core.DependencyInjection/SharpEngine.Core.DependencyInjection.csproj">
-    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-  </Project>
-  <Project Path="SharpEngine.Core.Numerics/SharpEngine.Core.Numerics.csproj">
-    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-  </Project>
-  <Project Path="SharpEngine.Core.ObjLoader/SharpEngine.Core.ObjLoader.csproj">
-    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-  </Project>
-  <Project Path="SharpEngine.Core/SharpEngine.Core.csproj" />
-  <Project Path="SharpEngine.Dto/SharpEngine.Core.Dto.csproj">
-    <BuildType Solution="LauncherNonWindows|*" Project="Release" />
-  </Project>
   
 </Solution>
