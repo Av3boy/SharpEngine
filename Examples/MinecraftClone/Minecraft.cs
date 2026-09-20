@@ -6,6 +6,7 @@ using Minecraft.Terrain.Block;
 using Minecraft.Terrain.Layers;
 
 using SharpEngine.Core;
+using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Properties;
 using SharpEngine.Core.Enums;
@@ -40,9 +41,9 @@ public class Minecraft : Game
     private readonly Terrain.TerrainGenerator _terrain;
     private readonly SceneNode _blocksNode;
 
-    private bool _renderTerrain = true;
-    private bool _renderUI = true;
-    private bool _minimaldebugSetup = true;
+    private readonly bool _renderTerrain = true;
+    private readonly bool _renderUI = true;
+    private readonly bool _minimaldebugSetup = true;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Minecraft"/>.
@@ -56,7 +57,7 @@ public class Minecraft : Game
         _inventory = new Inventory();
 
         _blocksNode = _scene.Root.AddChild<Transform, Vector3>("Blocks");
-        _terrain = new Terrain.TerrainGenerator_New(_scene, _blocksNode, 
+        _terrain = new Terrain.TerrainGenerator(_scene, _blocksNode, 
         [
             new HeightMapPass(),
             new BaseTerrainPass(),

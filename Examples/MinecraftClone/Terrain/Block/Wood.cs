@@ -7,7 +7,7 @@ namespace Minecraft.Terrain.Block;
 internal class Wood : BlockBase
 {
     public Wood(Silk.NET.OpenGL.GL gl, Vector3 position, string name)
-    : base(gl, position, name, DiffuseMap(), SpecularMap(), Default.VertexShader, Default.FragmentShader) { }
+    : base(gl, position, name, DiffuseMap(), SpecularMap(), Defaults.VertexShader, Defaults.FragmentShader) { }
 
     private static string DiffuseMap() => PathExtensions.GetAssemblyPath("Resources\\container2.png");
     private static string SpecularMap() => PathExtensions.GetAssemblyPath("Resources\\container2_specular.png");

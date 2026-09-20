@@ -22,7 +22,7 @@
 
   <!-- Placeholders for compiler directives -->
   <PropertyGroup>
-    <DeliverBuiltInLogging>false</DeliverBuiltInLogging>
+    <DeliverBuiltInLogging>true</DeliverBuiltInLogging>
   </PropertyGroup>
 
   <!-- Assign directives if a specific DLL can be found. --> 

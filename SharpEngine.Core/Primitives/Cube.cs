@@ -189,7 +189,7 @@ public static class Cube
     {
         // TODO: This method now contains some duplication as the constructor was removed and it's content was moved here.
 
-        var defaultTexture = TextureService.Instance.LoadTexture(Default.DebugTexture);
+        var defaultTexture = TextureService.Instance.LoadTexture(Defaults.Defaults.DebugTexture);
 
         var mesh = new Mesh(gl)
         {

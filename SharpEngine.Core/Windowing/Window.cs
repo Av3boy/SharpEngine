@@ -1,11 +1,9 @@
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Entities.Views.Settings;
-using SharpEngine.Core.Extensions;
 using SharpEngine.Core.Renderers;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Telemetry;
-using SharpEngine.Core.Managers;
 using SharpEngine.Core.Numerics;
 
 using Microsoft.Extensions.Logging;
@@ -18,10 +16,6 @@ using Silk.NET.Windowing;
 
 using System;
 using System.Collections.Generic;
-using SharpEngine.Core.EngineManagers;
-using System.Linq;
-using System.Numerics;
-using SharpEngine.Telemetry;
 using Vector3 = SharpEngine.Core.Numerics.Vector3;
 using SharpEngine.IO.Extensions;
 

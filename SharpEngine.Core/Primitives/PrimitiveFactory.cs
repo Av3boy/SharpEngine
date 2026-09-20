@@ -17,7 +17,7 @@ public static class PrimitiveFactory
     /// <param name="primitiveType">The type of primitive to create.</param>
     /// <param name="position">Where the game object should be placed.</param>
     public static GameObject Create(Silk.NET.OpenGL.GL gl, PrimitiveType primitiveType, Vector3 position)
-        => Create(gl, primitiveType, position, _Resources.Default.DebugTexture);
+        => Create(gl, primitiveType, position, Defaults.Defaults.DebugTexture);
 
     /// <inheritdoc cref="Create(PrimitiveType, Vector3)"/>
     /// <param name="primitiveType">The type of primitive to be created.</param>

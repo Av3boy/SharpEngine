@@ -1,7 +1,6 @@
 using SharpEngine.Core.Attributes;
 using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Entities.Interfaces;
-using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Numerics;
@@ -9,13 +8,14 @@ using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
 using SharpEngine.Core.Textures;
+using SharpEngine.Core.UI.Entities;
+using SharpEngine.Core.Components.Properties;
 using Shader = SharpEngine.Core.Shaders.Shader;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SharpEngine.Core.UI.Entities;
 
 namespace SharpEngine.Core.Entities;
 
@@ -140,15 +140,5 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
         }
 
         return Task.CompletedTask;
-    }
-}
-
-public static class MaterialExtensions
-{
-    public static Material Default(Shader shader)
-    {
-        var debugTexture = TextureService.Instance.LoadTexture(_Resources.Default.DebugTexture);
-        var material = new Material("defaultMaterial", debugTexture) { Shader = shader };
-        return material;
     }
 }

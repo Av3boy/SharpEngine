@@ -11,9 +11,7 @@ using Silk.NET.Windowing;
 
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using SharpEngine.IO.Extensions;
-using SharpEngine.Core.Defaults;
 
 namespace Tutorial;
 
@@ -83,7 +81,7 @@ public static class Program
 
         Gl = GL.GetApi(window);
 
-        Shader = new Shader(Gl, PathExtensions.GetAssemblyPath("shader2.vert"), Default.LightShader, "test");
+        Shader = new Shader(Gl, PathExtensions.GetAssemblyPath("shader2.vert"), SharpEngine.Core.Defaults.Defaults.LightShader, "test");
         Texture = new Texture(Gl, "silk.png");
 
         if (ObjLoaderFactory.Load(Gl, "D:\\Untitled2.obj", out var model))

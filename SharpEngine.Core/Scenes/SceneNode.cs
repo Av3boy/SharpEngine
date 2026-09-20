@@ -48,7 +48,7 @@ public abstract class SceneNode
 
     private bool _initialized;
 
-    private static readonly ILogger<SceneNode> logger = LoggingExtensions.CreateLogger<SceneNode>();
+    private readonly ILogger<SceneNode> _logger = LoggingExtensions.CreateLogger<SceneNode>();
 
     /// <summary>
     ///     Initializes a new empty <see cref="SceneNode"/>.

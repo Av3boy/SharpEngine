@@ -33,14 +33,14 @@ public class UIRenderer : RendererBase
     /// <inheritdoc />
     public override RenderFlags RenderFlag => RenderFlags.UIRenderer;
 
+    // Handler reference for subscribing/unsubscribing to scene events
+    private Action? _sceneChangedHandler;
+
     /// <summary>
     ///     Initializes a new instance of <see cref="UIRenderer"/>.
     /// </summary>
     public UIRenderer(CameraView camera, ISettings settings, Scene scene)
         : this(camera, settings, scene, LoggingExtensions.CreateLogger<UIRenderer>()) { }
-
-    // Handler reference for subscribing/unsubscribing to scene events
-    private Action? _sceneChangedHandler;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="UIRenderer"/>.
@@ -75,8 +75,8 @@ public class UIRenderer : RendererBase
             }
         }
 
-        // Subscribe to scene changes to refresh cache on demand. Only mark that a refresh is needed to avoid doing
-        // heavy traversals for every scene mutation; the renderer will perform a single refresh per frame when needed.
+        // Subscribe to scene changes to refresh cache on demand.
+        // Only mark that a refresh is needed to avoid doing heavy traversals for every scene mutation; the renderer will perform a single refresh per frame when needed.
         _sceneChangedHandler = () => _needsRefresh = true;
         _scene.SceneChanged += _sceneChangedHandler;
     }

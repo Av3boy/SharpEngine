@@ -1,17 +1,16 @@
-using SharpEngine.Core.Entities.Properties;
-using SharpEngine.Core.Entities.Properties.Meshes;
+using SharpEngine.Core.Entities;
 using SharpEngine.Core.Entities.Views;
+using SharpEngine.Core.Entities.Interfaces;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
+using SharpEngine.Core.Shaders.Rendering;
+using SharpEngine.Core.Numerics;
+using SharpEngine.Core.Components.Properties;
 using Vector2 = SharpEngine.Core.Numerics.Vector2;
 
 using Silk.NET.OpenGL;
-using System.Numerics;
-using SharpEngine.Core.Entities.Interfaces;
-using SharpEngine.Core.Shaders.Rendering;
-using SharpEngine.Core.Entities;
 
 namespace SharpEngine.Core.UI.Entities;
 
@@ -52,7 +51,7 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
         base.OnInitialized(gl);
 
         // TODO: #5 Support custom meshes?
-        var mesh = MeshService.Instance.LoadMesh(nameof(Primitives.Plane), Primitives.Plane.Mesh);
+        var mesh = Primitives.Plane.CreateMesh(gl);
         var material = MaterialExtensions.Default(new UIShader(gl));
 
         _renderer = new MeshRenderer(mesh, material);
@@ -76,7 +75,7 @@ public class UIElement : EmptyNode<Transform2D, Vector2>, IRenderable
         OrthoMatrix = window.CreateOrthographicOffCenter();
 
         _paramBinder.Apply(this, _renderer.Material.Shader);
-        _renderer.Material.Shader.SetVector2("position", (System.Numerics.Vector2)Transform.Position);
+        _renderer.Material.Shader.SetVector2("position", Transform.Position);
         _renderer.Material.Shader.SetFloat("rotation", Math.DegreesToRadians(Transform.Rotation.Angle));
         _renderer.Material.Shader.SetInt("texture1", 0);
         _renderer.Material.Shader.SetMatrix4(ShaderAttributes.Model, Transform.ModelMatrix);
