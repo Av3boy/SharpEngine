@@ -1,5 +1,9 @@
 <h1 align="center">
-    <a href="#"><img align="center" width="100" src="Resources/icon.svg"></a>
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="Resources/icon_white.svg"/>
+      <source media="(prefers-color-scheme: light)" srcset="Resources/icon.svg"/>
+      <img alt="The SharpEngine logo." align="center" width="100" src="Resources/icon.svg"/>
+    </picture>
     SharpEngine    
 </h1>
 <div align="center">
