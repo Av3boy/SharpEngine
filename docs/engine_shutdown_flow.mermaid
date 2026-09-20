@@ -1,0 +1,67 @@
+flowchart TD
+
+    A[Shutdown] --> B[Begin Engine Shutdown]
+
+    B --> B1[Set Engine Running = false]
+    B1 --> B2[Stop Accepting New Engine Commands]
+    B2 --> B3[Stop Simulation]
+
+    %% =========================================================
+    %% WINDOWS
+    %% =========================================================
+
+    B3 --> C[Request All Windows Close]
+
+    C --> C1[WindowHandler.StopAcceptingWindows]
+    C1 --> C2[Signal Silk.NET Windows To Close]
+    C2 --> C3[Window Loops Exit]
+    C3 --> C4[Dispose Per-Window Renderer Resources]
+    C4 --> C5[Dispose Silk.NET Windows]
+
+    %% =========================================================
+    %% ECS / SCENE
+    %% =========================================================
+
+    C5 --> D[Unload Active Scene Async]
+
+    D --> D1[Run OnDisable]
+    D1 --> D2[Run OnDestroy]
+    D2 --> D3[Destroy Entities]
+    D3 --> D4[Apply Final ECS Structural Changes]
+
+    %% =========================================================
+    %% SYSTEM SHUTDOWN
+    %% =========================================================
+
+    D4 --> E[Shutdown Runtime Systems Async]
+
+    E --> E1[PhysicsSystem.ShutdownAsync]
+    E --> E2[AnimationSystem.ShutdownAsync]
+    E --> E3[AudioSystem.ShutdownAsync]
+    E --> E4[AssetSystem.ShutdownAsync]
+
+    E1 --> EB[await Task.WhenAll]
+    E2 --> EB
+    E3 --> EB
+    E4 --> EB
+
+    %% =========================================================
+    %% CORE SHUTDOWN
+    %% =========================================================
+
+    EB --> F[Shutdown Core Systems]
+
+    F --> F1[ECS.ShutdownAsync]
+    F1 --> F2[Drain Job System]
+    F2 --> F3[JobSystem.ShutdownAsync]
+    F3 --> F4[WindowHandler.ShutdownAsync]
+    F4 --> F5[FileSystem.ShutdownAsync]
+
+    %% =========================================================
+    %% FINAL CLEANUP
+    %% =========================================================
+
+    F5 --> G[Dispose Dependency Injection Container]
+    G --> G1[Flush Logs Async]
+    G1 --> G2[Shutdown Logging]
+    G2 --> H[Process Exit]
