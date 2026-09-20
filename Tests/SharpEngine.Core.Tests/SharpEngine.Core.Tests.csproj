@@ -16,18 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Audio\" />
-    <Folder Include="Entities\" />
-    <Folder Include="Enums\" />
-    <Folder Include="Handlers\" />
-    <Folder Include="Windowing\" />
-    <Folder Include="Textures\" />
-    <Folder Include="Scenes\" />
-    <Folder Include="Renderers\" />
-    <Folder Include="Primitives\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\SharpEngine.Core\SharpEngine.Core.csproj" />
   </ItemGroup>
 

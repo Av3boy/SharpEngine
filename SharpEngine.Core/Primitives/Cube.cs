@@ -1,4 +1,3 @@
-using SharpEngine.Core._Resources;
 using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Components.Properties.Textures;
@@ -20,7 +19,7 @@ public static class Cube
         if (_loaded)
             return;
 
-        var defaultTexture = TextureService.Instance.LoadTexture(Default.DebugTexture);
+        var defaultTexture = TextureService.Instance.LoadTexture(Defaults.Defaults.DebugTexture);
 
         var mesh = new Mesh(Window.SharedGL)
         {

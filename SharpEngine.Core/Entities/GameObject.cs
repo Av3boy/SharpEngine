@@ -1,21 +1,20 @@
 using SharpEngine.Core.Attributes;
-using SharpEngine.Core.Components.Properties;
 using SharpEngine.Core.Components.Properties.Meshes;
 using SharpEngine.Core.Entities.Interfaces;
 using SharpEngine.Core.Entities.Properties;
-using SharpEngine.Core.Entities.UI;
 using SharpEngine.Core.Entities.Views;
 using SharpEngine.Core.Interfaces;
 using SharpEngine.Core.Numerics;
 using SharpEngine.Core.Scenes;
 using SharpEngine.Core.Shaders;
 using SharpEngine.Core.Windowing;
+using Shader = SharpEngine.Core.Shaders.Shader;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SharpEngine.Core.Textures;
-using Shader = SharpEngine.Core.Shaders.Shader;
+using SharpEngine.Core.UI.Entities;
 
 namespace SharpEngine.Core.Entities;
 
@@ -94,7 +93,7 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
         if (shader is not null)
             _tempShaderData = new TempShaderDataContainer(shader.VertPath, shader.FragPath, shader.Name);
         else
-            _tempShaderData = new TempShaderDataContainer(_Resources.Default.VertexShader, _Resources.Default.FragmentShader, "lighting");
+            _tempShaderData = new TempShaderDataContainer(Defaults.Defaults.VertexShader, Defaults.Defaults.FragmentShader, "lighting");
     }
 
     /// <summary>
@@ -140,15 +139,5 @@ public class GameObject : EmptyNode<Transform, Vector3>, IRenderable
         }
 
         return Task.CompletedTask;
-    }
-}
-
-public static class MaterialExtensions
-{
-    public static Material Default(Shader shader)
-    {
-        var debugTexture = TextureService.Instance.LoadTexture(SharpEngine.Core._Resources.Default.DebugTexture);
-        var material = new Material("defaultMaterial", debugTexture) { Shader = shader };
-        return material;
     }
 }

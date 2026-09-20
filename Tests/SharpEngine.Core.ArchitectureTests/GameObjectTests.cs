@@ -24,5 +24,4 @@ public class GameObjectTests
             Assert.Empty(publicConstructors);
         }
     }
-
 }

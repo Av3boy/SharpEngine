@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
+
 using SharpEngine.Core.Enums;
 using SharpEngine.Core.Handlers;
 using SharpEngine.Core.Windowing;
 using SharpEngine.Telemetry;
+
 using Silk.NET.Input;
 using System;
 using System.Numerics;
@@ -134,7 +136,7 @@ public class InputManager : EngineHandler
     /// <param name="mouse">The mouse that triggered the event.</param>
     /// <param name="button">The mouse button that was clicked.</param>
     /// <param name="vector">The position of the mouse when the button was clicked.</param>
-    public virtual void OnMouseClick(IMouse mouse, MouseButton button, Vector2 vector) { }
+    public virtual void OnMouseClick(IMouse mouse, MouseButton button, System.Numerics.Vector2 vector) { }
 
     /// <summary>
     ///     Handles key down events, invoked when a key is pressed on the keyboard.

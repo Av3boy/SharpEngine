@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <LangVersion>preview</LangVersion>
@@ -15,41 +15,31 @@
     <!-- Required, atleast for now since another NuGet package with the SharpEngine.Core name already exists. -->
     <!-- TODO: This will be resolved once we start hosting the nuget packages in GitHub -->
     <PackageId>$(AssemblyName).NET</PackageId>
-    
-    <!-- TODO: This required by the AudioDevice class. -->
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
   </PropertyGroup>
 
   <ItemGroup>    
-    <PackageReference Include="Silk.NET.OpenAL" Version="2.23.0" />
     <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.23.0" />
     <PackageReference Include="Silk.NET.Input" Version="2.23.0" />
     <PackageReference Include="Silk.NET.OpenGL" Version="2.23.0" />
     <PackageReference Include="Silk.NET.Windowing" Version="2.23.0" />
 
-    <PackageReference Include="LibTessDotNet" Version="1.0.7" />
-    <PackageReference Include="NLayer" Version="1.1.1" />
+    <PackageReference Include="NLayer" Version="3.0.0" />
 
     <PackageReference Include="System.Text.Json" Version="9.0.9" />
     <PackageReference Include="System.IO.Abstractions" Version="22.2.0" />
-    <PackageReference Include="Typography.OpenFont" Version="1.0.0">
-      <Aliases>typography</Aliases>
-    </PackageReference>
-    <PackageReference Include="Typography.GlyphLayout" Version="1.0.0">
-      <Aliases>typography</Aliases>
-    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.IO\SharpEngine.IO.csproj" />
     <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Shared\SharpEngine.Shared.csproj" />
     <ProjectReference Include="..\..\SharpEngine-Shared\SharpEngine.Telemetry\SharpEngine.Telemetry.csproj" />
+
     <ProjectReference Include="..\SharpEngine.Core.Components\SharpEngine.Core.Components.csproj" />
+    <ProjectReference Include="..\SharpEngine.Core.Defaults\SharpEngine.Core.Defaults.csproj" />
     <ProjectReference Include="..\SharpEngine.Core.Numerics\SharpEngine.Core.Numerics.csproj" />
-    <ProjectReference Include="..\SharpEngine.Text\SharpEngine.Text.csproj" />
   </ItemGroup>
 
   <ItemGroup>
