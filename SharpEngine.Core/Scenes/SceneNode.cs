@@ -104,7 +104,7 @@ public abstract class SceneNode
     {
         node.Parent = this;
         // propagate scene reference so node knows which scene it belongs to
-        node.SetSceneRecursive(this.Scene);
+        node.SetSceneRecursive(Scene);
         Children.Add(node);
 
         // Ensure lifecycle hook runs for newly added nodes
@@ -118,7 +118,7 @@ public abstract class SceneNode
         }
 
         // Notify the scene that structure changed
-        this.Scene?.IncrementRevision();
+        Scene?.IncrementRevision();
 
         return node;
     }
@@ -194,7 +194,7 @@ public abstract class SceneNode
     /// </summary>
     internal void SetSceneRecursive(Scene? scene)
     {
-        this.Scene = scene;
+        Scene = scene;
         foreach (var child in Children)
             child.SetSceneRecursive(scene);
     }

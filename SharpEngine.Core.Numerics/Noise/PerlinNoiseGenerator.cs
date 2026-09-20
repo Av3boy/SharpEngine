@@ -1,4 +1,5 @@
 ﻿using MathEx = SharpEngine.Core.Numerics.MathExtensions;
+using SysMath = System.Math;
 
 namespace SharpEngine.Core.Numerics.Noise;
 
@@ -34,21 +35,21 @@ public sealed class PerlinNoiseGenerator : INoiseGenerator
     public int Octaves
     {
         get => _octaves;
-        set => _octaves = Math.Max(1, value);
+        set => _octaves = SysMath.Max(1, value);
     }
 
     /// <inheritdoc />
     public float Persistence
     {
         get => _persistence;
-        set => _persistence = Math.Max(0f, value);
+        set => _persistence = SysMath.Max(0f, value);
     }
 
     /// <inheritdoc />
     public float Lacunarity
     {
         get => _lacunarity;
-        set => _lacunarity = Math.Max(0.0001f, value);
+        set => _lacunarity = SysMath.Max(0.0001f, value);
     }
 
     /// <inheritdoc />
@@ -186,6 +187,6 @@ public sealed class PerlinNoiseGenerator : INoiseGenerator
         // Perlin is roughly in [-1, 1], so remap to [0, 1].
         float result = value * 0.5f + 0.5f;
 
-        return Math.Clamp(result, 0f, 1f);
+        return SysMath.Clamp(result, 0f, 1f);
     }
 }
