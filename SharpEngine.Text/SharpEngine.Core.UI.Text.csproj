@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <!-- TODO: This needs to be refactored out support cross platform. -->
-    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.31" />
 
     <PackageReference Include="System.IO.Abstractions" Version="22.2.0" />
 
