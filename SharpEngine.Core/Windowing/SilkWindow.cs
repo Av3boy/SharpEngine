@@ -18,6 +18,12 @@ namespace SharpEngine.Core.Windowing;
 // TODO: The warnings produced by enabling this need to be implemented.
 #pragma warning disable CS0067 // Event is required by IWindow but not used by this implementation
 
+internal sealed class WindowNotInitializedException : Exception
+{
+    public WindowNotInitializedException(SilkWindow window) : base($"Window '{window.Title}' not initialized.") { }
+    public WindowNotInitializedException(string message) : base(message) { }
+}
+
 /// <summary>
 ///     Represents an abstraction for the <see cref="IWindow"/> interface.
 /// </summary>
@@ -36,7 +42,7 @@ public abstract class SilkWindow : IWindow
         set => CurrentWindow.Monitor = value;
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="IWindow.IsClosing" />
     public bool IsClosing
     { 
         get => CurrentWindow.IsClosing;
@@ -48,8 +54,7 @@ public abstract class SilkWindow : IWindow
     /// </summary>
     public IViewSettings Settings { get; protected set; } = ViewSettings.Default;
 
-    /// <summary>Gets or sets the input context for the window.</summary>
-    public IInputContext? Input { get; protected set; }
+    public Silk.NET.Maths.Vector4D<float> BackgroundColor { get; set; } = new Silk.NET.Maths.Vector4D<float>(0.2f, 0.3f, 0.3f, 1.0f);
 
     /// <inheritdoc />
     public virtual Rectangle<int> BorderSize => CurrentWindow.BorderSize;
@@ -83,12 +88,30 @@ public abstract class SilkWindow : IWindow
     /// <remarks>Use <see cref="Size"/> to change the window size.</remarks>
     public int Height => Size.Y;
 
+    public float Top => Height / 2f;
+
+    public float Bottom => -(Height / 2f);
+
+    public float Left => -(Width / 2f);
+
+    public float Right => Width / 2f;
+
+    // TODO: This doesn't seem to work
     /// <inheritdoc />
     public string Title
     {
-        get => CurrentWindow.Title;
-        set => CurrentWindow.Title = value;
+        get => !string.IsNullOrWhiteSpace(CurrentWindow?.Title) ? CurrentWindow.Title : "Untitled window";
+        set
+        {
+            if (CurrentWindow != null)
+            {
+                CurrentWindow.Title = value;
+                Settings.WindowOptions = Settings.WindowOptions with { Title = value };
+            }
+        }
     }
+
+    public string IconPath { get; set; } = "_Resources/icon.png";
 
     /// <inheritdoc />
     public WindowState WindowState
@@ -237,6 +260,7 @@ public abstract class SilkWindow : IWindow
 
     /// <summary>Raised after the scene has been rendered.</summary>
     public event Action<Frame>? OnAfterRender;
+    public event Action<Frame>? OnPreRender;
 
     /// <summary>An event executed when the window has loaded.</summary>
     public event Action? OnLoaded;
@@ -250,9 +274,9 @@ public abstract class SilkWindow : IWindow
     private IWindow? _currentWindow;
     
     /// <summary>Gets or sets the current window.</summary>
-    public IWindow CurrentWindow
+    public IWindow? CurrentWindow
     {
-        get => _currentWindow!;
+        get => _currentWindow; // ?? throw new WindowNotInitializedException(this);
         set => _currentWindow = value;
     }
 
@@ -363,7 +387,7 @@ public abstract class SilkWindow : IWindow
     ///     Handles operations needed to be executed before the renderers are executed.
     /// </summary>
     /// <param name="frame">Contains information about the previous frame.</param>
-    protected virtual void PreRender(Frame frame) { }
+    protected virtual void PreRender(Frame frame) => OnPreRender?.Invoke(frame);
 
     /// <summary>
     ///     Handles closing the application.

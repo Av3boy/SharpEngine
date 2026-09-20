@@ -5,7 +5,10 @@ using Microsoft.Extensions.Logging;
 using SharpEngine.Core.Windowing;
 
 using System;
+using System.Linq;
 using System.Threading;
+using SharpEngine.Core.Handlers;
+using SharpEngine.Core.Interfaces;
 
 namespace SharpEngine.Core.DependencyInjection;
 
@@ -14,8 +17,9 @@ namespace SharpEngine.Core.DependencyInjection;
 /// </summary>
 public class App
 {
-    private static IConfiguration? _configuration;
+    private readonly IConfiguration? _configuration;
     private readonly IServiceProvider _serviceProvider;
+    private Engine _engine;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="App"/> class.
@@ -36,56 +40,23 @@ public class App
     {
         var logger = _serviceProvider.GetService<ILogger<App>>()!;
 
+        var game = _serviceProvider.GetService<Game>();
+        if (game is null)
+            throw new InvalidOperationException("A service for the type 'Game' could not be found. One must be registered before running the application with the dependency Injection apporach.");
+
+        _engine = _serviceProvider.GetRequiredService<Engine>();
+        if (_engine is null)
+            throw new InvalidOperationException("A service for the type 'Engine' could not be found. One must be registered before running the application with the dependency Injection apporach.");
+
         try
         {
-
             logger.LogInformation("App started. Resolving services.");
 
             if (cancellationToken.IsCancellationRequested)
                 return;
 
-            var windowFactory = _serviceProvider.GetService<IWindowFactory>();
-            if (windowFactory is not null && windowFactory.RegisteredWindows.Count > 0)
-            {
-                using var factoryWindow = windowFactory.CreateWindow();
-
-                logger.LogInformation("Required services resolved.");
-                logger.LogInformation("Starting window.");
-
-                factoryWindow.Initialize();
-                factoryWindow.Run();
-                return;
-            }
-
-            var window = _serviceProvider.GetService<Window>();
-            if (window is not null)
-            {
-                logger.LogInformation("Required services resolved.");
-                logger.LogInformation("Starting window.");
-
-                using (window)
-                {
-                    window.Initialize();
-                    window.Run();
-                }
-
-                return;
-            }
-
-            // This is just an example of how to use the scopes. In App we should always use '_serviceProvider'.
-            var scopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
-            using var scope = scopeFactory.CreateScope();
-
-            logger.LogInformation("Required services resolved.");
-            logger.LogInformation("Entering main loop.");
-
-            bool running = !cancellationToken.IsCancellationRequested;
-            while (running)
-            {
-                logger.LogInformation("frame tick.");
-
-                Thread.Sleep(1000); // Simulate frame delay
-            }
+            logger.LogInformation("Starting engine handlers.");
+            _engine.Initialize();
         }
         catch (Exception ex)
         {

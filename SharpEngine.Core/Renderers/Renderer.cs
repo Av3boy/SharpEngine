@@ -10,6 +10,7 @@ using SharpEngine.Core.Windowing;
 using SharpEngine.Telemetry;
 using Silk.NET.OpenGL;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
 
@@ -70,11 +71,8 @@ public class Renderer : RendererBase
     }
 
     /// <inheritdoc />
-    public override Task Render()
+    public override async Task Render()
     {
-        // TODO: Make toggling these shaders into a hotkey.
-        // return Task.CompletedTask;
-
         try
         {
             _gl.Enable(EnableCap.DepthTest);
@@ -87,21 +85,29 @@ public class Renderer : RendererBase
             _camera.SetShaderUniforms(_lightingShader);
             _gl.BindVertexArray(_lightingShader.Vao);
 
-            var lightRenderTasks = _scene.IterateAsync(_scene.Root.Children, RenderLight);
-            Task.WaitAll([.. lightRenderTasks]);
+            // Render lights sequentially to avoid allocating a Task per node.
+            await TraverseAndAwait(_scene.Root.Children, RenderLight);
 
-            // TODO: Streamline this part where the game objects are rendered
-            var gameObjectRenderTasks = _scene.IterateAsync(_scene.Root.Children, RenderGameObject);
-            var renderTask = Task.WhenAll(gameObjectRenderTasks);
+            // Render game objects sequentially. Streaming avoids large Task allocations and reduces GC pressure.
+            await TraverseAndAwait(_scene.Root.Children, RenderGameObject);
 
             _gl.BindVertexArray(_lampShader.Vao);
-
-            return renderTask;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "{Message}", ex.Message);
-            return Task.FromException(ex);
+            throw;
+        }
+    }
+
+    private static async Task TraverseAndAwait(IEnumerable<SceneNode> nodes, Func<SceneNode, Task> action)
+    {
+        foreach (var node in nodes)
+        {
+            await action(node).ConfigureAwait(false);
+
+            if (node.Children is { Count: > 0 })
+                await TraverseAndAwait(node.Children, action).ConfigureAwait(false);
         }
     }
 

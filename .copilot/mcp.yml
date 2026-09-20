@@ -1,0 +1,39 @@
+# Copilot MCP configuration for Av3boy/SharpEngine
+# Purpose: tell Copilot which repository resources to index and surface as context
+
+version: 1
+name: SharpEngine Copilot MCP
+repository: Av3boy/SharpEngine
+
+# Which repo sources to include for context (issues, project boards, PRs, discussions, code, workflows)
+contexts:
+  - type: github
+    include:
+      - issues
+      - projects
+      - pull_requests
+      - discussions
+      - labels
+      - milestones
+      - commits
+      - workflows
+
+  - type: files
+    include_paths:
+      - README.md
+      - docs/**
+      - .github/**
+      - src/**
+
+settings:
+  indexing:
+    max_documents: 1000
+    refresh: weekly
+  visibility:
+    include_private: false
+
+# Notes:
+# - This file is a lightweight starting point. Adjust `include` and `include_paths` to match
+#   which repo artifacts you want the Copilot agent to surface (e.g., add tests/** or design/**).
+# - No secrets or tokens are stored here; GitHub will use repository permissions when Copilot
+#   fetches the requested resources.
